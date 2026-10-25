@@ -6,7 +6,7 @@ No public release exists yet.
 
 - Prepared the reviewed foundation for `main` and `develop`, with contributor guidance and explicit planned-product status.
 - Added five issue forms, private security reporting links, CODEOWNERS and a PR template.
-- Added a pinned, read-only GitHub Actions workflow for public-file boundaries, documentation structure and licence-text checks.
+- Added a pinned, read-only GitHub Actions workflow for public-file boundaries, documentation structure and licence-text checks, with push, pull-request and manual triggers.
 - Kept operational continuity and private implementation outside the published tree.
 
 ## Unreleased — licensing, 2026-10-25

@@ -14,6 +14,6 @@ Use the [issue forms](https://github.com/senyo888/thermal-intelligence/issues/ne
 
 ## Foundation checks
 
-With Python 3 installed, run `python3 scripts/check_foundation.py` against the staged/tracked public files and `git diff --check`. The GitHub **Foundation checks** workflow runs the same structural check on pushes and pull requests. It verifies private-file boundaries, local Markdown links, fences, whitespace and the standard licence text. It is not a runtime, provider, HACS or full secret-scan test.
+With Python 3 installed, run `python3 scripts/check_foundation.py` against the staged/tracked public files and `git diff --check`. The GitHub **Foundation checks** workflow runs the same structural check on pushes and pull requests, and supports manual runs from Actions. It verifies private-file boundaries, local Markdown links, fences, whitespace and the standard licence text. It is not a runtime, provider, HACS or full secret-scan test.
 
 Before publication, run Gitleaks with redacted output against the exact candidate tree and Git history. Keep scanner reports private. There is no HACS validation workflow yet because there is no installable package.
