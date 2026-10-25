@@ -4,6 +4,7 @@
 // Provenance is recorded in docs/source-provenance.md. This module has no service or persistence path.
 import { renderHumidity } from './humidity-dialog.js';
 import { overviewDialogStyles, humidityDialogStyles, settingsDialogStyles } from './dialog-styles.js';
+import { STATE_TELEMETRY } from '../model/state-telemetry.js';
 export const dialogStyles = overviewDialogStyles;
 
 const esc = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
@@ -75,12 +76,13 @@ function telemetry({ model, config, rowKey, statusMessage }) {
   }
   if (rowKey === 'humidity' || row?.kind === 'humidity' || row?.topic === 'humidity') return humidity({ model, config, row, statusMessage });
   const title = row?.label || (rowKey === 'follow' ? 'Follow underlying target' : 'Telemetry');
-  const reading = row?.status === 'available' ? row.value ?? fmt(row.rawValue) : row?.status || 'Unavailable';
+  const semantic = STATE_TELEMETRY[row?.kind];
+  const reading = row?.status === 'available' ? row.value ?? fmt(row.rawValue) : row?.status === 'disabled' ? 'Not configured' : row?.status || 'Unavailable';
   const values = [
-    { label: 'Selected reading', value: reading },
+    { label: semantic ? 'State' : 'Selected reading', value: reading },
     { label: 'Status', value: row?.status || 'Not configured' },
     { label: 'Source', value: sourceText(row?.source), entity: row?.source?.entity },
-    { label: 'Unit', value: row?.unit || 'Not reported' },
+    ...semantic ? [] : [{ label: 'Unit', value: row?.unit || 'Not reported' }],
   ];
   const content = `<section aria-label="${esc(title)}">${plainRows(values)}<p class="note">${esc(row?.detail || 'No matching configured source is available. No source is inferred from an entity name.')}</p><div class="topic-links">${nativeButton(row?.source?.entity)}<button data-dialog-settings>Card display settings</button></div>${message(statusMessage)}</section>`;
   return { title, html: standardShell({ view: 'telemetry', title, eyebrow: config.name || model.name || 'Thermostat', content }) };

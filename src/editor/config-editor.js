@@ -2,9 +2,10 @@
 
 import { normalizeConfig, TELEMETRY_KINDS } from '../model/config.js';
 import { HUMIDITY_DEFAULTS, HUMIDITY_KEYS } from '../model/humidity.js';
+import { STATE_TELEMETRY } from '../model/state-telemetry.js';
 
 const UNSAFE_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
-const KIND_LABELS = { humidity: 'Humidity', trend: 'Temperature trend', valve: 'Valve position', energy: 'Energy', power: 'Power', custom: 'Custom telemetry' };
+const KIND_LABELS = { humidity: 'Humidity', trend: 'Temperature trend', valve: 'Valve position', energy: 'Energy', power: 'Power', custom: 'Custom telemetry', ...Object.fromEntries(Object.entries(STATE_TELEMETRY).map(([key, value]) => [key, value.label])) };
 const own = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
 const record = (value) => value && typeof value === 'object' && !Array.isArray(value);
 

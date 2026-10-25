@@ -95,6 +95,41 @@ test('VT lock indication requires provider evidence and never invents an unlocke
   assert.equal(read(), null);
 });
 
+test('categorical header telemetry uses canonical labels, changing icons and active colours', () => {
+  const h = fixture();
+  const id = 'binary_sensor.example';
+  h.states[id] = { state: 'on', attributes: {} };
+  for (const [kind, active, inactive, icon, colour] of [
+    ['window','Open','Closed','mdi:window-closed-variant','#efb86b'],
+    ['motion','Detected','Clear','mdi:motion-sensor-off','#b9a1e6'],
+    ['presence','Home','Away','mdi:home-account','#7dc39c'],
+    ['power_management','Limiting','Normal','mdi:transmission-tower','#efb86b'],
+    ['follow','On','Off','mdi:link-variant','#73c9bd'],
+  ]) {
+    const read = () => buildModel(h, { ...config, telemetry: [{ kind, entity: id }] }, identity).headerTelemetry[0];
+    h.states[id].state = 'on'; assert.equal(read().value, active); assert.equal(read().colour, colour);
+    h.states[id].state = 'off'; assert.equal(read().value, inactive); assert.equal(read().icon, icon); assert.equal(read().activity, 'neutral');
+    h.states[id].state = 'unknown'; assert.equal(read().value, 'Unknown'); assert.equal(read().activity, 'unknown');
+    h.states[id].state = 'unavailable'; assert.equal(read().value, 'Unavailable'); assert.equal(read().colour, '#8795a8');
+    h.states[id].state = 'unexpected'; assert.equal(read().status, 'invalid');
+  }
+  h.states[id].state = 'on'; h.states[id].attributes.unit_of_measurement = '%';
+  assert.equal(buildModel(h, { ...config, telemetry: [{ kind: 'window', entity: id }] }, identity).telemetry[0].status, 'invalid');
+});
+
+test('VT categorical telemetry respects configured flags and never enables a feature', () => {
+  const h = fixture({ is_ready: true, is_window_configured: false, window_manager: { window_state: 'on' } });
+  const c = { ...config, telemetry: [{ kind: 'window', entity, attribute: 'window_manager.window_state' }] };
+  const read = () => buildModel(h, c, vtIdentity);
+  assert.equal(read().headerTelemetry[0].value, 'Not configured'); assert.equal(read().canSet, true);
+  delete h.states[entity].attributes.is_window_configured;
+  assert.equal(read().headerTelemetry[0].status, 'unknown');
+  h.states[entity].attributes.is_window_configured = true;
+  assert.equal(read().headerTelemetry[0].value, 'Open');
+  delete h.states[entity].attributes.window_manager.window_state;
+  assert.equal(read().headerTelemetry[0].status, 'unavailable'); assert.equal(read().canSet, true);
+});
+
 test('connection and entity availability gate every command', () => {
   for (const state of ['unknown', 'unavailable', '']) {
     const h = fixture(); h.states[entity].state = state;

@@ -2,6 +2,12 @@
 
 No public release exists yet.
 
+## Unreleased — coherent header states, 2026-10-25
+
+- Restored canonical window Open/Closed, motion Detected/Clear, presence Home/Away, power Limiting/Normal and Follow On/Off presentation through explicit visual telemetry types. Window and motion glyphs change with state; active colours and muted degraded states match the source design.
+- Aligned focused popup states and explanations with the icons, without measurement-unit clutter for categorical readings. Known VT configuration flags distinguish an unconfigured feature from an inactive detector.
+- Compared the source and candidate LED animation timings, staggered phases, sampled brightness, halo keyframes and reduced-motion behavior; retained the original animation.
+
 ## Unreleased — VT lock indication, 2026-10-25
 
 - Added a small lock/unlock icon beside the card name, based only on VT's reported lock state. Unknown or unavailable lock data is distinct; the icon sends no commands and preserves existing user-lock restrictions.

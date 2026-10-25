@@ -3,7 +3,7 @@ import { validHumidityBands, legacyHumidityBands } from './humidity.js';
 
 export const CARD_TYPE = 'custom:thermal-intelligence-card';
 export const SCHEMA_VERSION = 1;
-export const TELEMETRY_KINDS = ['humidity', 'trend', 'valve', 'energy', 'power', 'custom'];
+export const TELEMETRY_KINDS = ['humidity', 'trend', 'valve', 'energy', 'power', 'window', 'motion', 'presence', 'power_management', 'follow', 'custom'];
 export const BACKGROUNDS = ['blue', 'plum', 'black'];
 const FORBIDDEN_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 const ENTITY = /^[a-z0-9_]+\.[a-z0-9_]+$/;

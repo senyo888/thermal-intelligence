@@ -131,7 +131,7 @@ The arc preserves the directly evidenced target-comparison colours: below-target
 
 | Field | Required / default | Meaning |
 | --- | --- | --- |
-| `kind` | Required | `humidity`, `trend`, `valve`, `energy`, `power` or `custom`. |
+| `kind` | Required | `humidity`, `trend`, `valve`, `energy`, `power`, `window`, `motion`, `presence`, `power_management`, `follow` or `custom`. |
 | `entity` | Required | Exact HA entity ID, or `""` for a disabled row. Any entity domain can supply an observation. |
 | `attribute` | Optional; entity state | Dot-separated attribute path, such as `diagnostics.temperature_slope`. Only own properties are read. |
 | `label` | Optional; kind label | Display label. Defaults are Humidity, Temperature trend, Valve, Energy, Power or Telemetry. |
@@ -147,7 +147,18 @@ The entity's `unit_of_measurement` describes its state. It is not automatically 
 | `valve` | Finite percentage from 0 to 100; unit `%` | Valve |
 | `energy` | Finite value; `Wh`, `kWh`, `MWh`, `J`, `kJ`, `MJ` or `GJ` | Energy |
 | `power` | Finite value; `W`, `kW` or `MW` | Power |
+| `window` | `on`/`off`, `open`/`closed`, or boolean; no unit | Window detection: Open / Closed |
+| `motion` | `on`/`off`, `detected`/`clear`, or boolean; no unit | Motion detection: Detected / Clear |
+| `presence` | `on`/`off`, `home`/`away`/`not_home`, or boolean; no unit | Presence detection: Home / Away |
+| `power_management` | `on`/`off`, `limiting`/`normal`, or boolean; no unit | Power management: Limiting / Normal |
+| `follow` | `on`/`off` or boolean; no unit | Follow underlying target: On / Off |
 | `custom` | Finite number, reported text or boolean; optional unit | Telemetry |
+
+Choose the semantic type in the visual editor to retain the canonical labels, state-dependent window/motion icons and active colours. Open windows and limiting power are amber, detected motion purple, presence at home green and Follow on teal. Inactive readings are muted; unavailable/unknown/invalid/stale observations stay gray. Energy is a cumulative reading, not an activity colour. No type is inferred from a source name or chosen icon.
+
+Tapping these icons opens a focused read-only panel with the same state, observation status, source and a short explanation. Categorical panels omit measurement units. Selecting an icon never enables a VT feature. A mapping to a known VT's window, automatic-window, motion, presence or power-management state checks the corresponding provider configuration flag: false means **Not configured**; absent flags stay unknown.
+
+For example, select `kind: window` and an explicit window binary sensor. To display VT's own window detector instead, select the thermostat entity with `attribute: window_manager.window_state`. These are distinct sources; the card does not treat a separate sensor as proof that VT's window protection is enabled.
 
 A missing entity or expected attribute is unavailable. Provider `unknown` values remain unknown; incompatible units or malformed numeric values are invalid. A blank entity is disabled. With an explicit maximum age, old data becomes stale and a missing or future timestamp makes freshness unknown. Without a maximum age, the card does not invent a timeout. `last_updated` is an HA entity-update timestamp, not proof of when a physical sensor sampled its environment.
 

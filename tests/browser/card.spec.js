@@ -143,6 +143,27 @@ test('VT lock icon follows reported state and lock scope without issuing command
   expect(await calls(page)).toEqual([]);
 });
 
+test('window header and focused popup agree through live Open, Closed and unavailable states',async({page})=>{
+  await reset(page,'standard',{telemetry:[{kind:'window',entity:'binary_sensor.fixture_window'}]});
+  await page.evaluate(()=>{fixture.hass.states['binary_sensor.fixture_window']={state:'on',attributes:{}};fixture.refresh();});
+  const button=card(page).getByRole('button',{name:'Window detection: Open',exact:true});
+  await expect(button).toBeVisible();
+  await expect(button.locator('ha-icon')).toHaveAttribute('icon','mdi:window-open-variant');
+  await button.click();
+  const dialog=card(page).getByRole('dialog');
+  await expect(dialog.getByRole('heading',{name:'Window detection',exact:true})).toBeVisible();
+  await expect(dialog.locator('dl > div').filter({hasText:'State'}).locator('dd')).toHaveText('Open');
+  await expect(dialog.locator('dt').filter({hasText:'Unit'})).toHaveCount(0);
+  await expect(dialog).toContainText('does not enable window protection');
+  await page.evaluate(()=>{fixture.hass.states['binary_sensor.fixture_window'].state='off';fixture.refresh();});
+  await expect(dialog.locator('dl > div').filter({hasText:'State'}).locator('dd')).toHaveText('Closed');
+  await expect(card(page).getByRole('button',{name:'Window detection: Closed',exact:true}).locator('ha-icon')).toHaveAttribute('icon','mdi:window-closed-variant');
+  await page.evaluate(()=>{fixture.hass.states['binary_sensor.fixture_window'].state='unavailable';fixture.refresh();});
+  await expect(dialog.locator('dl > div').filter({hasText:'State'}).locator('dd')).toHaveText('unavailable');
+  await expect(increase(page)).toBeEnabled();
+  expect(await calls(page)).toEqual([]);
+});
+
 test('Fahrenheit and dual range preserve units and the other endpoint',async({page})=>{
   await reset(page,'fahrenheit');await increase(page).click();
   expect((await calls(page))[0].payload.temperature).toBe(71);

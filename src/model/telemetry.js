@@ -3,6 +3,7 @@
 // Public provenance is recorded in docs/source-provenance.md.
 import { finiteNumber } from './config.js';
 import { humidityBands, humidityBand, legacyHumidityBands } from './humidity.js';
+import { STATE_TELEMETRY, stateTelemetryValue } from './state-telemetry.js';
 
 const LABELS = { humidity: 'Humidity', trend: 'Temperature trend', valve: 'Valve', energy: 'Energy', power: 'Power', custom: 'Telemetry' };
 const UNITS = {
@@ -22,10 +23,11 @@ export function readOwnPath(object, path) {
 }
 
 /** Explicitly configured observations do not affect climate readiness. */
-export function buildTelemetry(hass, config, now, connected = true) {
+export function buildTelemetry(hass, config, now, connected = true, climate = {}) {
   return config.telemetry.map((entry) => {
     const source = { entity: entry.entity, attribute: entry.attribute ?? null, evidence: 'Reported by configured Home Assistant entity' };
-    const row = { kind: entry.kind, label: entry.label || LABELS[entry.kind], status: 'unknown', value: null, unit: entry.unit ?? null, source, detail: '' };
+    const semantic = STATE_TELEMETRY[entry.kind];
+    const row = { kind: entry.kind, label: entry.label || semantic?.label || LABELS[entry.kind], status: 'unknown', value: null, unit: entry.unit ?? null, source, detail: '', ...(semantic ? { icon: semantic.icon, topic: entry.kind } : {}) };
     if (entry.kind === 'humidity') {
       row.guides = humidityBands(config);
       row.guideMode = legacyHumidityBands(row.guides) ? 'legacy' : 'canonical';
@@ -40,6 +42,12 @@ export function buildTelemetry(hass, config, now, connected = true) {
     if (state.state === 'unknown') return result('unknown', 'Configured source has no known state.');
     const attrs = state.attributes ?? {};
     if(typeof attrs.friendly_name==='string' && attrs.friendly_name.trim()) row.source.name=attrs.friendly_name;
+    if (semantic?.flag && climate.provider?.kind === 'vtherm' && entry.entity === config.entity && (entry.attribute === semantic.path || entry.kind === 'window' && entry.attribute === 'window_manager.window_auto_state')) {
+      const flag = entry.attribute === 'window_manager.window_auto_state' ? 'is_window_auto_configured' : semantic.flag;
+      const configured = readOwnPath(attrs, flag).value;
+      if (configured === false) return result('disabled', 'This feature is not configured in VT. Selecting its icon does not enable it.');
+      if (configured !== true) return result('unknown', 'VT does not report whether this feature is configured.');
+    }
     const resolved = entry.attribute ? readOwnPath(attrs, entry.attribute) : { found: true, value: state.state };
     if (!resolved.found) return result('unavailable', 'Configured attribute is missing.');
     if (resolved.value === 'unavailable') return result('unavailable', 'Configured value is unavailable.');
@@ -48,9 +56,17 @@ export function buildTelemetry(hass, config, now, connected = true) {
     const sourceUnit = !entry.attribute && Object.hasOwn(attrs, 'unit_of_measurement') && typeof attrs.unit_of_measurement === 'string' ? attrs.unit_of_measurement : null;
     if (sourceUnit && entry.unit && sourceUnit !== entry.unit) return result('invalid', `Source unit ${sourceUnit} does not match configured unit ${entry.unit}; no conversion was applied.`);
     row.unit = sourceUnit || entry.unit || null;
-    if (entry.kind !== 'custom' && (!row.unit || !UNITS[entry.kind].includes(row.unit))) return result('invalid', 'A compatible unit is required; no unit is inferred.');
+    if (!semantic && entry.kind !== 'custom' && (!row.unit || !UNITS[entry.kind].includes(row.unit))) return result('invalid', 'A compatible unit is required; no unit is inferred.');
     const value = finiteNumber(resolved.value);
-    if (entry.kind === 'custom' && typeof resolved.value === 'boolean') {
+    if (semantic) {
+      if (row.unit) return result('invalid', 'A categorical state must not have a measurement unit.');
+      const active = stateTelemetryValue(entry.kind, resolved.value);
+      if (active === null) return result('invalid', 'The source does not report a recognised state for this telemetry type.');
+      row.value = active ? semantic.active : semantic.inactive;
+      row.icon = !active && semantic.inactiveIcon ? semantic.inactiveIcon : semantic.icon;
+      row.activity = active ? 'active' : 'neutral';
+      row.colour = active ? semantic.colour : '#a9b8cb';
+    } else if (entry.kind === 'custom' && typeof resolved.value === 'boolean') {
       row.value = resolved.value;
     } else if (entry.kind === 'custom' && typeof resolved.value === 'string' && value === null && resolved.value.trim()) {
       row.value = resolved.value;
@@ -70,7 +86,7 @@ export function buildTelemetry(hass, config, now, connected = true) {
       row.bandStatus = humidityBand(value, row.guides);
       row.band = row.bandStatus.key; row.colour = row.bandStatus.colour;
     }
-    return result('available', 'Reported observation; no controller decision is inferred.');
+    return result('available', semantic?.note || 'Reported observation; no controller decision is inferred.');
   });
 }
 
@@ -81,7 +97,7 @@ const display = (value) => typeof value === 'boolean' ? value ? 'On' : 'Off' : t
 
 /** Public source mappings only: no name matching or implicit entity discovery. */
 export function buildSourceTelemetry(hass, config, climate, now, connected) {
-  const telemetry = buildTelemetry(hass, config, now, connected);
+  const telemetry = buildTelemetry(hass, config, now, connected, climate);
   const mapped = (key, kind) => {
     if (Object.hasOwn(config, key)) {
       // Reuse explicit metadata for the same state source, including its age limit.
@@ -110,13 +126,14 @@ export function buildSourceTelemetry(hass, config, climate, now, connected) {
     if (preset && (!presetReading?.selected || presetReading.status !== 'available')) return null;
     const sourceState = Object.hasOwn(hass?.states ?? {}, row.source.entity) ? hass.states[row.source.entity] : null;
     const sourceIcon = sourceState?.attributes?.icon;
-    const value = row.status === 'available' ? display(row.value) + (row.unit ? ` ${row.unit}` : '') : row.status.charAt(0).toUpperCase() + row.status.slice(1);
+    const value = row.status === 'available' ? display(row.value) + (row.unit ? ` ${row.unit}` : '') : row.status === 'disabled' ? 'Not configured' : row.status.charAt(0).toUpperCase() + row.status.slice(1);
     return {
       ...row, key: `extra-${index}-${row.source.entity}-${row.source.attribute || 'state'}`,
       entity: row.source.entity, attribute: row.source.attribute, rawValue: row.value, value,
       shortLabel: presetReading?.label ?? row.label, icon: validIcon(row.icon) ? row.icon : preset && Object.hasOwn(PRESET_ICONS, preset) ? PRESET_ICONS[preset] : validIcon(sourceIcon) ? sourceIcon : ICONS[row.kind],
-      activity: preset ? 'active' : row.status !== 'available' ? 'unknown' : [true, 'on', 'On', 'true'].includes(row.value) ? 'active' : 'neutral',
-      activityLabel: preset ? 'Preset selected' : row.kind === 'humidity' ? row.status === 'available' ? row.bandStatus.label : row.status.charAt(0).toUpperCase() + row.status.slice(1) : '', topic: row.kind === 'humidity' ? 'humidity' : 'entity', preset,
+      colour: row.status === 'available' ? row.colour : '#8795a8',
+      activity: preset ? 'active' : row.status !== 'available' ? 'unknown' : row.activity || ([true, 'on', 'On', 'true'].includes(row.value) ? 'active' : 'neutral'),
+      activityLabel: preset ? 'Preset selected' : row.kind === 'humidity' ? row.status === 'available' ? row.bandStatus.label : row.status.charAt(0).toUpperCase() + row.status.slice(1) : '', topic: row.topic || (row.kind === 'humidity' ? 'humidity' : 'entity'), preset,
     };
   }).filter(Boolean);
   const trend = trendPresentation(trendSource, climate);
