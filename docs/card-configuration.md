@@ -34,10 +34,12 @@ This workflow is for local development. Installation, update, rollback and relea
 
 Ordinary configuration is available through the visual editor:
 
-1. In **Thermostat**, select a climate entity and provider mode. Set the card name, appearance, activity visibility and details visibility.
-2. In **Optional telemetry**, add sources, select their kinds, enter exact entities and optional attribute paths, and set labels, units or maximum ages. Rows can be reordered or removed. A blank source disables that row.
-3. In **Preset display labels**, change the labels for advertised presets or add an exact provider-value mapping. Reset removes a label override. Saved mappings for currently unadvertised values remain editable.
-4. In **Advanced display settings**, set a fallback temperature step or local humidity display bounds. Both humidity bounds must be valid before they apply; **Clear humidity colour preference** removes the preference.
+1. In **Thermostat**, select a climate entity and provider mode. Set the card name and **Background**: **Midnight Blue**, **Plum** or **Black**. Activity and details visibility remain independent settings.
+2. In **Temperature trend, humidity and valve sources**, map the existing card surfaces to explicit sensors. None is required for temperature control.
+3. In **Custom telemetry & features**, add named header extras using an entity, optional attribute, label, unit and icon. Optionally associate a temperature source with an exact advertised preset using **Preset association**; **Unassociated** clears that link. Rows can be reordered or removed; a blank source is a disabled setup row.
+4. In **Optional telemetry**, add typed sources, exact entities and optional attribute paths, labels, units or maximum ages. This schema remains supported alongside the original `features` mappings.
+5. In **Preset display labels**, change the labels for advertised presets or add an exact provider-value mapping. Reset removes a label override. Saved mappings for currently unadvertised values remain editable.
+6. In **Advanced display settings**, set a fallback temperature step or the original four humidity display boundaries. Saved legacy low/high guides remain two explicitly labelled fields. **Reset humidity guides to source defaults** restores the original five-band presentation, retaining unknown nested configuration.
 
 Fields validate before emitting an accepted configuration. An incomplete or invalid draft shows an error and leaves the card on its last accepted configuration. The no-climate scenario remains a usable setup state. Configuration belongs to each card instance; editing one card does not update other copies.
 
@@ -52,17 +54,23 @@ The YAML below describes the same configuration contract. The preview shows the 
 | `entity` | Thermostat entity | Empty string | A `climate.*` entity ID. Empty is the safe setup state. Entity names do not establish provider identity. |
 | `adapter` | Provider | `auto` | `auto`, `standard` or `vtherm`; see identity rules below. |
 | `name` | Card name | No override | Plain text. When omitted or empty, use the entity's friendly name, then its entity ID. |
-| `theme` | Appearance | `auto` | `auto` follows HA theme variables; `light` or `dark` chooses the card palette. |
-| `show_activity` | Show activity | `true` | Boolean. Show the separate integration-reported activity and its attribution. |
-| `show_details` | Show details | `true` | Boolean. Show the details button for provider evidence, readiness, ownership, step and applicable provider observations. |
+| `background` | Background | `blue` | `blue` (Midnight Blue), `plum` or `black`, preserving the existing TI palettes. |
+| `show_activity` | Show activity | `true` | Boolean. Show the measured trend and reported output summary, with their distinct sources. |
+| `show_details` | Show details | `true` | Boolean. Show provider and mapped feature detail rows in expanded **Controls & features**. |
 | `step` | Temperature step override | Unset | Finite positive number, used only when the provider omits `target_temp_step`. It does not override a reported provider step. |
 | `preset_labels` | Preset display labels | `{}` | Object mapping exact provider preset values to plain-text display labels. Does not add capabilities or change service values. |
+| `trend_entity` | Optional trend entity | Unset | Explicit `sensor.*` temperature-trend source; reported units are required. |
+| `humidity_entity` | Optional humidity entity | Unset | Explicit `sensor.*` humidity source; finite percentage from 0 to 100 with unit `%`. |
+| `valve_position_entity` | Optional TRV opening sensor (%) | Unset | Explicit `sensor.*` valve-position source; finite percentage from 0 to 100 with unit `%`. |
+| `features` | Custom telemetry & features | `[]` | Ordered portable named observations for the header and expanded features; fields below. |
 | `telemetry` | Optional telemetry | `[]` | Ordered list of explicit source rows; see fields and kinds below. |
-| `humidity_bands` | Humidity display low/high | Unset | Object containing finite numeric `low` and `high`, with `0 ≤ low < high ≤ 100`. Local display classification only. |
+| `humidity_bands` | Four humidity guide boundaries, or explicit legacy low/high | Original `30/40/60/70` guides | `{dry_below, good_min, good_max, wet_above}` requires ordered integers within 0–100. Existing `{low, high}` remains an explicit legacy format. Local display classification only; details below. |
 
 Names, labels, units and preset keys must be plain text without markup delimiters or control characters. Optional numbers use YAML numbers, not quoted numeric strings. Boolean options use `true` or `false`. Clear an optional setting by omitting it; `null` is not a substitute for a valid recognized value.
 
-Unknown top-level options, unknown fields within telemetry rows, and unknown fields within `humidity_bands` survive normalization and editor round trips. Preservation does not make an unknown option operational. The editor patches the selected field instead of rebuilding a reduced configuration. There are no implicit private entity bindings or shared card settings.
+Unknown top-level options, unknown fields within feature/telemetry rows, and unknown fields within `humidity_bands` survive normalization and editor round trips. Preservation does not make an unknown option operational. The editor patches the selected field instead of rebuilding a reduced configuration. There are no implicit private entity bindings or shared card settings.
+
+The earlier local preview's `theme` option is no longer the appearance control. A previously saved valid `auto`, `light` or `dark` value is retained as inert legacy data; it does not select the source UI's background. Choose `background` explicitly or accept Midnight Blue. See [local migration](migration.md#source-ui-configuration-correction).
 
 ## Provider selection and temperature behavior
 
@@ -77,6 +85,45 @@ Temperature units come from HA's configured display unit (`°C` or `°F`). Limit
 The card quantizes target edits to the valid step grid within the provider limits. A range edit preserves the other endpoint and cannot cross it. Unknown units or invalid temperature data disable temperature editing; independently valid mode or preset controls can remain available. No configuration option invents a temperature range, preset, fan mode or swing capability.
 
 Frost is selectable only if the provider advertises its exact preset value. For example, `preset_labels: {frost: Frost}` changes that value's display label; it neither creates Frost support nor maps an unrelated preset to a different service value. Preset `none` and a coincident target temperature do not establish manual ownership or the absence of a schedule.
+
+## Original source mappings and named features
+
+A configured direct source selects its explicit sensor. If the direct key is omitted, the first matching `trend`, `humidity` or `valve` entry in `telemetry` can supply that surface. An explicitly empty direct key disables that mapping; an invalid or unavailable explicit source never triggers a search for a replacement. The editor clears a direct override by removing its key.
+
+When the same entity state is also configured with the matching typed telemetry kind, its declared label, unit checks and maximum age are reused. This prevents a direct mapping from discarding an age limit already set for that observation. Direct source strings have no implicit freshness timeout. Use a matching typed telemetry row when an age limit is appropriate.
+
+The original `features` array is portable named telemetry:
+
+| Feature field | Default | Meaning |
+| --- | --- | --- |
+| `entity` | Required | Any exact HA entity ID, or `""` for a disabled setup row. |
+| `label` | Source name | Plain-text label; an attribute path's final component is the fallback label for attribute observations. |
+| `attribute` | Entity state | Optional dot-separated own-property path. Blank means entity state. |
+| `unit` | Reported state unit | Optional unit for an attribute or state lacking metadata; no conversion or reinterpretation of a conflicting reported unit. |
+| `icon` | Valid source icon or information icon | Named icon such as `mdi:thermometer`. URLs and markup are rejected. |
+| `preset` | Unassociated | Optional exact advertised provider preset value. Associates this source with a preset-temperature reading; it never selects the preset or changes its temperature. |
+
+Feature values can be finite numbers, reported text or booleans. Booleans display as **On**/**Off**. Missing, unknown and invalid evidence retains its status. Feature entity names and matching temperatures do not select presets, establish ownership or discover helper contracts. A mapped feature remains an observation; it does not become a service control.
+
+Preset associations require a finite numeric reading and a reported or explicit `°C`/`°F` unit matching the selected climate display unit. No conversion is applied. An attribute source needs an explicit unit. One source may be associated with each exact preset; duplicate associations are invalid instead of choosing one. Unadvertised saved associations remain editable and report unsupported. All supported associated readings remain available for comparison, but a header indicator appears only while connected and ready in **Heat**, with that exact advertised preset selected. Off, other modes, unknown selection and disconnected states suppress preset indicators. Preset `none` and a target matching a preset temperature do not activate an indicator. Unassociated features remain independent observations.
+
+For example, this mapping is explicit and portable; the synthetic number entity must exist in the chosen fixture or installation:
+
+```yaml
+type: custom:thermal-intelligence-card
+entity: climate.example
+features:
+  - entity: number.example_comfort_temperature
+    label: Comfort
+    preset: comfort
+    icon: mdi:sofa
+```
+
+Measured temperature trend retains the existing TI labels and colours. Values within `±0.05°C/hour` or `±0.09°F/hour` display **Stable**; positive values display **Rising**, negative values **Falling**. The original stronger trend colours apply beyond `±2.5°C/hour` or `±4.5°F/hour`. Per-minute readings use the equivalent hourly rate for this display classification and retain their reported unit. This describes measured temperature change only; it is not HI Stability or proof of heating response. The trend surface is unavailable when its source, current temperature or thermostat readiness is unavailable.
+
+An explicitly mapped valve source retains **TRV Open/Closed** and its reported percentage. An open valve does not establish boiler firing or heat delivery. Without a valve mapping, the output summary uses the selected climate entity's reported activity; known VT heating remains **Heat requested**.
+
+The arc preserves the directly evidenced target-comparison colours: below-target cyan, at-target green, more than `0.2` display degrees above target purple, Off muted blue-gray, and reported cooling light cyan. The original green interval runs from the target through `0.2` display degrees above it in either Celsius or Fahrenheit. Connection, readiness, a finite current temperature, known unit, recognized mode and a valid single climate target are required; ranges and invalid or missing evidence stay gray. Comparison uses the selected climate's serialized target and display unit, never an unconverted VT internal target. These colours do not prove physical heating. Warming orange remains unavailable without a public accepted-output and freshness contract, so a known below-target comparison stays cyan even if heating is requested.
 
 ## Telemetry row fields
 
@@ -94,11 +141,11 @@ The entity's `unit_of_measurement` describes its state. It is not automatically 
 | Kind | Valid data | Default label |
 | --- | --- | --- |
 | `humidity` | Finite percentage from 0 to 100; unit `%` | Humidity |
-| `trend` | Finite signed value; `°C/h`, `°F/h`, `°C/min` or `°F/min` | Temperature trend |
+| `trend` | Finite signed value; `°C/h`, `°F/h`, `°C/hour`, `°C/hr`, `degC/h`, `°F/hour`, `°F/hr`, `°C/min` or `°F/min` | Temperature trend |
 | `valve` | Finite percentage from 0 to 100; unit `%` | Valve |
 | `energy` | Finite value; `Wh`, `kWh`, `MWh`, `J`, `kJ`, `MJ` or `GJ` | Energy |
 | `power` | Finite value; `W`, `kW` or `MW` | Power |
-| `custom` | Finite number or reported text; optional unit | Telemetry |
+| `custom` | Finite number, reported text or boolean; optional unit | Telemetry |
 
 A missing entity or expected attribute is unavailable. Provider `unknown` values remain unknown; incompatible units or malformed numeric values are invalid. A blank entity is disabled. With an explicit maximum age, old data becomes stale and a missing or future timestamp makes freshness unknown. Without a maximum age, the card does not invent a timeout. `last_updated` is an HA entity-update timestamp, not proof of when a physical sensor sampled its environment.
 
@@ -116,7 +163,7 @@ schema_version: 1
 entity: climate.fixture_thermostat
 adapter: auto
 name: Example thermostat
-theme: light
+background: blue
 show_activity: true
 show_details: true
 step: 0.25
@@ -126,8 +173,18 @@ preset_labels:
   comfort: Comfort
   frost: Frost
 humidity_bands:
-  low: 35
-  high: 65
+  dry_below: 30
+  good_min: 40
+  good_max: 60
+  wet_above: 70
+trend_entity: ""
+humidity_entity: sensor.fixture_humidity
+valve_position_entity: sensor.fixture_valve
+features:
+  - entity: climate.fixture_thermostat
+    attribute: hvac_action
+    label: Provider activity value
+    icon: mdi:radiator
 telemetry:
   - kind: humidity
     entity: sensor.fixture_humidity
@@ -138,13 +195,9 @@ telemetry:
     entity: sensor.fixture_valve
     label: Reported valve position
     unit: "%"
-  - kind: custom
-    entity: climate.fixture_thermostat
-    attribute: hvac_action
-    label: Provider activity value
 ```
 
-The fixture advertises its own temperature step, so the example's `step: 0.25` remains a fallback. Its preset list is synthetic and does not imply that every real standard thermostat supports Frost. The maximum age deliberately makes a humidity row stale if the fixture value is not refreshed within five minutes.
+The fixture advertises its own temperature step, so the example's `step: 0.25` remains a fallback. Its preset list is synthetic and does not imply that every real standard thermostat supports Frost. The maximum age deliberately makes the humidity observation stale if it is not refreshed within five minutes, including when selected through `humidity_entity`. Trend is explicitly disabled in this example; select a suitable synthetic trend sensor in the editor to exercise that surface.
 
 For an empty setup state, the minimal configuration is:
 
@@ -157,7 +210,11 @@ For an explicit provider configuration, set `adapter: standard` or `adapter: vth
 
 ## Display preferences and operating limits
 
-Humidity values below `low`, above `high`, or between the inclusive bounds are classified as below, above or within a **Local display band**. These are presentation preferences. They are not HI seasonal targets, Stability, lanes, controller reasons or safety thresholds. This preview has no automatic HI contract or HI service path.
+The original humidity guides use four strictly increasing integer boundaries: `dry_below: 30`, `good_min: 40`, `good_max: 60`, `wet_above: 70`. Omitting `humidity_bands` uses those defaults. Values below `dry_below` are **Too dry** (blue); from that boundary to below `good_min` are **Low humidity · warning** (amber); from `good_min` through `good_max`, inclusive, are **Good range** (green); above `good_max` through `wet_above`, inclusive, are **High humidity · warning** (amber); higher values are **Too wet** (red). Thus `30%` is low, `40%` and `60%` are good, and `70%` is high. Unavailable, invalid or stale readings have no valid classification and remain gray.
+
+An existing `humidity_bands: {low: 35, high: 65}` retains the explicit legacy three-band format: below, within both inclusive bounds, or above. The editor identifies that format and offers an intentional reset to the original four boundaries. The formats cannot be mixed, and no automatic conversion invents the two missing boundaries. Unknown nested fields survive edits and reset. Canonical boundaries require integers; legacy bounds retain their finite numeric contract `0 ≤ low < high ≤ 100`.
+
+All humidity colours are **Local display band** preferences. They are not HI seasonal targets, Stability, lanes, controller reasons or safety thresholds. This preview has no automatic HI contract or HI service path.
 
 Activity is kept separate from mode, preset and ownership. Standard `hvac_action` is integration-reported activity; VT `heating` is presented as **Heat requested**, with physical heat delivery unverified. Ownership remains unknown without an authoritative ownership contract.
 

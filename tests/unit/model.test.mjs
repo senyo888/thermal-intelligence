@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { normalizeConfig, finiteNumber } from '../../src/model/config.js';
 import { buildModel, quantize, targetPayload, FEATURES } from '../../src/model/climate.js';
 import { readOwnPath } from '../../src/model/telemetry.js';
+import { HUMIDITY_DEFAULTS, humidityBands, humidityBand, humidityGradient, moveHumidityBoundary, validHumidityBands, legacyHumidityBands } from '../../src/model/humidity.js';
 
 const entity = 'climate.example';
 const identity = { entity_id: entity, platform: 'generic_thermostat' };
@@ -23,7 +24,7 @@ test('setup config has public defaults and preserves unknown nested fields witho
   const raw = { custom: { future: true }, preset_labels: { frost: 'Frost protection', private_provider_preset: 'Provider option' }, humidity_bands: { low: 35, high: 65, future: 'retained' }, telemetry: [{ kind: 'custom', entity: '', future: 'retained' }] };
   const before = JSON.stringify(raw);
   const c = normalizeConfig(raw);
-  assert.equal(c.entity, ''); assert.equal(c.adapter, 'auto'); assert.equal(c.theme, 'auto');
+  assert.equal(c.entity, ''); assert.equal(c.adapter, 'auto'); assert.equal(c.background, 'blue'); assert.equal(Object.hasOwn(c, 'theme'), false);
   assert.equal(c.show_activity, true); assert.equal(c.show_details, true); assert.equal(c.schema_version, 1);
   assert.equal(c.custom.future, true); assert.equal(c.humidity_bands.future, 'retained'); assert.equal(c.telemetry[0].future, 'retained');
   assert.equal(c.preset_labels.frost, 'Frost protection'); assert.equal(JSON.stringify(raw), before);
@@ -255,4 +256,250 @@ test('model building is pure and performs no writes', () => {
   const before = JSON.stringify(h); const c = normalizeConfig(config); const cBefore = JSON.stringify(c);
   for (let i = 0; i < 3; i++) buildModel(h, c, identity);
   assert.equal(JSON.stringify(h), before); assert.equal(JSON.stringify(c), cBefore);
+});
+
+test('source backgrounds and explicit mappings preserve existing telemetry and legacy fields', () => {
+  for (const background of ['blue', 'plum', 'black']) assert.equal(normalizeConfig({ background }).background, background);
+  const raw = { entity, background: 'plum', theme: 'dark', trend_entity: 'sensor.trend', humidity_entity: 'sensor.humidity', valve_position_entity: 'sensor.valve', telemetry: [{ kind: 'custom', entity: 'sensor.other' }], features: [{ entity: 'sensor.feature', attribute: 'diagnostics.value', label: 'Feature', unit: '%', icon: 'mdi:water-percent', future: { keep: true } }] };
+  const c = normalizeConfig(raw);
+  assert.equal(c.theme, 'dark'); assert.equal(c.background, 'plum'); assert.deepEqual(c.features, raw.features); assert.deepEqual(c.telemetry, raw.telemetry);
+  for (const bad of [{ background: 'dark' }, { background: null }, { trend_entity: 'climate.example' }, { humidity_entity: 3 }, { valve_position_entity: 'sensor.' }, { features: {} }, { features: [{ entity: 'bad' }] }, { features: [{ entity: 'sensor.feature', attribute: 'constructor.prototype' }] }, { features: [{ entity: 'sensor.feature', icon: '<svg>' }] }]) assert.throws(() => normalizeConfig(bad));
+});
+
+test('portable features use own-property readings and never infer preset or ownership semantics', () => {
+  const h = fixture({ preset_mode: 'none', temperature: 20 });
+  h.states['sensor.example_preset_comfort_temp'] = { state: '20', attributes: { friendly_name: 'Comfort temperature', unit_of_measurement: '°C' } };
+  h.states['binary_sensor.example'] = { state: 'on', attributes: { diagnostics: { ready: true }, icon: 'mdi:check' } };
+  const features = [{ entity: 'sensor.example_preset_comfort_temp' }, { entity: 'binary_sensor.example', attribute: 'diagnostics.ready', label: 'Reported readiness' }];
+  const m = buildModel(h, { ...config, features }, identity);
+  assert.equal(m.state, 'heat'); assert.equal(m.attrs.preset_mode, 'none'); assert.equal(m.headerTelemetry[0].value, '20 °C');
+  assert.equal(m.headerTelemetry[0].preset, null); assert.equal(m.headerTelemetry[0].activity, 'neutral'); assert.equal(m.ownership.label, 'Unknown');
+  assert.equal(m.headerTelemetry[1].value, 'On'); assert.equal(m.headerTelemetry[1].activity, 'active'); assert.equal(m.headerTelemetry[1].icon, 'mdi:check');
+  h.states['binary_sensor.example'].attributes.diagnostics = Object.create({ ready: true });
+  assert.equal(buildModel(h, { ...config, features }, identity).headerTelemetry[1].status, 'unavailable');
+});
+
+test('direct mappings take precedence over declared typed telemetry without guessing a replacement', () => {
+  const h = fixture();
+  h.states['sensor.humidity'] = { state: '48', attributes: { unit_of_measurement: '%' } };
+  h.states['sensor.valve'] = { state: '12.5', attributes: { unit_of_measurement: '%' } };
+  const telemetry = [{ kind: 'humidity', entity: 'sensor.humidity' }, { kind: 'valve', entity: 'sensor.valve' }];
+  const fallback = buildModel(h, { ...config, telemetry }, identity);
+  assert.equal(fallback.humidity.value, 48); assert.equal(fallback.output.percentage, 12.5); assert.equal(fallback.output.text, 'TRV Open · 12.5%');
+  const direct = buildModel(h, { ...config, telemetry, humidity_entity: 'sensor.missing', valve_position_entity: 'sensor.missing' }, identity);
+  assert.equal(direct.humidity.status, 'unavailable'); assert.equal(direct.output.percentage, null); assert.equal(direct.output.text, 'TRV unavailable'); assert.equal(direct.canSet, true);
+  const blank = buildModel(h, { ...config, telemetry, valve_position_entity: '' }, identity);
+  assert.equal(blank.output.status, 'disabled'); assert.equal(blank.output.percentage, null);
+});
+
+test('source trend presentation preserves original hourly colours and labels across supported units', () => {
+  const h = fixture(); h.states['sensor.trend'] = { state: '0.40', attributes: { unit_of_measurement: '°C/hour' } };
+  const c = { ...config, trend_entity: 'sensor.trend' };
+  let m = buildModel(h, c, identity);
+  assert.equal(m.trend.text, 'Rising · +0.40 °C/hour'); assert.equal(m.trend.color, '#ff962e');
+  h.states['sensor.trend'].state = '-3'; m = buildModel(h, c, identity); assert.equal(m.trend.label, 'Falling'); assert.equal(m.trend.color, '#4169ff');
+  h.states['sensor.trend'] = { state: '0.08', attributes: { unit_of_measurement: '°F/hr' } }; m = buildModel(h, c, identity); assert.equal(m.trend.label, 'Stable'); assert.equal(m.trend.color, '#62e3b0');
+  h.states['sensor.trend'] = { state: '0.01', attributes: { unit_of_measurement: '°C/min' } }; m = buildModel(h, c, identity); assert.equal(m.trend.label, 'Rising');
+  h.states['sensor.trend'].attributes.unit_of_measurement = 'W'; m = buildModel(h, c, identity); assert.equal(m.trend.available, false); assert.equal(m.trend.status, 'invalid'); assert.equal(m.canSet, true);
+});
+
+test('source output preserves TRV observation wording and separates VT demand from physical heating', () => {
+  const h = fixture({ is_ready: true, hvac_action: 'heating' });
+  assert.equal(buildModel(h, config, vtIdentity).output.text, 'Heat requested');
+  assert.equal(buildModel(h, config, vtIdentity).output.tone, 'request');
+  h.states['sensor.valve'] = { state: '0', attributes: { unit_of_measurement: '%' } };
+  const c = { ...config, valve_position_entity: 'sensor.valve' };
+  let m = buildModel(h, c, vtIdentity); assert.equal(m.output.text, 'TRV Closed · 0%'); assert.equal(m.output.tone, 'neutral');
+  h.states['sensor.valve'].state = '0.4'; m = buildModel(h, c, vtIdentity); assert.equal(m.output.text, 'TRV Open · <1%'); assert.match(m.output.detail, /does not establish/);
+  h.connected = false; m = buildModel(h, c, vtIdentity); assert.equal(m.output.status, 'unavailable'); assert.equal(m.output.percentage, null);
+});
+
+test('all direct sources enforce finite data, compatible units and independently degraded evidence', () => {
+  for (const [key, unit, read] of [
+    ['trend_entity', '°C/hour', (m) => m.trend],
+    ['humidity_entity', '%', (m) => m.humidity],
+    ['valve_position_entity', '%', (m) => m.output],
+  ]) {
+    const h = fixture(), c = { ...config, [key]: 'sensor.source' };
+    const check = (state, units = unit) => {
+      h.states['sensor.source'] = { state, attributes: { unit_of_measurement: units } };
+      const model = buildModel(h, c, identity); assert.equal(model.canSet, true);
+      return read(model).status;
+    };
+    assert.equal(check('12'), 'available', key);
+    for (const state of [NaN, Infinity, '', ' ', true, false, {}, [], 'NaN', 'Infinity']) assert.equal(check(state), 'invalid', `${key}: ${String(state)}`);
+    assert.equal(check(null), 'unknown', key); assert.equal(check('unknown'), 'unknown', key); assert.equal(check('unavailable'), 'unavailable', key);
+    assert.equal(check('12', 'W'), 'invalid', key);
+    h.states['sensor.source'].attributes = {}; assert.equal(read(buildModel(h, c, identity)).status, 'invalid', key);
+    if (unit === '%') { assert.equal(check(-1), 'invalid', key); assert.equal(check(101), 'invalid', key); }
+    delete h.states['sensor.source']; assert.equal(read(buildModel(h, c, identity)).status, 'unavailable', key);
+  }
+  const h = fixture(); h.states['sensor.trend'] = { state: '1e308', attributes: { unit_of_measurement: '°C/min' } };
+  assert.equal(buildModel(h, { ...config, trend_entity: 'sensor.trend' }, identity).trend.status, 'invalid');
+});
+
+test('direct sources retain an explicitly configured age limit for the same typed state source', () => {
+  const h = fixture(), now = Date.parse('2026-10-25T12:00:00Z');
+  h.states['sensor.humidity'] = { state: '48', attributes: { unit_of_measurement: '%' }, last_updated: '2026-10-25T10:00:00Z' };
+  const c = { ...config, humidity_entity: 'sensor.humidity', telemetry: [{ kind: 'humidity', entity: 'sensor.humidity', label: 'Measured humidity', max_age_seconds: 300 }] };
+  const m = buildModel(h, c, identity, { now });
+  assert.equal(m.humidity.status, 'stale'); assert.equal(m.headerTelemetry.length, 1); assert.equal(m.headerTelemetry[0].status, 'stale'); assert.equal(m.headerTelemetry[0].label, 'Measured humidity'); assert.equal(m.canSet, true);
+});
+
+test('target comparison arc preserves original below, at and above colours in display units', () => {
+  for (const unit of ['°C', '°F']) {
+    const h = fixture({ temperature: 20 }); h.config.unit_system.temperature = unit;
+    for (const [current, color, reason] of [[19.9, '#50c8ff', 'below_target'], [20, '#62e3b0', 'at_target'], [20.2, '#62e3b0', 'at_target'], [20.21, '#c4a7ff', 'above_target']]) {
+      h.states[entity].attributes.current_temperature = current;
+      const arc = buildModel(h, config, identity).arc;
+      assert.equal(arc.color, color, `${unit}: ${current}`); assert.equal(arc.reason, reason); assert.equal(arc.responding, false);
+      assert.ok(Math.abs(arc.delta - (current - 20)) < 1e-9); assert.match(arc.explanation, /target comparison/i);
+    }
+  }
+});
+
+test('target comparison arc uses selected climate mode and reported cooling without claiming warming', () => {
+  const h = fixture({ is_ready: true, current_temperature: 19, temperature: 20, hvac_action: 'heating', current_state: { hvac_mode: 'off', target_temperature: 70 }, configuration: { temperature_unit: '°F' } });
+  let m = buildModel(h, config, vtIdentity);
+  assert.equal(m.arc.color, '#50c8ff'); assert.equal(m.arc.delta, -1); assert.equal(m.arc.responding, false);
+  h.states[entity].state = 'off'; m = buildModel(h, config, vtIdentity); assert.equal(m.arc.color, '#7c8ba2'); assert.equal(m.arc.reason, 'off');
+  h.states[entity].state = 'cool'; h.states[entity].attributes.hvac_action = 'cooling'; m = buildModel(h, config, vtIdentity); assert.equal(m.arc.color, '#66cfff'); assert.equal(m.arc.reason, 'cooling'); assert.equal(m.arc.responding, false);
+  for (const mode of ['heat', 'auto', 'dry', 'fan_only']) {
+    h.states[entity].state = mode; h.states[entity].attributes.hvac_action = 'idle'; m = buildModel(h, config, vtIdentity); assert.equal(m.arc.color, '#50c8ff', mode);
+  }
+  h.states[entity].state = 'unrecognized_mode'; assert.equal(buildModel(h, config, vtIdentity).arc.reason, 'mode_unknown');
+});
+
+test('target comparison arc remains unknown for unavailable readiness, ranges, units and target evidence', () => {
+  const cases = [
+    fixture({}, { connected: false }),
+    fixture({ current_temperature: null }),
+    fixture({ current_temperature: NaN }),
+    fixture({ temperature: null }),
+    fixture({ temperature: 31 }),
+    fixture({ min_temp: 30 }),
+    fixture({ min_temp: -1e308, max_temp: 1e308 }),
+    fixture({ supported_features: 0 }),
+    fixture({ supported_features: 2, target_temp_low: 18, target_temp_high: 24 }),
+  ];
+  const unavailable = fixture(); unavailable.states[entity].state = 'unavailable'; cases.push(unavailable);
+  const unknownUnit = fixture(); unknownUnit.config.unit_system.temperature = undefined; cases.push(unknownUnit);
+  for (const h of cases) {
+    const arc = buildModel(h, config, identity).arc; assert.equal(arc.color, '#94a3b8'); assert.equal(arc.responding, false); assert.equal(arc.delta, null);
+  }
+  const vt = buildModel(fixture({ is_ready: false }), config, vtIdentity); assert.equal(vt.arc.color, '#94a3b8'); assert.equal(vt.arc.reason, 'unavailable');
+  const registryUnknown = buildModel(fixture(), config, null); assert.equal(registryUnknown.arc.color, '#94a3b8');
+});
+
+function presetFixture(unit = '°C') {
+  const h = fixture({ preset_modes: ['none', 'eco', 'comfort', 'boost'], preset_mode: 'comfort', temperature: 21 });
+  h.config.unit_system.temperature = unit;
+  const features = ['boost', 'comfort', 'eco'].map((preset, index) => {
+    const id = `number.fixture_${index}`;
+    h.states[id] = { state: String([23, 21, 17][index]), attributes: { unit_of_measurement: unit } };
+    return { entity: id, label: preset.toUpperCase(), preset, future: { retained: true } };
+  });
+  return { h, c: { ...config, features } };
+}
+
+test('preset associations are explicit exact strings and retain unknown fields', () => {
+  const raw = { features: [{ entity: 'number.fixture', preset: 'Provider Frost', future: { retained: true } }] };
+  assert.deepEqual(normalizeConfig(raw).features, raw.features);
+  for (const preset of ['', ' ', null, true, 7, '<eco>', '__proto__', 'constructor', 'prototype']) assert.throws(() => normalizeConfig({ features: [{ entity: 'number.fixture', preset }] }));
+});
+
+test('only the exact selected preset contributes an active header source', () => {
+  for (const unit of ['°C', '°F']) {
+    const { h, c } = presetFixture(unit);
+    const m = buildModel(h, c, identity);
+    assert.equal(m.headerTelemetry.length, 1); assert.equal(m.headerTelemetry[0].preset, 'comfort');
+    assert.equal(m.headerTelemetry[0].value, `21 ${unit}`); assert.equal(m.headerTelemetry[0].icon, 'mdi:sofa');
+    assert.equal(m.presetReadings.eco.value, 17); assert.equal(m.presetReadings.boost.value, 23);
+    assert.equal(m.presetReadings.comfort.source.entity, c.features[1].entity); assert.equal(m.presetReadings.comfort.selected, true);
+    assert.equal(m.presetReadings.eco.selected, false); assert.equal(m.presetReadings.none.status, 'disabled');
+    h.states['sensor.humidity'] = { state: '58.5', attributes: { unit_of_measurement: '%' } };
+    const withHumidity = buildModel(h, { ...c, humidity_entity: 'sensor.humidity' }, identity);
+    assert.equal(withHumidity.headerTelemetry[0].preset, 'comfort'); assert.equal(withHumidity.headerTelemetry[1].kind, 'humidity'); assert.equal(withHumidity.headerTelemetry[1].colour, '#7dc39c');
+    h.states[entity].attributes.preset_mode = 'eco';
+    const renamed = buildModel(h, { ...c, preset_labels: { eco: 'Comfort' } }, identity);
+    assert.equal(renamed.headerTelemetry[0].preset, 'eco'); assert.equal(renamed.headerTelemetry[0].shortLabel, 'Comfort');
+  }
+});
+
+test('preset header suppression follows ready Heat and exact selection, never temperature coincidence', () => {
+  const { h, c } = presetFixture();
+  h.states['sensor.feature'] = { state: '42', attributes: {} }; c.features.push({ entity: 'sensor.feature', label: 'Unassociated' });
+  const expectNoPreset = (model) => { assert.equal(model.headerTelemetry.some((row) => row.preset), false); assert.equal(model.headerTelemetry.some((row) => row.label === 'Unassociated'), true); };
+  h.states[entity].attributes.preset_mode = 'none'; expectNoPreset(buildModel(h, c, identity));
+  h.states[entity].attributes.preset_mode = 'COMFORT'; expectNoPreset(buildModel(h, c, identity));
+  h.states[entity].attributes.preset_mode = 'comfort';
+  for (const mode of ['off', 'cool', 'auto', 'unavailable']) { h.states[entity].state = mode; expectNoPreset(buildModel(h, c, identity)); }
+  h.states[entity].state = 'heat'; h.connected = false; expectNoPreset(buildModel(h, c, identity));
+  h.connected = true; h.states[entity].attributes.is_ready = false; expectNoPreset(buildModel(h, c, vtIdentity));
+  expectNoPreset(buildModel(h, c, null));
+});
+
+test('preset readings reject unsupported, duplicate, unavailable, nonfinite and incompatible evidence', () => {
+  const { h, c } = presetFixture(); const id = c.features[1].entity;
+  const read = (overrides = c) => buildModel(h, overrides, identity);
+  for (const value of [NaN, Infinity, 'Infinity', 'not numeric', true, {}, []]) {
+    h.states[id].state = value; assert.equal(read().presetReadings.comfort.status, 'invalid'); assert.equal(read().headerTelemetry.length, 0);
+  }
+  h.states[id].state = '21';
+  for (const unit of ['°F', '%', undefined]) { h.states[id].attributes.unit_of_measurement = unit; assert.equal(read().presetReadings.comfort.status, 'invalid'); }
+  h.states[id].attributes.unit_of_measurement = '°C';
+  const duplicate = { ...c, features: [...c.features, { entity: id, preset: 'comfort' }] };
+  assert.equal(read(duplicate).presetReadings.comfort.status, 'invalid'); assert.equal(read(duplicate).headerTelemetry.length, 0);
+  h.states[id].state = 'unavailable'; assert.equal(read().presetReadings.comfort.status, 'unavailable');
+  h.states[id].state = '21'; h.states[entity].attributes.preset_modes = ['none', 'eco'];
+  assert.equal(read().presetReadings.comfort.status, 'unsupported'); assert.equal(read().headerTelemetry.length, 0);
+  h.states[entity].attributes.preset_modes.push('comfort'); h.config.unit_system.temperature = undefined;
+  assert.equal(read().presetReadings.comfort.status, 'unknown');
+});
+
+test('preset attribute observations use only own fields and explicit units', () => {
+  const { h, c } = presetFixture(), id = c.features[1].entity;
+  c.features[1].attribute = 'diagnostics.value'; h.states[id].attributes.diagnostics = { value: 21 };
+  assert.equal(buildModel(h, c, identity).presetReadings.comfort.status, 'invalid');
+  c.features[1].unit = '°C'; assert.equal(buildModel(h, c, identity).presetReadings.comfort.value, 21);
+  h.states[id].attributes.diagnostics = Object.create({ value: 21 });
+  assert.equal(buildModel(h, c, identity).presetReadings.comfort.status, 'unavailable');
+});
+
+test('original humidity guide defaults preserve five colours and exact boundary inclusivity', () => {
+  assert.deepEqual(humidityBands({}), { dry_below: 30, good_min: 40, good_max: 60, wet_above: 70 });
+  for (const [value, key, colour] of [[20, 'dry', '#79b8ed'], [30, 'low', '#efb86b'], [35, 'low', '#efb86b'], [40, 'good', '#7dc39c'], [50, 'good', '#7dc39c'], [60, 'good', '#7dc39c'], [60.1, 'high', '#efb86b'], [65, 'high', '#efb86b'], [70, 'high', '#efb86b'], [70.1, 'wet', '#eb7777'], [80, 'wet', '#eb7777']]) {
+    const band = humidityBand(value, HUMIDITY_DEFAULTS); assert.equal(band.key, key, String(value)); assert.equal(band.colour, colour);
+  }
+  for (const value of [null, undefined, '50', NaN, Infinity, -1, 101]) assert.equal(humidityBand(value, HUMIDITY_DEFAULTS).key, 'unknown');
+  assert.equal(humidityGradient(HUMIDITY_DEFAULTS), 'linear-gradient(to right,#79b8ed 0% 30%,#efb86b 30% 40%,#7dc39c 40% 60%,#efb86b 60% 70%,#eb7777 70% 100%)');
+});
+
+test('humidity format validation preserves unknown fields and explicit legacy format without conversion', () => {
+  const canonical = { ...HUMIDITY_DEFAULTS, future: { retained: true } };
+  assert.deepEqual(normalizeConfig({ humidity_bands: canonical }).humidity_bands, canonical); assert.equal(validHumidityBands(canonical), true);
+  const legacy = { low: 35.5, high: 65.5, future: { retained: true } };
+  assert.equal(legacyHumidityBands(legacy), true); assert.equal(validHumidityBands(legacy), false); assert.deepEqual(humidityBands({ humidity_bands: legacy }), legacy);
+  for (const [value, key] of [[35, 'below'], [35.5, 'within'], [65.5, 'within'], [66, 'above']]) assert.equal(humidityBand(value, legacy).key, key);
+  for (const bad of [{}, { ...canonical, low: 35, high: 65 }, { ...canonical, good_min: 30 }, { ...canonical, good_max: 40 }, { ...canonical, wet_above: 60 }, { ...canonical, dry_below: -1 }, { ...canonical, wet_above: 101 }, { ...canonical, dry_below: 30.1 }, { ...canonical, good_min: NaN }, { ...canonical, good_min: '40' }]) {
+    assert.throws(() => normalizeConfig({ humidity_bands: bad })); assert.equal(humidityBands({ humidity_bands: bad }), null);
+  }
+  const moved = moveHumidityBoundary(canonical, 'good_min', 100); assert.equal(moved.good_min, 59); assert.deepEqual(moved.future, canonical.future); assert.equal(canonical.good_min, 40);
+  assert.equal(moveHumidityBoundary(canonical, 'unrecognized', 42), canonical); assert.equal(moveHumidityBoundary(canonical, 'good_min', Infinity), canonical);
+});
+
+test('humidity header uses original guide colour and label while degraded evidence stays unknown', () => {
+  const h = fixture(); const c = { ...config, humidity_entity: 'sensor.humidity' };
+  h.states['sensor.humidity'] = { state: '50', attributes: { unit_of_measurement: '%' } };
+  for (const value of [20, 35, 50, 65, 80]) {
+    h.states['sensor.humidity'].state = String(value); const m = buildModel(h, c, identity), expected = humidityBand(value, HUMIDITY_DEFAULTS);
+    assert.equal(m.humidity.band, expected.key); assert.equal(m.humidity.guideMode, 'canonical'); assert.equal(m.headerTelemetry[0].colour, expected.colour); assert.equal(m.headerTelemetry[0].activityLabel, expected.label); assert.equal(m.canSet, true);
+  }
+  for (const state of ['unknown', 'unavailable', 'Infinity', '101']) {
+    h.states['sensor.humidity'].state = state; const m = buildModel(h, c, identity); assert.equal(m.humidity.band, 'unknown'); assert.equal(m.headerTelemetry[0].colour, '#8795a8'); assert.equal(m.canSet, true);
+  }
+  h.states['sensor.humidity'].state = '50'; h.states['sensor.humidity'].last_updated = '2026-10-25T10:00:00Z';
+  const stale = buildModel(h, { ...c, telemetry: [{ kind: 'humidity', entity: 'sensor.humidity', max_age_seconds: 1 }] }, identity, { now: Date.parse('2026-10-25T11:00:00Z') });
+  assert.equal(stale.humidity.band, 'unknown'); assert.equal(stale.headerTelemetry[0].activityLabel, 'Stale');
+  const legacy = buildModel(h, { ...c, humidity_bands: { low: 35, high: 65 } }, identity); assert.equal(legacy.humidity.guideMode, 'legacy'); assert.equal(legacy.humidity.band, 'within');
 });

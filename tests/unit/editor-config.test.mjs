@@ -148,3 +148,95 @@ test('the rendered add-source action retains edits committed since it was render
     else globalThis.document = previousDocument;
   }
 });
+
+test('source background and feature edits preserve independent mappings and unknown row fields', () => {
+  const source = { entity: '', background: 'blue', theme: 'dark', trend_entity: 'sensor.trend', humidity_entity: 'sensor.humidity', valve_position_entity: 'sensor.valve', features: [{ entity: 'sensor.feature', icon: 'mdi:thermometer', future: { keep: true } }], telemetry: [{ kind: 'custom', entity: 'sensor.other' }] };
+  const next = normalizeConfig(patchConfig(patchConfig(source, ['background'], 'plum'), ['features', 0, 'label'], 'Mapped reading'));
+  assert.equal(next.background, 'plum'); assert.equal(next.theme, 'dark'); assert.equal(source.background, 'blue');
+  for (const key of ['trend_entity', 'humidity_entity', 'valve_position_entity']) assert.equal(next[key], source[key]);
+  assert.deepEqual(next.telemetry, source.telemetry); assert.deepEqual(next.features[0].future, { keep: true }); assert.equal(next.features[0].label, 'Mapped reading');
+  assert.equal(Object.hasOwn(source.features[0], 'label'), false);
+});
+
+test('rendered source mapping and feature controls expose every restored public field', () => {
+  const previousDocument = globalThis.document;
+  const node = () => ({ dataset: {}, children: [], append(...children) { this.children.push(...children); } });
+  globalThis.document = { createElement: node };
+  try {
+    const fields = [], actions = new Map(), events = [];
+    const editor = Object.create(ThermalIntelligenceCardEditor.prototype);
+    Object.assign(editor, {
+      _draft: { entity: '', features: [{ entity: 'sensor.feature', future: true }] }, _buffers: new Map(),
+      _render() {}, _refreshFieldState() {}, _details: node,
+      _field(label, key, value, options) { fields.push({ label, key, value, options }); return node(); },
+      _button(label, action, callback) { actions.set(action, callback); return node(); },
+      dispatchEvent(event) { events.push(event); },
+    });
+    editor._sourceMappings({}); editor._features({});
+    for (const key of ['trend_entity', 'humidity_entity', 'valve_position_entity', 'features.0.entity', 'features.0.label', 'features.0.attribute', 'features.0.unit', 'features.0.icon', 'features.0.preset']) assert.ok(fields.some((field) => field.key === key), key);
+    fields.find((field) => field.key === 'features.0.label').options.onChange('Latest label');
+    actions.get('add-feature')();
+    assert.equal(events.at(-1).detail.config.features[0].label, 'Latest label');
+    assert.equal(events.at(-1).detail.config.features[0].future, true);
+    assert.deepEqual(events.at(-1).detail.config.features[1], { entity: '' });
+  } finally {
+    if (previousDocument === undefined) delete globalThis.document;
+    else globalThis.document = previousDocument;
+  }
+});
+
+test('preset association dropdown exposes advertised and saved values and unsets without losing fields', () => {
+  const previousDocument = globalThis.document;
+  const node = () => ({ dataset: {}, children: [], append(...children) { this.children.push(...children); } });
+  globalThis.document = { createElement: node };
+  try {
+    const fields = [], events = [];
+    const editor = Object.create(ThermalIntelligenceCardEditor.prototype);
+    Object.assign(editor, {
+      _draft: { entity: 'climate.example', features: [{ entity: 'number.example', preset: 'custom', future: { retained: true } }], telemetry: [{ kind: 'custom', entity: 'sensor.example' }] }, _buffers: new Map(),
+      _render() {}, _refreshFieldState() {}, _details: node, _button: node,
+      _field(label, key, value, options) { fields.push({ key, value, options }); return node(); },
+      dispatchEvent(event) { events.push(event); },
+    });
+    editor._features({ 'climate.example': { attributes: { preset_modes: ['none', 'eco', 'frost', 'eco'] } } });
+    const association = fields.find((field) => field.key === 'features.0.preset');
+    assert.deepEqual(association.options.options.map((option) => option[0]), ['', 'none', 'eco', 'frost', 'custom']);
+    assert.equal(association.value, 'custom');
+    association.options.onChange('frost'); assert.equal(events.at(-1).detail.config.features[0].preset, 'frost');
+    association.options.onChange(''); const saved = events.at(-1).detail.config;
+    assert.equal(Object.hasOwn(saved.features[0], 'preset'), false); assert.deepEqual(saved.features[0].future, { retained: true });
+    assert.deepEqual(saved.telemetry, [{ kind: 'custom', entity: 'sensor.example' }]);
+  } finally {
+    if (previousDocument === undefined) delete globalThis.document; else globalThis.document = previousDocument;
+  }
+});
+
+test('humidity editor exposes source defaults or legacy fields and resets without losing unknown keys', () => {
+  const previousDocument = globalThis.document;
+  const node = () => ({ dataset: {}, children: [], append(...children) { this.children.push(...children); } });
+  globalThis.document = { createElement: node };
+  try {
+    const fields = [], actions = new Map(), events = [];
+    const editor = Object.create(ThermalIntelligenceCardEditor.prototype);
+    Object.assign(editor, {
+      _draft: { entity: '' }, _buffers: new Map(), _render() {}, _refreshFieldState() {}, _details: node,
+      _field(label, key, value, options) { fields.push({ key, value, options }); return node(); },
+      _button(label, action, callback) { actions.set(action, callback); return node(); },
+      dispatchEvent(event) { events.push(event); },
+    });
+    editor._advanced();
+    for (const [key, expected] of [['dry_below', 30], ['good_min', 40], ['good_max', 60], ['wet_above', 70]]) assert.equal(fields.find((field) => field.key === `humidity_bands.${key}`).value, expected);
+    assert.equal(events.length, 0); assert.equal(editor._draft.humidity_bands, undefined);
+    fields.find((field) => field.key === 'humidity_bands.dry_below').options.onChange(25);
+    assert.deepEqual(events.at(-1).detail.config.humidity_bands, { dry_below: 25, good_min: 40, good_max: 60, wet_above: 70 });
+    editor._draft.humidity_bands = { low: 35.5, high: 65.5, future: { retained: true } };
+    fields.length = 0; editor._advanced();
+    assert.deepEqual(fields.filter((field) => field.key.startsWith('humidity_bands.')).map((field) => field.key), ['humidity_bands.low', 'humidity_bands.high']);
+    fields.find((field) => field.key === 'humidity_bands.low').options.onChange(36.5);
+    assert.deepEqual(events.at(-1).detail.config.humidity_bands, { low: 36.5, high: 65.5, future: { retained: true } });
+    actions.get('clear-humidity-bands')();
+    assert.deepEqual(events.at(-1).detail.config.humidity_bands, { future: { retained: true }, dry_below: 30, good_min: 40, good_max: 60, wet_above: 70 });
+  } finally {
+    if (previousDocument === undefined) delete globalThis.document; else globalThis.document = previousDocument;
+  }
+});

@@ -2,11 +2,13 @@
 
 **A Home Assistant thermal-control interface by Senyo (senyo888).**
 
-Status: **local development preview, 25 October 2026**. The standalone card, visual editor and synthetic test harness are implemented on this development branch. **There is no supported release or HACS package yet.** Live HA compatibility and installation remain unverified. TI code uses **GPL-3.0-only**; see [licence scope](docs/licensing-options.md). Three Thermal home logo concepts are prepared; final artwork and its reuse terms remain undecided.
+Status: **local development preview, 25 October 2026**. The standalone card, visual editor and synthetic test harness are implemented on this development branch. **There is no supported release or HACS package yet.** Live HA compatibility and installation remain unverified. TI code uses **GPL-3.0-only**; see [licence scope](docs/licensing-options.md). A cinematic Thermal home logo study is prepared; final artwork and its reuse terms remain undecided.
 
 The preview provides target/current temperatures, advertised modes and presets including provider-exposed Frost, range/fan/swing capabilities, optional telemetry and VT readiness checks. It registers an **Add Card entry and a visual editor**. Neither the TI backend nor Humidity Intelligence is required. Home Assistant Generic Thermostat and specifically tested Versatile Thermostat versions are the intended initial release targets.
 
 The product roadmap also includes House Climate, Effective Mode, Heating Control Centre, an optional portable backend and full mobile/tablet dashboards. These are planned components, not installed features.
+
+The customer component preserves the established TI glass/dome design.
 
 ## Try the local fixture
 

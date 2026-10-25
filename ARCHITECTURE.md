@@ -1,6 +1,6 @@
 # Thermal Intelligence architecture contract
 
-Status: foundation design; implementation is not yet present in this repository.
+Status: architecture contract with a local standalone frontend implementation. The optional backend and later cards remain planned.
 
 ## Ownership and layers
 

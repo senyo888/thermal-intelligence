@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import './icons.js';
 import '/dist/thermal-intelligence.js';
 
 const TYPE = 'custom:thermal-intelligence-card';
@@ -61,7 +62,7 @@ const fixture = window.fixture = {
   reset(scenario='standard',overrides={}) {
     for(const card of this.cards)card.remove();this.cards=[];this.calls=[];this.events=[];this.registryCalls=[];this.pending=[];this.registryFailure=false;this.behavior='observe';
     this.hass=this.makeHass(scenario);
-    this.config={type:TYPE,entity:scenario==='empty'?'':ENTITY,adapter:'auto',theme:'dark',preset_labels:{frost:'Frost'},telemetry:[{kind:'humidity',entity:'sensor.fixture_humidity'},{kind:'valve',entity:'sensor.fixture_valve'}],...overrides};
+    this.config={type:TYPE,entity:scenario==='empty'?'':ENTITY,adapter:'auto',background:'blue',preset_labels:{frost:'Frost'},telemetry:[{kind:'humidity',entity:'sensor.fixture_humidity'},{kind:'valve',entity:'sensor.fixture_valve'}],...overrides};
     const card=this.addCard(this.config);card.preview=document.querySelector('#preview').checked;
     this.editor=document.createElement('thermal-intelligence-card-editor');this.editor.setConfig(this.config);this.editor.hass=this.hass;
     this.editor.addEventListener('config-changed',event=>{this.events.push(structuredClone(event.detail.config));this.configure(event.detail.config);});
@@ -70,4 +71,15 @@ const fixture = window.fixture = {
 };
 document.querySelector('#scenario').onchange=event=>fixture.reset(event.target.value);
 document.querySelector('#preview').onchange=event=>{for(const card of fixture.cards)card.preview=event.target.checked;};
-fixture.reset();
+const parameters = new URLSearchParams(location.search);
+const scenario = [...document.querySelector('#scenario').options].some(option=>option.value===parameters.get('scenario')) ? parameters.get('scenario') : 'standard';
+document.querySelector('#scenario').value = scenario;
+const background = ['blue','plum','black'].includes(parameters.get('background')) ? parameters.get('background') : 'blue';
+const fidelity = parameters.get('fidelity') === '1';
+fixture.reset(scenario, fidelity ? { adapter:'standard', background, preset_labels:{frost:'Frost',eco:'Eco',comfort:'Comfort',boost:'Boost'}, valve_position_entity:'sensor.fixture_valve', features:[{entity:'sensor.fixture_humidity',label:'Humidity',icon:'mdi:water-percent'}], telemetry:[] } : {background});
+if(parameters.get('expanded') === '1') {fixture.cards[0]._open=true;fixture.cards[0].render();}
+if(parameters.get('capture') === '1') {
+  document.body.dataset.capture='true';
+  const width=['237','280','334','460'].includes(parameters.get('width')) ? parameters.get('width') : '334';
+  document.documentElement.style.setProperty('--fixture-width',`${width}px`);
+}

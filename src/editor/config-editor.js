@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { normalizeConfig, TELEMETRY_KINDS } from '../model/config.js';
+import { HUMIDITY_DEFAULTS, HUMIDITY_KEYS } from '../model/humidity.js';
 
 const UNSAFE_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 const KIND_LABELS = { humidity: 'Humidity', trend: 'Temperature trend', valve: 'Valve position', energy: 'Energy', power: 'Power', custom: 'Custom telemetry' };
@@ -69,7 +70,7 @@ const STYLES = `
   details > summary { cursor:pointer; min-height:44px; display:list-item; padding:10px 2px; font-size:15px; font-weight:650; }
   details.section { padding-top:4px; padding-bottom:4px; }
   details[open].section { padding-bottom:16px; }
-  .telemetry-row { display:grid; gap:12px; border:1px solid var(--divider-color,rgba(128,145,163,.28)); border-radius:10px; padding:14px; }
+  .telemetry-row,.feature-row { display:grid; gap:12px; border:1px solid var(--divider-color,rgba(128,145,163,.28)); border-radius:10px; padding:14px; }
   .row-heading { display:flex; justify-content:space-between; gap:12px; align-items:center; font-size:14px; font-weight:650; }
   .preset-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:end; }
   .status { padding:12px 14px; border-radius:9px; font-size:13px; line-height:1.5; overflow-wrap:anywhere; }
@@ -232,7 +233,7 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     }
   }
 
-  _field(label, key, value, { type = 'text', help, placeholder, options, min, max, list, wide = false, onChange } = {}) {
+  _field(label, key, value, { type = 'text', help, placeholder, options, min, max, step = 'any', list, wide = false, onChange } = {}) {
     const wrapper = element('label', `field${wide ? ' wide' : ''}`);
     wrapper.append(element('span', '', label));
     const control = element(options ? 'select' : 'input');
@@ -246,7 +247,7 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
       }
     } else {
       control.type = type;
-      if (type === 'number') control.step = 'any';
+      if (type === 'number') control.step = String(step);
       if (placeholder) control.placeholder = placeholder;
       if (min !== undefined) control.min = String(min);
       if (max !== undefined) control.max = String(max);
@@ -344,9 +345,9 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
       placeholder: 'Use thermostat name',
       onChange: (value) => this._change(['name'], value || undefined),
     }));
-    grid.append(this._field('Appearance', 'theme', this._draft.theme ?? 'auto', {
-      options: [['auto', 'Follow Home Assistant'], ['light', 'Light'], ['dark', 'Dark']],
-      onChange: (value) => this._change(['theme'], value),
+    grid.append(this._field('Background', 'background', this._draft.background ?? 'blue', {
+      options: [['blue', 'Midnight Blue'], ['plum', 'Plum'], ['black', 'Black']],
+      onChange: (value) => this._change(['background'], value),
     }));
     const display = element('div', 'stack');
     display.append(
@@ -358,10 +359,94 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     if (!climates.length) basic.append(element('p', 'status info', this._hass ? 'No climate entities are available. Add or enable a thermostat in Home Assistant, then select it here. This setup state sends no commands.' : 'Waiting for Home Assistant to provide the thermostat list.'));
     form.append(basic);
 
-    form.append(this._telemetry(states), this._presets(states), this._advanced());
+    form.append(this._sourceMappings(states), this._features(states), this._telemetry(states), this._presets(states), this._advanced());
     form.append(element('p', 'hint', 'Save the card in Home Assistant when you are finished. Unknown advanced options are preserved.'));
     this.shadowRoot.replaceChildren(style, form);
     this._restore(snapshot, focus);
+  }
+
+  _sourceMappings(states) {
+    const section = this._details('sources', 'Temperature trend, humidity and valve sources');
+    const stack = element('div', 'stack');
+    stack.append(element('p', 'hint', 'Map the original card surfaces to explicit sensors. No entity names are guessed. If unset, a matching explicitly configured typed telemetry source can be used.'));
+    const datalist = element('datalist');
+    datalist.id = 'ti-direct-source-entities';
+    for (const id of Object.keys(states).filter((id) => id.startsWith('sensor.')).sort()) {
+      const option = element('option'); option.value = id; option.label = states[id]?.attributes?.friendly_name || id; datalist.append(option);
+    }
+    stack.append(datalist);
+    const fields = [
+      ['Optional trend entity', 'trend_entity', 'Measured temperature change with a reported temperature-per-time unit.'],
+      ['Optional humidity entity', 'humidity_entity', 'A reported percentage, displayed independently of thermostat control.'],
+      ['Optional TRV opening sensor (%)', 'valve_position_entity', 'Reported valve opening from 0 to 100%; this does not confirm heating.'],
+    ];
+    for (const [label, key, help] of fields) stack.append(this._field(label, key, this._draft[key], {
+      list: datalist.id, placeholder: 'No direct mapping', help,
+      onChange: (value) => this._change([key], value || undefined),
+    }));
+    section.append(stack);
+    return section;
+  }
+
+  _features(states) {
+    const rows = Array.isArray(this._draft.features) ? this._draft.features : [];
+    const section = this._details('features', `Custom telemetry & features${rows.length ? ` · ${rows.length}` : ''}`);
+    const stack = element('div', 'stack');
+    stack.append(element('p', 'hint', 'Choose named extras for the header and Controls & features. Associate a temperature reading with an exact provider preset to show its header indicator only when that preset is selected. Names and target matches never select presets.'));
+    const datalist = element('datalist'); datalist.id = 'ti-feature-entities';
+    for (const id of Object.keys(states).sort()) {
+      const option = element('option'); option.value = id; option.label = states[id]?.attributes?.friendly_name || id; datalist.append(option);
+    }
+    stack.append(datalist);
+    if (!rows.length) stack.append(element('p', 'empty', 'No custom features configured.'));
+    rows.forEach((entry, index) => {
+      const row = record(entry) ? entry : {};
+      const panel = element('div', 'feature-row'); panel.dataset.row = String(index);
+      panel.append(element('div', 'row-heading', `Feature ${index + 1}`));
+      const grid = element('div', 'grid');
+      const fields = [
+        ['Entity', 'entity', { list: datalist.id, placeholder: 'Select or enter an entity' }],
+        ['Display label', 'label', { placeholder: 'Use source name' }],
+        ['Attribute path', 'attribute', { placeholder: 'Entity state', help: 'Own-property paths only, such as safety_manager.safety_state.' }],
+        ['Unit', 'unit', { placeholder: 'Use reported state unit', help: 'Supply attribute units explicitly. This setting does not convert values.' }],
+        ['Icon', 'icon', { placeholder: 'mdi:information-outline', help: 'A named icon, such as mdi:thermometer.' }],
+      ];
+      for (const [label, key, options] of fields) grid.append(this._field(`Feature ${index + 1} ${label.toLowerCase()}`, `features.${index}.${key}`, row[key], {
+        ...options, onChange: (value) => this._change(['features', index, key], value === '' && key !== 'entity' ? undefined : value),
+      }));
+      const suppliedPresets = states[this._draft.entity]?.attributes?.preset_modes;
+      const advertisedPresets = Array.isArray(suppliedPresets) ? suppliedPresets.filter((value) => typeof value === 'string' && value.trim()) : [];
+      const presetOptions = [['', 'Unassociated'], ...[...new Set(advertisedPresets)].map((value) => [value, value])];
+      if (typeof row.preset === 'string' && !advertisedPresets.includes(row.preset)) presetOptions.push([row.preset, `${row.preset} · not currently advertised`]);
+      grid.append(this._field(`Feature ${index + 1} preset association`, `features.${index}.preset`, row.preset ?? '', {
+        options: presetOptions, help: 'The exact provider preset value. Requires a compatible numeric temperature source; this setting never selects a preset.',
+        onChange: (value) => this._change(['features', index, 'preset'], value || undefined),
+      }));
+      panel.append(grid);
+      const actions = element('div', 'actions');
+      const move = (offset) => {
+        const next = clone(this._draft);
+        [next.features[index], next.features[index + offset]] = [next.features[index + offset], next.features[index]];
+        this._buffers.clear(); this._commit(next, { focus: `features.${index + offset}.entity`, open: 'features' });
+      };
+      actions.append(
+        this._button('↑', 'move-feature-up', () => move(-1), { row: index, disabled: index === 0, title: `Move feature ${index + 1} up` }),
+        this._button('↓', 'move-feature-down', () => move(1), { row: index, disabled: index === rows.length - 1, title: `Move feature ${index + 1} down` }),
+        this._button('Remove', 'remove-feature', () => {
+          const next = clone(this._draft); next.features.splice(index, 1); this._buffers.clear();
+          this._commit(next, { focus: next.features.length ? `features.${Math.min(index, next.features.length - 1)}.entity` : undefined, open: 'features' });
+          if (!next.features.length) this.shadowRoot.querySelector('[data-action="add-feature"]').focus({ preventScroll: true });
+        }, { row: index, className: 'remove', title: `Remove feature ${index + 1}` }),
+      );
+      panel.append(actions); stack.append(panel);
+    });
+    stack.append(this._button('Add feature', 'add-feature', () => {
+      const next = clone(this._draft), currentRows = Array.isArray(next.features) ? next.features : [];
+      next.features = [...currentRows, { entity: '' }];
+      this._commit(next, { focus: `features.${currentRows.length}.entity`, open: 'features' });
+    }, { className: 'add' }));
+    section.append(stack);
+    return section;
   }
 
   _telemetry(states) {
@@ -479,19 +564,24 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
       help: 'Used only when the provider omits its step. The provider limits and reported step remain authoritative.',
       onChange: (value) => this._change(['step'], value),
     }));
-    const bands = record(this._draft.humidity_bands) ? this._draft.humidity_bands : {};
+    const bands = record(this._draft.humidity_bands) ? this._draft.humidity_bands : { ...HUMIDITY_DEFAULTS };
+    const legacy = own(bands, 'low') || own(bands, 'high');
     const bandGrid = element('div', 'grid');
-    bandGrid.append(this._field('Humidity display low (%)', 'humidity_bands.low', bands.low, {
-      type: 'number', min: 0, max: 100, placeholder: 'Unset',
-      onChange: (value) => this._change(['humidity_bands', 'low'], value, { open: 'advanced' }),
+    const labels = { dry_below: 'Too dry below', good_min: 'Good range minimum', good_max: 'Good range maximum', wet_above: 'Too wet above', low: 'Legacy low', high: 'Legacy high' };
+    for (const key of legacy ? ['low', 'high'] : HUMIDITY_KEYS) bandGrid.append(this._field(`Humidity ${labels[key].toLowerCase()} (%)`, `humidity_bands.${key}`, bands[key], {
+      type: 'number', min: 0, max: 100, step: legacy ? 'any' : 1,
+      onChange: (value) => {
+        const current = this._draft.humidity_bands === undefined ? { ...HUMIDITY_DEFAULTS } : this._draft.humidity_bands;
+        this._change(['humidity_bands'], { ...current, [key]: value }, { open: 'advanced' });
+      },
     }));
-    bandGrid.append(this._field('Humidity display high (%)', 'humidity_bands.high', bands.high, {
-      type: 'number', min: 0, max: 100, placeholder: 'Unset',
-      onChange: (value) => this._change(['humidity_bands', 'high'], value, { open: 'advanced' }),
-    }));
-    stack.append(element('p', 'hint', 'Optional humidity colours are local display preferences, not HI seasonal targets or safety thresholds. Enter both bounds to apply them, or clear the preference.'));
+    stack.append(element('p', 'hint', legacy ? 'Legacy two-bound format is preserved explicitly. Reset to source defaults to use the original five display bands. These are local display guides, not HI targets or control thresholds.' : 'Original five-band humidity display guides default to 30, 40, 60 and 70%. All four ordered integer boundaries must be valid. These are local display guides, not HI targets or control thresholds.'));
     stack.append(bandGrid);
-    stack.append(this._button('Clear humidity colour preference', 'clear-humidity-bands', () => this._change(['humidity_bands'], undefined, { open: 'advanced', rerender: true, focus: 'humidity_bands.low' }), { disabled: this._draft.humidity_bands === undefined }));
+    stack.append(this._button('Reset humidity guides to source defaults', 'clear-humidity-bands', () => {
+      const preserved = { ...(this._draft.humidity_bands ?? {}) };
+      for (const key of [...HUMIDITY_KEYS, 'low', 'high']) delete preserved[key];
+      this._change(['humidity_bands'], Object.keys(preserved).length ? { ...preserved, ...HUMIDITY_DEFAULTS } : undefined, { open: 'advanced', rerender: true, focus: 'humidity_bands.dry_below' });
+    }, { disabled: this._draft.humidity_bands === undefined }));
     section.append(stack);
     return section;
   }

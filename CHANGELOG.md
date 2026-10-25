@@ -2,6 +2,13 @@
 
 No public release exists yet.
 
+## Unreleased — canonical UI restoration, 2026-10-25
+
+- Preserved the TI renderer and exact finishing styles: glass dome, diamond ticks, pearl targets, telemetry, pill controls, disclosure and original dialog surfaces.
+- Restored active-only preset readings through explicit source associations, original target-comparison colours, and the four-boundary/five-colour humidity guide. Preset selection remains provider-owned; legacy display configuration is retained.
+- Preserved marker pickup offsets, keyboard drafts, range endpoints, dialog focus and local drafts across passive updates. Settings and colour dialogs explicitly export drafts; dashboard persistence still uses Home Assistant's card editor.
+- Added canonical fixtures using the original 20°C current/21°C target and native 280/320px widths, with source/candidate comparisons. Private ownership, cutoff, recovery and timetable controls remain explicitly deferred.
+
 ## Unreleased — standalone local preview, 2026-10-25
 
 - Implemented a standalone thermostat card and complete native visual editor, including an empty setup state, per-card settings and preservation of unknown configuration.

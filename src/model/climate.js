@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { finiteNumber, normalizeConfig } from './config.js';
-import { buildTelemetry } from './telemetry.js';
+import { buildSourceTelemetry } from './telemetry.js';
 import { providerReadiness, resolveProvider } from '../providers/identity.js';
 import { vthermDetails } from '../providers/vtherm.js';
 
@@ -69,13 +69,16 @@ export function buildModel(hass, rawConfig, identity = null, { now = Date.now() 
     const version = attr(attributes, 'version');
     if (typeof version === 'string' && version.trim()) provider.version = version;
   }
+  const current = number(attributes, 'current_temperature');
+  const presentation = buildSourceTelemetry(hass, config, { entity: config.entity, attrs: attributes, state: state?.state ?? null, action: available ? attr(attributes, 'hvac_action') ?? null : null, provider, ready, available, current, unit, min, max, ranged, keys, targets, choices }, now, connected);
   return {
     entity: config.entity, name: config.name || attr(attributes, 'friendly_name') || config.entity || 'Thermal Intelligence',
     provider, connected, available, ready, readiness, unit, min, max, step, stepSource,
-    keys, targets, ranged, current: number(attributes, 'current_temperature'), choices, canSet, reason,
+    keys, targets, ranged, current, choices, canSet, reason,
+    attrs: attributes, state: state?.state ?? null, action: available ? attr(attributes, 'hvac_action') ?? null : null,
     activity: activityFor(state, provider, available, connected),
     ownership: { label: 'Unknown', detail: 'No authoritative ownership contract is configured; presets and temperatures do not establish ownership.' },
-    telemetry: buildTelemetry(hass, config, now, connected), details: provider.kind === 'vtherm' ? vthermDetails(attributes, connected && available) : [],
+    ...presentation, details: provider.kind === 'vtherm' ? vthermDetails(attributes, connected && available) : [],
   };
 }
 

@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { validHumidityBands, legacyHumidityBands } from './humidity.js';
 
 export const CARD_TYPE = 'custom:thermal-intelligence-card';
 export const SCHEMA_VERSION = 1;
 export const TELEMETRY_KINDS = ['humidity', 'trend', 'valve', 'energy', 'power', 'custom'];
+export const BACKGROUNDS = ['blue', 'plum', 'black'];
 const FORBIDDEN_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 const ENTITY = /^[a-z0-9_]+\.[a-z0-9_]+$/;
 
@@ -42,9 +44,16 @@ export function normalizeConfig(raw) {
   }
   const adapter = raw.adapter === undefined ? 'auto' : raw.adapter;
   if (!['auto', 'standard', 'vtherm'].includes(adapter)) throw new Error('Adapter must be auto, standard or vtherm.');
-  const theme = raw.theme === undefined ? 'auto' : raw.theme;
-  if (!['auto', 'light', 'dark'].includes(theme)) throw new Error('Theme must be auto, light or dark.');
-  const result = { ...raw, type: CARD_TYPE, schema_version: SCHEMA_VERSION, entity, adapter, theme };
+  const background = raw.background === undefined ? 'blue' : raw.background;
+  if (!BACKGROUNDS.includes(background)) throw new Error('Background must be blue, plum or black.');
+  // Retain a saved prototype setting for round trips; the source UI uses background.
+  if (raw.theme !== undefined && !['auto', 'light', 'dark'].includes(raw.theme)) throw new Error('Legacy theme must be auto, light or dark.');
+  const result = { ...raw, type: CARD_TYPE, schema_version: SCHEMA_VERSION, entity, adapter, background };
+  for (const key of ['trend_entity', 'humidity_entity', 'valve_position_entity']) {
+    if (raw[key] !== undefined && (typeof raw[key] !== 'string' || (raw[key] !== '' && (!ENTITY.test(raw[key]) || !raw[key].startsWith('sensor.'))))) {
+      throw new Error(`${key} must be a sensor entity ID or empty.`);
+    }
+  }
   if (raw.name !== undefined) result.name = safeText(raw.name, 'Name', { empty: true });
   if (raw.step !== undefined) result.step = numberOption(raw.step, 'Step', true);
   for (const key of ['show_activity', 'show_details']) {
@@ -71,12 +80,26 @@ export function normalizeConfig(raw) {
     if (entry.max_age_seconds !== undefined) numberOption(entry.max_age_seconds, 'Telemetry max_age_seconds', true);
     return copy;
   });
+  if (raw.features !== undefined && !Array.isArray(raw.features)) throw new Error('features must be an array.');
+  result.features = (raw.features ?? []).map((entry) => {
+    if (!isRecord(entry) || typeof entry.entity !== 'string' || (entry.entity !== '' && !ENTITY.test(entry.entity))) throw new Error('A feature requires an entity ID or an empty setup source.');
+    const copy = { ...entry };
+    for (const key of ['label', 'unit']) if (entry[key] !== undefined) safeText(entry[key], `Feature ${key}`, { empty: true });
+    if (entry.attribute !== undefined && entry.attribute !== '') {
+      safeText(entry.attribute, 'Feature attribute');
+      if (entry.attribute.split('.').some((part) => !/^\w+$/.test(part) || FORBIDDEN_KEYS.has(part))) throw new Error('Invalid feature attribute path.');
+    }
+    if (entry.icon !== undefined && (typeof entry.icon !== 'string' || !/^[a-z0-9_-]+:[a-z0-9_-]+$/i.test(entry.icon))) throw new Error('Feature icon must be a named icon, such as mdi:thermometer.');
+    if (entry.preset !== undefined) {
+      safeText(entry.preset, 'Feature preset');
+      if (FORBIDDEN_KEYS.has(entry.preset)) throw new Error('Invalid feature preset value.');
+    }
+    return copy;
+  });
   if (raw.humidity_bands !== undefined) {
     if (!isRecord(raw.humidity_bands)) throw new Error('humidity_bands must be an object.');
-    const low = numberOption(raw.humidity_bands.low, 'Humidity low');
-    const high = numberOption(raw.humidity_bands.high, 'Humidity high');
-    if (low < 0 || high > 100 || low >= high) throw new Error('Humidity bands require 0 ≤ low < high ≤ 100.');
-    result.humidity_bands = { ...raw.humidity_bands, low, high };
+    if (!validHumidityBands(raw.humidity_bands) && !legacyHumidityBands(raw.humidity_bands)) throw new Error('Humidity guides require ordered integer dry_below < good_min < good_max < wet_above within 0–100, or explicit legacy low < high bounds. Do not mix the formats.');
+    result.humidity_bands = { ...raw.humidity_bands };
   }
   return result;
 }
