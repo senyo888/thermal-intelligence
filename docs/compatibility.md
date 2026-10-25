@@ -1,6 +1,6 @@
 # Compatibility and validation matrix
 
-Current beta: **0.1.0-beta.2**, HA **2026.10.0**, VT **10.5.1**. [The beta guide](beta.md) identifies the exact artifact and installation/rollback evidence. Earlier development rows below retain their own scope; physical hardware, broad version support and HACS installation are unverified.
+Current beta: **0.1.0-beta.3**, HA **2026.10.0**, VT **10.5.1**. [The beta guide](beta.md) identifies the exact artifact and installation/rollback evidence. Earlier development rows below retain their own scope; physical hardware, broad version support and HACS installation are unverified.
 
 Development preview, 25 October 2026. Local model, command, editor and Chromium fixture tests exercise candidate `0.1.0-dev.1`. Dedicated Lab checks now cover HA 2026.10.0 Generic Thermostat and VT 10.5.1 through switch, climate, direct-valve and combined climate/valve paths. This is scoped validation with inert outputs, not a support guarantee or minimum-version claim.
 
@@ -41,6 +41,10 @@ Select the minimum HA and HACS versions from API availability and actual testing
 For each run record source revision and clean/dirty identity, artifact SHA-256, library version, HA/HACS/provider versions, fixture/profile version, environment identity, browser/OS/Companion, time and result. Record source-only inspection, unit tests, browser simulation, live HA observation and physical-device evidence distinctly.
 
 Synthetic fixtures must cover independent unknown/unavailable/stale transitions and source timestamps, not only happy-path snapshots. Test assertions should validate meaningful contracts and regressions, not repeat implementation expressions. Keep raw private evidence local; publish redacted conclusions with reproducible fixture tests.
+
+## Beta.3 response evidence
+
+Beta.3 response-arc validation covers explicitly mapped synthetic VT native and confirmed-TRV evidence, including expiry and failure paths. Lab verifies update/rollback and the native overview on existing unmapped fixtures. A generic TRV percentage is not the confirmed-output contract, and positive physical warming remains unverified. See [response evidence](provider-contracts.md#temperature-response-evidence) and [the exact package](beta.md).
 
 ## Later backend gates
 
