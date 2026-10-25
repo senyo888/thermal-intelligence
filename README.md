@@ -21,15 +21,44 @@ Thermal Intelligence brings current and target temperatures, supported thermosta
 
 *Actual beta UI, rendered with synthetic data. These images contain no private home configuration.*
 
-## What the beta provides
+## More information, without a crowded card
 
-- **Temperature control:** current and target readings, a draggable dial and controls that respect the thermostat's reported limits and capabilities.
-- **Modes and presets:** supported modes, presets and provider-exposed Frost, with additional controls shown where available.
-- **Useful detail:** configurable top-row icons and focused popups for humidity, temperature trend, valve opening and provider features.
-- **Versatile Thermostat awareness:** readiness, a compact lock indicator with administrator [Lock/Unlock controls](docs/lock-control.md), and configured feature states, including Window Open/Closed, Presence Home/Away and Motion Detected/Clear.
-- **Visual setup:** find the card in Add Card, choose your thermostat and configure each card independently.
+The everyday view stays simple: the room temperature, your target, a clear status and controls within reach. Behind that simplicity, the dial, colour, icons and small indicators each have a purpose. Tap for context, expand for controls, then return to the quiet overview.
 
-Home Assistant and the selected thermostat remain in charge. Missing readings are shown honestly; an open valve is not presented as proof of delivered heat. **VT** means **Versatile Thermostat**. **TRV** means **thermostatic radiator valve**.
+### Read the room at a glance
+
+| Detail | What it tells you |
+| --- | --- |
+| **Glass dial and outer arc** | The large reading is the current temperature; the pearl marker locates your target on the scale. In this beta, the arc compares temperature with the target: blue below, green at or just above, and lavender further above. Reported cooling has a cyan treatment; Off and unavailable states are muted. Drag the target marker or use the minus/plus controls within the thermostat's reported limits. |
+| **Temperature-slope ring** | The fine ring around the sphere shows the direction of temperature change from your configured trend source. Warm orange/red tones indicate rising readings, blues indicate falling readings, and green or pale tones indicate a near-flat trend. The accompanying Rising, Falling or Stable label gives the rate and units, so the colour has an explanation. Missing trend data is shown as unavailable. |
+| **Dynamic status chip** | The chip adapts to the available evidence: reported Heating, Cooling or Idle; **Heat requested** for VT; or **TRV Open/Closed** with a reported valve percentage when mapped. **Heat enabled** means the mode is selected when activity is not reported. Tap the chip for the overview and the source behind the status. |
+| **Status LED** | The small LED summarises connection and readiness: green for the card's ready state, amber when controls or observations need attention, and red when disconnected or unavailable. Tap it to open temperatures, modes, provider details and request status. A press-and-hold opens the registered device's Home Assistant settings, with thermostat details as the fallback. |
+
+The outer arc, slope ring and activity chip describe different things: temperature against target, measured temperature change, and reported activity. A room can still be warming while its valve is closed. An open valve does not establish that heat is being delivered.
+
+The staggered glint of the small lights around the dial and the slope ring's gentle breathing preserve the original glass-and-light character. They add depth without replacing readable values or status text, and respect reduced-motion preferences.
+
+### A top row that earns its space
+
+Each configured icon combines a compact reading with colour that follows its meaning. Humidity follows your display bands; window, presence and motion distinguish **Open/Closed**, **Home/Away** and **Detected/Clear**; supported presets retain their own Frost, Eco, Comfort and Boost colours. Active, inactive and unknown observations receive distinct treatments, with missing information muted.
+
+Choose which readings appear, their order, labels and icons for each card. Humidity, temperature, valve position and provider features can sit beside the room name without filling the main dial with detail. Tap a reading for its focused panel or Home Assistant source details. The compact VT lock indicates its reported state and opens [Lock/Unlock controls](docs/lock-control.md) for verified administrators when supported.
+
+**Humidity presentation is customisable.** Set four boundaries for too dry, the start and end of your good range, and too wet. The display uses blue, amber, green, amber and red bands, with a reading and explanation in the humidity panel. These are visual preferences for this card; they do not change heating or humidity control. Save them through Home Assistant's visual card editor; the in-card adjustment panel provides a draft to copy.
+
+### Open only the controls you need
+
+The chevron reveals **Controls & features**: the thermostat's supported HVAC modes and presets, fan or swing choices where advertised, and relevant provider and telemetry details. VT can also expose its preset-temperature comparison, Follow setting information and configured feature observations. Top-row icon settings are available here too. Tap the centre temperature to open the thermostat's native Home Assistant details.
+
+This keeps occasional settings close without putting every control on the everyday face of the card. Home Assistant and the selected thermostat remain in charge.
+
+## One card, different setups
+
+Start with a standard climate entity or configure **Versatile Thermostat (VT)**. Add an explicit **thermostatic radiator valve (TRV)** opening source when available, or use the thermostat's reported activity. Optional humidity, trend and other sensors build up the view independently; the card does not require a TI backend. Test-environment coverage includes Generic Thermostat and VT switch, climate, valve and combined climate/valve configurations. [Compatibility and its limits](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/compatibility.md) remain explicit.
+
+For a phone, keep a compact room view with the most useful readings. For a tablet or wider dashboard, place several independently configured cards together and expand the room you are working with. The layout adapts to the space available, the top row scrolls when needed, and controls retain touch-sized targets and keyboard access. Choose **Midnight Blue**, **Plum** or **Black**, and set activity and detail visibility per card. Responsive browser checks cover phone, tablet and desktop widths; physical-device validation is still pending.
+
+Ordinary setup is visual: **Add Card → Thermal Intelligence Thermostat · Beta**, choose your thermostat, then select the readings and presentation that suit that card. [Configuration guide](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md).
 
 <details>
 <summary>See the preset detail panel</summary>
@@ -62,6 +91,26 @@ Home Assistant and the selected thermostat remain in charge. Missing readings ar
 </table>
 
 *Privacy-edited examples supplied by Senyo, with anonymised room names. Their source version was not recorded; the beta.2 captures above remain the versioned reference.*
+
+</details>
+
+<details>
+<summary>See window detection and Heat enabled examples</summary>
+
+<table>
+  <tr>
+    <th>Window detection</th>
+    <th>Heat enabled</th>
+  </tr>
+  <tr>
+    <td valign="top" align="center"><img src="assets/presentation/window-detection-example.png" alt="Privacy-edited TI window details showing Closed, bypass Off, Frost temperature action and 0% reported valve opening" width="280"></td>
+    <td valign="top" align="center"><img src="assets/presentation/thermostat-heat-enabled-example.png" alt="Privacy-edited TI thermostat showing 21.1°C, Heat enabled and a 20.3°C target" width="280"></td>
+  </tr>
+</table>
+
+Window detection separates the detector state, configured response and reported valve opening. **Heat enabled** identifies the selected HVAC mode; it does not prove active heating.
+
+*Privacy-edited examples supplied by Senyo, with anonymised names. Their source version was not recorded; the beta.2 captures above remain the versioned reference.*
 
 </details>
 
