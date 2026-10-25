@@ -6,6 +6,8 @@ import { styles } from './styles.js';
 import { renderCard } from './source-view.js';
 import { renderDialog, dialogStyles } from './dialogs.js';
 import { humidityBands, moveHumidityBoundary } from '../model/humidity.js';
+import { lockCapability } from '../providers/lock-control.js';
+import { lockDialog, lockScope, lockRelock } from './lock-dialog.js';
 
 const format = value => Number.isFinite(value) ? new Intl.NumberFormat(undefined, { maximumSignificantDigits: 12 }).format(value) : '—';
 const previewHosts = new Set(['hui-card-preview', 'hui-dialog-edit-card', 'hui-dialog-create-card', 'hui-card-element-editor']);
@@ -59,7 +61,12 @@ export class ThermalIntelligenceCard extends HTMLElement {
     return false;
   }
   _updateContext(model = this.model()) {
-    this._coordinator.updateContext({ hass: this._hass, entity: this.config.entity, preview: this._isPreview(), contextKey: this._configRevision, model: { ready: model.ready && this._registryStatus !== 'loading' } });
+    const capability = this._lockCapability();
+    this._coordinator.updateContext({ hass: this._hass, entity: this.config.entity, preview: this._isPreview(), contextKey: this._configRevision, model: { ready: model.ready && this._registryStatus !== 'loading', lockReady: capability.allowed } });
+    this._checkLockIntent(capability);
+  }
+  _lockCapability() {
+    return lockCapability({ hass:this._hass, entity:this.config.entity, identity:this._identity, registryStatus:this._registryStatus, preview:this._isPreview(), attached:this.isConnected });
   }
   _session() {
     return { connection:this._hass?.connection, socket:this._hass?.connection?.socket, user:this._hass?.user?.id, connected:this._hass?.connected === true };
@@ -296,19 +303,24 @@ export class ThermalIntelligenceCard extends HTMLElement {
     button.onkeydown=event=>{if(event.key==='Enter'&&event.shiftKey){event.preventDefault();clear();this._deviceSettings();}};
   }
   _closeDialog() {
+    this._clearLockCode(); this._lockIntent = null;
     const host = this._dialogHost,returnFocus=this._dialogReturnFocus; this._dialogHost = null; this._dialogSpec = null; this._dialogMarkup = null; this._settingsDraft = null; this._displayDraft = null;this._dialogReturnFocus=null;
     host?.shadowRoot.querySelector('dialog')?.close(); host?.remove(); this._activity();
     if(host&&returnFocus)this.shadowRoot.querySelector(`[data-focus="${CSS.escape(returnFocus)}"]`)?.focus({preventScroll:true});
   }
   _openDialog(kind='overview',rowKey) {
+    const capability = kind === 'lock' ? this._lockCapability() : null;
+    if (kind === 'lock' && (!capability.allowed || this._coordinator.busy)) return;
     const returnFocus=this._dialogReturnFocus||this.shadowRoot.activeElement?.getAttribute('data-focus');
     this._closeDialog(); this._cancelDraft(); this._dialogSpec = {kind,rowKey}; this._displayDraft = structuredClone(this.config);this._dialogReturnFocus=returnFocus;
+    if (kind === 'lock') this._lockIntent = { entity:this.config.entity, revision:this._configRevision, session:this._session(), signature:capability.signature, locked:!capability.locked, codeRequired:capability.codeRequired, submitted:false, invalid:false, message:'' };
     this._dialogHost = document.createElement('div'); this._dialogHost.attachShadow({mode:'open'});
     this._dialogHost.style.cssText='--primary-text-color:#eff5ff;--secondary-text-color:#a9b8cb;--card-background-color:#0d1622;--input-fill-color:#152234;--secondary-background-color:#152234;--divider-color:#34465c;--primary-color:#8ac9f1;color-scheme:dark';
     this.shadowRoot.append(this._dialogHost); this._renderDialog(true);
   }
   _renderDialog(show=false) {
     if (!this._dialogHost || !this._dialogSpec) return;
+    if (this._dialogSpec.kind === 'lock') { this._renderLockDialog(show); return; }
     // Keep the actual editor node and its draft while telemetry changes.
     if (!show && this._dialogSpec.kind === 'settings') {
       const editor = this._dialogHost.shadowRoot.querySelector('[data-dialog-editor]'); if (editor) editor.hass = this._hass;
@@ -372,6 +384,82 @@ export class ThermalIntelligenceCard extends HTMLElement {
     else if(summaryId)root.querySelector(`#${CSS.escape(summaryId)} > summary`)?.focus({preventScroll:true});
     else if(actionAttribute)root.querySelector(`[${actionAttribute}="${CSS.escape(actionValue)}"]`)?.focus({preventScroll:true});
   }
+  _clearLockCode() {
+    const input = this._dialogHost?.shadowRoot.querySelector('[data-lock-code]');
+    if (input) input.value = '';
+  }
+  _lockIntentReason(intent, capability) {
+    if (!intent || this._lockIntent !== intent || intent.entity !== this.config.entity || intent.revision !== this._configRevision || !this._sameSession(intent.session, this._session())) return 'Thermostat context changed. Close and reopen lock controls.';
+    if (intent.invalid) return intent.message || 'The lock action is no longer available. Close and reopen lock controls.';
+    if (!capability.allowed) return capability.reason || 'Lock control is unavailable. Close and reopen when available.';
+    if (intent.signature !== capability.signature) return 'Lock state or settings changed. Close and reopen to choose an action.';
+    return '';
+  }
+  _checkLockIntent(capability = this._lockCapability()) {
+    const intent = this._lockIntent;
+    if (!intent || intent.invalid) return;
+    // An expected observation after dispatch must not invalidate its own request.
+    const reason = intent.submitted
+      ? (!capability.allowed || !this._sameSession(intent.session, this._session()) ? 'Lock control is no longer available. Check the current state before trying again.' : '')
+      : this._lockIntentReason(intent, capability);
+    if (reason) { intent.invalid = true; intent.message = reason; this._clearLockCode(); }
+  }
+  _renderLockDialog(show=false) {
+    const intent = this._lockIntent, root = this._dialogHost?.shadowRoot;
+    if (!intent || !root) return;
+    const capability = this._lockCapability(); this._checkLockIntent(capability);
+    if (!root.querySelector('[data-lock-dialog]')) {
+      const name = this.config.name || this._hass?.states?.[intent.entity]?.attributes?.friendly_name || intent.entity;
+      root.innerHTML = lockDialog({ name, locked:intent.locked, codeRequired:intent.codeRequired });
+      root.querySelector('dialog').addEventListener('cancel', event=>{event.preventDefault();this._closeDialog();});
+      for (const button of root.querySelectorAll('[data-lock-close]')) button.onclick=()=>this._closeDialog();
+      root.querySelector('form').onsubmit=event=>{event.preventDefault();this._submitLock();};
+      root.querySelector('[data-lock-code]').oninput=()=>this._renderLockDialog();
+    }
+    const model = this.model(), observable = model.connected === true && model.available === true
+      && this._registryStatus === 'verified' && this._identity?.entity_id === this.config.entity
+      && this._identity?.platform === 'versatile_thermostat' && this._hass?.states?.[this.config.entity]?.entity_id === this.config.entity;
+    const state = !observable ? 'Unavailable' : model.lock?.status === 'locked' ? 'Locked' : model.lock?.status === 'unlocked' ? 'Unlocked' : 'Unknown';
+    root.querySelector('[data-lock-current]').textContent = `VT reports: ${state}`;
+    root.querySelector('[data-lock-scope]').textContent = observable ? lockScope(capability) : 'Lock details are unavailable.';
+    root.querySelector('[data-lock-relock]').textContent = observable ? lockRelock(capability) : '';
+    const input = root.querySelector('[data-lock-code]');
+    input.disabled = !intent.codeRequired || intent.submitted || intent.invalid;
+    const status = this._coordinator.status;
+    const ownStatus = intent.submitted && status.target === intent.entity && status.domain === 'versatile_thermostat';
+    root.querySelector('[data-lock-message]').textContent = intent.message || (ownStatus ? status.message : '');
+    root.querySelector('[data-lock-dismiss]').textContent = intent.submitted ? 'Close' : 'Cancel';
+    root.querySelector('[data-lock-submit]').disabled = intent.submitted || intent.invalid || !capability.allowed || this._coordinator.busy || (intent.codeRequired && input.value.length === 0);
+    if (show) root.querySelector('dialog').showModal();
+  }
+  _submitLock() {
+    const intent = this._lockIntent, root = this._dialogHost?.shadowRoot;
+    if (!intent || !root || intent.submitted || intent.invalid || this._coordinator.busy) return;
+    const capability = this._lockCapability(), reason = this._lockIntentReason(intent, capability);
+    if (reason) { intent.invalid = true; intent.message = reason; this._clearLockCode(); this._renderLockDialog(); return; }
+    let code = intent.codeRequired ? root.querySelector('[data-lock-code]').value : undefined;
+    if (intent.codeRequired && code.length === 0) { root.querySelector('[data-lock-code]').focus(); return; }
+    intent.submitted = true; this._clearLockCode(); this._draftMessage = ''; this._updateContext();
+    try {
+      const result = this._coordinator.requestLock({
+        hass:this._hass, entity:intent.entity, locked:intent.locked, code,
+        preview:this._isPreview(), contextKey:intent.revision,
+        validate: ({ entity, values }) => {
+          const current = this._lockCapability();
+          const invalid = this._lockIntentReason(intent, current);
+          return { allowed:!invalid && entity === intent.entity && values.locked === intent.locked, reason:invalid || 'The selected lock action is no longer available.' };
+        },
+      });
+      code = undefined;
+      Promise.resolve(result).catch(()=>{
+        if (this._lockIntent !== intent) return;
+        intent.message = 'The lock request could not be completed. Check the current state before trying again.';
+        this._renderLockDialog();
+      });
+    } catch {
+      intent.message = 'The lock request could not be completed. Check the current state before trying again.';
+    } finally { code = undefined; this._renderLockDialog(); this._scheduleRender(); }
+  }
   _paintHumidityDraft(html) {
     const root=this._dialogHost?.shadowRoot;if(!root)return;
     const template=document.createElement('template');template.innerHTML=html;const next=template.content;
@@ -407,7 +495,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     const statusMessage = this._draftMessage || (status.phase !== 'idle' ? status.message : this._registryStatus === 'loading' ? 'Checking thermostat provider identity…' : model.readiness.status === 'locked' ? '' : model.reason || '');
     // Unrelated HA updates must not replace an open native select or its focus.
     // Readiness, capabilities and command status still participate in this markup.
-    const html = `<style>${styles}</style>` + renderCard({ config:this.config,model,open:this._open,allowed:this._guard(model).allowed,busy:this._coordinator.busy,
+    const html = `<style>${styles}</style>` + renderCard({ config:this.config,model,open:this._open,allowed:this._guard(model).allowed,lockAllowed:this._lockCapability().allowed,busy:this._coordinator.busy,
       draftValues:this._draftContext?{...model.targets,[this._targetKey(model)]:this._draft}:null,statusMessage,preview:this._isPreview(),animationOffset:this._animationOffset });
     if (html === this._viewHTML) {
       this._renderDialog(); this._scheduleFreshness(); return;
@@ -417,6 +505,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     for (const button of this.shadowRoot.querySelectorAll('[data-details]')) button.onclick=()=>this._moreInfo();
     for (const button of this.shadowRoot.querySelectorAll('[data-info]')) button.onclick=()=>this._moreInfo(button.dataset.info);
     for (const button of this.shadowRoot.querySelectorAll('[data-device]')) this._bindDevice(button);
+    for (const button of this.shadowRoot.querySelectorAll('[data-lock-controls]')) button.onclick=()=>this._openDialog('lock');
     for (const button of this.shadowRoot.querySelectorAll('[data-status-overview]')) button.onclick=()=>this._openDialog('overview');
     for (const button of this.shadowRoot.querySelectorAll('[data-presets]')) button.onclick=()=>this._openDialog('presets');
     for (const button of this.shadowRoot.querySelectorAll('[data-icon-settings]')) button.onclick=()=>this._openDialog('settings');

@@ -44,3 +44,9 @@ For an existing standalone development fixture only, duplicate its configuration
 For beta updates, retain the previous bundle and resource URL, install verified bytes under a new versioned filename, update only the beta resource, and reload the frontend. Validate the loaded class version and saved configuration. To roll back, restore the prior beta resource URL and reload into a new document; a custom element already registered in an open page cannot be replaced in place.
 
 To roll back the first beta installation, remove only its new test view/cards and its own resource registration after checking they have not changed since preparation. Retain the beta file as a recovery artifact. Existing resources and dashboards remain in place; never restore a whole stale dashboard over newer user changes. A frontend-only change does not require a Core restart.
+
+## beta.1 to beta.2: administrator lock interaction
+
+Saved card configuration and beta card/editor names are unchanged. Beta.2 adds automatic lock-dialog access for verified administrators when the selected VT reports complete lock capabilities. Ordinary accounts remain read-only. The code, if configured, is entered at runtime and is never a card option. Normal user-lock restrictions still apply to temperature, mode and preset controls. See [lock control](lock-control.md) for provider scope and code-handling limits.
+
+Retain the tested beta.1 bundle and its resource URL. To roll back, restore that URL and open a fresh browser document; no dashboard schema migration or Core restart is required. Reverting the frontend does not undo a deliberate provider lock command: check VT's actual reported state and restore it intentionally where required.

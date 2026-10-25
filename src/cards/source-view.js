@@ -18,7 +18,7 @@ function telemetryColour(item) {
 }
 
 /** Pure presentation. The host owns all events, command guards, dialogs and configuration persistence. */
-export function renderCard({ config = {}, model = {}, open = false, allowed = false, busy = false, draftValues = null, statusMessage = '', preview = false, expanderId = 'thermal-features', animationOffset = 0 } = {}) {
+export function renderCard({ config = {}, model = {}, open = false, allowed = false, lockAllowed = false, busy = false, draftValues = null, statusMessage = '', preview = false, expanderId = 'thermal-features', animationOffset = 0 } = {}) {
   const m = {
     ...model,
     attrs: model.attrs ?? {},
@@ -47,7 +47,9 @@ export function renderCard({ config = {}, model = {}, open = false, allowed = fa
   const ownership = null;
   const ownerIcon = '';
   const lock = m.lock;
-  const lockIcon = lock ? `<span class="lock-indicator" data-lock-state="${esc(lock.status)}" role="img" aria-label="${esc(lock.label)}" title="${esc(lock.label)}"><ha-icon icon="${esc(lock.icon)}" aria-hidden="true"></ha-icon></span>` : '';
+  const lockIcon = !lock ? '' : lockAllowed && !preview
+    ? `<button type="button" class="lock-indicator lock-action" data-lock-controls data-focus="lock-controls" data-lock-state="${esc(lock.status)}" aria-label="${esc(lock.label)}. Open lock controls" title="${esc(lock.label)} · Lock controls" aria-haspopup="dialog" ${busy ? 'disabled' : ''}><ha-icon icon="${esc(lock.icon)}" aria-hidden="true"></ha-icon></button>`
+    : `<span class="lock-indicator" data-lock-state="${esc(lock.status)}" role="img" aria-label="${esc(lock.label)}" title="${esc(lock.label)}"><ha-icon icon="${esc(lock.icon)}" aria-hidden="true"></ha-icon></span>`;
   const headerItems = telemetry.map(item => {
     const title = `${item.label ?? 'Telemetry'}: ${item.value ?? 'Unavailable'}${item.activityLabel ? ` · ${item.activityLabel}` : ''}`;
     const action = ['frost', 'eco', 'comfort', 'boost'].includes(item.preset) ? 'data-presets aria-haspopup="dialog"'

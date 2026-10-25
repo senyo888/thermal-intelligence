@@ -6,7 +6,7 @@
 
 Created and maintained by **[Senyo · senyo888](https://github.com/senyo888)**.
 
-**Beta 0.1.0-beta.1** · Home Assistant dashboard card · GPL-3.0-only software
+**Beta 0.1.0-beta.2** · Home Assistant dashboard card · GPL-3.0-only software
 
 [Beta installation](docs/beta.md) · [Configuration](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md) · [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/compatibility.md) · [Report an issue](https://github.com/senyo888/thermal-intelligence/issues/new/choose)
 
@@ -25,7 +25,7 @@ Thermal Intelligence brings current and target temperatures, supported thermosta
 - **Temperature control:** current and target readings, a draggable dial and controls that respect the thermostat's reported limits and capabilities.
 - **Modes and presets:** supported modes, presets and provider-exposed Frost, with additional controls shown where available.
 - **Useful detail:** configurable top-row icons and focused popups for humidity, temperature trend, valve opening and provider features.
-- **Versatile Thermostat awareness:** readiness, a simple lock indicator and configured feature states, including Window Open/Closed, Presence Home/Away and Motion Detected/Clear.
+- **Versatile Thermostat awareness:** readiness, a compact lock indicator with administrator [Lock/Unlock controls](docs/lock-control.md), and configured feature states, including Window Open/Closed, Presence Home/Away and Motion Detected/Clear.
 - **Visual setup:** find the card in Add Card, choose your thermostat and configure each card independently.
 
 Home Assistant and the selected thermostat remain in charge. Missing readings are shown honestly; an open valve is not presented as proof of delivered heat. **VT** means **Versatile Thermostat**. **TRV** means **thermostatic radiator valve**.

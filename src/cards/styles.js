@@ -37,6 +37,8 @@ ha-card{border-color:#607b9b42;box-shadow:inset 0 1px 0 #d5e7ff09,0 8px 24px #00
 const LOCK_INDICATOR = `
 .lock-indicator{display:inline-flex;align-items:center;justify-content:center;flex:0 0 14px;width:14px;height:14px;line-height:0;color:#a9b8cb}
 .lock-indicator>ha-icon{--mdc-icon-size:14px;width:14px;height:14px}
+.lock-indicator.lock-action{flex:0 0 44px;width:44px;height:44px;min-height:44px;padding:0;background:transparent;border:0;border-radius:8px}
+.heading:has(.lock-action).no-telemetry>strong{flex:0 1 auto;max-width:calc(100% - 50px)}
 .lock-indicator>ha-icon,.header-telemetry .telemetry-item>ha-icon,.status>ha-icon{display:inline-flex;align-items:center;justify-content:center;line-height:0;flex-shrink:0}
 .header-telemetry .telemetry-item>span{line-height:14px}
 .lock-indicator[data-lock-state=locked]{color:#efb86b}
