@@ -304,7 +304,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     const returnFocus=this._dialogReturnFocus||this.shadowRoot.activeElement?.getAttribute('data-focus');
     this._closeDialog(); this._cancelDraft(); this._dialogSpec = {kind,rowKey}; this._displayDraft = structuredClone(this.config);this._dialogReturnFocus=returnFocus;
     this._dialogHost = document.createElement('div'); this._dialogHost.attachShadow({mode:'open'});
-    this._dialogHost.style.cssText='--primary-text-color:#eff5ff;--secondary-text-color:#a9b8cb;--card-background-color:#0d1622;--divider-color:#34465c;--primary-color:#8ac9f1;color-scheme:dark';
+    this._dialogHost.style.cssText='--primary-text-color:#eff5ff;--secondary-text-color:#a9b8cb;--card-background-color:#0d1622;--input-fill-color:#152234;--secondary-background-color:#152234;--divider-color:#34465c;--primary-color:#8ac9f1;color-scheme:dark';
     this.shadowRoot.append(this._dialogHost); this._renderDialog(true);
   }
   _renderDialog(show=false) {

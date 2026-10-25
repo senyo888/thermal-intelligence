@@ -35,8 +35,10 @@ ha-card{border-color:#607b9b42;box-shadow:inset 0 1px 0 #d5e7ff09,0 8px 24px #00
 `;
 // Small provider-state indicator; the canonical geometry is unchanged when absent.
 const LOCK_INDICATOR = `
-.lock-indicator{display:inline-flex;align-items:center;justify-content:center;flex:0 0 18px;width:18px;height:24px;color:#a9b8cb}
-.lock-indicator ha-icon{--mdc-icon-size:18px;width:18px;height:18px}
+.lock-indicator{display:inline-flex;align-items:center;justify-content:center;flex:0 0 14px;width:14px;height:14px;line-height:0;color:#a9b8cb}
+.lock-indicator>ha-icon{--mdc-icon-size:14px;width:14px;height:14px}
+.lock-indicator>ha-icon,.header-telemetry .telemetry-item>ha-icon,.status>ha-icon{display:inline-flex;align-items:center;justify-content:center;line-height:0;flex-shrink:0}
+.header-telemetry .telemetry-item>span{line-height:14px}
 .lock-indicator[data-lock-state=locked]{color:#efb86b}
 .lock-indicator[data-lock-state=unknown],.lock-indicator[data-lock-state=unavailable]{color:#8795a8}
 `;
