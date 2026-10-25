@@ -46,7 +46,7 @@ Use a versioned, validated card configuration with documented migrations. All de
 
 Separate a no-entity setup state from operational validation. Stub generation, editor construction and preview have no device side effects. Escape dynamic text at DOM sinks. No unsafe HTML from entities, provider reason text or imported config. Retain `thermal-intelligence-card` registration and guard duplicate registration/resource loading without masking incompatible versions.
 
-## Sibling contract
+## Optional Humidity Intelligence interoperability
 
 HI remains the authority for its seasonal humidity targets, Stability, selected lanes and reasons. TI may display an explicit supported HI contract with attribution; it must not reconstruct those semantics, add HI commands, or require HI installation. Local TI humidity colours are presentation preferences with separate labels.
 

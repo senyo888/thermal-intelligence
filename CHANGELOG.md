@@ -2,6 +2,8 @@
 
 No public release exists yet.
 
+## Unreleased — public identity, 2026-10-25
+
 ## Unreleased — VT presence and feature behaviour, 2026-10-25
 
 - Clarified that VT Presence selects home/away preset temperatures, while room Motion selects temperatures in Activity mode. Updated the focused popup explanations and configuration documentation.
