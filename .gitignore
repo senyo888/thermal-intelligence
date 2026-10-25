@@ -9,6 +9,8 @@ node_modules/
 coverage/
 playwright-report/
 test-results/
+.playwright-cli/
+output/playwright/
 *.log
 
 # dist/ is intentionally not ignored: release layout is still a design decision.

@@ -2,6 +2,14 @@
 
 No public release exists yet.
 
+## Unreleased — standalone local preview, 2026-10-25
+
+- Implemented a standalone thermostat card and complete native visual editor, including an empty setup state, per-card settings and preservation of unknown configuration.
+- Added registry-backed provider identity, VT readiness/lock restrictions, independent capabilities, attributed telemetry and display-only humidity bands.
+- Added deliberate temperature/mode/preset/fan/swing requests with captured targets, uncertain-outcome handling and no replay after reconnect. Session, configuration and concurrent target changes cancel input drafts.
+- Built a single local module without runtime dependencies and added synthetic unit/browser regression fixtures. Browser testing caught and fixed timer receiver binding, focus redraw and a telemetry editor edit-loss bug.
+- Prepared three original, unselected Thermal home raster concepts with provenance. No final logo, artwork licence, HACS package, live HA validation, deployment or product release is established by this work.
+
 ## Unreleased — public foundation, 2026-10-25
 
 - Prepared the reviewed foundation for `main` and `develop`, with contributor guidance and explicit planned-product status.

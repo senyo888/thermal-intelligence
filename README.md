@@ -2,15 +2,28 @@
 
 **A Home Assistant thermal-control interface by Senyo (senyo888).**
 
-Status: **public foundation, 25 October 2026**. This repository contains product contracts, plans and contributor tooling. **There is no installable card or supported release yet.** TI code uses **GPL-3.0-only**; see [licence scope](docs/licensing-options.md). The logo direction is **Thermal home**; final artwork remains to be designed. A website and Wiki will follow the first working preview.
+Status: **local development preview, 25 October 2026**. The standalone card, visual editor and synthetic test harness are implemented on this development branch. **There is no supported release or HACS package yet.** Live HA compatibility and installation remain unverified. TI code uses **GPL-3.0-only**; see [licence scope](docs/licensing-options.md). Three Thermal home logo concepts are prepared; final artwork and its reuse terms remain undecided.
 
-The first planned release is a standalone thermostat card for Home Assistant Generic Thermostat and explicitly tested Versatile Thermostat versions. Ordinary setup will use **Add Card and a complete visual editor**. Neither the TI backend nor Humidity Intelligence will be required. Optional provider information will remain available where its source and meaning are verified.
+The preview provides target/current temperatures, advertised modes and presets including provider-exposed Frost, range/fan/swing capabilities, optional telemetry and VT readiness checks. It registers an **Add Card entry and a visual editor**. Neither the TI backend nor Humidity Intelligence is required. Home Assistant Generic Thermostat and specifically tested Versatile Thermostat versions are the intended initial release targets.
 
 The product roadmap also includes House Climate, Effective Mode, Heating Control Centre, an optional portable backend and full mobile/tablet dashboards. These are planned components, not installed features.
 
-## Foundation documents
+## Try the local fixture
+
+With Node 22 or newer:
+
+```sh
+npm ci
+npm run build
+npm run preview
+```
+
+Open the loopback address printed by the server. This is a synthetic browser fixture with a service recorder and **no HA connection or physical outputs**. See [card configuration](docs/card-configuration.md), [provider contracts](docs/provider-contracts.md) and [command safety](docs/command-contract.md). For validation, run `npm test`, `npx playwright install chromium`, then `npm run test:browser`.
+
+## Project documents
 
 - [Architecture](ARCHITECTURE.md) — provider, capability, command and UI truth contracts.
+- [provenance](docs/source-provenance.md).
 - [Compatibility and validation](docs/compatibility.md) and [migration](docs/migration.md).
 - [Licence options](docs/licensing-options.md) and [distribution](docs/distribution.md).
 - [Contributing](CONTRIBUTING.md), [security](SECURITY.md) and [changelog](CHANGELOG.md).

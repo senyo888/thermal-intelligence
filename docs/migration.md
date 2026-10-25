@@ -11,4 +11,8 @@ No public configuration schema or migration is released yet. This file records r
 - Do not promise lossless downgrade across schema changes. State known unsupported combinations and export/recovery steps before release.
 - Later backend rollback must additionally cover persistent schedules, holds, Boost, helper/schema state and authoritative writer identity. A frontend rollback is not a backend rollback.
 
-Publish concrete versioned procedures after the first artifact and schema are chosen.
+## Local schema 1 candidate
+
+Candidate `0.1.0-dev.1` uses configuration `schema_version: 1`; omission selects schema 1. Unsupported explicit versions are rejected. The element identity is unchanged, but this is not a drop-in migration of the existing card: existing schedules, ownership helpers, cutoff and recovery controls remain in the existing system. Recreate only the standalone fields through the [visual editor](card-configuration.md); unknown keys survive round trips but do not imply implemented runtime behavior.
+
+The synthetic browser suite covers configuration save/reopen, independent instances, unknown fields and duplicate registration. It has not established HACS upgrades or lossless downgrade. Before an installation, retain the existing resource list, dashboard configuration and exact previous bundle; restore those independently if needed. No supported predecessor exists for this new public library yet.
