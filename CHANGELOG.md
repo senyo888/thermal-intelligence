@@ -4,6 +4,8 @@ No stable release exists yet.
 
 ## Unreleased — presentation, 25 October 2026
 
+- Explain the dial, target-comparison arc, temperature-slope ring, dynamic status chip, LED overview, state-aware top-row icons, humidity display bands and expanded controls. Describe per-card presentation and responsive layouts with their current validation limits.
+- Add privacy-edited Window detection and Heat enabled examples, preserving the distinction between detector state, reported valve position and HVAC mode. Leave duplicate or clipped images and examples of controls outside the current beta out of the public selection.
 - Add privacy-edited Idle and Call for heat examples, with anonymised room labels and image provenance. Keep these supplied examples distinct from the versioned beta captures; no runtime change.
 
 ## 0.1.0-beta.2 — untagged beta, 25 October 2026
