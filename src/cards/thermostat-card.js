@@ -14,6 +14,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
   constructor() {
     super(); this.attachShadow({ mode: 'open' });
     this._view = document.createElement('div'); this.shadowRoot.append(this._view);
+    this._animationOffset = Date.now() % 4000;
     this.config = normalizeConfig({}); this._preview = false; this._editMode = false;
     this._identity = null; this._identityToken = 0; this._knownVT = new Set(); this._vtByConnection = new WeakMap(); this._configRevision = 0;
     this._open = false; this._activeTarget = 'temperature'; this._registryStatus = 'idle';
@@ -163,6 +164,9 @@ export class ThermalIntelligenceCard extends HTMLElement {
     } catch { return null; }
   }
   _paintDraft(value) {
+    // Draft painting changes the mounted DOM independently of the rendered model.
+    // Always restore authoritative markup when the gesture ends or is cancelled.
+    this._viewHTML = null;
     const model = this.model(), key = this._targetKey(model);
     const polar = (radius, angle) => [100 + radius * Math.cos(angle * Math.PI / 180), 100 + radius * Math.sin(angle * Math.PI / 180)];
     const angle = 135 + 270 * (value - model.min) / (model.max - model.min), [x, y] = polar(72, angle);
@@ -401,9 +405,14 @@ export class ThermalIntelligenceCard extends HTMLElement {
     const focused = this.shadowRoot.activeElement?.getAttribute('data-focus');
     const headerScroll = this.shadowRoot.querySelector('[data-header-telemetry]')?.scrollLeft || 0;
     const statusMessage = this._draftMessage || (status.phase !== 'idle' ? status.message : this._registryStatus === 'loading' ? 'Checking thermostat provider identity…' : model.reason || '');
-    // Dialogs stay mounted in a separate shadow root while the card updates.
-    this._view.innerHTML = `<style>${styles}</style>` + renderCard({ config:this.config,model,open:this._open,allowed:this._guard(model).allowed,busy:this._coordinator.busy,
-      draftValues:this._draftContext?{...model.targets,[this._targetKey(model)]:this._draft}:null,statusMessage,preview:this._isPreview() });
+    // Unrelated HA updates must not replace an open native select or its focus.
+    // Readiness, capabilities and command status still participate in this markup.
+    const html = `<style>${styles}</style>` + renderCard({ config:this.config,model,open:this._open,allowed:this._guard(model).allowed,busy:this._coordinator.busy,
+      draftValues:this._draftContext?{...model.targets,[this._targetKey(model)]:this._draft}:null,statusMessage,preview:this._isPreview(),animationOffset:this._animationOffset });
+    if (html === this._viewHTML) {
+      this._renderDialog(); this._scheduleFreshness(); return;
+    }
+    this._view.innerHTML = html; this._viewHTML = html;
     this.shadowRoot.querySelector('[data-expand]')?.addEventListener('click',()=>{this._open=!this._open;this._activity();this.render();});
     for (const button of this.shadowRoot.querySelectorAll('[data-details]')) button.onclick=()=>this._moreInfo();
     for (const button of this.shadowRoot.querySelectorAll('[data-info]')) button.onclick=()=>this._moreInfo(button.dataset.info);

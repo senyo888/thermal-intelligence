@@ -130,6 +130,36 @@ test('invalid numeric data disables temperature independently of supported mode'
   expect((await calls(page))[0].service).toBe('set_hvac_mode');
 });
 
+test('unrelated HA updates preserve a mode selector, while availability changes still gate it',async({page})=>{
+  await expand(page);
+  const mode=card(page).getByRole('combobox',{name:'HVAC mode',exact:true});
+  await mode.focus();
+  await mode.evaluate(node=>{window.retainedModeSelector=node;});
+  for(let update=0;update<3;update++) {
+    await page.evaluate(()=>{
+      fixture.hass.states['climate.fixture_secondary'].attributes.current_temperature+=0.1;
+      fixture.refresh();
+    });
+    expect(await mode.evaluate(node=>node===window.retainedModeSelector)).toBe(true);
+    await expect(mode).toBeFocused();
+  }
+  expect(await calls(page)).toEqual([]);
+  await page.evaluate(()=>{fixture.hass.states['climate.fixture_thermostat'].state='unavailable';fixture.refresh();});
+  await expect(mode).toBeDisabled();
+  await page.evaluate(()=>fixture.cards[0]._request('set_hvac_mode',{hvac_mode:'heat'}));
+  expect(await calls(page)).toEqual([]);
+});
+
+test('a cancelled marker draft restores the reported target without a service call',async({page})=>{
+  const dial=marker(page);await dial.focus();
+  await page.keyboard.down('ArrowUp');
+  await expect(target(page)).toHaveText('21.5°C');
+  await page.keyboard.press('Escape');await page.keyboard.up('ArrowUp');
+  await expect(target(page)).toHaveText('21°C');
+  await expect(dial).toHaveAttribute('aria-valuenow','21');
+  expect(await calls(page)).toEqual([]);
+});
+
 test('keyboard draft commits once on release and cancels on concurrent state change',async({page})=>{
   const dial=marker(page);await dial.focus();await page.keyboard.down('ArrowUp');
   expect(await calls(page)).toEqual([]);

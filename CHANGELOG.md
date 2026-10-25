@@ -2,6 +2,10 @@
 
 No public release exists yet.
 
+## Unreleased — interaction fix, 2026-10-25
+
+- Keep unchanged thermostat controls mounted across unrelated Home Assistant updates, so native mode menus remain usable. Preserve live availability gating and restore reported targets after cancelled drafts. The source animation phase is stable per card instance; rendered geometry and canonical comparison pixels are unchanged.
+
 ## Unreleased — canonical UI restoration, 2026-10-25
 
 - Preserved the TI renderer and exact finishing styles: glass dome, diamond ticks, pearl targets, telemetry, pill controls, disclosure and original dialog surfaces.
