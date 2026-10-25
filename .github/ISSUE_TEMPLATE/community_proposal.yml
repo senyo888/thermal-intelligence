@@ -1,0 +1,36 @@
+name: Community proposal
+description: Discuss a broader product, UI, provider or control idea.
+title: "[Proposal] "
+body:
+  - type: markdown
+    attributes:
+      value: This is an intake proposal, not approval to implement or change a live Home Assistant system. Keep all examples public-safe.
+  - type: textarea
+    id: need
+    attributes:
+      label: User need and expected benefit
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Proposed scope and affected components
+    validations:
+      required: true
+  - type: textarea
+    id: contracts
+    attributes:
+      label: Ownership, data and behavior
+      description: Explain required provider/backend evidence, who writes controls and what should remain unchanged. Unknowns are useful to record.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives, tradeoffs and behavior to avoid
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Related issues, examples and possible validation

@@ -1,0 +1,60 @@
+name: Bug report
+description: Report a documentation, tooling or tested preview defect.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        TI is at foundation stage, with no installable release yet. For runtime reports, identify the exact development build.
+        Remove tokens, private URLs, device IDs and home details. Do not attach full backups or HI diagnostics for a standalone TI report.
+  - type: input
+    id: version
+    attributes:
+      label: TI version or commit
+      description: Use foundation for a current documentation report.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Documentation or repository tooling
+        - Thermostat or provider behavior
+        - Visual editor or onboarding
+        - Installation or resource loading
+        - Other planned component
+        - Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: HA, provider/version, HACS or manual installation, browser/OS or Companion version. Use not applicable for documentation-only reports.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps, expected behavior and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Redacted minimal card configuration
+      description: Optional for documentation reports. Replace all private entity/device names.
+      render: yaml
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Relevant evidence and checks already tried
+      description: Redacted logs or screenshots only. An accepted command is not proof of physical heating.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked for duplicate reports and removed private information.
+          required: true

@@ -1,0 +1,33 @@
+name: Configuration help
+description: Ask about a documented setup or preview configuration.
+title: "[Help] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        There is no installable TI release yet. Foundation questions are welcome; describe the guide or development build you are using.
+        Share only a minimal redacted configuration, never tokens, private URLs or a full HA backup. HI diagnostics are not required.
+  - type: textarea
+    id: goal
+    attributes:
+      label: Intended outcome and current problem
+    validations:
+      required: true
+  - type: textarea
+    id: setup
+    attributes:
+      label: Versions and setup
+      description: TI commit, HA/provider versions, install method, resource loading and browser/Companion. Mark anything not applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Minimal redacted configuration
+      render: yaml
+  - type: textarea
+    id: attempted
+    attributes:
+      label: Documentation followed and checks already tried
+    validations:
+      required: true

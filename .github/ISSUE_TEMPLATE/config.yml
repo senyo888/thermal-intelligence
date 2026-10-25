@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Private security report
+    url: https://github.com/senyo888/thermal-intelligence/security/advisories/new
+    about: Report vulnerabilities privately. Do not include secrets in public issues.
+  - name: Project status and documentation
+    url: https://github.com/senyo888/thermal-intelligence#readme
+    about: Foundation stage; no installable card or supported release yet.

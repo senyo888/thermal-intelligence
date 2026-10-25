@@ -1,0 +1,46 @@
+name: UI Gallery submission
+description: Propose a portable example or a clearly labelled design mockup.
+title: "[Gallery] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        No installable TI release exists yet. Label designs as mockups; do not present them as tested product screenshots.
+        Remove private names, entities, addresses and device details. Documentation/artwork reuse terms must be agreed before merging.
+  - type: input
+    id: title
+    attributes:
+      label: Example title and intended layout
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Evidence type
+      options:
+        - Design mockup
+        - Synthetic fixture capture
+        - Tested development build
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Versions, dependencies and source
+      description: Identify TI/HA/provider versions, third-party cards, copied/generated elements and their licences. State not applicable for a pure mockup.
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Portable configuration and public-safe preview
+      description: Include or link the example, explain its behavior and identify synthetic data.
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy_rights
+    attributes:
+      label: Privacy and provenance
+      options:
+        - label: I removed private information and identified third-party or generated material.
+          required: true

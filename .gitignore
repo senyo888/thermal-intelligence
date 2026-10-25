@@ -1,0 +1,14 @@
+# Private operational continuity is never part of the public product or payload.
+/.private/
+/AGENTS.local.md
+.DS_Store
+.env
+.env.*
+!.env.example
+node_modules/
+coverage/
+playwright-report/
+test-results/
+*.log
+
+# dist/ is intentionally not ignored: release layout is still a design decision.
