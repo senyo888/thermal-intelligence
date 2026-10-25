@@ -56,6 +56,21 @@ export function normalizeConfig(raw) {
       throw new Error(`${key} must be a sensor entity ID or empty.`);
     }
   }
+  if (raw.response_arc !== undefined) {
+    if (!isRecord(raw.response_arc)) throw new Error('response_arc must be an object.');
+    const response = { ...raw.response_arc };
+    for (const [key, domain] of [['room_sensor', 'sensor'], ['native_thermostat', 'climate'], ['confirmed_output', 'climate'], ['heat_source', 'climate']]) {
+      const value = response[key];
+      if (value !== undefined && (typeof value !== 'string' || (value !== '' && (!ENTITY.test(value) || !value.startsWith(`${domain}.`))))) {
+        throw new Error(`response_arc.${key} must be a ${domain} entity ID or empty.`);
+      }
+    }
+    if (response.freshness_minutes !== undefined) {
+      numberOption(response.freshness_minutes, 'response_arc.freshness_minutes', true);
+      if (response.freshness_minutes > 30) throw new Error('response_arc.freshness_minutes must be at most 30 minutes.');
+    }
+    result.response_arc = response;
+  }
   if (raw.name !== undefined) result.name = safeText(raw.name, 'Name', { empty: true });
   if (raw.step !== undefined) result.step = numberOption(raw.step, 'Step', true);
   for (const key of ['show_activity', 'show_details']) {

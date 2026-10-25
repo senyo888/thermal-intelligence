@@ -4,6 +4,7 @@
 import { finiteNumber } from './config.js';
 import { humidityBands, humidityBand, legacyHumidityBands } from './humidity.js';
 import { STATE_TELEMETRY, stateTelemetryValue } from './state-telemetry.js';
+import { buildResponseArc } from './response-arc.js';
 
 const LABELS = { humidity: 'Humidity', trend: 'Temperature trend', valve: 'Valve', energy: 'Energy', power: 'Power', custom: 'Telemetry' };
 const UNITS = {
@@ -150,7 +151,7 @@ export function buildSourceTelemetry(hass, config, climate, now, connected) {
   }).filter(Boolean);
   const trend = trendPresentation(trendSource, climate);
   const output = outputPresentation(valve, climate, connected);
-  const arc = targetComparisonArc(climate, connected);
+  const arc = buildResponseArc({ hass, config, climate, trendSource, valve, now, connected });
   return { telemetry, humidity, features: featureRows, headerTelemetry, presetReadings, trend, output, arc };
 }
 
@@ -176,33 +177,6 @@ function buildPresetReadings(features, config, climate, connected) {
     if (row.unit !== climate.unit) return finish('invalid', 'The preset reading and selected climate use different temperature units; no conversion was applied.');
     return finish('available', 'Explicit preset-temperature observation; only the provider-selected preset controls its active indicator.', number);
   }));
-}
-
-/** Original target-comparison presentation; it never claims accepted heat response. */
-function targetComparisonArc(climate, connected) {
-  const gray = '#94a3b8';
-  const result = (color, reason, explanation, delta = null) => ({ color, reason, explanation, responding: false, delta });
-  if (!connected || !climate.ready || !climate.available || !Number.isFinite(climate.current)) {
-    return result(gray, 'unavailable', 'Target comparison is unavailable because connection, readiness or current temperature is unavailable. Physical heating is unverified.');
-  }
-  if (!['°C', '°F'].includes(climate.unit)) return result(gray, 'unit_unknown', 'Target comparison requires a known climate display unit. Physical heating is unverified.');
-  if (climate.ranged || climate.keys?.length !== 1 || climate.keys[0] !== 'temperature') {
-    return result(gray, 'target_unknown', 'Target comparison requires one selected climate target; a temperature range is not reduced to an invented single target. Physical heating is unverified.');
-  }
-  const target = climate.targets?.temperature, { min, max } = climate;
-  if (![target, min, max].every(Number.isFinite) || min >= max || !Number.isFinite(max - min) || target < min || target > max) {
-    return result(gray, 'target_invalid', 'Target comparison requires a finite selected climate target within valid reported limits. Physical heating is unverified.');
-  }
-  const delta = climate.current - target;
-  if (!Number.isFinite(delta)) return result(gray, 'target_invalid', 'Target comparison could not produce a finite temperature difference. Physical heating is unverified.');
-  if (!['off', 'heat', 'cool', 'heat_cool', 'auto', 'dry', 'fan_only'].includes(climate.state)) {
-    return result(gray, 'mode_unknown', 'Target comparison is unavailable because the climate mode is unrecognized. Physical heating is unverified.', delta);
-  }
-  if (climate.state === 'off') return result('#7c8ba2', 'off', 'The selected climate mode is Off. Its target comparison does not establish physical heating.', delta);
-  if (climate.action === 'cooling') return result('#66cfff', 'cooling', 'The selected climate reports cooling. The target comparison and reported activity do not establish physical heat delivery.', delta);
-  if (delta > 0.2 + 1e-9) return result('#c4a7ff', 'above_target', 'Current temperature is above the selected climate target. This target comparison does not establish physical heating.', delta);
-  if (delta >= -1e-9) return result('#62e3b0', 'at_target', 'Current temperature is at the selected climate target or no more than 0.2 display degrees above it. This target comparison does not establish physical heating.', delta);
-  return result('#50c8ff', 'below_target', 'Current temperature is below the selected climate target. Accepted-output and fresh warming-response evidence are not established; this is a target comparison only.', delta);
 }
 
 function trendPresentation(row, climate) {

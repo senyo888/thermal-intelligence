@@ -159,7 +159,27 @@ export class ThermalIntelligenceCard extends HTMLElement {
   _scheduleRender() {
     if (this._renderQueued) return;
     this._renderQueued = true;
-    queueMicrotask(() => { this._renderQueued = false; if (this.isConnected && !this._draftContext) this.render(); });
+    queueMicrotask(() => {
+      this._renderQueued = false;
+      if (!this.isConnected) return;
+      if (this._draftContext) this._refreshArcDuringDraft();
+      else this.render();
+    });
+  }
+  _refreshArcDuringDraft() {
+    // Keep pointer capture and the target draft mounted while response evidence expires.
+    const arc = this.model().arc;
+    const colour = /^#[0-9a-f]{6}$/i.test(arc?.color ?? '') ? arc.color : '#94a3b8';
+    const surface = this.shadowRoot.querySelector('ha-card');
+    if (surface) {
+      surface.style.setProperty('--accent', colour);
+      surface.dataset.arcState = arc?.responding ? 'responding' : 'not-responding';
+      surface.dataset.arcReason = arc?.reason || 'unavailable';
+    }
+    for (const circle of this.shadowRoot.querySelectorAll('[data-response-arc]')) circle.setAttribute('stroke', colour);
+    this._viewHTML = null;
+    this._renderDialog();
+    this._scheduleFreshness();
   }
   _pointerAngle(event) {
     try {
@@ -486,6 +506,8 @@ export class ThermalIntelligenceCard extends HTMLElement {
       const stamp = Date.parse(this._hass?.states?.[row.entity]?.last_updated);
       return stamp > now ? stamp + 1 : stamp + row.max_age_seconds * 1000 + 1;
     }).filter(deadline=>Number.isFinite(deadline) && deadline > now);
+    const arcExpiry = this.model().arc?.expiresAt;
+    if (Number.isFinite(arcExpiry) && arcExpiry + 1 > now) deadlines.push(arcExpiry + 1);
     if(this.isConnected && deadlines.length) this._freshnessTimer = setTimeout(()=>this._scheduleRender(), Math.min(30000, Math.max(1, Math.min(...deadlines)-now)));
   }
   render() {

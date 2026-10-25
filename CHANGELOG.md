@@ -4,9 +4,16 @@ No stable release exists yet.
 
 ## Unreleased — presentation, 25 October 2026
 
-- Explain the dial, target-comparison arc, temperature-slope ring, dynamic status chip, LED overview, state-aware top-row icons, humidity display bands and expanded controls. Describe per-card presentation and responsive layouts with their current validation limits.
+- Explain the dial, response arc, temperature-slope ring, dynamic status chip, LED overview, state-aware top-row icons, humidity display bands and expanded controls. Describe per-card presentation and responsive layouts with their current validation limits.
 - Add privacy-edited Window detection and Heat enabled examples, preserving the distinction between detector state, reported valve position and HVAC mode. Leave duplicate or clipped images and examples of controls outside the current beta out of the public selection.
 - Add privacy-edited Idle and Call for heat examples, with anonymised room labels and image provenance. Keep these supplied examples distinct from the versioned beta captures; no runtime change.
+
+## 0.1.0-beta.3 — untagged beta, 25 October 2026
+
+- Restore the canonical orange response arc omitted during standalone extraction. Require an accepted current VT request plus matching recent room/trend evidence; retain reported cooling, target bands, Off and unavailable treatments.
+- Add explicit visual response-source settings and an explanation in the overview. Unknown units, restrictions, mismatching or expired evidence cannot produce orange. Existing unmapped cards retain their comparison fallback.
+- Expire response evidence without HA updates, including during a held target-marker draft, while preserving input capture and read-only rendering.
+- Add response boundary and browser fixtures and document the earlier visual coverage gap. Preserve the independent slope ring, status chip, health LED, dial geometry and staggered lights.
 
 ## 0.1.0-beta.2 — untagged beta, 25 October 2026
 

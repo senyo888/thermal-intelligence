@@ -360,7 +360,7 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     if (!climates.length) basic.append(element('p', 'status info', this._hass ? 'No climate entities are available. Add or enable a thermostat in Home Assistant, then select it here. This setup state sends no commands.' : 'Waiting for Home Assistant to provide the thermostat list.'));
     form.append(basic);
 
-    form.append(this._sourceMappings(states), this._features(states), this._telemetry(states), this._presets(states), this._advanced());
+    form.append(this._sourceMappings(states), this._responseArc(states), this._features(states), this._telemetry(states), this._presets(states), this._advanced());
     form.append(element('p', 'hint', 'Save the card in Home Assistant when you are finished. Unknown advanced options are preserved.'));
     this.shadowRoot.replaceChildren(style, form);
     this._restore(snapshot, focus);
@@ -387,6 +387,41 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     }));
     section.append(stack);
     return section;
+  }
+
+  _responseArc(states) {
+    const section = this._details('response-arc', 'Temperature response');
+    const stack = element('div', 'stack');
+    stack.append(element('p', 'hint', 'Optional, read-only evidence for the Versatile Thermostat response arc. Orange combines an accepted heat request with recent measured warming; it does not confirm physical heat delivery. These mappings use the temperature trend source above and never send heating commands.'));
+    const sources = record(this._draft.response_arc) ? this._draft.response_arc : {};
+    const lists = {};
+    for (const domain of ['sensor', 'climate']) {
+      const datalist = element('datalist'); datalist.id = `ti-response-${domain}-entities`; lists[domain] = datalist.id;
+      for (const id of Object.keys(states).filter(id=>id.startsWith(`${domain}.`)).sort()) {
+        const option = element('option'); option.value = id; option.label = states[id]?.attributes?.friendly_name || id; datalist.append(option);
+      }
+      stack.append(datalist);
+    }
+    stack.append(this._field('Room temperature sensor', 'response_arc.room_sensor', sources.room_sensor, {
+      list:lists.sensor, placeholder:'No response mapping', help:'The actual room-temperature source must agree with VT’s reading and temperature unit. Leave blank to disable this mapping.',
+      onChange:value=>this._change(['response_arc', 'room_sensor'], value),
+    }));
+    stack.append(element('p', 'hint', 'Choose the evidence route for this thermostat: native target confirmation, or confirmed TRV output with the valve opening sensor configured above. Missing evidence cannot produce an orange response.'));
+    const grid = element('div', 'grid');
+    for (const [label, key, help] of [
+      ['Native thermostat (target confirmation)', 'native_thermostat', 'Use the native thermostat whose reported target confirms VT’s regulated target. Leave blank for the TRV output route.'],
+      ['Confirmed TRV output controller', 'confirmed_output', 'Use a controller exposing the supported TRV output-confirmation contract. This is not inferred from its name or an open valve.'],
+      ['Optional heat-source thermostat', 'heat_source', 'Reads the mapped thermostat’s mode and reported activity. This does not control it or prove heat delivery.'],
+    ]) grid.append(this._field(label, `response_arc.${key}`, sources[key], {
+      list:lists.climate, placeholder:'No mapping', help,
+      onChange:value=>this._change(['response_arc', key], value),
+    }));
+    grid.append(this._field('Response evidence freshness (minutes)', 'response_arc.freshness_minutes', sources.freshness_minutes, {
+      type:'number', min:0, max:30, placeholder:'10 minutes (default)',
+      help:'Greater than 0, up to 30. Limits the age of the room value change and trend update; a shorter VT safety delay still applies. This does not change sensor reporting or heating.',
+      onChange:value=>this._change(['response_arc', 'freshness_minutes'], value),
+    }));
+    stack.append(grid); section.append(stack); return section;
   }
 
   _features(states) {

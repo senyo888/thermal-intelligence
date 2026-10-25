@@ -125,7 +125,37 @@ Measured temperature trend retains the existing TI labels and colours. Values wi
 
 VT's reported lock state appears as a small lock/unlock icon beside the card name. Hover text and an accessible label identify the state; a question-mark lock means the state is unknown or unavailable. From beta.2, verified administrators can tap the icon for the [lock control dialog](lock-control.md); other accounts retain a read-only indicator. No per-card option is needed. User controls follow VT's reported lock scope, and missing state for a configured lock keeps them disabled.
 
-The arc preserves the directly evidenced target-comparison colours: below-target cyan, at-target green, more than `0.2` display degrees above target purple, Off muted blue-gray, and reported cooling light cyan. The original green interval runs from the target through `0.2` display degrees above it in either Celsius or Fahrenheit. Connection, readiness, a finite current temperature, known unit, recognized mode and a valid single climate target are required; ranges and invalid or missing evidence stay gray. Comparison uses the selected climate's serialized target and display unit, never an unconverted VT internal target. These colours do not prove physical heating. Warming orange remains unavailable without a public accepted-output and freshness contract, so a known below-target comparison stays cyan even if heating is requested.
+### Temperature response arc
+
+The outer arc follows the canonical TI response design; the fine ring around the sphere remains the independent measured-slope display. Open **Temperature response** in the visual editor to select explicit evidence sources for VT. These settings only read observations and never send heating commands.
+
+| Arc | Meaning |
+| --- | --- |
+| Orange | Below target, current heat request accepted, and matching recent measurements show ordinary warming. |
+| Cyan | The native thermostat reports cooling. A TRV opening observation is not a cooling action. |
+| Green | At the effective target through `0.2` display degrees above it. |
+| Lavender | More than `0.2` display degrees above the effective target. |
+| Blue | Below target; warming is not corroborated, has expired, or is restricted. |
+| Muted blue-gray / gray | Off / insufficient valid evidence. |
+
+An Idle chip does not force a particular arc colour. Temperature relative to target, measured slope and reported activity remain separate facts. Tap the status LED or chip for **Temperature response**, including the reason warming is or is not established.
+
+Choose the actual room-temperature sensor and the existing trend source. For a VT controlling a native thermostat, map **Native thermostat**. For a TRV path, map **Confirmed output** plus an explicit valve-position source. The confirmed output must implement the [documented acceptance contract](provider-contracts.md#temperature-response-evidence); a generic TRV entity or valve percentage alone is insufficient. An optional **Heat source** adds a Heat-mode check.
+
+```yaml
+# Synthetic example: replace every mapping with your own documented sources.
+trend_entity: sensor.example_temperature_slope
+response_arc:
+  room_sensor: sensor.example_room_temperature
+  native_thermostat: climate.example_native_thermostat
+  freshness_minutes: 10
+```
+
+The freshness window defaults to 10 minutes, can be set above zero through 30, and is capped by a valid VT safety delay. The room sensor's last value change and the trend's last update must both be recent. Repeated VT attribute updates do not renew that evidence. Stricter typed telemetry age limits still apply. Orange expires without requiring another HA update, including during a target-marker draft.
+
+VT must explicitly declare an internal temperature unit matching the card's display unit; the room and trend must also use matching units. Restrictions must be known and inactive. Missing, conflicting, rapid or stale evidence does not become orange. Accepted request plus recent warming is an observation, not proof of boiler firing or radiator flow.
+
+Without `response_arc`, the existing display-unit comparison is retained: blue below target, green from target through `0.2` degrees above, lavender further above, and reported cooling/Off/unavailable treatments. Standard climate entities retain this fallback even if response settings are present. Delete the `response_arc` object to return a VT card to that fallback; empty source fields disable those individual evidence mappings. Existing legacy `overview` and `recovery_entity` fields are not activated by this feature.
 
 ## Telemetry row fields
 

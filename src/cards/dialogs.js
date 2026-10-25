@@ -61,6 +61,10 @@ function overview({ model, config, statusMessage }) {
       { label: 'Output source', value: sourceText(output.source), entity: output.source?.entity },
       { label: 'Request status', value: statusMessage || 'No active card request is reported.' },
     ], note: 'This view shows the signals available to the card. It does not verify physical heat delivery, sensor accuracy or device response.' },
+    { id: 'response', title: 'Temperature response', rows: [
+      { label: 'Response arc', value: model.arc?.label || model.arc?.reason?.replaceAll('_', ' ') || 'Unavailable' },
+      { label: 'Warming response', value: model.arc?.responding ? 'Recent warming with an accepted request' : 'Not established' },
+    ], note: model.arc?.explanation || 'Temperature-response evidence is unavailable.' },
   ];
   if (model.details?.length) sections.push({ id: 'provider-details', title: 'Provider details', rows: model.details.map(row => ({ label: row.label, value: `${row.value ?? row.status ?? 'Unavailable'}${row.unit ? ` ${row.unit}` : ''}${row.detail ? ` · ${row.detail}` : ''}` })) });
   const groups = `<div class="groups">${sections.map(section => `<details id="section-${section.id}"><summary>${esc(section.title)}<span aria-hidden="true">⌄</span></summary>${plainRows(section.rows)}${section.note ? `<p class="note">${esc(section.note)}</p>` : ''}</details>`).join('')}</div>`;
