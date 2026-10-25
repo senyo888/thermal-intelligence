@@ -1,6 +1,11 @@
 # Changelog
 
-No public release exists yet.
+No stable release exists yet.
+
+## 0.1.0-beta.1 — prepared 25 October 2026
+
+- Separate beta card/editor registrations allow existing TI cards to coexist without renaming the legacy installation. The canonical UI, icons, dialogs and LED animation remain unchanged.
+- Add exact-commit packaging, deterministic manifests, coexistence tests and redacted secret/public-data scans. See [installation and rollback](docs/migration.md).
 
 ## Unreleased — public identity, 2026-10-25
 

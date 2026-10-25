@@ -2,7 +2,7 @@
 import './icons.js';
 import '/dist/thermal-intelligence.js';
 
-const TYPE = 'custom:thermal-intelligence-card';
+const TYPE = 'custom:thermal-intelligence-beta-card';
 const ENTITY = 'climate.fixture_thermostat';
 const OTHER = 'climate.fixture_secondary';
 const SERVICES = ['set_temperature','set_hvac_mode','set_preset_mode','set_fan_mode','set_swing_mode','set_swing_horizontal_mode'];
@@ -58,13 +58,13 @@ const fixture = window.fixture = {
   },
   refresh() { this.hass={...this.hass}; for(const card of this.cards)card.hass=this.hass; if(this.editor)this.editor.hass=this.hass; },
   configure(config,index=0) { this.cards[index].setConfig(config); if(index===0){this.config=structuredClone(config);document.querySelector('#configuration').textContent=JSON.stringify(config,null,2);} },
-  addCard(config=this.config) { const card=document.createElement('thermal-intelligence-card'); card.setConfig(config);card.hass=this.hass;this.cards.push(card);document.querySelector('#cards').append(card);return card; },
+  addCard(config=this.config) { const card=document.createElement('thermal-intelligence-beta-card'); card.setConfig(config);card.hass=this.hass;this.cards.push(card);document.querySelector('#cards').append(card);return card; },
   reset(scenario='standard',overrides={}) {
     for(const card of this.cards)card.remove();this.cards=[];this.calls=[];this.events=[];this.registryCalls=[];this.pending=[];this.registryFailure=false;this.behavior='observe';
     this.hass=this.makeHass(scenario);
     this.config={type:TYPE,entity:scenario==='empty'?'':ENTITY,adapter:'auto',background:'blue',preset_labels:{frost:'Frost'},telemetry:[{kind:'humidity',entity:'sensor.fixture_humidity'},{kind:'valve',entity:'sensor.fixture_valve'}],...overrides};
     const card=this.addCard(this.config);card.preview=document.querySelector('#preview').checked;
-    this.editor=document.createElement('thermal-intelligence-card-editor');this.editor.setConfig(this.config);this.editor.hass=this.hass;
+    this.editor=document.createElement('thermal-intelligence-beta-card-editor');this.editor.setConfig(this.config);this.editor.hass=this.hass;
     this.editor.addEventListener('config-changed',event=>{this.events.push(structuredClone(event.detail.config));this.configure(event.detail.config);});
     document.querySelector('#editor').replaceChildren(this.editor);this.configure(this.config);this.audit();
   },

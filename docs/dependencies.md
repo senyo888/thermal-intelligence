@@ -1,6 +1,6 @@
 # Build and dependency inventory
 
-Candidate `0.1.0-dev.1` uses native custom elements, DOM, CSS and Home Assistant's supplied `hass` API. The JavaScript bundle has **no third-party runtime modules, remote fonts, runtime downloads or generated brand assets**. The renderer preserves the existing TI design and uses Home Assistant's `ha-icon` for named icons. The build rejects non-`src/` inputs and external module imports.
+Candidate `0.1.0-beta.1` uses native custom elements, DOM, CSS and Home Assistant's supplied `hass` API. The JavaScript bundle has **no third-party runtime modules, remote fonts, runtime downloads or generated brand assets**. The renderer preserves the existing TI design and uses Home Assistant's `ha-icon` for named icons. The build rejects non-`src/` inputs and external module imports.
 
 | Development dependency | Pinned version | Package licence | Role |
 | --- | --- | --- | --- |
@@ -16,3 +16,5 @@ Versions and integrity hashes are in [package-lock.json](../package-lock.json). 
 Build with Node 22 or newer and `npm ci`, then `npm run build`. Source, lockfile, build scripts and the GPL-3.0-only licence must accompany a distributed version. Source maps are disabled. CI rebuilds and compares the checked-in bundle, runs model/editor/command tests, and runs the synthetic Chromium suite. CI is configured locally; a successful local run does not establish a successful GitHub run for an unpublished branch.
 
 See [source provenance](source-provenance.md), [licence scope](licensing-options.md) and [distribution](distribution.md). Marketing concepts and documentation remain subject to their separate, unselected reuse terms.
+
+The development-only [secret-scan helper](../scripts/security/scan_secrets.sh) follows HI's tracked-file/full-history workflow and retains its [MIT notice](../scripts/security/HI-LICENSE.txt). It is not bundled into the card.

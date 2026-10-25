@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { test, expect } from '@playwright/test';
 
-const card = page => page.locator('thermal-intelligence-card');
+const card = page => page.locator('thermal-intelligence-beta-card');
 const target = page => card(page).locator('[data-value="temperature"]');
 const marker = page => card(page).locator('[data-marker="temperature"]');
 const activePreset = page => card(page).locator('.header-telemetry [data-presets]');

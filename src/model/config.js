@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { validHumidityBands, legacyHumidityBands } from './humidity.js';
 
-export const CARD_TYPE = 'custom:thermal-intelligence-card';
+export const CARD_TAG = 'thermal-intelligence-beta-card';
+export const EDITOR_TAG = 'thermal-intelligence-beta-card-editor';
+export const CARD_TYPE = `custom:${CARD_TAG}`;
 export const SCHEMA_VERSION = 1;
 export const TELEMETRY_KINDS = ['humidity', 'trend', 'valve', 'energy', 'power', 'window', 'motion', 'presence', 'power_management', 'follow', 'custom'];
 export const BACKGROUNDS = ['blue', 'plum', 'black'];

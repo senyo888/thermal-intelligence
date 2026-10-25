@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { normalizeConfig } from '../model/config.js';
+import { normalizeConfig, CARD_TYPE, EDITOR_TAG } from '../model/config.js';
 import { buildModel, targetPayload, quantize } from '../model/climate.js';
 import { CommandCoordinator } from '../commands/coordinator.js';
 import { styles } from './styles.js';
@@ -22,9 +22,9 @@ export class ThermalIntelligenceCard extends HTMLElement {
   }
   static getStubConfig(hass, entities = [], fallback = []) {
     const candidates = [...entities, ...fallback, ...Object.keys(hass?.states ?? {})];
-    return { type: 'custom:thermal-intelligence-card', entity: candidates.find(id => typeof id === 'string' && id.startsWith('climate.')) ?? '', adapter: 'auto' };
+    return { type: CARD_TYPE, entity: candidates.find(id => typeof id === 'string' && id.startsWith('climate.')) ?? '', adapter: 'auto' };
   }
-  static async getConfigElement() { return document.createElement('thermal-intelligence-card-editor'); }
+  static async getConfigElement() { return document.createElement(EDITOR_TAG); }
   getCardSize() { return this._open ? 10 : 6; }
   getGridOptions() { return { columns: 6, min_columns: 4, rows: 'auto' }; }
   setConfig(config) {

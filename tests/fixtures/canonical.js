@@ -7,7 +7,7 @@ const parameters=new URLSearchParams(location.search);
 const surface=parameters.get('surface')==='polish'?'polish':'active-presets';
 document.documentElement.style.setProperty('--fixture-width',surface==='polish'?'320px':'280px');
 document.body.dataset.capture=String(parameters.get('capture')==='1');
-const config={type:'custom:thermal-intelligence-card',entity:'climate.room',name:'Example room',adapter:'vtherm',
+const config={type:'custom:thermal-intelligence-beta-card',entity:'climate.room',name:'Example room',adapter:'vtherm',
   features:['boost','comfort','eco'].map(preset=>({entity:`number.room_preset_${preset}_temp`,label:preset[0].toUpperCase()+preset.slice(1),preset})),
   humidity_entity:'sensor.room_humidity'};
 const thermostat={entity_id:'climate.room',state:'heat',attributes:{is_ready:true,current_temperature:20,temperature:21,min_temp:7,max_temp:30,target_temp_step:.1,supported_features:401,hvac_modes:['off','heat'],preset_modes:['none','eco','comfort','boost'],preset_mode:'comfort',humidity_manager:{humidity_sensor_entity_id:'sensor.room_humidity'}}};
@@ -19,7 +19,7 @@ const hass={connected:true,connection:{socket:{}},user:{id:'synthetic-canonical-
   services:{climate:{set_temperature:{},set_hvac_mode:{},set_preset_mode:{}}},
   async callService(domain,service,payload){calls.push({domain,service,payload:structuredClone(payload)});document.querySelector('#calls').textContent=`Service calls: ${calls.length}`;},
 };
-const card=document.createElement('thermal-intelligence-card');card.setConfig(config);document.querySelector('main').append(card);
+const card=document.createElement('thermal-intelligence-beta-card');card.setConfig(config);document.querySelector('main').append(card);
 function scenario(mode){
   hass.connected=mode!=='Disconnected';thermostat.state=mode==='Off'?'off':'heat';
   thermostat.attributes.preset_mode=['eco','comfort','boost'].includes(mode)?mode:'none';

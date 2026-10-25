@@ -8,7 +8,7 @@ const result = await build({
   bundle: true, format: 'esm', target: 'es2022', minify: true,
   sourcemap: false, legalComments: 'inline', charset: 'utf8', metafile: true,
   define: { __TI_VERSION__: JSON.stringify(version) },
-  banner: { js: `/*! Thermal Intelligence Cards ${version} — local development candidate. GPL-3.0-only. Editable source and build instructions accompany this project; no third-party runtime dependencies. */` },
+  banner: { js: `/*! Thermal Intelligence Cards ${version} — beta frontend module. GPL-3.0-only. Editable source and build instructions accompany this project; no third-party runtime dependencies. */` },
 });
 if (Object.keys(result.metafile.inputs).some(path => !path.startsWith('src/'))) throw new Error('The runtime must contain only reviewed project source.');
 if (Object.values(result.metafile.outputs).some(output => output.imports.length)) throw new Error('The runtime must not load external modules.');

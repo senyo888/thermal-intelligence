@@ -3,7 +3,7 @@ name: Project checks
 on:
   workflow_dispatch:
   push:
-    branches: [main, develop]
+    branches: [main, develop, senyo888-patch-1]
   pull_request:
     branches: [main, develop]
 
@@ -19,8 +19,24 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+          fetch-depth: 0
       - name: Check public foundation
         run: python3 scripts/check_foundation.py
+      - name: Check public data boundaries
+        run: python3 scripts/check_public_data.py
+      - name: Install verified Gitleaks
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/gitleaks"
+          curl -fsSL https://github.com/gitleaks/gitleaks/releases/download/v8.29.1/gitleaks_8.29.1_linux_x64.tar.gz -o "$RUNNER_TEMP/gitleaks.tar.gz"
+          echo "e4eb209d04e20339d77122a3bdf9cd41351255cfb27ebcb75e85325e04f88924  $RUNNER_TEMP/gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP/gitleaks" gitleaks
+          echo "$RUNNER_TEMP/gitleaks" >> "$GITHUB_PATH"
+      - name: Scan tracked files and history with redacted output
+        run: |
+          scripts/security/scan_secrets.sh tracked
+          scripts/security/scan_secrets.sh full-history
   frontend:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -37,6 +53,8 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Unit contracts
         run: npm test
+      - name: Package regression contracts
+        run: python3 -B tests/package_test.py
       - name: Build and verify checked-in bundle
         run: |
           npm run build
@@ -45,3 +63,9 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Synthetic browser contracts
         run: npm run test:browser
+      - name: Reproduce beta package
+        if: github.ref == 'refs/heads/senyo888-patch-1'
+        run: |
+          python3 scripts/package_beta.py --commit "$GITHUB_SHA" --output "$RUNNER_TEMP/ti-beta-a"
+          python3 scripts/package_beta.py --commit "$GITHUB_SHA" --output "$RUNNER_TEMP/ti-beta-b"
+          diff -ru "$RUNNER_TEMP/ti-beta-a" "$RUNNER_TEMP/ti-beta-b"

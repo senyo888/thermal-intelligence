@@ -10,7 +10,7 @@ const { patchConfig, ThermalIntelligenceCardEditor } = await import('../../src/e
 
 test('editor field changes retain unknown configuration and leave caller data untouched', () => {
   const source = {
-    type: 'custom:thermal-intelligence-card', entity: 'climate.example',
+    type: 'custom:thermal-intelligence-beta-card', entity: 'climate.example',
     future_option: { nested: ['retained'] },
     telemetry: [{ kind: 'humidity', entity: 'sensor.example_humidity', future_source: { enabled: true } }],
     humidity_bands: { low: 35, high: 65, future_band: { colour: 'muted' } },
@@ -104,7 +104,7 @@ test('editor emits a complete isolated configuration only after a valid intentio
   assert.equal(events[0].type, 'config-changed');
   assert.equal(events[0].bubbles, true);
   assert.equal(events[0].composed, true);
-  assert.equal(events[0].detail.config.type, 'custom:thermal-intelligence-card');
+  assert.equal(events[0].detail.config.type, 'custom:thermal-intelligence-beta-card');
   assert.equal(events[0].detail.config.step, 0.5);
   assert.deepEqual(events[0].detail.config.future_option, { keep: true });
   events[0].detail.config.future_option.keep = false;

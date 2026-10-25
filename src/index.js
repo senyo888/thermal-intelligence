@@ -2,10 +2,12 @@
 import { ThermalIntelligenceCard } from './cards/thermostat-card.js';
 import { ThermalIntelligenceCardEditor } from './editor/config-editor.js';
 
+import { CARD_TAG, EDITOR_TAG } from './model/config.js';
+
 const version = typeof __TI_VERSION__ === 'undefined' ? 'development' : __TI_VERSION__;
 for (const [name, constructor] of [
-  ['thermal-intelligence-card', ThermalIntelligenceCard],
-  ['thermal-intelligence-card-editor', ThermalIntelligenceCardEditor],
+  [CARD_TAG, ThermalIntelligenceCard],
+  [EDITOR_TAG, ThermalIntelligenceCardEditor],
 ]) {
   const previous = customElements.get(name);
   if (!previous) {
@@ -16,10 +18,10 @@ for (const [name, constructor] of [
   }
 }
 window.customCards ??= [];
-if (!window.customCards.some(card => card.type === 'thermal-intelligence-card')) {
+if (!window.customCards.some(card => card.type === CARD_TAG)) {
   window.customCards.push({
-    type: 'thermal-intelligence-card', name: 'Thermal Intelligence Thermostat',
-    description: 'A capability-aware thermostat with a visual editor. Standalone development preview.',
+    type: CARD_TAG, name: 'Thermal Intelligence Thermostat · Beta',
+    description: 'A capability-aware thermostat with a visual editor. Beta; installs alongside existing Thermal Intelligence cards.',
     preview: true,
     documentationURL: 'https://github.com/senyo888/thermal-intelligence#readme',
   });

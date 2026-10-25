@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { test, expect } from '@playwright/test';
-const card = page => page.locator('thermal-intelligence-card').first();
+const card = page => page.locator('thermal-intelligence-beta-card').first();
 const increase = (page,key='temperature') => card(page).locator(`[data-adjust="${key}"][data-delta="1"]`);
 const marker = (page,key='temperature') => card(page).locator(`[data-marker="${key}"]`);
 const target = (page,key='temperature') => card(page).locator(`[data-value="${key}"]`);
@@ -31,7 +31,7 @@ async function pointAtTarget(page,value,min=7,max=30) {
   const angle=(135+270*(value-min)/(max-min))*Math.PI/180;
   return svgPoint(page,100+72*Math.cos(angle),100+72*Math.sin(angle));
 }
-const editor = page => page.locator('thermal-intelligence-card-editor');
+const editor = page => page.locator('thermal-intelligence-beta-card-editor');
 const field = (page,name) => editor(page).locator(`[data-field="${name}"]`);
 const calls = page => page.evaluate(()=>fixture.calls);
 async function reset(page,scenario='standard',config={}) {
@@ -46,10 +46,10 @@ test('picker, empty setup, editor, reopen and duplicate resource never dispatch'
   await reset(page,'empty');
   await expect(card(page).getByText(/(?:Choose|Select) a climate entity/).first()).toBeVisible();
   await expect(editor(page).getByText(/No climate entities are available/)).toBeVisible();
-  const stub=await page.evaluate(()=>customElements.get('thermal-intelligence-card').getStubConfig({states:{}}));
+  const stub=await page.evaluate(()=>customElements.get('thermal-intelligence-beta-card').getStubConfig({states:{}}));
   expect(stub.entity).toBe('');
   await page.evaluate(async()=>{await import('/dist/thermal-intelligence.js?duplicate');fixture.cards[0].setConfig(fixture.config);fixture.cards[0].hass=fixture.hass;});
-  expect(await page.evaluate(()=>window.customCards.filter(row=>row.type==='thermal-intelligence-card').length)).toBe(1);
+  expect(await page.evaluate(()=>window.customCards.filter(row=>row.type==='thermal-intelligence-beta-card').length)).toBe(1);
   expect(await calls(page)).toEqual([]);
 });
 
@@ -406,7 +406,7 @@ test('visual editor preserves unknown fields and changes only its card',async({p
   await edit(page,'name','Review thermostat');await field(page,'background').selectOption('plum');
   await field(page,'show_activity').uncheck();await field(page,'show_details').uncheck();
   await expect(card(page)).toContainText('Review thermostat');
-  await expect(page.locator('thermal-intelligence-card').nth(1)).not.toContainText('Review thermostat');
+  await expect(page.locator('thermal-intelligence-beta-card').nth(1)).not.toContainText('Review thermostat');
   await editor(page).locator('[data-section="telemetry"] summary').click();
   await edit(page,'telemetry.0.label','Room humidity');await editor(page).locator('[data-action="add-telemetry"]').click();
   await edit(page,'telemetry.1.entity','sensor.fixture_valve');await field(page,'telemetry.1.kind').selectOption('valve');

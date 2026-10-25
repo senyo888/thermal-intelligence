@@ -49,7 +49,7 @@ The YAML below describes the same configuration contract. The preview shows the 
 
 | YAML key | Visual field | Default | Accepted value and behavior |
 | --- | --- | --- | --- |
-| `type` | Managed by the card | `custom:thermal-intelligence-card` | This exact card type. Include it in a complete YAML configuration. |
+| `type` | Managed by the card | `custom:thermal-intelligence-beta-card` | This exact card type. Include it in a complete YAML configuration. |
 | `schema_version` | Managed by the card | `1` | Numeric `1`. Unsupported versions are rejected. |
 | `entity` | Thermostat entity | Empty string | A `climate.*` entity ID. Empty is the safe setup state. Entity names do not establish provider identity. |
 | `adapter` | Provider | `auto` | `auto`, `standard` or `vtherm`; see identity rules below. |
@@ -110,7 +110,7 @@ Preset associations require a finite numeric reading and a reported or explicit 
 For example, this mapping is explicit and portable; the synthetic number entity must exist in the chosen fixture or installation:
 
 ```yaml
-type: custom:thermal-intelligence-card
+type: custom:thermal-intelligence-beta-card
 entity: climate.example
 features:
   - entity: number.example_comfort_temperature
@@ -183,7 +183,7 @@ Each displayed row identifies its configured entity and optional attribute path 
 This example uses entity IDs present in the bundled fixture. All identifiers are synthetic. It exercises the implemented top-level settings and every telemetry-row field without requiring extra entities:
 
 ```yaml
-type: custom:thermal-intelligence-card
+type: custom:thermal-intelligence-beta-card
 schema_version: 1
 entity: climate.fixture_thermostat
 adapter: auto
@@ -227,7 +227,7 @@ The fixture advertises its own temperature step, so the example's `step: 0.25` r
 For an empty setup state, the minimal configuration is:
 
 ```yaml
-type: custom:thermal-intelligence-card
+type: custom:thermal-intelligence-beta-card
 entity: ""
 ```
 
