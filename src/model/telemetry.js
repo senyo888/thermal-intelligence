@@ -47,6 +47,18 @@ export function buildTelemetry(hass, config, now, connected = true, climate = {}
       const configured = readOwnPath(attrs, flag).value;
       if (configured === false) return result('disabled', 'This feature is not configured in VT. Selecting its icon does not enable it.');
       if (configured !== true) return result('unknown', 'VT does not report whether this feature is configured.');
+      // VT can retain an accepted motion/window state after its input fails.
+      // Only follow the source ID explicitly reported for this exact manager.
+      if (['window', 'motion', 'presence'].includes(entry.kind) && entry.attribute === semantic.path) {
+        const input = readOwnPath(attrs, `${entry.kind}_manager.${entry.kind}_sensor_entity_id`).value;
+        if (typeof input === 'string' && input.trim()) {
+          const inputState = Object.hasOwn(hass.states, input) ? hass.states[input] : null;
+          if (!inputState || ['unknown', 'unavailable'].includes(inputState.state)) {
+            const status = inputState?.state === 'unknown' ? 'unknown' : 'unavailable';
+            return result(status, `VT's configured ${entry.kind} input is ${status}. Its retained detector state is not a current observation; this does not change VT's control behaviour.`);
+          }
+        }
+      }
     }
     const resolved = entry.attribute ? readOwnPath(attrs, entry.attribute) : { found: true, value: state.state };
     if (!resolved.found) return result('unavailable', 'Configured attribute is missing.');

@@ -164,6 +164,21 @@ test('window header and focused popup agree through live Open, Closed and unavai
   expect(await calls(page)).toEqual([]);
 });
 
+test('VT motion popup exposes input failure and recovers without a command',async({page})=>{
+  await reset(page,'vt',{telemetry:[{kind:'motion',entity:'climate.fixture_thermostat',attribute:'motion_manager.motion_state'}]});
+  await page.evaluate(()=>{Object.assign(fixture.hass.states['climate.fixture_thermostat'].attributes,{is_motion_configured:true,motion_manager:{motion_state:'on',motion_sensor_entity_id:'binary_sensor.fixture_motion'}});fixture.hass.states['binary_sensor.fixture_motion']={state:'on',attributes:{}};fixture.refresh();});
+  await card(page).getByRole('button',{name:'Motion detection: Detected',exact:true}).click();
+  const dialog=card(page).getByRole('dialog');
+  await expect(dialog).toContainText('while Activity is selected');
+  await page.evaluate(()=>{fixture.hass.states['binary_sensor.fixture_motion'].state='unavailable';fixture.refresh();});
+  await expect(card(page).getByRole('button',{name:'Motion detection: Unavailable',exact:true})).toBeVisible();
+  await expect(dialog).toContainText('retained detector state is not a current observation');
+  await expect(increase(page)).toBeEnabled();
+  await page.evaluate(()=>{fixture.hass.states['binary_sensor.fixture_motion'].state='off';fixture.hass.states['climate.fixture_thermostat'].attributes.motion_manager.motion_state='off';fixture.refresh();});
+  await expect(dialog.locator('dl > div').filter({has:page.locator('dt').getByText('State',{exact:true})}).locator('dd')).toHaveText('Clear');
+  expect(await calls(page)).toEqual([]);
+});
+
 test('Fahrenheit and dual range preserve units and the other endpoint',async({page})=>{
   await reset(page,'fahrenheit');await increase(page).click();
   expect((await calls(page))[0].payload.temperature).toBe(71);

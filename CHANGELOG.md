@@ -2,6 +2,11 @@
 
 No public release exists yet.
 
+## Unreleased — VT presence and feature behaviour, 2026-10-25
+
+- Clarified that VT Presence selects home/away preset temperatures, while room Motion selects temperatures in Activity mode. Updated the focused popup explanations and configuration documentation.
+- Prevented retained VT motion/window/presence readings from appearing current when the manager's explicitly reported input is missing, unknown or unavailable. This display correction sends no command and does not change VT's controller behaviour.
+
 ## Unreleased — test-environment validation, 2026-10-25
 
 - Installed the development module in HA 2026.10.0 and exercised Generic Thermostat plus four VT 10.5.1 control paths with inert outputs. Added separate setup/unavailable/readiness failure cards and varied per-card header fixtures.

@@ -160,6 +160,18 @@ Tapping these icons opens a focused read-only panel with the same state, observa
 
 For example, select `kind: window` and an explicit window binary sensor. To display VT's own window detector instead, select the thermostat entity with `attribute: window_manager.window_state`. These are distinct sources; the card does not treat a separate sensor as proof that VT's window protection is enabled.
 
+### VT Presence and Motion are different features
+
+VT **Presence** selects the home or away temperature for the selected preset. It is intended for household presence; its configured input can be a `person`, `binary_sensor` or `input_boolean`. VT 10.5.1 accepts `on`/`home` as present and `off`/`not_home` as absent. A room occupancy sensor can supply that input, but then its room occupancy drives the home/away temperature choice. A manual target (`none`) is not replaced by an away preset temperature.
+
+VT **Motion** is intended for a room's motion or occupancy sensor. It selects the configured motion/no-motion temperatures only while the **Activity** preset is selected, after VT's configured detection and inactivity delays. When Presence is also configured, Activity uses the home or away version of that selected temperature. In other presets, the motion indicator can change without changing the target.
+
+Map `presence_manager.presence_state` or `motion_manager.motion_state` on the VT entity to show VT's accepted feature state. A directly mapped binary sensor shows the raw input instead, potentially before VT's delay has elapsed. Home/Away is a temperature-selection label, not proof of whole-house occupancy, control ownership or alarm state.
+
+For exact VT window/motion/presence manager mappings, TI also checks the input entity ID explicitly reported by that manager. A missing, unknown or unavailable input prevents an old retained detector state appearing as a current reading. The popup explains the input failure; it does not alter VT's control or substitute the raw sensor for the accepted state. Automatic window detection has no physical input dependency. Other telemetry mappings keep their explicit source contract.
+
+These semantics were checked against the installed version's [Presence documentation](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/documentation/en/feature-presence.md), [Motion documentation](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/documentation/en/feature-motion.md) and real Lab feature checks. TI's observation labels also accept `away` and booleans; that does not extend VT's own accepted input states.
+
 A missing entity or expected attribute is unavailable. Provider `unknown` values remain unknown; incompatible units or malformed numeric values are invalid. A blank entity is disabled. With an explicit maximum age, old data becomes stale and a missing or future timestamp makes freshness unknown. Without a maximum age, the card does not invent a timeout. `last_updated` is an HA entity-update timestamp, not proof of when a physical sensor sampled its environment.
 
 Each source degrades independently. Missing humidity does not disable temperature control. A reported valve percentage is not proof of heat delivery, and a trend is not a prediction. These observations do not create a new controller or writer.

@@ -130,6 +130,41 @@ test('VT categorical telemetry respects configured flags and never enables a fea
   assert.equal(read().headerTelemetry[0].status, 'unavailable'); assert.equal(read().canSet, true);
 });
 
+test('VT detector input failure cannot present a retained state as a current observation', () => {
+  for (const kind of ['motion', 'window', 'presence']) {
+    const input = `binary_sensor.fixture_${kind}`;
+    const h = fixture({ is_ready: true, [`is_${kind}_configured`]: true, [`${kind}_manager`]: { [`${kind}_state`]: 'on', [`${kind}_sensor_entity_id`]: input } });
+    const c = { ...config, telemetry: [{ kind, entity, attribute: `${kind}_manager.${kind}_state` }] };
+    const read = () => buildModel(h, c, vtIdentity);
+    h.states[input] = { state: 'on', attributes: {} };
+    assert.equal(read().headerTelemetry[0].status, 'available');
+    for (const state of ['unknown', 'unavailable']) {
+      h.states[input].state = state;
+      assert.equal(read().headerTelemetry[0].status, state);
+      assert.equal(read().headerTelemetry[0].activity, 'unknown');
+      assert.match(read().headerTelemetry[0].detail, /retained detector state/);
+      assert.equal(read().canSet, true);
+    }
+    delete h.states[input]; assert.equal(read().headerTelemetry[0].status, 'unavailable');
+    h.states[input] = { state: 'off', attributes: {} };
+    // Respect the accepted VT state during its delay; do not substitute raw input.
+    assert.equal(read().headerTelemetry[0].activity, 'active');
+    h.states[entity].attributes[`${kind}_manager`][`${kind}_state`] = 'off';
+    assert.equal(read().headerTelemetry[0].activity, 'neutral');
+  }
+});
+
+test('VT input availability checks stay within the selected provider and exact manager mapping', () => {
+  const h = fixture({ is_ready: true, is_window_configured: true, is_window_auto_configured: true, window_manager: { window_state: 'on', window_auto_state: 'on', window_sensor_entity_id: 'binary_sensor.missing' } });
+  const c = { ...config, telemetry: [{ kind: 'window', entity, attribute: 'window_manager.window_state' }] };
+  assert.equal(buildModel(h, c, identity).headerTelemetry[0].status, 'available');
+  c.telemetry[0].attribute = 'window_manager.window_auto_state';
+  assert.equal(buildModel(h, c, vtIdentity).headerTelemetry[0].status, 'available');
+  c.telemetry[0].attribute = 'window_manager.window_state';
+  h.states[entity].attributes.is_window_configured = false;
+  assert.equal(buildModel(h, c, vtIdentity).headerTelemetry[0].status, 'disabled');
+});
+
 test('connection and entity availability gate every command', () => {
   for (const state of ['unknown', 'unavailable', '']) {
     const h = fixture(); h.states[entity].state = state;
