@@ -1,6 +1,6 @@
 # Thermal Intelligence architecture contract
 
-Status: architecture contract with a local standalone frontend implementation. The optional backend and later cards remain planned.
+Status: architecture contract with a standalone frontend implementation on `senyo888-patch-1`. The optional backend and later cards remain planned.
 
 ## Ownership and layers
 

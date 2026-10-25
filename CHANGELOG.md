@@ -2,10 +2,12 @@
 
 No stable release exists yet.
 
-## 0.1.0-beta.1 — prepared 25 October 2026
+## 0.1.0-beta.1 — untagged beta, 25 October 2026
 
 - Separate beta card/editor registrations allow existing TI cards to coexist without renaming the legacy installation. The canonical layout, dialogs and LED animation are retained. The lock is reduced to 14 px and header/status icons are aligned with their text.
 - Keep the dark settings popup input background explicit so text remains readable under light and dark HA themes; the native HA card editor still follows its host theme.
+- Add the public beta presentation, dry graphite header and synthetic UI captures.
+- Verify test-environment coexistence, first-install rollback, update rollback and reapplication; bind the exact tested module in the [beta guide](docs/beta.md).
 - Add exact-commit packaging, deterministic manifests, coexistence tests and redacted secret/public-data scans. See [installation and rollback](docs/migration.md).
 
 ## Unreleased — public identity, 2026-10-25

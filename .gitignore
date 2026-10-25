@@ -13,4 +13,7 @@ test-results/
 output/playwright/
 *.log
 
-# dist/ is intentionally not ignored: release layout is still a design decision.
+# The reviewed beta module in dist/ is tracked for exact-commit installation.
+# Private local adapters and browser outputs are not public contracts.
+/.codex/
+/output/
