@@ -31,7 +31,7 @@ Humidity presentation restores the original four-boundary defaults: `dry_below: 
 
 Existing typed `telemetry` rows remain supported and editable. When a direct mapping is absent, the first matching typed row may supply its surface. A direct mapping takes precedence over a different source; a matching typed observation of the same entity state retains its explicit metadata and freshness rule. Invalid or unavailable explicit mappings do not fall back to alternative entities.
 
-Unknown top-level keys and unknown fields inside feature rows, telemetry rows and humidity bands survive editor round trips. Their preservation is not evidence that private features have been implemented. The existing card's backend-dependent ownership, timetable, cutoff, recovery and corroborated heating-response behavior still require their own public contracts; visual preservation does not silently activate those control paths.
+Unknown top-level keys and unknown fields inside feature rows, telemetry rows and humidity bands survive editor round trips. Their preservation is not evidence that private features have been implemented. The existing card's backend-dependent ownership, timetable, cutoff and recovery behavior still require their own public contracts; visual preservation does not silently activate those control paths.
 
 Schema version remains `1` for the initial beta. Reopen saved configurations in the visual editor, verify the selected background and all explicit source mappings, then exercise the synthetic preview with an empty setup state, unavailable sources and separate card instances. Configuration changes and reopening must produce zero service writes. Keep the previous candidate bundle and saved configuration if comparing or rolling back local preview work.
 
@@ -50,3 +50,9 @@ To roll back the first beta installation, remove only its new test view/cards an
 Saved card configuration and beta card/editor names are unchanged. Beta.2 adds automatic lock-dialog access for verified administrators when the selected VT reports complete lock capabilities. Ordinary accounts remain read-only. The code, if configured, is entered at runtime and is never a card option. Normal user-lock restrictions still apply to temperature, mode and preset controls. See [lock control](lock-control.md) for provider scope and code-handling limits.
 
 Retain the tested beta.1 bundle and its resource URL. To roll back, restore that URL and open a fresh browser document; no dashboard schema migration or Core restart is required. Reverting the frontend does not undo a deliberate provider lock command: check VT's actual reported state and restore it intentionally where required.
+
+## beta.2 to beta.3: canonical response arc
+
+Schema 1, card identity and existing saved mappings are unchanged. Optional `response_arc` fields are additive and preserved with their unknown nested fields by the visual editor. Existing cards keep their comparison fallback until explicit response sources are selected; legacy `overview` or `recovery_entity` keys are not repurposed. The source-dependent orange response is now implemented under the [public evidence contract](provider-contracts.md#temperature-response-evidence).
+
+Retain the beta.2 bytes, resource URL and saved configuration before updating. Beta.2 preserves the new object as unknown configuration but cannot display the corroborated warming state. Restoring the beta.2 resource and opening a fresh document rolls back the frontend; no provider settings or heating state are changed by these display mappings.

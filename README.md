@@ -6,7 +6,7 @@
 
 Created and maintained by **[Senyo · senyo888](https://github.com/senyo888)**.
 
-**Beta 0.1.0-beta.2** · Home Assistant dashboard card · GPL-3.0-only software
+**Beta 0.1.0-beta.3** · Home Assistant dashboard card · GPL-3.0-only software
 
 [Beta installation](docs/beta.md) · [Configuration](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md) · [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/compatibility.md) · [Report an issue](https://github.com/senyo888/thermal-intelligence/issues/new/choose)
 
@@ -19,7 +19,7 @@ Thermal Intelligence brings current and target temperatures, supported thermosta
   </tr>
 </table>
 
-*Actual beta UI, rendered with synthetic data. These images contain no private home configuration.*
+*Actual beta.2 UI, rendered with synthetic data. The beta.3 response correction is described below. These images contain no private home configuration.*
 
 ## More information, without a crowded card
 
@@ -29,12 +29,14 @@ The everyday view stays simple: the room temperature, your target, a clear statu
 
 | Detail | What it tells you |
 | --- | --- |
-| **Glass dial and outer arc** | The large reading is the current temperature; the pearl marker locates your target on the scale. In this beta, the arc compares temperature with the target: blue below, green at or just above, and lavender further above. Reported cooling has a cyan treatment; Off and unavailable states are muted. Drag the target marker or use the minus/plus controls within the thermostat's reported limits. |
+| **Glass dial and outer arc** | The large reading is the current temperature; the pearl marker locates your target on the scale. The arc changes with the room's reported state and temperature response: orange for corroborated warming below target, cyan for reported cooling, green in the target band and lavender above it. Blue below target means warming is not yet established; Off and unavailable states are muted. Drag the marker or use minus/plus within the thermostat's reported limits. |
 | **Temperature-slope ring** | The fine ring around the sphere shows the direction of temperature change from your configured trend source. Warm orange/red tones indicate rising readings, blues indicate falling readings, and green or pale tones indicate a near-flat trend. The accompanying Rising, Falling or Stable label gives the rate and units, so the colour has an explanation. Missing trend data is shown as unavailable. |
 | **Dynamic status chip** | The chip adapts to the available evidence: reported Heating, Cooling or Idle; **Heat requested** for VT; or **TRV Open/Closed** with a reported valve percentage when mapped. **Heat enabled** means the mode is selected when activity is not reported. Tap the chip for the overview and the source behind the status. |
 | **Status LED** | The small LED summarises connection and readiness: green for the card's ready state, amber when controls or observations need attention, and red when disconnected or unavailable. Tap it to open temperatures, modes, provider details and request status. A press-and-hold opens the registered device's Home Assistant settings, with thermostat details as the fallback. |
 
-The outer arc, slope ring and activity chip describe different things: temperature against target, measured temperature change, and reported activity. A room can still be warming while its valve is closed. An open valve does not establish that heat is being delivered.
+The outer arc, slope ring and activity chip are deliberately independent: the arc combines the room's state with corroborated temperature response, the fine ring shows measured temperature slope, and the chip reports activity. Idle is a reported activity, not a universal arc colour. A rising temperature slope can continue after the valve closes; the closed TRV does not establish an orange response arc.
+
+**Orange has a specific meaning.** With the optional VT response sources configured, the room must be below its effective target, the current heat request must be accepted, and fresh room and trend readings must agree that it is warming. An open valve or a heating request alone is insufficient. When those observations expire, the arc returns to blue and the LED overview explains why. Standard thermostats and cards without response mappings retain the temperature comparison and reported cooling colours; they do not invent accepted-output evidence. [Response setup and colour meanings](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md#temperature-response-arc).
 
 The staggered glint of the small lights around the dial and the slope ring's gentle breathing preserve the original glass-and-light character. They add depth without replacing readable values or status text, and respect reduced-motion preferences.
 
@@ -90,7 +92,7 @@ Ordinary setup is visual: **Add Card → Thermal Intelligence Thermostat · Beta
   </tr>
 </table>
 
-*Privacy-edited examples supplied by Senyo, with anonymised room names. Their source version was not recorded; the beta.2 captures above remain the versioned reference.*
+*Privacy-edited examples supplied by Senyo, with anonymised room names. Their source version was not recorded; the beta.2 captures above retain their recorded version.*
 
 </details>
 
@@ -110,7 +112,7 @@ Ordinary setup is visual: **Add Card → Thermal Intelligence Thermostat · Beta
 
 Window detection separates the detector state, configured response and reported valve opening. **Heat enabled** identifies the selected HVAC mode; it does not prove active heating.
 
-*Privacy-edited examples supplied by Senyo, with anonymised names. Their source version was not recorded; the beta.2 captures above remain the versioned reference.*
+*Privacy-edited examples supplied by Senyo, with anonymised names. Their source version was not recorded; the beta.2 captures above retain their recorded version.*
 
 </details>
 
