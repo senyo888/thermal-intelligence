@@ -62,7 +62,7 @@ export function buildResponseArc({ hass, config, climate, trendSource, valve, no
   const blue = (reason, explanation, expiresAt = null) => result(COLORS.below, reason, explanation, delta, expiresAt);
   if (effective === 'off') return result(COLORS.off, 'off', 'Room heating is switched off.', delta);
 
-  const trv = valve !== null && valve !== undefined || !!mapping.confirmed_output;
+  const trv = valve !== null && valve !== undefined && valve.status !== 'disabled' || !!mapping.confirmed_output;
   const native = source(hass, mapping.native_thermostat);
   const nativeAction = mapping.native_thermostat ? live(native) && native.state !== 'off' ? native.attributes?.hvac_action : null : climate.action;
   // Canonical TRV output has no cooling action: valve opening is distinct evidence.

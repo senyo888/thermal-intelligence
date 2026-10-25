@@ -64,6 +64,29 @@ test('legacy config remains inert and standard climates retain reported comparis
   arc = read(f, NOW, standard); assert.equal(arc.color, '#66cfff'); assert.equal(arc.responding, false);
 });
 
+test('disabled valve placeholders leave the native response route available, while configured valve failures do not', () => {
+  for (const configure of [
+    (f) => { f.config.valve_position_entity = ''; },
+    (f) => { f.config.telemetry = [{ kind: 'valve', entity: '' }]; },
+  ]) {
+    const f = fixture(); configure(f);
+    assert.equal(read(f).responding, true);
+    assert.equal(read(f).reason, 'warming');
+  }
+  for (const state of ['unknown', 'unavailable', null]) {
+    const f = fixture(); f.config.valve_position_entity = 'sensor.response_valve';
+    if (state === null) delete f.hass.states['sensor.response_valve'];
+    else f.hass.states['sensor.response_valve'].state = state;
+    assert.equal(read(f).responding, false);
+    assert.equal(read(f).reason, 'trv_not_open');
+  }
+  const typed = fixture(); typed.config.telemetry = [{ kind: 'valve', entity: 'sensor.missing_valve' }];
+  assert.equal(read(typed).reason, 'trv_not_open');
+  const explicit = fixture(true); explicit.config.valve_position_entity = '';
+  assert.equal(read(explicit).responding, false);
+  assert.equal(read(explicit).reason, 'trv_not_open');
+});
+
 test('known readiness, identity, unit, scalar target and range guards cannot be bypassed by response mappings', () => {
   const changes = [
     (f) => { f.hass.connected = false; }, (f) => { f.attrs.is_ready = undefined; }, (f) => { f.attrs.is_ready = false; },
