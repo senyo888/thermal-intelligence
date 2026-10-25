@@ -67,10 +67,32 @@ test('known VT cannot bypass missing, false or malformed readiness with standard
 test('VT lock restrictions distinguish user locks from automation-only locks', () => {
   const h = fixture({ is_ready: true, is_lock_configured: true, specific_states: { is_locked: true } });
   assert.equal(buildModel(h, config, vtIdentity).canSet, false);
+  assert.equal(buildModel(h, config, vtIdentity).lock.status, 'locked');
   h.states[entity].attributes.lock_manager = { lock_users: false };
   assert.equal(buildModel(h, config, vtIdentity).canSet, true);
+  assert.equal(buildModel(h, config, vtIdentity).lock.status, 'locked');
   delete h.states[entity].attributes.specific_states.is_locked;
   assert.equal(buildModel(h, config, vtIdentity).canSet, false);
+  assert.equal(buildModel(h, config, vtIdentity).lock.status, 'unknown');
+});
+
+test('VT lock indication requires provider evidence and never invents an unlocked state', () => {
+  const h = fixture({ is_ready: true, is_lock_configured: true, specific_states: { is_locked: false } });
+  const read = () => buildModel(h, config, vtIdentity).lock;
+  assert.equal(read().status, 'unlocked');
+  assert.equal(buildModel(h, config, identity).lock, null);
+  for (const value of [undefined, null, 'false', 0, 'true']) {
+    h.states[entity].attributes.specific_states.is_locked = value;
+    assert.equal(read().status, 'unknown');
+  }
+  h.states[entity].attributes.specific_states.is_locked = false;
+  h.connected = false; assert.equal(read().status, 'unavailable');
+  h.connected = true; h.states[entity].state = 'unavailable'; assert.equal(read().status, 'unavailable');
+  h.states[entity].state = 'heat'; h.states[entity].attributes.is_lock_configured = false;
+  assert.equal(read(), null);
+  delete h.states[entity].attributes.is_lock_configured;
+  delete h.states[entity].attributes.specific_states;
+  assert.equal(read(), null);
 });
 
 test('connection and entity availability gate every command', () => {

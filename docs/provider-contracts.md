@@ -10,6 +10,8 @@ The card obtains one matching registry entry with the read-only WebSocket reques
 
 An available state and a connected Home Assistant session are required for every control. VT additionally requires a literal boolean `is_ready: true`. False, missing, numeric and string values do not satisfy readiness. VT defines readiness as completed startup and initialized underlying devices. A reported lock disables user commands unless `lock_manager.lock_users` explicitly says false; a configured lock with unknown state also disables commands. This preview cannot unlock a provider.
 
+The small lock/unlock icon beside the card name reports VT's `specific_states.is_locked` boolean. It is an indicator, with an accessible label and tooltip. It sends no service call. A configured lock with missing or malformed state displays a question-mark lock; disconnected or unavailable observations cannot display an unlocked state. No icon is added to standard thermostats or an unconfigured VT lock. Lock state and lock scope remain separate: an automation-only lock may be shown while user controls remain enabled.
+
 Each control requires its corresponding entry in `hass.services.climate`. Temperature service availability does not establish preset, mode, fan or swing availability. A failure in optional telemetry does not disable otherwise valid climate commands.
 
 ## Climate capabilities

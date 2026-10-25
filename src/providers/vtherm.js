@@ -2,6 +2,18 @@
 import { readOwnPath } from '../model/telemetry.js';
 import { finiteNumber } from '../model/config.js';
 
+/** A reported lock is separate from readiness and from the scope of that lock. */
+export function vthermLock(attributes, observable) {
+  const locked = readOwnPath(attributes, 'specific_states.is_locked').value;
+  const configured = readOwnPath(attributes, 'is_lock_configured').value;
+  if (configured !== true && locked !== true && (configured === false || typeof locked !== 'boolean')) return null;
+  if (!observable) return { status: 'unavailable', label: 'VT lock state unavailable', icon: 'mdi:lock-question' };
+  if (typeof locked !== 'boolean') return { status: 'unknown', label: 'VT lock state unknown', icon: 'mdi:lock-question' };
+  return locked
+    ? { status: 'locked', label: 'VT locked', icon: 'mdi:lock-outline' }
+    : { status: 'unlocked', label: 'VT unlocked', icon: 'mdi:lock-open-variant-outline' };
+}
+
 function regulationDetails(attributes, observable) {
   const type = readOwnPath(attributes, 'configuration.type').value;
   const proportional = ['over_switch', 'over_valve', 'over_climate_valve'];

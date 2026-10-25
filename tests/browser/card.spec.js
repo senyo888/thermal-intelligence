@@ -112,6 +112,35 @@ test('known VT cannot bypass unready gating with standard configuration',async({
   expect(await calls(page)).toEqual([]);
 });
 
+test('VT lock icon follows reported state and lock scope without issuing commands',async({page})=>{
+  await reset(page,'vt');
+  const indicator=card(page).locator('[data-lock-state]');
+  await expect(indicator).toHaveCount(0);
+  await page.evaluate(()=>{Object.assign(fixture.hass.states['climate.fixture_thermostat'].attributes,{is_lock_configured:true,specific_states:{is_locked:false},lock_manager:{lock_users:true}});fixture.refresh();});
+  await expect(indicator).toHaveAttribute('aria-label','VT unlocked');
+  await expect(indicator.locator('ha-icon')).toHaveAttribute('icon','mdi:lock-open-variant-outline');
+  await expect(increase(page)).toBeEnabled();
+  await page.evaluate(()=>{fixture.hass.states['climate.fixture_thermostat'].attributes.specific_states.is_locked=true;fixture.refresh();});
+  await expect(indicator).toHaveAttribute('aria-label','VT locked');
+  await expect(indicator.locator('ha-icon')).toHaveAttribute('icon','mdi:lock-outline');
+  await expect(increase(page)).toBeDisabled();
+  await expand(page);
+  await expect(card(page).getByRole('combobox',{name:'HVAC mode',exact:true})).toBeDisabled();
+  await indicator.click();
+  await page.evaluate(()=>{fixture.hass.states['climate.fixture_thermostat'].attributes.lock_manager.lock_users=false;fixture.refresh();});
+  await expect(indicator).toHaveAttribute('data-lock-state','locked');
+  await expect(increase(page)).toBeEnabled();
+  await page.evaluate(()=>{delete fixture.hass.states['climate.fixture_thermostat'].attributes.specific_states.is_locked;fixture.refresh();});
+  await expect(indicator).toHaveAttribute('aria-label','VT lock state unknown');
+  await expect(increase(page)).toBeDisabled();
+  await page.evaluate(()=>{fixture.hass.connected=false;fixture.refresh();});
+  await expect(indicator).toHaveAttribute('aria-label','VT lock state unavailable');
+  await page.evaluate(()=>{fixture.hass.connected=true;fixture.hass.states['climate.fixture_thermostat'].attributes.specific_states.is_locked=false;fixture.refresh();});
+  await expect(indicator).toHaveAttribute('aria-label','VT unlocked');
+  await expect(increase(page)).toBeEnabled();
+  expect(await calls(page)).toEqual([]);
+});
+
 test('Fahrenheit and dual range preserve units and the other endpoint',async({page})=>{
   await reset(page,'fahrenheit');await increase(page).click();
   expect((await calls(page))[0].payload.temperature).toBe(71);

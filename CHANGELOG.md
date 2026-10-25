@@ -2,6 +2,11 @@
 
 No public release exists yet.
 
+## Unreleased — VT lock indication, 2026-10-25
+
+- Added a small lock/unlock icon beside the card name, based only on VT's reported lock state. Unknown or unavailable lock data is distinct; the icon sends no commands and preserves existing user-lock restrictions.
+- Defined VT (Versatile Thermostat) and TRV (thermostatic radiator valve) in the README and expanded TRV in valve documentation.
+
 ## Unreleased — interaction fix, 2026-10-25
 
 - Keep unchanged thermostat controls mounted across unrelated Home Assistant updates, so native mode menus remain usable. Preserve live availability gating and restore reported targets after cancelled drafts. The source animation phase is stable per card instance; rendered geometry and canonical comparison pixels are unchanged.

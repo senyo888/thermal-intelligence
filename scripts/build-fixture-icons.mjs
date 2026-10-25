@@ -2,7 +2,7 @@
 // Development-only MDI renderer. Home Assistant supplies ha-icon in production.
 import * as mdi from '@mdi/js';
 import { writeFile } from 'node:fs/promises';
-const names = 'calendar-clock fire flash gauge hand-back-right help-circle-outline home-account home-thermometer information-outline leaf lightning-bolt link-variant menu motion-sensor motion-sensor-off pipe-valve progress-clock radiator-off snowflake sofa sofa-outline thermometer thermometer-check thermometer-high transmission-tower trending-up tune-variant water-percent window-closed-variant window-open-variant'.split(' ');
+const names = 'calendar-clock fire flash gauge hand-back-right help-circle-outline home-account home-thermometer information-outline leaf lightning-bolt link-variant lock-outline lock-open-variant-outline lock-question menu motion-sensor motion-sensor-off pipe-valve progress-clock radiator-off snowflake sofa sofa-outline thermometer thermometer-check thermometer-high transmission-tower trending-up tune-variant water-percent window-closed-variant window-open-variant'.split(' ');
 const paths = Object.fromEntries(names.map(name => {
   const key = 'mdi' + name.split('-').map(part => part[0].toUpperCase() + part.slice(1)).join('');
   if (!mdi[key]) throw new Error(`Missing fixture icon: ${name}`);

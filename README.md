@@ -6,6 +6,8 @@ Status: **local development preview, 25 October 2026**. The standalone card, vis
 
 The preview provides target/current temperatures, advertised modes and presets including provider-exposed Frost, range/fan/swing capabilities, optional telemetry and VT readiness checks. It registers an **Add Card entry and a visual editor**. Neither the TI backend nor Humidity Intelligence is required. Home Assistant Generic Thermostat and specifically tested Versatile Thermostat versions are the intended initial release targets.
 
+**VT** means **Versatile Thermostat**; **TRV** means **thermostatic radiator valve**. Valve opening is shown separately from a request for heat.
+
 The product roadmap also includes House Climate, Effective Mode, Heating Control Centre, an optional portable backend and full mobile/tablet dashboards. These are planned components, not installed features.
 
 The customer component preserves the established TI glass/dome design.

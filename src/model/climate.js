@@ -2,7 +2,7 @@
 import { finiteNumber, normalizeConfig } from './config.js';
 import { buildSourceTelemetry } from './telemetry.js';
 import { providerReadiness, resolveProvider } from '../providers/identity.js';
-import { vthermDetails } from '../providers/vtherm.js';
+import { vthermDetails, vthermLock } from '../providers/vtherm.js';
 
 export const FEATURES = Object.freeze({ TARGET_TEMPERATURE: 1, TARGET_TEMPERATURE_RANGE: 2, FAN_MODE: 8, PRESET_MODE: 16, SWING_MODE: 32, SWING_HORIZONTAL_MODE: 512 });
 const own = (object, key) => object != null && Object.hasOwn(object, key);
@@ -74,6 +74,7 @@ export function buildModel(hass, rawConfig, identity = null, { now = Date.now() 
   return {
     entity: config.entity, name: config.name || attr(attributes, 'friendly_name') || config.entity || 'Thermal Intelligence',
     provider, connected, available, ready, readiness, unit, min, max, step, stepSource,
+    lock: provider.kind === 'vtherm' ? vthermLock(attributes, connected && available) : null,
     keys, targets, ranged, current, choices, canSet, reason,
     attrs: attributes, state: state?.state ?? null, action: available ? attr(attributes, 'hvac_action') ?? null : null,
     activity: activityFor(state, provider, available, connected),

@@ -33,4 +33,11 @@ ha-card{border-color:#607b9b42;box-shadow:inset 0 1px 0 #d5e7ff09,0 8px 24px #00
 .target strong{font-variant-numeric:tabular-nums}
 .disclosure span{box-shadow:inset 0 1px 0 #ffffff05}
 `;
-export const styles=STYLE+CARD_POLISH;
+// Small provider-state indicator; the canonical geometry is unchanged when absent.
+const LOCK_INDICATOR = `
+.lock-indicator{display:inline-flex;align-items:center;justify-content:center;flex:0 0 18px;width:18px;height:24px;color:#a9b8cb}
+.lock-indicator ha-icon{--mdc-icon-size:18px;width:18px;height:18px}
+.lock-indicator[data-lock-state=locked]{color:#efb86b}
+.lock-indicator[data-lock-state=unknown],.lock-indicator[data-lock-state=unavailable]{color:#8795a8}
+`;
+export const styles=STYLE+CARD_POLISH+LOCK_INDICATOR;
