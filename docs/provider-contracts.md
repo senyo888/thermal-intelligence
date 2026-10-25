@@ -12,7 +12,7 @@ An available state and a connected Home Assistant session are required for every
 
 The small lock/unlock icon beside the card name reports VT's `specific_states.is_locked` boolean. It has an accessible label and tooltip. It remains read-only for ordinary users or incomplete capabilities; verified administrators can open a compact dialog and deliberately request a native VT lock/unlock action. Opening the dialog sends no service call. Lock-only explanatory text stays in the overview and accessible status, keeping the collapsed card compact. A configured lock with missing or malformed state displays a question-mark lock; disconnected or unavailable observations cannot display an unlocked state. No icon is added to standard thermostats or an unconfigured VT lock. Lock state and lock scope remain separate: an automation-only lock may be shown while user controls remain enabled.
 
-Each control requires its corresponding entry in `hass.services.climate`. Temperature service availability does not establish preset, mode, fan or swing availability. A failure in optional telemetry does not disable otherwise valid climate commands.
+Each ordinary climate control requires its corresponding entry in `hass.services.climate`. Temperature service availability does not establish preset, mode, fan or swing availability. A failure in optional telemetry does not disable otherwise valid climate commands.
 
 ## Climate capabilities
 

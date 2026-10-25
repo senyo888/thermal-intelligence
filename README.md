@@ -37,13 +37,22 @@ Home Assistant and the selected thermostat remain in charge. Missing readings ar
 
 </details>
 
+<details>
+<summary>See administrator lock controls</summary>
+
+<img src="assets/presentation/lock-controls.png" alt="Administrator lock dialog showing a locked synthetic thermostat, its lock scope and an explicit Unlock thermostat action" width="390">
+
+*The code field appears only when VT reports a configured code. [Lock behavior and code-handling limits](docs/lock-control.md).*
+
+</details>
+
 ## Try the beta
 
 The installable beta and its source are on **[senyo888-patch-1](https://github.com/senyo888/thermal-intelligence/tree/senyo888-patch-1)**. Start with the [verified package and installation guide](docs/beta.md).
 
 The beta has separate card and editor names so it can coexist with an existing Thermal Intelligence installation. Keep existing cards and resources in place, and add **Thermal Intelligence Thermostat · Beta** for testing.
 
-Testing covers HA **2026.10.0**, VT **10.5.1**, inert controller fixtures, installation, removal/reinstallation and update/rollback. Physical thermostats, production deployment, a minimum supported version range and HACS installation remain unverified. This is a beta for controlled testing; there is no stable release yet.
+Testing covers HA **2026.10.0**, VT **10.5.1**, inert controller fixtures, installation, removal/reinstallation, update/rollback and deliberate no-code lock commands with automatic relocking. Code/error paths have synthetic coverage only. Physical thermostats, production deployment, a minimum supported version range and HACS installation remain unverified. This is a beta for controlled testing; there is no stable release yet.
 
 ## Project direction
 

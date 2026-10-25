@@ -1,6 +1,6 @@
 # Build and dependency inventory
 
-Candidate `0.1.0-beta.1` uses native custom elements, DOM, CSS and Home Assistant's supplied `hass` API. The JavaScript bundle has **no third-party runtime modules, remote fonts, runtime downloads or generated brand assets**. The renderer preserves the existing TI design and uses Home Assistant's `ha-icon` for named icons. The build rejects non-`src/` inputs and external module imports.
+Candidate `0.1.0-beta.2` uses native custom elements, DOM, CSS and Home Assistant's supplied `hass` API. The JavaScript bundle has **no third-party runtime modules, remote fonts, runtime downloads or generated brand assets**. The renderer preserves the existing TI design and uses Home Assistant's `ha-icon` for named icons. The build rejects non-`src/` inputs and external module imports.
 
 | Development dependency | Pinned version | Package licence | Role |
 | --- | --- | --- | --- |
