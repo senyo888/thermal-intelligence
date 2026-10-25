@@ -404,7 +404,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     const model = this.model(), status = this._coordinator.status;
     const focused = this.shadowRoot.activeElement?.getAttribute('data-focus');
     const headerScroll = this.shadowRoot.querySelector('[data-header-telemetry]')?.scrollLeft || 0;
-    const statusMessage = this._draftMessage || (status.phase !== 'idle' ? status.message : this._registryStatus === 'loading' ? 'Checking thermostat provider identity…' : model.reason || '');
+    const statusMessage = this._draftMessage || (status.phase !== 'idle' ? status.message : this._registryStatus === 'loading' ? 'Checking thermostat provider identity…' : model.readiness.status === 'locked' ? '' : model.reason || '');
     // Unrelated HA updates must not replace an open native select or its focus.
     // Readiness, capabilities and command status still participate in this markup.
     const html = `<style>${styles}</style>` + renderCard({ config:this.config,model,open:this._open,allowed:this._guard(model).allowed,busy:this._coordinator.busy,

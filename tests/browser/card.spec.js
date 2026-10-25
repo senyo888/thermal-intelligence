@@ -123,6 +123,8 @@ test('VT lock icon follows reported state and lock scope without issuing command
   await page.evaluate(()=>{fixture.hass.states['climate.fixture_thermostat'].attributes.specific_states.is_locked=true;fixture.refresh();});
   await expect(indicator).toHaveAttribute('aria-label','VT locked');
   await expect(indicator.locator('ha-icon')).toHaveAttribute('icon','mdi:lock-outline');
+  await expect(card(page).locator('[data-request-status]')).toBeHidden();
+  await expect(card(page).locator('.condition')).not.toContainText('locked');
   await expect(increase(page)).toBeDisabled();
   await expand(page);
   await expect(card(page).getByRole('combobox',{name:'HVAC mode',exact:true})).toBeDisabled();
