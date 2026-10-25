@@ -2,6 +2,10 @@
 
 No public release exists yet.
 
+## Unreleased — test-environment validation, 2026-10-25
+
+- Installed the development module in HA 2026.10.0 and exercised Generic Thermostat plus four VT 10.5.1 control paths with inert outputs. Added separate setup/unavailable/readiness failure cards and varied per-card header fixtures.
+
 ## Unreleased — coherent header states, 2026-10-25
 
 - Restored canonical window Open/Closed, motion Detected/Clear, presence Home/Away, power Limiting/Normal and Follow On/Off presentation through explicit visual telemetry types. Window and motion glyphs change with state; active colours and muted degraded states match the source design.

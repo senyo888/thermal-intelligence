@@ -1,6 +1,6 @@
 # Card configuration and local preview
 
-This document describes the implemented development preview. Home Assistant **2026.10.x** and Versatile Thermostat **10.5.1** are intended contract targets. Current validation uses synthetic fixtures; it does not establish a live installation, supported version range, physical heating response or product release.
+This document describes the implemented development preview. Home Assistant **2026.10.x** and Versatile Thermostat **10.5.1** are intended contract targets. Validation includes synthetic fixtures and scoped test-environment checks. It does not establish a supported version range, physical heating response or product release.
 
 The card presents a selected climate entity, its advertised controls and explicit optional observations. It does not need a TI backend, create schedules or take ownership of an existing controller. See the [provider contracts](provider-contracts.md) for capability and evidence rules, and the [command contract](command-contract.md) for request tracking and uncertainty.
 
@@ -237,4 +237,4 @@ Only deliberate runtime controls may request a supported service. Setup, visual 
 
 Mouse and keyboard temperature drafts share context checks. A concurrent target, unit, mode, provider, readiness, configuration or session change cancels the draft instead of sending an edit derived from outdated context.
 
-The local preview cannot establish authenticated HA onboarding, live registry behavior, real provider compatibility, HACS installation, cache/update recovery, physical phone/tablet interaction or heating-device response. Those need separate evidence against an identified candidate before support or release claims change.
+The synthetic preview alone cannot establish authenticated HA behavior. Separate Lab evidence covers narrow onboarding, registry, controller and resource-loading checks. HACS distribution, complete cache/update/rollback recovery, physical phone/tablet interaction and heating-device response remain outstanding before support or release claims change.

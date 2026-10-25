@@ -64,4 +64,4 @@ HI remains the authority for its seasonal humidity targets, Stability, selected 
 | `ui-gallery/` | Canonical portable examples with dependency/version notes and previews |
 | `.github/` | Issue forms, PR template, ownership and validated CI/release workflows |
 
-Only foundation documents exist now. Do not create a misleading integration payload or a backend stub to fill the proposed tree. HACS packaging has its own [distribution contract](docs/distribution.md).
+The standalone frontend, visual editor and test harness are implemented. The optional backend, website and later cards remain planned; do not add a backend stub merely to fill the proposed tree. HACS packaging has its own [distribution contract](docs/distribution.md).

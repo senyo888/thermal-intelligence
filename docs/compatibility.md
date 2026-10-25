@@ -1,6 +1,6 @@
 # Compatibility and validation matrix
 
-Development preview, 25 October 2026. Local model, command, editor and Chromium fixture tests exercise candidate `0.1.0-dev.1`. **No live HA/provider version row is validated yet.** HA 2026.10.x and VT 10.5.1 inform the current contracts, not a support guarantee or minimum-version claim.
+Development preview, 25 October 2026. Local model, command, editor and Chromium fixture tests exercise candidate `0.1.0-dev.1`. Dedicated Lab checks now cover HA 2026.10.0 Generic Thermostat and VT 10.5.1 through switch, climate, direct-valve and combined climate/valve paths. This is scoped validation with inert outputs, not a support guarantee or minimum-version claim.
 
 ## Target matrix
 

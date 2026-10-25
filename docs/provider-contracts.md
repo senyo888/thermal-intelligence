@@ -1,6 +1,6 @@
 # Provider and observation contracts
 
-This preview targets the public Home Assistant 2026.10 climate contract and Versatile Thermostat (VT) 10.5.1 attribute contract. These are implementation targets checked against upstream source, not claims of a validated installation, physical heating response, compatibility certification or release readiness. Unit tests use synthetic entities.
+This preview targets the public Home Assistant 2026.10 climate contract and Versatile Thermostat (VT) 10.5.1 attribute contract. These contracts were checked against upstream source and scoped test fixtures. They do not establish physical heating response, broad compatibility certification or release readiness. Unit tests use synthetic entities.
 
 ## Identity and control eligibility
 
