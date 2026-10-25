@@ -2,6 +2,13 @@
 
 No stable release exists yet.
 
+## 0.1.0-beta.2 — untagged beta, 25 October 2026
+
+- Make the compact VT lock icon actionable for verified Home Assistant administrators through an explicit Lock/Unlock dialog; keep ordinary users and incomplete capabilities read-only.
+- Use native VT services and the shared command guard. Preserve provider lock scope, required codes and automatic relocking, with no optimistic state change or replay.
+- Keep code input outside card configuration and request records; suppress raw provider errors and document the VT 10.5.1 upstream error-text limitation.
+- Preserve the 14 px glyph in a non-overlapping 44 px target. No saved-configuration migration is required; retain beta.1 for frontend rollback. See [lock control](docs/lock-control.md).
+
 ## 0.1.0-beta.1 — untagged beta, 25 October 2026
 
 - Separate beta card/editor registrations allow existing TI cards to coexist without renaming the legacy installation. The canonical layout, dialogs and LED animation are retained. The lock is reduced to 14 px and header/status icons are aligned with their text.

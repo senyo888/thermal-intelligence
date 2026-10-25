@@ -6,7 +6,7 @@
 
 Created and maintained by **[Senyo · senyo888](https://github.com/senyo888)**.
 
-**Beta 0.1.0-beta.1** · Home Assistant dashboard card · GPL-3.0-only software
+**Beta 0.1.0-beta.2** · Home Assistant dashboard card · GPL-3.0-only software
 
 [Beta installation](docs/beta.md) · [Configuration](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md) · [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/compatibility.md) · [Report an issue](https://github.com/senyo888/thermal-intelligence/issues/new/choose)
 
@@ -25,7 +25,7 @@ Thermal Intelligence brings current and target temperatures, supported thermosta
 - **Temperature control:** current and target readings, a draggable dial and controls that respect the thermostat's reported limits and capabilities.
 - **Modes and presets:** supported modes, presets and provider-exposed Frost, with additional controls shown where available.
 - **Useful detail:** configurable top-row icons and focused popups for humidity, temperature trend, valve opening and provider features.
-- **Versatile Thermostat awareness:** readiness, a simple lock indicator and configured feature states, including Window Open/Closed, Presence Home/Away and Motion Detected/Clear.
+- **Versatile Thermostat awareness:** readiness, a compact lock indicator with administrator [Lock/Unlock controls](docs/lock-control.md), and configured feature states, including Window Open/Closed, Presence Home/Away and Motion Detected/Clear.
 - **Visual setup:** find the card in Add Card, choose your thermostat and configure each card independently.
 
 Home Assistant and the selected thermostat remain in charge. Missing readings are shown honestly; an open valve is not presented as proof of delivered heat. **VT** means **Versatile Thermostat**. **TRV** means **thermostatic radiator valve**.
@@ -37,13 +37,22 @@ Home Assistant and the selected thermostat remain in charge. Missing readings ar
 
 </details>
 
+<details>
+<summary>See administrator lock controls</summary>
+
+<img src="assets/presentation/lock-controls.png" alt="Administrator lock dialog showing a locked synthetic thermostat, its lock scope and an explicit Unlock thermostat action" width="390">
+
+*The code field appears only when VT reports a configured code. [Lock behavior and code-handling limits](docs/lock-control.md).*
+
+</details>
+
 ## Try the beta
 
 The installable beta and its source are on **[senyo888-patch-1](https://github.com/senyo888/thermal-intelligence/tree/senyo888-patch-1)**. Start with the [verified package and installation guide](docs/beta.md).
 
 The beta has separate card and editor names so it can coexist with an existing Thermal Intelligence installation. Keep existing cards and resources in place, and add **Thermal Intelligence Thermostat · Beta** for testing.
 
-Testing covers HA **2026.10.0**, VT **10.5.1**, inert controller fixtures, installation, removal/reinstallation and update/rollback. Physical thermostats, production deployment, a minimum supported version range and HACS installation remain unverified. This is a beta for controlled testing; there is no stable release yet.
+Testing covers HA **2026.10.0**, VT **10.5.1**, inert controller fixtures, installation, removal/reinstallation, update/rollback and deliberate no-code lock commands with automatic relocking. Code/error paths have synthetic coverage only. Physical thermostats, production deployment, a minimum supported version range and HACS installation remain unverified. This is a beta for controlled testing; there is no stable release yet.
 
 ## Project direction
 
