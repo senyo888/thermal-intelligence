@@ -12,11 +12,12 @@ Created and maintained by **[Senyo · senyo888](https://github.com/senyo888)**.
 
 Thermal Intelligence brings current and target temperatures, supported thermostat controls and device observations into one considered interface. The glass dial, restrained lighting, responsive controls and focused detail panels are the actual customer component.
 
-<p align="center">
-  <img src="assets/presentation/thermostat.png" alt="Thermal Intelligence thermostat showing 20°C and a 21°C target" width="260">
-  &nbsp;
-  <img src="assets/presentation/thermostat-expanded.png" alt="The same thermostat with its controls expanded" width="260">
-</p>
+<table>
+  <tr>
+    <td valign="top" align="center"><img src="assets/presentation/thermostat.png" alt="Thermal Intelligence thermostat showing 20°C and a 21°C target" width="260"></td>
+    <td valign="top" align="center"><img src="assets/presentation/thermostat-expanded.png" alt="The same thermostat with its controls expanded" width="260"></td>
+  </tr>
+</table>
 
 *Actual beta UI, rendered with synthetic data. These images contain no private home configuration.*
 
