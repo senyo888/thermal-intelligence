@@ -11,4 +11,8 @@ playwright-report/
 test-results/
 *.log
 
-# dist/ is intentionally not ignored: release layout is still a design decision.
+# Runtime source and packages belong on senyo888-patch-1 at this stage.
+
+# Private local agent adapters and browser outputs are not public contracts.
+/.codex/
+/output/

@@ -1,6 +1,8 @@
 # Compatibility and validation matrix
 
-Foundation design, 25 October 2026. **No TI artifact or version row is validated yet.** Do not present intended providers as a support guarantee.
+Current beta: **0.1.0-beta.1**, HA **2026.10.0**, VT **10.5.1**. [The beta guide](beta.md) identifies the exact artifact and installation/rollback evidence. Earlier development rows below retain their own scope; physical hardware, broad version support and HACS installation are unverified.
+
+Development preview, 25 October 2026. Local model, command, editor and Chromium fixture tests exercise candidate `0.1.0-dev.1`. Dedicated Lab checks now cover HA 2026.10.0 Generic Thermostat and VT 10.5.1 through switch, climate, direct-valve and combined climate/valve paths. This is scoped validation with inert outputs, not a support guarantee or minimum-version claim.
 
 ## Target matrix
 

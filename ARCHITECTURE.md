@@ -1,6 +1,6 @@
 # Thermal Intelligence architecture contract
 
-Status: foundation design; implementation is not yet present in this repository.
+Status: architecture contract with a standalone frontend implementation on `senyo888-patch-1`. The optional backend and later cards remain planned.
 
 ## Ownership and layers
 
@@ -44,9 +44,9 @@ Define coalescing/cancellation behavior for rapid inputs and stale completions. 
 
 Use a versioned, validated card configuration with documented migrations. All declared first-release options must be available visually, including optional telemetry/provider details where retained. Preserve unknown/advanced fields during edits. Scope settings to a card instance unless the user explicitly selects a broader operation.
 
-Separate a no-entity setup state from operational validation. Stub generation, editor construction and preview have no device side effects. Escape dynamic text at DOM sinks. No unsafe HTML from entities, provider reason text or imported config. Retain `thermal-intelligence-card` registration and guard duplicate registration/resource loading without masking incompatible versions.
+Separate a no-entity setup state from operational validation. Stub generation, editor construction and preview have no device side effects. Escape dynamic text at DOM sinks. No unsafe HTML from entities, provider reason text or imported config. The beta registers only `thermal-intelligence-beta-card` and its editor, preserving legacy registrations. Guard duplicate resource loading without masking incompatible versions; see [migration](docs/migration.md).
 
-## Sibling contract
+## Optional Humidity Intelligence interoperability
 
 HI remains the authority for its seasonal humidity targets, Stability, selected lanes and reasons. TI may display an explicit supported HI contract with attribution; it must not reconstruct those semantics, add HI commands, or require HI installation. Local TI humidity colours are presentation preferences with separate labels.
 
@@ -64,4 +64,4 @@ HI remains the authority for its seasonal humidity targets, Stability, selected 
 | `ui-gallery/` | Canonical portable examples with dependency/version notes and previews |
 | `.github/` | Issue forms, PR template, ownership and validated CI/release workflows |
 
-Only foundation documents exist now. Do not create a misleading integration payload or a backend stub to fill the proposed tree. HACS packaging has its own [distribution contract](docs/distribution.md).
+The standalone frontend, visual editor and test harness are implemented. The optional backend, website and later cards remain planned; do not add a backend stub merely to fill the proposed tree. HACS packaging has its own [distribution contract](docs/distribution.md).
