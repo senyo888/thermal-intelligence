@@ -2,6 +2,10 @@
 
 No stable release exists yet.
 
+## Unreleased — presentation, 25 October 2026
+
+- Add privacy-edited Idle and Call for heat examples, with anonymised room labels and image provenance. Keep these supplied examples distinct from the versioned beta captures; no runtime change.
+
 ## 0.1.0-beta.2 — untagged beta, 25 October 2026
 
 - Make the compact VT lock icon actionable for verified Home Assistant administrators through an explicit Lock/Unlock dialog; keep ordinary users and incomplete capabilities read-only.

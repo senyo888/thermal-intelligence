@@ -47,6 +47,24 @@ Home Assistant and the selected thermostat remain in charge. Missing readings ar
 
 </details>
 
+<details>
+<summary>See Idle and Call for heat examples</summary>
+
+<table>
+  <tr>
+    <th>Idle</th>
+    <th>Call for heat</th>
+  </tr>
+  <tr>
+    <td valign="top" align="center"><img src="assets/presentation/thermostat-idle-example.png" alt="Privacy-edited TI example showing 20.7°C, Idle and a 20.5°C target" width="280"></td>
+    <td valign="top" align="center"><img src="assets/presentation/thermostat-call-for-heat-example.png" alt="Privacy-edited TI example showing 20°C, Call for heat, 78% valve opening and a 20.5°C target" width="280"></td>
+  </tr>
+</table>
+
+*Privacy-edited examples supplied by Senyo, with anonymised room names. Their source version was not recorded; the beta.2 captures above remain the versioned reference.*
+
+</details>
+
 ## Try the beta
 
 The installable beta and its source are on **[senyo888-patch-1](https://github.com/senyo888/thermal-intelligence/tree/senyo888-patch-1)**. Start with the [verified package and installation guide](docs/beta.md).
