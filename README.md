@@ -64,6 +64,9 @@ Choose which readings appear, their order, labels and icons for each card. Humid
 
 **Humidity presentation is customisable.** Set four boundaries for too dry, the start and end of your good range, and too wet. The display uses blue, amber, green, amber and red bands, with a reading and explanation in the humidity panel. These are visual preferences for this card; they do not change heating or humidity control. Save them through Home Assistant's visual card editor; the in-card adjustment panel provides a draft to copy.
 
+<details>
+<summary>Explore window details and administrator lock controls</summary>
+
 <table>
   <tr><th>Window details</th><th>Administrator lock controls</th></tr>
   <tr>
@@ -76,11 +79,16 @@ The window panel separates detector state, configured response and reported valv
 
 *Left: anonymised installation example, source build unrecorded. Right: actual beta.2 component with synthetic data and no configured code.*
 
+</details>
+
 ### Open only the controls you need
 
 The chevron reveals **Controls & features**: the thermostat's supported HVAC modes and presets, fan or swing choices where advertised, and relevant provider and telemetry details. VT can also expose its preset-temperature comparison, Follow setting information and configured feature observations. Top-row icon settings are available here too. Tap the centre temperature to open the thermostat's native Home Assistant details.
 
 This keeps occasional settings close without putting every control on the everyday face of the card. Home Assistant and the selected thermostat remain in charge.
+
+<details>
+<summary>Explore expanded controls and preset details</summary>
 
 <table>
   <tr><th>Expanded controls</th><th>Preset detail</th></tr>
@@ -91,6 +99,8 @@ This keeps occasional settings close without putting every control on the everyd
 </table>
 
 *Unedited beta.2 component captures using synthetic data. These show the expanded controls and detail panels; the beta.3 response-arc changes are described above.*
+
+</details>
 
 ## One card, different setups
 
