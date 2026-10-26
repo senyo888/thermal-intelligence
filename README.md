@@ -13,13 +13,19 @@ Created and maintained by **[Senyo · senyo888](https://github.com/senyo888)**.
 Thermal Intelligence brings current and target temperatures, supported thermostat controls and device observations into one considered interface. The glass dial, restrained lighting, responsive controls and focused detail panels are the actual customer component.
 
 <table>
+  <tr><th>Heat requested · rising</th><th>Idle · near target</th></tr>
   <tr>
-    <td valign="top" align="center"><img src="assets/presentation/thermostat.png" alt="Thermal Intelligence thermostat showing 20°C and a 21°C target" width="260"></td>
-    <td valign="top" align="center"><img src="assets/presentation/thermostat-expanded.png" alt="The same thermostat with its controls expanded" width="260"></td>
+    <td valign="top" align="center"><img src="assets/presentation/heating-request-example.png" alt="Collapsed TI card showing Heat requested, 20.1°C, a rising trend and orange arc" width="260"></td>
+    <td valign="top" align="center"><img src="assets/presentation/thermostat-idle-example.png" alt="Collapsed TI card showing Idle, 20.7°C, a near-flat trend and green arc" width="260"></td>
+  </tr>
+  <tr><th>TRV closed · falling</th><th>Above target · rising</th></tr>
+  <tr>
+    <td valign="top" align="center"><img src="assets/presentation/trv-closed-falling-example.png" alt="Collapsed TI card showing 20.6°C, TRV Closed at 0%, a falling trend and blue arc" width="260"></td>
+    <td valign="top" align="center"><img src="assets/presentation/trv-above-target-rising-example.png" alt="Collapsed TI card showing 20.1°C above a 19.5°C target, a lavender arc and orange rising-trend ring" width="260"></td>
   </tr>
 </table>
 
-*Actual beta.2 UI, rendered with synthetic data. The beta.3 response correction is described below. These images contain no private home configuration.*
+*Four collapsed views from Senyo's existing TI installation, with names anonymised. Their source builds were not recorded; some header indicators belong to backend features outside the standalone beta. They show UI diversity, not a beta feature checklist.*
 
 ## More information, without a crowded card
 
@@ -40,6 +46,16 @@ The outer arc, slope ring and activity chip are deliberately independent: the ar
 
 The staggered glint of the small lights around the dial and the slope ring's gentle breathing preserve the original glass-and-light character. They add depth without replacing readable values or status text, and respect reduced-motion preferences.
 
+<table>
+  <tr><th>TRV open · rising</th><th>TRV closed · still rising</th></tr>
+  <tr>
+    <td valign="top" align="center"><img src="assets/presentation/trv-open-warming-example.png" alt="Anonymised TI example showing 19.9°C, rising temperature and TRV Open at 100%" width="260"></td>
+    <td valign="top" align="center"><img src="assets/presentation/trv-closed-rising-example.png" alt="Anonymised TI example showing 19.4°C, a blue outer arc, orange slope ring and TRV Closed at 0%" width="260"></td>
+  </tr>
+</table>
+
+*Anonymised installation examples, with source builds unrecorded. The right-hand card shows why these indicators are independent: a closed valve and a rising room temperature can occur together. Neither image alone proves physical heat delivery.*
+
 ### A top row that earns its space
 
 Each configured icon combines a compact reading with colour that follows its meaning. Humidity follows your display bands; window, presence and motion distinguish **Open/Closed**, **Home/Away** and **Detected/Clear**; supported presets retain their own Frost, Eco, Comfort and Boost colours. Active, inactive and unknown observations receive distinct treatments, with missing information muted.
@@ -48,11 +64,33 @@ Choose which readings appear, their order, labels and icons for each card. Humid
 
 **Humidity presentation is customisable.** Set four boundaries for too dry, the start and end of your good range, and too wet. The display uses blue, amber, green, amber and red bands, with a reading and explanation in the humidity panel. These are visual preferences for this card; they do not change heating or humidity control. Save them through Home Assistant's visual card editor; the in-card adjustment panel provides a draft to copy.
 
+<table>
+  <tr><th>Window details</th><th>Administrator lock controls</th></tr>
+  <tr>
+    <td valign="top" align="center"><img src="assets/presentation/window-detection-example.png" alt="Window detail panel showing Closed, bypass Off, Frost temperature action, delays and reported valve opening" width="280"></td>
+    <td valign="top" align="center"><img src="assets/presentation/lock-controls.png" alt="Administrator lock dialog for a locked synthetic thermostat with an explicit Unlock thermostat action" width="280"></td>
+  </tr>
+</table>
+
+The window panel separates detector state, configured response and reported valve opening. The lock dialog exposes the provider's scope and explicit action; a code field appears only when VT reports a configured code. [Lock behavior and limits](docs/lock-control.md).
+
+*Left: anonymised installation example, source build unrecorded. Right: actual beta.2 component with synthetic data and no configured code.*
+
 ### Open only the controls you need
 
 The chevron reveals **Controls & features**: the thermostat's supported HVAC modes and presets, fan or swing choices where advertised, and relevant provider and telemetry details. VT can also expose its preset-temperature comparison, Follow setting information and configured feature observations. Top-row icon settings are available here too. Tap the centre temperature to open the thermostat's native Home Assistant details.
 
 This keeps occasional settings close without putting every control on the everyday face of the card. Home Assistant and the selected thermostat remain in charge.
+
+<table>
+  <tr><th>Expanded controls</th><th>Preset detail</th></tr>
+  <tr>
+    <td valign="top" align="center"><img src="assets/presentation/thermostat-expanded.png" alt="Actual beta thermostat with Controls and features expanded" width="280"></td>
+    <td valign="top" align="center"><img src="assets/presentation/preset-details.png" alt="Actual beta preset detail panel with reported Eco, Comfort and Boost temperatures" width="280"></td>
+  </tr>
+</table>
+
+*Unedited beta.2 component captures using synthetic data. These show the expanded controls and detail panels; the beta.3 response-arc changes are described above.*
 
 ## One card, different setups
 
@@ -62,81 +100,25 @@ For a phone, keep a compact room view with the most useful readings. For a table
 
 Ordinary setup is visual: **Add Card → Thermal Intelligence Thermostat · Beta**, choose your thermostat, then select the readings and presentation that suit that card. [Configuration guide](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md).
 
-<details>
-<summary>See different temperature and TRV states</summary>
+<img src="assets/presentation/multi-card-dashboard-example.png" alt="Anonymised TI dashboard with eight numbered cards, independent targets, varied header telemetry and different arc and trend colours" width="100%">
 
-*Anonymised examples supplied by Senyo from the existing TI system. Their source versions were not recorded; some header indicators belong to backend features outside the standalone beta.*
+*Anonymised example of Senyo's wider TI installation, with source build unrecorded. The partially visible second row and clipped header text are retained from the supplied capture. This illustrates a wider layout; it is not a complete dashboard shipped with the standalone beta.*
+
+[Explore the full state gallery](docs/ui-examples.md) for larger examples and their explanations.
+
+<details>
+<summary>More combinations: Call for heat, Heat enabled and falling temperature</summary>
 
 <table>
-  <tr><th>Heat requested · rising</th><th>TRV open · rising</th></tr>
+  <tr><th>Call for heat</th><th>Heat enabled</th><th>Above target · falling</th></tr>
   <tr>
-    <td valign="top" align="center"><img src="assets/presentation/heating-request-example.png" alt="Anonymised TI example with orange arc, 20.1°C, a rising trend and Heat requested" width="280"></td>
-    <td valign="top" align="center"><img src="assets/presentation/trv-open-warming-example.png" alt="Anonymised TI example with orange arc, 19.9°C, a rising trend and TRV Open at 100%" width="280"></td>
-  </tr>
-  <tr><th>TRV closed · falling</th><th>TRV closed · rising</th></tr>
-  <tr>
-    <td valign="top" align="center"><img src="assets/presentation/trv-closed-falling-example.png" alt="Anonymised TI example with blue arc and slope ring, falling temperature and TRV Closed at 0%" width="280"></td>
-    <td valign="top" align="center"><img src="assets/presentation/trv-closed-rising-example.png" alt="Anonymised TI example with blue outer arc but orange slope ring, rising temperature and TRV Closed at 0%" width="280"></td>
+    <td valign="top" align="center"><img src="assets/presentation/thermostat-call-for-heat-example.png" alt="Anonymised TI example showing Call for heat, 78% valve opening and falling temperature" width="220"></td>
+    <td valign="top" align="center"><img src="assets/presentation/thermostat-heat-enabled-example.png" alt="Anonymised TI example showing Heat enabled, 21.1°C and a 20.3°C target" width="220"></td>
+    <td valign="top" align="center"><img src="assets/presentation/trv-above-target-falling-example.png" alt="Anonymised TI example showing 23°C above a 19.7°C target, a lavender arc, blue slope ring and Closed window" width="220"></td>
   </tr>
 </table>
 
-A closed valve and a rising temperature can appear together. The slope ring preserves the measured trend while the chip reports the valve state. These screenshots show the distinction; they do not establish physical heat delivery.
-
-[Explore all nine examples](docs/ui-examples.md), including above-target states, window details and a wider dashboard.
-
-</details>
-
-<details>
-<summary>See the preset detail panel</summary>
-
-<img src="assets/presentation/preset-details.png" alt="Preset detail panel with reported Eco, Comfort and Boost temperatures" width="390">
-
-</details>
-
-<details>
-<summary>See administrator lock controls</summary>
-
-<img src="assets/presentation/lock-controls.png" alt="Administrator lock dialog showing a locked synthetic thermostat, its lock scope and an explicit Unlock thermostat action" width="390">
-
-*The code field appears only when VT reports a configured code. [Lock behavior and code-handling limits](docs/lock-control.md).*
-
-</details>
-
-<details>
-<summary>See Idle and Call for heat examples</summary>
-
-<table>
-  <tr>
-    <th>Idle</th>
-    <th>Call for heat</th>
-  </tr>
-  <tr>
-    <td valign="top" align="center"><img src="assets/presentation/thermostat-idle-example.png" alt="Privacy-edited TI example showing 20.7°C, Idle and a 20.5°C target" width="280"></td>
-    <td valign="top" align="center"><img src="assets/presentation/thermostat-call-for-heat-example.png" alt="Privacy-edited TI example showing 20°C, Call for heat, 78% valve opening and a 20.5°C target" width="280"></td>
-  </tr>
-</table>
-
-*Privacy-edited examples supplied by Senyo, with anonymised room names. Their source version was not recorded; the beta.2 captures above retain their recorded version.*
-
-</details>
-
-<details>
-<summary>See window detection and Heat enabled examples</summary>
-
-<table>
-  <tr>
-    <th>Window detection</th>
-    <th>Heat enabled</th>
-  </tr>
-  <tr>
-    <td valign="top" align="center"><img src="assets/presentation/window-detection-example.png" alt="Privacy-edited TI window details showing Closed, bypass Off, Frost temperature action and 0% reported valve opening" width="280"></td>
-    <td valign="top" align="center"><img src="assets/presentation/thermostat-heat-enabled-example.png" alt="Privacy-edited TI thermostat showing 21.1°C, Heat enabled and a 20.3°C target" width="280"></td>
-  </tr>
-</table>
-
-Window detection separates the detector state, configured response and reported valve opening. **Heat enabled** identifies the selected HVAC mode; it does not prove active heating.
-
-*Privacy-edited examples supplied by Senyo, with anonymised names. Their source version was not recorded; the beta.2 captures above retain their recorded version.*
+**Heat enabled** describes the selected HVAC mode; it does not prove active heating. A falling temperature trend does not establish active HVAC cooling. These additional installation examples have anonymised names and unrecorded source builds.
 
 </details>
 

@@ -4,6 +4,8 @@ No stable release exists yet.
 
 ## Unreleased — presentation, 26 October 2026
 
+- Lead the README with four collapsed cards in different states. Place window and lock panels, expanded controls, preset details, valve/trend comparisons and a wider dashboard beside their explanations; retain image provenance and beta scope.
+
 - Review nine supplied interface captures; add seven anonymised derivatives and reuse two existing edited examples. Retain the different arc/ring combinations, requested heat, reported TRV positions, humidity colours, window detail and wider layout.
 - Add a compact README selection and a complete UI example gallery, with source-version limits, additional backend indicator scope and original clipping documented. No runtime change.
 
