@@ -63,6 +63,30 @@ For a phone, keep a compact room view with the most useful readings. For a table
 Ordinary setup is visual: **Add Card → Thermal Intelligence Thermostat · Beta**, choose your thermostat, then select the readings and presentation that suit that card. [Configuration guide](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md).
 
 <details>
+<summary>See different temperature and TRV states</summary>
+
+*Anonymised examples supplied by Senyo from the existing TI system. Their source versions were not recorded; some header indicators belong to backend features outside the standalone beta.*
+
+<table>
+  <tr><th>Heat requested · rising</th><th>TRV open · rising</th></tr>
+  <tr>
+    <td valign="top" align="center"><img src="assets/presentation/heating-request-example.png" alt="Anonymised TI example with orange arc, 20.1°C, a rising trend and Heat requested" width="280"></td>
+    <td valign="top" align="center"><img src="assets/presentation/trv-open-warming-example.png" alt="Anonymised TI example with orange arc, 19.9°C, a rising trend and TRV Open at 100%" width="280"></td>
+  </tr>
+  <tr><th>TRV closed · falling</th><th>TRV closed · rising</th></tr>
+  <tr>
+    <td valign="top" align="center"><img src="assets/presentation/trv-closed-falling-example.png" alt="Anonymised TI example with blue arc and slope ring, falling temperature and TRV Closed at 0%" width="280"></td>
+    <td valign="top" align="center"><img src="assets/presentation/trv-closed-rising-example.png" alt="Anonymised TI example with blue outer arc but orange slope ring, rising temperature and TRV Closed at 0%" width="280"></td>
+  </tr>
+</table>
+
+A closed valve and a rising temperature can appear together. The slope ring preserves the measured trend while the chip reports the valve state. These screenshots show the distinction; they do not establish physical heat delivery.
+
+[Explore all nine examples](docs/ui-examples.md), including above-target states, window details and a wider dashboard.
+
+</details>
+
+<details>
 <summary>See the preset detail panel</summary>
 
 <img src="assets/presentation/preset-details.png" alt="Preset detail panel with reported Eco, Comfort and Boost temperatures" width="390">
