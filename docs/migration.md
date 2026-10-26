@@ -56,3 +56,7 @@ Retain the tested beta.1 bundle and its resource URL. To roll back, restore that
 Schema 1, card identity and existing saved mappings are unchanged. Optional `response_arc` fields are additive and preserved with their unknown nested fields by the visual editor. Existing cards keep their comparison fallback until explicit response sources are selected; legacy `overview` or `recovery_entity` keys are not repurposed. The source-dependent orange response is now implemented under the [public evidence contract](provider-contracts.md#temperature-response-evidence).
 
 Retain the beta.2 bytes, resource URL and saved configuration before updating. Beta.2 preserves the new object as unknown configuration but cannot display the corroborated warming state. Restoring the beta.2 resource and opening a fresh document rolls back the frontend; no provider settings or heating state are changed by these display mappings.
+
+## beta.3 to beta.4: optional VT reasons
+
+No configuration migration is needed. Beta.4 changes only the interpretation of VT's explicitly null Off reason and Mode reason to **None reported**, and rejects malformed reason values. Missing/unknown/unavailable observations remain visible; readiness and command permissions are unchanged. Retain beta.3's versioned module, update only the standalone beta resource URL and load a fresh browser document. Returning to beta.3 can restore the false amber warning. See the [exact package and rollback evidence](beta.md).
