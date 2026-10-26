@@ -2,6 +2,11 @@
 
 No stable release exists yet.
 
+## 0.1.0-beta.4 — untagged beta, 26 October 2026
+
+- Correct a false amber health LED when VT explicitly reports no optional Off reason or Mode reason. Provider details show “None reported” for these two null values.
+- Keep missing, unknown, unavailable and malformed observations visible, with unchanged readiness and command guards. No saved-configuration migration, controller change or visual redesign.
+
 ## Unreleased — presentation, 26 October 2026
 
 - Lead the README with four collapsed cards in different states. Keep key valve/trend comparisons and a wider dashboard visible, with window/lock panels, expanded controls, preset details and supplementary states in labelled dropdowns beside their explanations. Retain image provenance and beta scope.

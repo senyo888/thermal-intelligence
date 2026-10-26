@@ -1,5 +1,7 @@
 # Card configuration and local preview
 
+The health LED distinguishes connection/readiness and incomplete provider observations from heating activity. VT's explicitly null **Off reason** and **Mode reason** mean **None reported**, not a telemetry failure. Missing fields and genuine unknown or unavailable values remain visible in the overview and may keep the LED amber; disconnected or unavailable thermostats remain red. An amber provider-detail warning does not itself change command permissions: the existing readiness and capability guards remain authoritative.
+
 This document describes the implemented development preview. Home Assistant **2026.10.x** and Versatile Thermostat **10.5.1** are intended contract targets. Validation includes synthetic fixtures and scoped test-environment checks. It does not establish a supported version range, physical heating response or product release.
 
 The card presents a selected climate entity, its advertised controls and explicit optional observations. It does not need a TI backend, create schedules or take ownership of an existing controller. See the [provider contracts](provider-contracts.md) for capability and evidence rules, and the [command contract](command-contract.md) for request tracking and uncertainty.

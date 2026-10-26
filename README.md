@@ -6,7 +6,7 @@
 
 Created and maintained by **[Senyo · senyo888](https://github.com/senyo888)**.
 
-**Beta 0.1.0-beta.3** · Home Assistant dashboard card · GPL-3.0-only software
+**Beta 0.1.0-beta.4** · Home Assistant dashboard card · GPL-3.0-only software
 
 [Beta installation](docs/beta.md) · [Configuration](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md) · [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/compatibility.md) · [Report an issue](https://github.com/senyo888/thermal-intelligence/issues/new/choose)
 
@@ -39,6 +39,8 @@ The everyday view stays simple: the room temperature, your target, a clear statu
 | **Temperature-slope ring** | The fine ring around the sphere shows the direction of temperature change from your configured trend source. Warm orange/red tones indicate rising readings, blues indicate falling readings, and green or pale tones indicate a near-flat trend. The accompanying Rising, Falling or Stable label gives the rate and units, so the colour has an explanation. Missing trend data is shown as unavailable. |
 | **Dynamic status chip** | The chip adapts to the available evidence: reported Heating, Cooling or Idle; **Heat requested** for VT; or **TRV Open/Closed** with a reported valve percentage when mapped. **Heat enabled** means the mode is selected when activity is not reported. Tap the chip for the overview and the source behind the status. |
 | **Status LED** | The small LED summarises connection and readiness: green for the card's ready state, amber when controls or observations need attention, and red when disconnected or unavailable. Tap it to open temperatures, modes, provider details and request status. A press-and-hold opens the registered device's Home Assistant settings, with thermostat details as the fallback. |
+
+**Beta.4 removes a false amber warning.** VT can explicitly report no Off reason or Mode reason; these now read **None reported** in the overview. Missing, unknown, unavailable or malformed observations still need attention. Readiness and command guards are unchanged.
 
 The outer arc, slope ring and activity chip are deliberately independent: the arc combines the room's state with corroborated temperature response, the fine ring shows measured temperature slope, and the chip reports activity. Idle is a reported activity, not a universal arc colour. A rising temperature slope can continue after the valve closes; the closed TRV does not establish an orange response arc.
 
@@ -138,7 +140,7 @@ The installable beta and its source are on **[senyo888-patch-1](https://github.c
 
 The beta has separate card and editor names so it can coexist with an existing Thermal Intelligence installation. Keep existing cards and resources in place, and add **Thermal Intelligence Thermostat · Beta** for testing.
 
-Testing covers HA **2026.10.0**, VT **10.5.1**, inert controller fixtures, installation, removal/reinstallation, update/rollback and deliberate no-code lock commands with automatic relocking. Code/error paths have synthetic coverage only. Physical thermostats, production deployment, a minimum supported version range and HACS installation remain unverified. This is a beta for controlled testing; there is no stable release yet.
+Testing covers HA **2026.10.0**, VT **10.5.1**, inert controller fixtures, installation, removal/reinstallation, update/rollback and deliberate no-code lock commands with automatic relocking. Code/error paths have synthetic coverage only. Beta.4 also received passive frontend checks on HA **2026.10.4**. Physical heating response, native phone/tablet acceptance, a minimum supported version range and HACS installation remain unverified. This is a beta for controlled testing; there is no stable release yet.
 
 ## Project direction
 
