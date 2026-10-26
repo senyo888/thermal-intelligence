@@ -2,6 +2,11 @@
 
 No stable release exists yet.
 
+## Unreleased — presentation, 26 October 2026
+
+- Review nine supplied interface captures; add seven anonymised derivatives and reuse two existing edited examples. Retain the different arc/ring combinations, requested heat, reported TRV positions, humidity colours, window detail and wider layout.
+- Add a compact README selection and a complete UI example gallery, with source-version limits, additional backend indicator scope and original clipping documented. No runtime change.
+
 ## Unreleased — presentation, 25 October 2026
 
 - Explain the dial, response arc, temperature-slope ring, dynamic status chip, LED overview, state-aware top-row icons, humidity display bands and expanded controls. Describe per-card presentation and responsive layouts with their current validation limits.
