@@ -14,6 +14,8 @@ The small lock/unlock icon beside the card name reports VT's `specific_states.is
 
 Each ordinary climate control requires its corresponding entry in `hass.services.climate`. Temperature service availability does not establish preset, mode, fan or swing availability. A failure in optional telemetry does not disable otherwise valid climate commands.
 
+VT 10.5.1 declares `specific_states.hvac_off_reason` and `specific_states.hvac_mode_reason` as optional strings. An explicitly present null means **None reported** in provider details and does not create an amber warning by itself. Nonblank reason text is retained. Missing properties, unknown/unavailable sentinels and malformed values remain degraded; no other null observation receives this exception. Loss of the climate entity or connection takes precedence over retained reasons.
+
 ## Climate capabilities
 
 | Surface | Required evidence | Service |

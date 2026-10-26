@@ -72,8 +72,13 @@ export function vthermDetails(attributes, observable) {
   const rows = fields.map(([label, path, flag]) => {
     const found = readOwnPath(attributes, path);
     const configured = flag ? readOwnPath(attributes, flag) : null;
-    const value = found.value;
-    const scalar = ['string', 'number', 'boolean'].includes(typeof value) && (typeof value !== 'number' || Number.isFinite(value));
+    // VT 10.5.1 explicitly clears these optional reasons to null. Absence or
+    // unavailable evidence is still degraded; no other null field is exempt.
+    const optionalReason = ['specific_states.hvac_off_reason', 'specific_states.hvac_mode_reason'].includes(path);
+    const emptyReason = optionalReason && found.found && found.value === null;
+    const value = emptyReason ? 'None reported' : found.value;
+    const scalar = optionalReason ? typeof value === 'string' && value.trim().length > 0
+      : ['string', 'number', 'boolean'].includes(typeof value) && (typeof value !== 'number' || Number.isFinite(value));
     let status = !found.found || value === 'unavailable' ? 'unavailable' : !scalar || value === 'unknown' ? 'unknown' : 'available';
     if (configured && (!configured.found || typeof configured.value !== 'boolean')) status = 'unknown';
     if (configured?.value === false) status = 'disabled';
