@@ -1,6 +1,6 @@
 # Thermal Intelligence architecture contract
 
-Status: architecture contract with a standalone frontend implementation on `senyo888-patch-1`. The optional backend and later cards remain planned.
+The standalone frontend is implemented on `senyo888-patch-1`. It presents Home Assistant/provider state and sends commands only after explicit user interaction. The optional backend and additional cards remain planned.
 
 ## Ownership and layers
 
@@ -50,18 +50,8 @@ Separate a no-entity setup state from operational validation. Stub generation, e
 
 HI remains the authority for its seasonal humidity targets, Stability, selected lanes and reasons. TI may display an explicit supported HI contract with attribution; it must not reconstruct those semantics, add HI commands, or require HI installation. Local TI humidity colours are presentation preferences with separate labels.
 
-## Proposed repository layout
+## Code and documentation
 
-| Path | Responsibility |
-| --- | --- |
-| `README.md`, `ARCHITECTURE.md`, `AGENTS.md` | Product entry point and contributor contracts |
-| `docs/` | Decisions, support, compatibility, migration, distribution and release evidence |
-| `src/cards/`, `src/editor/`, `src/providers/`, `src/model/`, `src/commands/` | Frontend code with distinct responsibilities |
-| `tests/fixtures/`, `tests/unit/`, `tests/browser/` | Synthetic provider contracts, behavior and onboarding tests |
-| `dist/thermal-intelligence.js` | Reproducible installable module, with verified required companions only |
-| `site/` | Responsive discovery website; no private operational records |
-| `assets/` | Selected brand masters/exports, illustrations, public-safe screenshots and provenance |
-| `ui-gallery/` | Canonical portable examples with dependency/version notes and previews |
-| `.github/` | Issue forms, PR template, ownership and validated CI/release workflows |
+The beta separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. Synthetic fixtures and unit/browser tests live under `tests/`. The reproducible module is `dist/thermal-intelligence.js`.
 
-The standalone frontend, visual editor and test harness are implemented. The optional backend, website and later cards remain planned; do not add a backend stub merely to fill the proposed tree. HACS packaging has its own [distribution contract](docs/distribution.md).
+The README introduces the product; the Wiki provides practical guidance; repository documents define configuration, compatibility and technical contracts. The website presents the same supported features and beta limits. See [distribution](docs/distribution.md) and [command contracts](docs/command-contract.md).

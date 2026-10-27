@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         There is no installable TI release yet. Foundation questions are welcome; describe the guide or development build you are using.
-        Share only a minimal redacted configuration, never tokens, private URLs or a full HA backup. HI diagnostics are not required.
+        Share only a minimal redacted configuration, never tokens, private URLs or a full HA backup.
   - type: textarea
     id: goal
     attributes:

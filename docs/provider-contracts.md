@@ -1,6 +1,6 @@
 # Provider and observation contracts
 
-This preview targets the public Home Assistant 2026.10 climate contract and Versatile Thermostat (VT) 10.5.1 attribute contract. These contracts were checked against upstream source and scoped test fixtures. They do not establish physical heating response, broad compatibility certification or release readiness. Unit tests use synthetic entities.
+The beta.4 adapters use the Home Assistant 2026.10 climate contract and Versatile Thermostat (VT) 10.5.1 attributes. See [Compatibility](compatibility.md) for tested scenarios and limits. Unit tests use synthetic entities.
 
 ## Identity and control eligibility
 
@@ -114,7 +114,7 @@ Orange (`#ff9459`, `responding: true`) requires every applicable observation bel
 - Room `last_changed` and trend `last_updated` must be valid, not future, and within the configured window: default 10 minutes, greater than zero and no more than 30, capped by a positive VT safety delay. Matching typed telemetry age limits remain binding. A newer VT attribute timestamp cannot substitute for a new room value.
 - Trend must be greater than `0.05°C/hour` (or `0.09°F/hour`) and no greater than `2.5°C/hour` (or `4.5°F/hour`). Flat, falling or unusually rapid change remains blue.
 
-The canonical ordering is preserved: effective Off, native reported cooling, valid room source, above/at-target bands, then below-target response evidence. TRV valve telemetry has no cooling action. Optional unmapped output is not discovered from a similar entity name. Unknown declared units are handled more strictly than the private source, and current VT nested regulated-target support is explicit.
+The canonical ordering is preserved: effective Off, native reported cooling, valid room source, above/at-target bands, then below-target response evidence. TRV valve telemetry has no cooling action. Optional unmapped output is not discovered from a similar entity name. Unknown declared units are handled explicitly, and current VT nested regulated-target support is explicit.
 
 `expiresAt` is the earliest inclusive evidence deadline. The renderer schedules a refresh just after it, even with no HA events. During a held target draft only the arc, accent and explanation refresh; the input retains its capture and no command is sent. A disconnected or changed configuration cannot retain response certainty. The fine slope ring, activity chip and health LED keep their own meanings.
 

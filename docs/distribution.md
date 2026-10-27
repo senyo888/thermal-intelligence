@@ -1,9 +1,21 @@
 # Distribution
 
-Thermal Intelligence uses a self-contained Home Assistant frontend module. Availability and supported features depend on the version of this checkout; the presence of a plan is not an installable release.
+Thermal Intelligence is currently available as a manually installed frontend beta. Use the [beta installation guide](beta.md) for the exact module, source commit and SHA-256 digest.
 
-Before installing a candidate, select an immutable source commit, build and verify the module, preserve the previous resource and configuration, and test installation and rollback. A fresh browser document is required after replacing a registered custom element.
+| Branch | Contents |
+| --- | --- |
+| `main` | Public documentation, images and website |
+| `develop` | Contribution and integration branch; no installable package yet |
+| `senyo888-patch-1` | Standalone thermostat source, tests and installable beta |
 
-Keep existing cards and resources in place unless a versioned migration procedure explicitly says otherwise. Frontend rollback does not reverse deliberate thermostat commands.
+The package contains the JavaScript module, software licence and a manifest identifying its source and hashes. Website content, images, development tools and private records are excluded. The bundle is self-contained and does not download runtime dependencies.
 
-HACS packaging, catalogue inclusion and lifecycle support require separate validation. No HACS or stable-release claim follows from a source build.
+## HACS
+
+HACS installation and catalogue inclusion are not available or validated for this beta. Manual resource installation is the current route. Future HACS support will require a tested Dashboard/frontend package and installation, update, removal and cache-refresh checks.
+
+## Resource loading
+
+Add the module once as a **JavaScript module** resource. After updating its versioned URL, open a fresh browser document before checking the card and editor. A custom element already registered in an open page cannot be replaced in place.
+
+The beta uses `custom:thermal-intelligence-beta-card`, with the picker name **Thermal Intelligence Thermostat · Beta**. Keep existing TI resources and card types in place. See [upgrade and rollback](migration.md).

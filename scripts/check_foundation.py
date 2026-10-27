@@ -11,6 +11,17 @@ from pathlib import PurePosixPath
 from urllib.parse import unquote, urlsplit
 
 
+PRIVATE_DOCUMENTS = {
+    "PROJECT_BRIEF.md",
+    *(f"docs/{name}.md" for name in (
+        "decisions", "branding", "ui-fidelity", "extraction-plan",
+        "development-preview", "lab-testing", "lab-validation", "sources",
+        "roadmap", "governance", "release-governance", "issue-triage",
+    )),
+}
+IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".svg", ".webp", ".gif"}
+
+
 def git(*args):
     return subprocess.check_output(["git", *args])
 
@@ -40,6 +51,10 @@ def main():
             continue
         if ".private" in path.parts or ".codex" in path.parts or path.name == "AGENTS.local.md":
             errors.append(f"{name}: private operational file in public index")
+        if name in PRIVATE_DOCUMENTS or name.startswith(("assets/brand/", "assets/preview/")):
+            errors.append(f"{name}: internal working material in public index")
+        if name.startswith("assets/") and path.suffix not in IMAGE_SUFFIXES:
+            errors.append(f"{name}: assets must contain selected images only")
         if path.name == ".env" or (path.name.startswith(".env.") and path.name != ".env.example"):
             errors.append(f"{name}: environment file in public index")
 
@@ -49,7 +64,7 @@ def main():
             if blob != "f6cdd22a6c1fbc887e08a215cb4beb3c47048041":
                 errors.append("LICENSE: differs from the approved standard GPL-3.0 text")
             continue
-        if path.suffix not in {".md", ".py", ".yml", ".yaml", ".json", ".toml", ".txt"} and name not in {".gitignore", ".github/CODEOWNERS"}:
+        if path.suffix not in {".md", ".py", ".yml", ".yaml", ".json", ".toml", ".txt", ".html", ".css", ".xml"} and name not in {".gitignore", ".github/CODEOWNERS"}:
             continue
         try:
             text = data.decode("utf-8")
@@ -72,6 +87,8 @@ def main():
                 continue
             links += 1
             resolved = posixpath.normpath(str(path.parent / unquote(target.path)))
+            if name.startswith("docs/wiki/") and not PurePosixPath(resolved).suffix:
+                resolved += ".md"
             if resolved not in indexed:
                 errors.append(f"{name}: local link is not an indexed file: {resolved}")
 
