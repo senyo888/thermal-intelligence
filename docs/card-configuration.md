@@ -46,7 +46,7 @@ Names, labels, units and preset keys must be plain text without markup delimiter
 
 Unknown top-level options, unknown fields within feature/telemetry rows, and unknown fields within `humidity_bands` survive normalization and editor round trips. Preservation does not make an unknown option operational. The editor patches the selected field instead of rebuilding a reduced configuration. There are no implicit private entity bindings or shared card settings.
 
-The earlier local preview's `theme` option is no longer the appearance control. A previously saved valid `auto`, `light` or `dark` value is retained as inert legacy data; it does not select the source UI's background. Choose `background` explicitly or accept Midnight Blue. See [local migration](migration.md#source-ui-configuration-correction).
+The earlier local preview's `theme` option is no longer the appearance control. A previously saved valid `auto`, `light` or `dark` value is retained as inert legacy data; it does not select the source UI's background. Choose `background` explicitly or accept Midnight Blue. See [local migration](migration.md#version-notes).
 
 ## Provider selection and temperature behavior
 
