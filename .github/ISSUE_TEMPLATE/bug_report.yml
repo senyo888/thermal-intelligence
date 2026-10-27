@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         TI is at foundation stage, with no installable release yet. For runtime reports, identify the exact development build.
-        Remove tokens, private URLs, device IDs and home details. Do not attach full backups or HI diagnostics for a standalone TI report.
+        Remove tokens, private URLs, device IDs and home details. Do not attach full backups.
   - type: input
     id: version
     attributes:

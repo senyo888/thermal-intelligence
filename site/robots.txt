@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://senyo888.github.io/thermal-intelligence/sitemap.xml

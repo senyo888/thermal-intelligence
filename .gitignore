@@ -9,11 +9,31 @@ node_modules/
 coverage/
 playwright-report/
 test-results/
-.playwright-cli/
-output/playwright/
 *.log
 
-# The reviewed beta module in dist/ is tracked for exact-commit installation.
-# Private local adapters and browser outputs are not public contracts.
+# Runtime source and packages belong on senyo888-patch-1 at this stage.
+
+# Private local agent adapters and browser outputs are not public contracts.
 /.codex/
 /output/
+
+# Internal working material is kept outside public branches.
+/PROJECT_BRIEF.md
+/docs/decisions.md
+/docs/branding.md
+/docs/ui-fidelity.md
+/docs/extraction-plan.md
+/docs/development-preview.md
+/docs/lab-testing.md
+/docs/lab-validation.md
+/docs/sources.md
+/docs/roadmap.md
+/docs/governance.md
+/docs/release-governance.md
+/docs/issue-triage.md
+/assets/brand/
+/assets/preview/
+/assets/**/*prompt*
+/assets/**/provenance.json
+/_site/
+/.playwright-cli/

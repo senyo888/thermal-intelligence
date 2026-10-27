@@ -1,36 +1,10 @@
-# Card configuration and local preview
+# Card configuration
 
 The health LED distinguishes connection/readiness and incomplete provider observations from heating activity. VT's explicitly null **Off reason** and **Mode reason** mean **None reported**, not a telemetry failure. Missing fields and genuine unknown or unavailable values remain visible in the overview and may keep the LED amber; disconnected or unavailable thermostats remain red. An amber provider-detail warning does not itself change command permissions: the existing readiness and capability guards remain authoritative.
 
-This document describes the implemented development preview. Home Assistant **2026.10.x** and Versatile Thermostat **10.5.1** are intended contract targets. Validation includes synthetic fixtures and scoped test-environment checks. It does not establish a supported version range, physical heating response or product release.
+This guide describes **0.1.0-beta.4**. See [Compatibility](compatibility.md) for tested Home Assistant and provider versions.
 
 The card presents a selected climate entity, its advertised controls and explicit optional observations. It does not need a TI backend, create schedules or take ownership of an existing controller. See the [provider contracts](provider-contracts.md) for capability and evidence rules, and the [command contract](command-contract.md) for request tracking and uncertainty.
-
-## Run the synthetic preview
-
-Use Node.js 22 or newer. From the repository root:
-
-```sh
-npm ci
-npm run build
-npm run preview
-```
-
-Open [the local preview](http://127.0.0.1:4173). The server listens on the loopback interface at port `4173`; the page uses local synthetic state and a service recorder. It does not connect to Home Assistant or control physical devices. Stop the server with `Ctrl+C`.
-
-The build writes the self-contained module to `dist/thermal-intelligence.js`. After source edits, run `npm run build` again and reload the page; the preview command does not rebuild or watch source files. If port `4173` is occupied, start a separate port with `TI_PREVIEW_PORT=4174 npm run preview` and open the printed address.
-
-The fixture selector provides standard Celsius, standard Fahrenheit, temperature range with fan/swing, ready VT, initializing VT, unavailable climate and no-climate setup scenarios. Changing the scenario resets its configuration and request recorder. These names describe simulated behavior, not tested provider installations.
-
-The page places the card beside its visual editor. Accepted editor changes update the card and the **Saved card configuration** panel. The **Recorded service requests** panel records deliberate runtime controls. Toggle **Preview / edit safety** to exercise the read-only preview state: configuration changes should remain usable while thermostat controls are disabled. The fixture's service acknowledgement and subsequent matching state are separate events; neither represents physical heating.
-
-Run the repository's synthetic unit checks with:
-
-```sh
-npm test
-```
-
-This workflow is for local development. Installation, update, rollback and release acceptance are separate work described in [distribution](distribution.md) and [compatibility](compatibility.md).
 
 ## Visual configuration
 
@@ -202,7 +176,7 @@ Map `presence_manager.presence_state` or `motion_manager.motion_state` on the VT
 
 For exact VT window/motion/presence manager mappings, TI also checks the input entity ID explicitly reported by that manager. A missing, unknown or unavailable input prevents an old retained detector state appearing as a current reading. The popup explains the input failure; it does not alter VT's control or substitute the raw sensor for the accepted state. Automatic window detection has no physical input dependency. Other telemetry mappings keep their explicit source contract.
 
-These semantics were checked against the installed version's [Presence documentation](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/documentation/en/feature-presence.md), [Motion documentation](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/documentation/en/feature-motion.md) and real Lab feature checks. TI's observation labels also accept `away` and booleans; that does not extend VT's own accepted input states.
+These semantics were checked against the installed version's [Presence documentation](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/documentation/en/feature-presence.md), [Motion documentation](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/documentation/en/feature-motion.md). TI's observation labels also accept `away` and booleans; that does not extend VT's own accepted input states.
 
 A missing entity or expected attribute is unavailable. Provider `unknown` values remain unknown; incompatible units or malformed numeric values are invalid. A blank entity is disabled. With an explicit maximum age, old data becomes stale and a missing or future timestamp makes freshness unknown. Without a maximum age, the card does not invent a timeout. `last_updated` is an HA entity-update timestamp, not proof of when a physical sensor sampled its environment.
 
@@ -271,14 +245,46 @@ The original humidity guides use four strictly increasing integer boundaries: `d
 
 An existing `humidity_bands: {low: 35, high: 65}` retains the explicit legacy three-band format: below, within both inclusive bounds, or above. The editor identifies that format and offers an intentional reset to the original four boundaries. The formats cannot be mixed, and no automatic conversion invents the two missing boundaries. Unknown nested fields survive edits and reset. Canonical boundaries require integers; legacy bounds retain their finite numeric contract `0 ≤ low < high ≤ 100`.
 
-All humidity colours are **Local display band** preferences. They are not HI seasonal targets, Stability, lanes, controller reasons or safety thresholds. This preview has no automatic HI contract or HI service path.
+All humidity colours are **Local display band** preferences. They are not HI seasonal targets, Stability, lanes, controller reasons or safety thresholds. This beta has no automatic HI contract or HI service path.
 
 Activity is kept separate from mode, preset and ownership. Standard `hvac_action` is integration-reported activity; VT `heating` is presented as **Heat requested**, with physical heat delivery unverified. Ownership remains unknown without an authoritative ownership contract.
 
-When details are enabled, applicable VT regulation observations include the provider's climate regulation mode/internal target or proportional function/demand and requested valve opening. These are read-only, type-gated observations with their own sources and availability states. The internal target retains its provider-declared unit, and requested valve opening is distinct from a measured valve-position source. See the [VT detail contract](provider-contracts.md#activity-and-vt-details) for exact paths and limitations; there is no regulation-setting control in this preview.
+When details are enabled, applicable VT regulation observations include the provider's climate regulation mode/internal target or proportional function/demand and requested valve opening. These are read-only, type-gated observations with their own sources and availability states. The internal target retains its provider-declared unit, and requested valve opening is distinct from a measured valve-position source. See the [VT detail contract](provider-contracts.md#activity-and-vt-details) for exact paths and limitations; there is no regulation-setting control in this beta.
 
 Only deliberate runtime controls may request a supported service. Setup, visual editing, preview, configuration saves, rendering and reconnection do not request heating writes. Requests retain their captured target; acknowledgement, matching state and physical behavior are distinct. Uncertain outcomes are displayed and are not automatically replayed. See the [command lifecycle](command-contract.md) for exact behavior.
 
 Mouse and keyboard temperature drafts share context checks. A concurrent target, unit, mode, provider, readiness, configuration or session change cancels the draft instead of sending an edit derived from outdated context.
 
-The synthetic preview alone cannot establish authenticated HA behavior. Separate Lab evidence covers narrow onboarding, registry, controller and resource-loading checks. HACS distribution, complete cache/update/rollback recovery, physical phone/tablet interaction and heating-device response remain outstanding before support or release claims change.
+See [Compatibility](compatibility.md) for authenticated Home Assistant checks and the remaining HACS, physical-device and heating-response limits.
+
+<details>
+<summary>For contributors: run the synthetic preview</summary>
+
+## Run the synthetic preview
+
+Use Node.js 22 or newer. From the repository root:
+
+```sh
+npm ci
+npm run build
+npm run preview
+```
+
+Open [the local preview](http://127.0.0.1:4173). The server listens on the loopback interface at port `4173`; the page uses local synthetic state and a service recorder. It does not connect to Home Assistant or control physical devices. Stop the server with `Ctrl+C`.
+
+The build writes the self-contained module to `dist/thermal-intelligence.js`. After source edits, run `npm run build` again and reload the page; the preview command does not rebuild or watch source files. If port `4173` is occupied, start a separate port with `TI_PREVIEW_PORT=4174 npm run preview` and open the printed address.
+
+The fixture selector provides standard Celsius, standard Fahrenheit, temperature range with fan/swing, ready VT, initializing VT, unavailable climate and no-climate setup scenarios. Changing the scenario resets its configuration and request recorder. These names describe simulated behavior, not tested provider installations.
+
+The page places the card beside its visual editor. Accepted editor changes update the card and the **Saved card configuration** panel. The **Recorded service requests** panel records deliberate runtime controls. Toggle **Preview / edit safety** to exercise the read-only preview state: configuration changes should remain usable while thermostat controls are disabled. The fixture's service acknowledgement and subsequent matching state are separate events; neither represents physical heating.
+
+Run the repository's synthetic unit checks with:
+
+```sh
+npm test
+```
+
+This workflow is for local development. Installation, update, rollback and release acceptance are separate work described in [distribution](distribution.md) and [compatibility](compatibility.md).
+
+
+</details>

@@ -1,6 +1,6 @@
 # Install and test the beta
 
-Version **0.1.0-beta.4**, source commit `ea1268ac7a8dc5aa7f54723870808bf24a92cdc0`. This is a frontend module for controlled testing, with no TI backend required. Manual installation and rollback were tested; see Compatibility for coverage.
+Version **0.1.0-beta.4**, source commit `ea1268ac7a8dc5aa7f54723870808bf24a92cdc0`. This is a frontend module for controlled testing, with no TI backend required. Manual installation and rollback have been tested; see [compatibility](compatibility.md) for version coverage and remaining limits.
 
 ## Get the exact package
 
@@ -28,7 +28,7 @@ Choose an unused output directory. The package contains `thermal-intelligence.js
 4. Reload the frontend or open a fresh browser session. In Add Card, select **Thermal Intelligence Thermostat · Beta** and choose a test thermostat in the visual editor.
 5. Check current readings, source details, readiness and available controls before making an intentional thermostat change.
 
-The beta type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`. No legacy alias is registered. Separate technical names preserve coexistence. The beta includes an explicit administrator [lock dialog](lock-control.md) in the canonical customer layout; ordinary accounts retain the read-only indicator. The beta retains the [canonical response arc](card-configuration.md#temperature-response-arc) through optional, read-only VT evidence mappings. Private backend-dependent schedules, holds, cutoff and recovery controls remain with the existing installation.
+The beta type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`. No legacy alias is registered. Separate technical names preserve coexistence. The beta includes an explicit administrator [lock dialog](lock-control.md) in the card layout; ordinary accounts retain the read-only indicator. The beta retains the [response arc](card-configuration.md#temperature-response-arc) through optional, read-only VT evidence mappings. Schedules, holds, cutoff and recovery controls are outside this standalone beta.
 
 When updating an existing beta, retain its versioned file and change only its beta resource URL to the new file. Do not add a second registration or overwrite the legacy TI resource. Saved schema-1 card configurations need no migration. Reload into a fresh browser document after changing the resource.
 
@@ -40,6 +40,14 @@ For a beta update, retain the previous bundle and resource URL before updating. 
 
 Frontend rollback does not undo a deliberate VT lock/unlock command. Check the provider's actual state and restore it intentionally where required; VT continues to own automatic relocking.
 
+## What changed in beta.4
+
+VT may explicitly report no Off reason or Mode reason. Those two null values now display **None reported** instead of causing a false amber health warning. Missing, unknown, unavailable and malformed observations remain visible. Readiness, command permissions, the response arc and saved configuration are unchanged.
+
 ## Testing and limits
 
-See [Compatibility](compatibility.md) for the tested versions and scenario limits. Synthetic checks and reported activity do not prove physical heating. HACS installation and a minimum supported version range remain unverified.
+The exact bundle passed 135 unit tests, 81 browser tests and 5 packaging tests, with reproducible build and secret/privacy checks. Manual update, rollback to beta.3 and reapplication were exercised on HA 2026.10.0 with VT 10.5.1. Passive frontend checks also covered HA 2026.10.4 with VT 10.5.1.
+
+Physical heating, native phone/tablet use, a minimum version range and the HACS lifecycle remain unverified. Response-arc positive cases and lock-code error paths have synthetic coverage only. Read [Compatibility](compatibility.md) and [VT lock limits](lock-control.md) before testing those features.
+
+This is an untagged beta, not a stable release. The package remains on `senyo888-patch-1`; HACS support is planned separately.

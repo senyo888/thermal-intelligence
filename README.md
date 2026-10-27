@@ -6,11 +6,13 @@
 
 Created and maintained by **[Senyo · senyo888](https://github.com/senyo888)**.
 
-**Beta 0.1.0-beta.4** · Home Assistant dashboard card · GPL-3.0-only software
+[![Beta 0.1.0-beta.4](https://img.shields.io/badge/beta-0.1.0--beta.4-d9a36c)](docs/beta.md)
+[![Beta checks](https://github.com/senyo888/thermal-intelligence/actions/workflows/foundation.yml/badge.svg?branch=senyo888-patch-1)](https://github.com/senyo888/thermal-intelligence/actions/workflows/foundation.yml?query=branch%3Asenyo888-patch-1)
+[![Software GPL-3.0-only](https://img.shields.io/badge/software-GPL--3.0--only-5e9bc5)](LICENSE)
 
-[Beta installation](docs/beta.md) · [Configuration](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md) · [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/compatibility.md) · [Report an issue](https://github.com/senyo888/thermal-intelligence/issues/new/choose)
+[Website](https://senyo888.github.io/thermal-intelligence/) · [Wiki](https://github.com/senyo888/thermal-intelligence/wiki) · [Beta installation](docs/beta.md) · [Configuration](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md) · [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/compatibility.md) · [Report an issue](https://github.com/senyo888/thermal-intelligence/issues/new/choose)
 
-Thermal Intelligence brings current and target temperatures, supported thermostat controls and device observations into one considered interface. The glass dial, restrained lighting, responsive controls and focused detail panels are the actual customer component.
+Thermal Intelligence brings current and target temperatures, supported thermostat controls and device observations into one considered interface. The glass dial, restrained lighting, responsive controls and focused detail panels keep everyday readings clear and further detail close at hand.
 
 <table>
   <tr><th>Heat requested · rising</th><th>Idle · near target</th></tr>
@@ -25,7 +27,7 @@ Thermal Intelligence brings current and target temperatures, supported thermosta
   </tr>
 </table>
 
-*Four collapsed views from Senyo's existing TI installation, with names anonymised. Their source builds were not recorded; some header indicators belong to backend features outside the standalone beta. They show UI diversity, not a beta feature checklist.*
+*Four anonymised installation examples. Their source builds were not recorded; some header indicators belong to backend features outside the standalone beta. They show UI diversity, not a beta feature checklist. [Image notes](docs/image-notes.md).*
 
 ## More information, without a crowded card
 
@@ -114,7 +116,7 @@ Ordinary setup is visual: **Add Card → Thermal Intelligence Thermostat · Beta
 
 <img src="assets/presentation/multi-card-dashboard-example.png" alt="Anonymised TI dashboard with eight numbered cards, independent targets, varied header telemetry and different arc and trend colours" width="100%">
 
-*Anonymised example of Senyo's wider TI installation, with source build unrecorded. The partially visible second row and clipped header text are retained from the supplied capture. This illustrates a wider layout; it is not a complete dashboard shipped with the standalone beta.*
+*Anonymised example of a wider TI dashboard, with source build unrecorded. The partially visible second row and clipped header text are retained from the supplied capture. This illustrates a wider layout; it is not a complete dashboard shipped with the standalone beta.*
 
 [Explore the full state gallery](docs/ui-examples.md) for larger examples and their explanations.
 
@@ -130,7 +132,7 @@ Ordinary setup is visual: **Add Card → Thermal Intelligence Thermostat · Beta
   </tr>
 </table>
 
-**Heat enabled** describes the selected HVAC mode; it does not prove active heating. A falling temperature trend does not establish active HVAC cooling. These additional installation examples have anonymised names and unrecorded source builds.
+**Heat enabled** describes the selected HVAC mode; it does not prove active heating. A falling temperature trend does not establish active HVAC cooling. These additional installation examples have anonymised names and unrecorded source builds. [Image notes](docs/image-notes.md).
 
 </details>
 
@@ -140,7 +142,7 @@ The installable beta and its source are on **[senyo888-patch-1](https://github.c
 
 The beta has separate card and editor names so it can coexist with an existing Thermal Intelligence installation. Keep existing cards and resources in place, and add **Thermal Intelligence Thermostat · Beta** for testing.
 
-Testing covers HA **2026.10.0**, VT **10.5.1**, inert controller fixtures, installation, removal/reinstallation, update/rollback and deliberate no-code lock commands with automatic relocking. Code/error paths have synthetic coverage only. Beta.4 also received passive frontend checks on HA **2026.10.4**. Physical heating response, native phone/tablet acceptance, a minimum supported version range and HACS installation remain unverified. This is a beta for controlled testing; there is no stable release yet.
+Testing covers HA **2026.10.0** and **2026.10.4** with VT **10.5.1**, including manual installation and test-environment rollback. Physical heating response, native phone/tablet use, a minimum supported version range and HACS installation remain unverified. See [Compatibility](docs/compatibility.md) for the scope of each check. This is a beta; there is no stable release yet.
 
 ## Project direction
 
@@ -149,7 +151,7 @@ The standalone thermostat is the first component. House Climate, Effective Mode,
 | Branch | Purpose |
 | --- | --- |
 | `main` | Public project presentation; future stable releases |
-| `develop` | Integration branch; currently retains the foundation |
+| `develop` | Contribution and integration branch; no package yet |
 | `senyo888-patch-1` | Working source and initial installable beta |
 
 ## Support and contribution

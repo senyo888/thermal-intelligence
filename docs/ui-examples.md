@@ -2,7 +2,7 @@
 
 These examples show how one card presents different combinations of temperature, trend and thermostat observations. The outer arc, fine slope ring and status chip carry separate information; they do not need to share one colour.
 
-**About these images:** Senyo supplied these installation captures. Names were anonymised using AI-assisted editing; their exact source versions were not recorded. They include ownership, schedule and cutoff indicators from the existing system that are outside the standalone beta's current scope. They illustrate the wider TI interface, not a beta feature checklist, verified heat delivery or compatibility evidence. The [beta guide](beta.md) identifies the tested package.
+**About these images:** These anonymised installation examples have unrecorded source builds. Some schedule, ownership and cutoff indicators belong to the wider TI system and are outside the standalone beta. See [Image notes](image-notes.md) for editing context and [the beta guide](beta.md) for the current package.
 
 ## A heat request and a reported valve opening
 
@@ -14,7 +14,7 @@ These examples show how one card presents different combinations of temperature,
   </tr>
 </table>
 
-Both captures show an orange arc and a rising trend. The chips report different facts: a thermostat heat request on the left, and a reported thermostatic radiator valve (TRV) opening on the right. Neither screenshot alone proves accepted output or physical heat transfer. In beta.3, orange additionally requires the configured [response evidence](provider-contracts.md#temperature-response-evidence).
+Both captures show an orange arc and a rising trend. The chips report different facts: a thermostat heat request on the left, and a reported thermostatic radiator valve (TRV) opening on the right. Neither screenshot alone proves accepted output or physical heat transfer. In beta.4, orange requires the configured [response evidence](provider-contracts.md#temperature-response-evidence).
 
 ## A closed valve with different temperature trends
 
@@ -28,7 +28,9 @@ Both captures show an orange arc and a rising trend. The chips report different 
 
 The right-hand card is a useful distinction: the valve reports closed while the room temperature is still rising. Its warm slope ring preserves that observation, while the blue outer arc does not assert an established warming response. Falling temperature on the left is a measured trend; it does not mean an HVAC cooling mode is active.
 
-## Above target, with rising or falling readings
+<details>
+<summary>Above target, with rising or falling readings</summary>
+
 
 <table>
   <tr><th>Above target and rising</th><th>Above target and falling</th></tr>
@@ -40,15 +42,19 @@ The right-hand card is a useful distinction: the valve reports closed while the 
 
 Both outer arcs are lavender because the displayed temperature is above target. The fine ring distinguishes rising from falling readings. The header also shows different humidity colours and a **Closed** window observation without replacing the main temperature display.
 
+</details>
+
 ## Several cards on a wider dashboard
 
 <img src="../assets/presentation/multi-card-dashboard-example.png" alt="Anonymised TI dashboard with eight numbered cards, varied header telemetry, green and lavender outer arcs, blue and orange slope rings, and a partially visible second row" width="100%">
 
 Each card keeps its own readings, target, status and header choices. The original capture includes only part of the second row; some header text is clipped at the horizontal viewport edge. Those limits are retained rather than filled in. This is an illustration of a wider installation layout, not proof of the beta's complete dashboard or physical tablet support.
 
-## Existing detail examples
+<details>
+<summary>Explore detail panels</summary>
 
-The supplied **Heat enabled** and **Window detection** captures repeat examples already prepared for the README. Their existing anonymised versions are retained:
+
+**Heat enabled** describes the selected mode. **Window detection** opens a focused view of detector state and the configured response:
 
 <table>
   <tr><th>Heat enabled</th><th>Window detection</th></tr>
@@ -59,3 +65,5 @@ The supplied **Heat enabled** and **Window detection** captures repeat examples 
 </table>
 
 Heat enabled describes the selected HVAC mode. The window panel keeps detector state, configured action, delays and reported valve position separate. No readings or UI states were changed to make the examples appear more favourable.
+
+</details>

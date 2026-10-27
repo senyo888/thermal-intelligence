@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Synthetic values/scenarios preserved from the source active-presets.html and polish.html.
-// See docs/ui-fidelity.md for fixture transport additions and explicit scope differences.
+// See docs/source-provenance.md for renderer attribution; fixtures use synthetic data.
 import './icons.js';
 import '/dist/thermal-intelligence.js';
 const parameters=new URLSearchParams(location.search);
