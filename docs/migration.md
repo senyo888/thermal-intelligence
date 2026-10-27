@@ -1,14 +1,34 @@
-# Configuration, upgrade and rollback design
+# Update and rollback
 
-No public configuration schema or migration is released yet. This file records requirements for the first implementation.
+Beta.4 uses **schema 1**. Existing beta.1–beta.3 card configurations need no migration. The beta card type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`.
 
-- Preserve `custom:thermal-intelligence-card` unless a reviewed migration explicitly changes it.
-- Separate library version, configuration schema and optional provider schema. Define defaults and migration functions in one owned location.
-- Preserve unknown advanced fields through the visual editor. Removing or changing an option requires a documented migration and regression case.
-- Installation instructions must distinguish HACS download, JavaScript module resource registration, loaded browser bytes and saved card configuration. Document cache refresh and duplicate-resource resolution without indiscriminate deletion.
-- Test update with a saved configuration and reopen it visually. Record what changed and which old provider/library combinations remain supported.
-- Preserve the previous known-good bundle, exact resource configuration and saved card config before a test upgrade. Rollback restores those independently where required.
-- Do not promise lossless downgrade across schema changes. State known unsupported combinations and export/recovery steps before release.
-- Later backend rollback must additionally cover persistent schedules, holds, Boost, helper/schema state and authoritative writer identity. A frontend rollback is not a backend rollback.
+## Keep existing TI alongside the beta
 
-Publish concrete versioned procedures after the first artifact and schema are chosen.
+Keep existing `custom:thermal-intelligence-card` instances and their resources in place. Add new beta cards through **Thermal Intelligence Thermostat · Beta**. The standalone beta does not provide the wider system's schedules, holds, ownership, cutoff or recovery controls; do not replace backend-dependent cards by changing their type.
+
+## Update an existing beta
+
+1. Retain the previous bundle, resource URL and saved card configuration.
+2. Download the [exact beta.4 package](beta.md) and verify its digest.
+3. Save it under a new versioned filename and change only the beta resource URL. Do not register a second copy.
+4. Open a fresh browser document, reopen the visual editor and check the thermostat, provider details and source mappings.
+
+A frontend-only resource update does not require a Home Assistant Core restart. Saving or reopening card configuration sends no thermostat command.
+
+## Roll back
+
+Restore the previous beta resource URL and open a fresh browser document. A custom element already registered in an open page cannot be replaced in place. Restore saved card configuration separately if you intentionally changed it; avoid overwriting newer dashboard edits.
+
+For a first installation, remove only the added beta cards/view and its resource registration. Keep existing resources and dashboards in place. Frontend rollback does not undo thermostat settings or a deliberate VT lock command; check the provider's reported state separately.
+
+## Version notes
+
+| Update | Configuration and rollback behaviour |
+| --- | --- |
+| beta.1 → beta.2 | Adds administrator lock controls without a new option. Codes are entered at runtime and never saved in card configuration. |
+| beta.2 → beta.3 | Adds optional `response_arc` settings. Unmapped cards retain their existing fallback. Beta.2 preserves the unknown object but cannot display corroborated warming. |
+| beta.3 → beta.4 | No new settings. Explicitly null VT Off/Mode reasons show **None reported**. Returning to beta.3 can restore the false amber warning. |
+
+Unknown top-level options and nested feature, telemetry, humidity and response fields survive editor round trips; preservation does not make an unknown option operational. Unsupported explicit schema versions are rejected.
+
+For early development configurations, `background` selects `blue`, `plum` or `black`; the prototype `theme` field is preserved but inactive. Explicit legacy two-boundary humidity guides keep their three-band meaning until you choose the four-boundary format. See [configuration](card-configuration.md) for mappings, precedence and visual settings.

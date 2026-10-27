@@ -1,0 +1,4 @@
+title = "Thermal Intelligence Gitleaks configuration"
+
+[extend]
+useDefault = true

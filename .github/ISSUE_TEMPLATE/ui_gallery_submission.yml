@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        No installable TI release exists yet. Label designs as mockups; do not present them as tested product screenshots.
+        TI is in beta. Include the version shown and distinguish actual screenshots from mockups.
         Remove private names, entities, addresses and device details. Documentation/artwork reuse terms must be agreed before merging.
   - type: input
     id: title
