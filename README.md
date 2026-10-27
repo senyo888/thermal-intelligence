@@ -8,6 +8,7 @@ Created and maintained by **[Senyo · senyo888](https://github.com/senyo888)**.
 
 [![Beta 0.1.0-beta.4](https://img.shields.io/badge/beta-0.1.0--beta.4-d9a36c)](docs/beta.md)
 [![Beta checks](https://github.com/senyo888/thermal-intelligence/actions/workflows/foundation.yml/badge.svg?branch=senyo888-patch-1)](https://github.com/senyo888/thermal-intelligence/actions/workflows/foundation.yml?query=branch%3Asenyo888-patch-1)
+[![Project Site](https://img.shields.io/badge/Project%20Site-GitHub%20Pages-5aa8d6)](https://senyo888.github.io/thermal-intelligence/)
 [![Software GPL-3.0-only](https://img.shields.io/badge/software-GPL--3.0--only-5e9bc5)](LICENSE)
 
 [Website](https://senyo888.github.io/thermal-intelligence/) · [Wiki](https://github.com/senyo888/thermal-intelligence/wiki) · [Beta installation](docs/beta.md) · [Configuration](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md) · [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/compatibility.md) · [Report an issue](https://github.com/senyo888/thermal-intelligence/issues/new/choose)
@@ -108,7 +109,7 @@ This keeps occasional settings close without putting every control on the everyd
 
 ## One card, different setups
 
-Start with a standard climate entity or configure **Versatile Thermostat (VT)**. Add an explicit **thermostatic radiator valve (TRV)** opening source when available, or use the thermostat's reported activity. Optional humidity, trend and other sensors build up the view independently; the card does not require a TI backend. Test-environment coverage includes Generic Thermostat and VT switch, climate, valve and combined climate/valve configurations. [Compatibility and its limits](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/compatibility.md) remain explicit.
+Start with a standard climate entity or configure **Versatile Thermostat (VT)**. Add an explicit **thermostatic radiator valve (TRV)** opening source when available, or use the thermostat's reported activity. Optional humidity, trend and other sensors build up the view independently; the card does not require a TI backend. Dedicated Lab coverage includes Generic Thermostat and VT switch, climate, valve and combined climate/valve configurations. [Compatibility and its limits](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/compatibility.md) remain explicit.
 
 For a phone, keep a compact room view with the most useful readings. For a tablet or wider dashboard, place several independently configured cards together and expand the room you are working with. The layout adapts to the space available, the top row scrolls when needed, and controls retain touch-sized targets and keyboard access. Choose **Midnight Blue**, **Plum** or **Black**, and set activity and detail visibility per card. Responsive browser checks cover phone, tablet and desktop widths; physical-device validation is still pending.
 
@@ -159,3 +160,5 @@ The standalone thermostat is the first component. House Climate, Effective Mode,
 Use the [issue forms](https://github.com/senyo888/thermal-intelligence/issues/new/choose) with your TI, HA and provider versions, reproduction steps and a redacted configuration. Report vulnerabilities through the [private security route](https://github.com/senyo888/thermal-intelligence/security/advisories/new).
 
 Read [Contributing](CONTRIBUTING.md), [Security](SECURITY.md) and the [changelog](CHANGELOG.md). Software is licensed under [GPL-3.0-only](LICENSE); artwork and documentation have separate [scope notes](docs/licensing-options.md).
+
+[![Star Thermal Intelligence](https://img.shields.io/badge/Star%20%2F%20Support-Thermal%20Intelligence-2ea44f?logo=github&logoColor=white)](https://github.com/senyo888/thermal-intelligence)

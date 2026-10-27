@@ -7,4 +7,4 @@ The gallery contains two kinds of images:
 
 Installation images use assisted image editing for anonymisation and were visually compared with the originals. They are illustrative, not pixel-comparison or physical-heating evidence. Original cropping and partially visible rows remain. Personal photo metadata was removed; content credentials are retained where present.
 
-The header is generated presentation artwork, not a screenshot. Image-editing prompts, originals and detailed working records are kept privately. Documentation and artwork are subject to the separate [reuse terms](licensing-options.md).
+The header is generated presentation artwork, not a screenshot. Documentation and artwork are subject to the separate [reuse terms](licensing-options.md).
