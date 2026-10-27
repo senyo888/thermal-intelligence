@@ -1,11 +1,11 @@
 name: Configuration help
-description: Ask about a documented setup or preview configuration.
+description: Ask about beta installation or card configuration.
 title: "[Help] "
 body:
   - type: markdown
     attributes:
       value: |
-        There is no installable TI release yet. Foundation questions are welcome; describe the guide or development build you are using.
+        TI is available as a manual-install beta. Describe the guide and exact version you are using.
         Share only a minimal redacted configuration, never tokens, private URLs or a full HA backup.
   - type: textarea
     id: goal

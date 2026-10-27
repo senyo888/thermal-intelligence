@@ -1,17 +1,17 @@
 name: Bug report
-description: Report a documentation, tooling or tested preview defect.
+description: Report a card, documentation or tooling defect.
 title: "[Bug] "
 body:
   - type: markdown
     attributes:
       value: |
-        TI is at foundation stage, with no installable release yet. For runtime reports, identify the exact development build.
+        TI is in beta. For runtime reports, identify the exact beta version or source commit.
         Remove tokens, private URLs, device IDs and home details. Do not attach full backups.
   - type: input
     id: version
     attributes:
       label: TI version or commit
-      description: Use foundation for a current documentation report.
+      description: For documentation reports, include the affected page or commit.
     validations:
       required: true
   - type: dropdown
