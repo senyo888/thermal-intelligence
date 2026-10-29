@@ -1,0 +1,11 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thermal Intelligence · Development preview</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/tests/fixtures/preview.css"></head>
+<body>
+<main>
+  <header class="intro"><p class="eyebrow">THERMAL INTELLIGENCE / LOCAL DEVELOPMENT</p><h1>Thermal Intelligence</h1><p>The established Thermal Intelligence interface, with synthetic data for local development.</p><div class="boundary">Synthetic browser fixture · no Home Assistant connection · no physical heating</div></header>
+  <div class="toolbar"><label>Fixture <select id="scenario"><option value="standard">Standard climate · Celsius</option><option value="fahrenheit">Standard climate · Fahrenheit</option><option value="range">Range · fan and swing</option><option value="vt">VT · ready</option><option value="vt-unready">VT · initialising</option><option value="unavailable">Climate unavailable</option><option value="empty">No climate entities</option></select></label><label><input type="checkbox" id="preview"> Preview / edit safety</label></div>
+  <div class="layout"><section aria-label="Thermostat fixture"><div id="cards"></div><p class="caption">Development fixture; see package.json for the candidate version. Fixture results do not establish live HA compatibility.</p></section><section class="workspace"><details open><summary>Visual configuration</summary><div id="editor"></div></details><details><summary>Saved card configuration</summary><pre id="configuration"></pre></details><details open><summary>Recorded service requests <span id="call-count">0</span></summary><p class="caption">Only deliberate card actions enter this local recorder. Acceptance and matching state remain separate observations.</p><pre id="audit">[]</pre></details></section></div>
+</main><script type="module" src="/tests/fixtures/harness.js"></script>
+</body></html>

@@ -1,6 +1,14 @@
 # Changelog
 
-There is no stable release yet. Installable beta source and packages are on `senyo888-patch-1`.
+There is no stable release yet. Release candidates are prepared through `develop`; beta.4 remains on `senyo888-patch-1`.
+
+## 0.1.0-rc.1 — 29 October 2026
+
+- Prepare the standalone card as a release candidate through `develop`, retaining beta.4 behaviour and saved schema-1 configurations.
+- Show **Thermal Intelligence Thermostat · RC** in the card picker. Keep the existing prerelease element names so saved trial cards continue working alongside legacy TI.
+- Add explicit beta/RC package channels and reproducibility checks for branch and pull-request builds.
+- Configure weekly dependency updates for npm tooling and GitHub Actions, with provider compatibility reviewed separately.
+- HACS installation and a stable release remain unavailable. See the [RC guide](docs/rc.md) for validation limits.
 
 ## Documentation — 27 October 2026
 

@@ -32,3 +32,7 @@ For a first installation, remove only the added beta cards/view and its resource
 Unknown top-level options and nested feature, telemetry, humidity and response fields survive editor round trips; preservation does not make an unknown option operational. Unsupported explicit schema versions are rejected.
 
 For early development configurations, `background` selects `blue`, `plum` or `black`; the prototype `theme` field is preserved but inactive. Explicit legacy two-boundary humidity guides keep their three-band meaning until you choose the four-boundary format. See [configuration](card-configuration.md) for mappings, precedence and visual settings.
+
+## Beta.4 to RC.1
+
+RC.1 retains `custom:thermal-intelligence-beta-card`, its editor registration and schema-1 configurations. The picker label becomes **Thermal Intelligence Thermostat · RC**. Change the existing trial resource URL to the verified RC module, then open a fresh browser document; do not load beta.4 and RC.1 together because they share registrations. Keep legacy TI resources unchanged. Retain the beta.4 file and URL for rollback. No Home Assistant Core restart is required. See the [RC guide](rc.md).

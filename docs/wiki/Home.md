@@ -18,3 +18,5 @@ Beta.4 fixes a false amber LED when VT explicitly reports no optional Off or Mod
 HACS installation, physical heating, native phone/tablet use and a minimum supported version range remain unverified. This is an untagged beta, not a stable release.
 
 [Website](https://senyo888.github.io/thermal-intelligence/) · [Repository](https://github.com/senyo888/thermal-intelligence) · [Changelog](https://github.com/senyo888/thermal-intelligence/blob/main/CHANGELOG.md) · [Support](Troubleshooting)
+
+[Release candidate installation](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/rc.md) · [Dependency monitoring](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/dependency-monitoring.md)

@@ -1,0 +1,21 @@
+{
+  "name": "thermal-intelligence-cards",
+  "version": "0.1.0-rc.1",
+  "private": true,
+  "type": "module",
+  "license": "GPL-3.0-only",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/unit/*.test.mjs",
+    "test:browser": "playwright test",
+    "preview": "node scripts/preview-server.mjs"
+  },
+  "devDependencies": {
+    "@mdi/js": "7.4.47",
+    "@playwright/test": "1.64.1",
+    "esbuild": "0.28.2"
+  }
+}

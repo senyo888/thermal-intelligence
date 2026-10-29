@@ -6,12 +6,12 @@
 
 Created and maintained by **[Senyo · senyo888](https://github.com/senyo888)**.
 
-[![Beta 0.1.0-beta.4](https://img.shields.io/badge/beta-0.1.0--beta.4-d9a36c)](docs/beta.md)
-[![Beta checks](https://github.com/senyo888/thermal-intelligence/actions/workflows/foundation.yml/badge.svg?branch=senyo888-patch-1)](https://github.com/senyo888/thermal-intelligence/actions/workflows/foundation.yml?query=branch%3Asenyo888-patch-1)
+[![Release candidate 0.1.0-rc.1](https://img.shields.io/badge/RC-0.1.0--rc.1-d9a36c)](docs/rc.md)
+[![RC checks](https://github.com/senyo888/thermal-intelligence/actions/workflows/foundation.yml/badge.svg?branch=develop)](https://github.com/senyo888/thermal-intelligence/actions/workflows/foundation.yml?query=branch%3Adevelop)
 [![Project Site](https://img.shields.io/badge/Project%20Site-GitHub%20Pages-5aa8d6)](https://senyo888.github.io/thermal-intelligence/)
 [![Software GPL-3.0-only](https://img.shields.io/badge/software-GPL--3.0--only-5e9bc5)](LICENSE)
 
-[Website](https://senyo888.github.io/thermal-intelligence/) · [Wiki](https://github.com/senyo888/thermal-intelligence/wiki) · [Beta installation](docs/beta.md) · [Configuration](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md) · [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/compatibility.md) · [Report an issue](https://github.com/senyo888/thermal-intelligence/issues/new/choose)
+[Website](https://senyo888.github.io/thermal-intelligence/) · [Wiki](https://github.com/senyo888/thermal-intelligence/wiki) · [RC installation](docs/rc.md) · [Configuration](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/card-configuration.md) · [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/compatibility.md) · [Report an issue](https://github.com/senyo888/thermal-intelligence/issues/new/choose)
 
 Thermal Intelligence brings current and target temperatures, supported thermostat controls and device observations into one considered interface. The glass dial, restrained lighting, responsive controls and focused detail panels keep everyday readings clear and further detail close at hand.
 
@@ -47,7 +47,7 @@ The everyday view stays simple: the room temperature, your target, a clear statu
 
 The outer arc, slope ring and activity chip are deliberately independent: the arc combines the room's state with corroborated temperature response, the fine ring shows measured temperature slope, and the chip reports activity. Idle is a reported activity, not a universal arc colour. A rising temperature slope can continue after the valve closes; the closed TRV does not establish an orange response arc.
 
-**Orange has a specific meaning.** With the optional VT response sources configured, the room must be below its effective target, the current heat request must be accepted, and fresh room and trend readings must agree that it is warming. An open valve or a heating request alone is insufficient. When those observations expire, the arc returns to blue and the LED overview explains why. Standard thermostats and cards without response mappings retain the temperature comparison and reported cooling colours; they do not invent accepted-output evidence. [Response setup and colour meanings](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md#temperature-response-arc).
+**Orange has a specific meaning.** With the optional VT response sources configured, the room must be below its effective target, the current heat request must be accepted, and fresh room and trend readings must agree that it is warming. An open valve or a heating request alone is insufficient. When those observations expire, the arc returns to blue and the LED overview explains why. Standard thermostats and cards without response mappings retain the temperature comparison and reported cooling colours; they do not invent accepted-output evidence. [Response setup and colour meanings](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/card-configuration.md#temperature-response-arc).
 
 The staggered glint of the small lights around the dial and the slope ring's gentle breathing preserve the original glass-and-light character. They add depth without replacing readable values or status text, and respect reduced-motion preferences.
 
@@ -109,11 +109,11 @@ This keeps occasional settings close without putting every control on the everyd
 
 ## One card, different setups
 
-Start with a standard climate entity or configure **Versatile Thermostat (VT)**. Add an explicit **thermostatic radiator valve (TRV)** opening source when available, or use the thermostat's reported activity. Optional humidity, trend and other sensors build up the view independently; the card does not require a TI backend. Dedicated Lab coverage includes Generic Thermostat and VT switch, climate, valve and combined climate/valve configurations. [Compatibility and its limits](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/compatibility.md) remain explicit.
+Start with a standard climate entity or configure **Versatile Thermostat (VT)**. Add an explicit **thermostatic radiator valve (TRV)** opening source when available, or use the thermostat's reported activity. Optional humidity, trend and other sensors build up the view independently; the card does not require a TI backend. Dedicated Lab coverage includes Generic Thermostat and VT switch, climate, valve and combined climate/valve configurations. [Compatibility and its limits](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/compatibility.md) remain explicit.
 
 For a phone, keep a compact room view with the most useful readings. For a tablet or wider dashboard, place several independently configured cards together and expand the room you are working with. The layout adapts to the space available, the top row scrolls when needed, and controls retain touch-sized targets and keyboard access. Choose **Midnight Blue**, **Plum** or **Black**, and set activity and detail visibility per card. Responsive browser checks cover phone, tablet and desktop widths; physical-device validation is still pending.
 
-Ordinary setup is visual: **Add Card → Thermal Intelligence Thermostat · Beta**, choose your thermostat, then select the readings and presentation that suit that card. [Configuration guide](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md).
+Ordinary setup is visual: **Add Card → Thermal Intelligence Thermostat · RC**, choose your thermostat, then select the readings and presentation that suit that card. [Configuration guide](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/card-configuration.md).
 
 <img src="assets/presentation/multi-card-dashboard-example.png" alt="Anonymised TI dashboard with eight numbered cards, independent targets, varied header telemetry and different arc and trend colours" width="100%">
 
@@ -137,23 +137,23 @@ Ordinary setup is visual: **Add Card → Thermal Intelligence Thermostat · Beta
 
 </details>
 
-## Try the beta
+## Try the release candidate
 
-The installable beta and its source are on **[senyo888-patch-1](https://github.com/senyo888/thermal-intelligence/tree/senyo888-patch-1)**. Start with the [verified package and installation guide](docs/beta.md).
+**[0.1.0-rc.1 is prepared through `develop`](https://github.com/senyo888/thermal-intelligence/tree/develop)**. Start with the [RC package and installation guide](docs/rc.md). Beta.4 remains available on `senyo888-patch-1`.
 
-The beta has separate card and editor names so it can coexist with an existing Thermal Intelligence installation. Keep existing cards and resources in place, and add **Thermal Intelligence Thermostat · Beta** for testing.
+RC.1 retains the beta.4 card behaviour and configuration. It appears as **Thermal Intelligence Thermostat · RC** in Add Card and keeps the prerelease card type so saved trial cards continue working. Keep existing TI resources in place; replace only a previous trial module, never load beta and RC modules together.
 
-Testing covers HA **2026.10.0** and **2026.10.4** with VT **10.5.1**, including manual installation and test-environment rollback. Physical heating response, native phone/tablet use, a minimum supported version range and HACS installation remain unverified. See [Compatibility](docs/compatibility.md) for the scope of each check. This is a beta; there is no stable release yet.
+The recorded beta checks cover HA **2026.10.0** and **2026.10.4** with VT **10.5.1**, including manual installation and test-environment rollback. RC validation and observation are recorded separately. Physical heating response, native phone/tablet acceptance, a minimum supported version range and HACS installation remain unverified. See [Compatibility](docs/compatibility.md). There is no stable release yet.
 
 ## Project direction
 
-The standalone thermostat is the first component. House Climate, Effective Mode, Heating Control Centre, a portable backend and broader mobile/tablet dashboards are planned. They are not included in this beta.
+The standalone thermostat is the first component. House Climate, Effective Mode, Heating Control Centre, a portable backend and broader mobile/tablet dashboards are planned. They are not included in this release candidate.
 
 | Branch | Purpose |
 | --- | --- |
 | `main` | Public project presentation; future stable releases |
-| `develop` | Contribution and integration branch; no package yet |
-| `senyo888-patch-1` | Working source and initial installable beta |
+| `develop` | Release-candidate source, tests and installable RC |
+| `senyo888-patch-1` | Retained beta.4 source and package |
 
 ## Support and contribution
 

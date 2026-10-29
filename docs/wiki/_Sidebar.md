@@ -8,3 +8,5 @@
 - [VT lock control](VT-lock-control)
 - [Compatibility](Compatibility)
 - [Troubleshooting](Troubleshooting)
+
+[Release candidate installation](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/rc.md) · [Dependency monitoring](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/dependency-monitoring.md)
