@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Check out reviewed source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -42,11 +42,11 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Check out reviewed source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Set up Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
       - name: Install pinned development dependencies
@@ -55,17 +55,25 @@ jobs:
         run: npm test
       - name: Package regression contracts
         run: python3 -B tests/package_test.py
+      - name: Dashboard distribution contracts
+        run: |
+          python3 -B tests/marketplace_test.py
+          python3 -B scripts/check_marketplace.py --commit "$GITHUB_SHA"
       - name: Build and verify checked-in bundle
         run: |
           npm run build
-          git diff --exit-code -- dist/thermal-intelligence.js
+          git diff --exit-code -- dist/
+      - name: Reproduce Marketplace candidate assets without publication
+        run: |
+          python3 -B scripts/package_beta.py --commit "$GITHUB_SHA" --marketplace --output "$RUNNER_TEMP/ti-marketplace-a"
+          python3 -B scripts/package_beta.py --commit "$GITHUB_SHA" --marketplace --output "$RUNNER_TEMP/ti-marketplace-b"
+          diff -ru "$RUNNER_TEMP/ti-marketplace-a" "$RUNNER_TEMP/ti-marketplace-b"
       - name: Install test browser
         run: npx playwright install --with-deps chromium
       - name: Synthetic browser contracts
         run: npm run test:browser
-      - name: Reproduce beta package
-        if: github.ref == 'refs/heads/senyo888-patch-1'
+      - name: Reproduce prerelease package
         run: |
-          python3 scripts/package_beta.py --commit "$GITHUB_SHA" --output "$RUNNER_TEMP/ti-beta-a"
-          python3 scripts/package_beta.py --commit "$GITHUB_SHA" --output "$RUNNER_TEMP/ti-beta-b"
-          diff -ru "$RUNNER_TEMP/ti-beta-a" "$RUNNER_TEMP/ti-beta-b"
+          python3 scripts/package_beta.py --commit "$GITHUB_SHA" --output "$RUNNER_TEMP/ti-prerelease-a"
+          python3 scripts/package_beta.py --commit "$GITHUB_SHA" --output "$RUNNER_TEMP/ti-prerelease-b"
+          diff -ru "$RUNNER_TEMP/ti-prerelease-a" "$RUNNER_TEMP/ti-prerelease-b"

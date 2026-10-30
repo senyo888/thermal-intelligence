@@ -2,6 +2,12 @@
 
 There is no stable release yet. Installable beta source and packages are on `senyo888-patch-1`.
 
+## Unreleased — distribution preparation
+
+- Add Dashboard package metadata for HACS and Home Assistant Marketplace, with the documentation-only default branch hidden from download choices.
+- Include the software licence in `dist/` and validate installation files and reproducible candidate assets in CI.
+- Preserve the existing frontend and saved configurations. Live installer, migration and catalogue checks remain pending; manual installation is still the available route.
+
 ## Documentation — 27 October 2026
 
 - Add the product website and Wiki manual, with state examples and expandable detail galleries.

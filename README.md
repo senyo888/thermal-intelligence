@@ -30,6 +30,10 @@ Thermal Intelligence brings current and target temperatures, supported thermosta
 
 *Four anonymised installation examples. Their source builds were not recorded; some header indicators belong to backend features outside the standalone beta. They show UI diversity, not a beta feature checklist. [Image notes](docs/image-notes.md).*
 
+## Marketplace preparation
+
+HACS and Home Assistant Marketplace packaging is prepared on `senyo888-patch-1` for review into `develop`. Manual installation remains the available route; an installable Marketplace release and migration testing are still pending. See [Distribution status](docs/distribution.md).
+
 ## More information, without a crowded card
 
 The everyday view stays simple: the room temperature, your target, a clear status and controls within reach. Behind that simplicity, the dial, colour, icons and small indicators each have a purpose. Tap for context, expand for controls, then return to the quiet overview.
@@ -152,8 +156,8 @@ The standalone thermostat is the first component. House Climate, Effective Mode,
 | Branch | Purpose |
 | --- | --- |
 | `main` | Public project presentation; future stable releases |
-| `develop` | Contribution and integration branch; no package yet |
-| `senyo888-patch-1` | Working source and initial installable beta |
+| `develop` | Release-candidate source, tests and installable RC |
+| `senyo888-patch-1` | Retained beta.4 source and package |
 
 ## Support and contribution
 
