@@ -10,6 +10,12 @@ There is no stable release yet. Release candidates are prepared through `develop
 - Configure weekly dependency updates for npm tooling and GitHub Actions, with provider compatibility reviewed separately.
 - HACS installation and a stable release remain unavailable. See the [RC guide](docs/rc.md) for validation limits.
 
+## Unreleased — distribution preparation
+
+- Add Dashboard package metadata for HACS and Home Assistant Marketplace, with the documentation-only default branch hidden from download choices.
+- Include the software licence in `dist/` and validate installation files and reproducible candidate assets in CI.
+- Preserve the existing frontend and saved configurations. Live installer, migration and catalogue checks remain pending; manual installation is still the available route.
+
 ## Documentation — 27 October 2026
 
 - Add the product website and Wiki manual, with state examples and expandable detail galleries.

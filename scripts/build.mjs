@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { build } from 'esbuild';
-import { readFile, mkdir } from 'node:fs/promises';
+import { readFile, mkdir, copyFile } from 'node:fs/promises';
 const { version } = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
 await mkdir(new URL('../dist/', import.meta.url), { recursive: true });
 const result = await build({
@@ -12,4 +12,5 @@ const result = await build({
 });
 if (Object.keys(result.metafile.inputs).some(path => !path.startsWith('src/'))) throw new Error('The runtime must contain only reviewed project source.');
 if (Object.values(result.metafile.outputs).some(output => output.imports.length)) throw new Error('The runtime must not load external modules.');
+await copyFile(new URL('../LICENSE', import.meta.url), new URL('../dist/LICENSE', import.meta.url));
 console.log(`Built Thermal Intelligence Cards ${version}`);

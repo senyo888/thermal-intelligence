@@ -4,11 +4,14 @@ import importlib.util
 import json
 import os
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
-spec = importlib.util.spec_from_file_location("package_beta", Path(__file__).resolve().parents[1] / "scripts/package_beta.py")
+SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
+sys.path.insert(0, str(SCRIPTS))
+spec = importlib.util.spec_from_file_location("package_beta", SCRIPTS / "package_beta.py")
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 
@@ -88,6 +91,48 @@ class PackageTests(unittest.TestCase):
         Path("dist/thermal-intelligence.js").unlink()
         Path("dist/thermal-intelligence.js").symlink_to("../LICENSE"); self.commit()
         with self.assertRaises(ValueError): module.package("HEAD", "a")
+
+    def marketplace_files(self):
+        from check_marketplace import EXPECTED_MANIFEST
+        Path("hacs.json").write_text(json.dumps(EXPECTED_MANIFEST))
+        Path("dist/LICENSE").write_bytes(Path("LICENSE").read_bytes())
+        self.commit()
+
+    def test_marketplace_package_requires_committed_metadata(self):
+        from check_marketplace import EXPECTED_MANIFEST
+        Path("hacs.json").write_text(json.dumps(EXPECTED_MANIFEST))
+        Path("dist/LICENSE").write_bytes(Path("LICENSE").read_bytes())
+        with self.assertRaises(ValueError): module.package_marketplace("HEAD", "a")
+        self.assertFalse(Path("a").exists())
+
+    def test_marketplace_package_is_immutable_and_reproducible(self):
+        self.marketplace_files()
+        Path("hacs.json").write_text('{"name":"uncommitted"}')
+        Path("dist/LICENSE").write_text("uncommitted licence")
+        a = module.package_marketplace("HEAD", "a")
+        b = module.package_marketplace("HEAD", "b")
+        self.assertEqual(a, b)
+        self.assertEqual(a["distribution"]["repository_manifest"]["filename"], "thermal-intelligence.js")
+        self.assertEqual(a["distribution"]["source"], a["source_commit"])
+        self.assertEqual(sorted(p.name for p in Path("a").iterdir()), ["LICENSE", "manifest.json", "thermal-intelligence.js"])
+        for p in Path("a").iterdir():
+            self.assertEqual(p.read_bytes(), (Path("b") / p.name).read_bytes())
+
+    def test_marketplace_rejects_stray_dist_payload(self):
+        self.marketplace_files()
+        Path("dist/notes.txt").write_text("Not an installation file"); self.commit()
+        with self.assertRaises(ValueError): module.package_marketplace("HEAD", "a")
+        self.assertFalse(Path("a").exists())
+
+    def test_marketplace_rejects_symlink_metadata(self):
+        self.marketplace_files()
+        Path("hacs.json").unlink(); Path("hacs.json").symlink_to("package.json"); self.commit()
+        with self.assertRaises(ValueError): module.package_marketplace("HEAD", "a")
+
+    def test_marketplace_rejects_missing_licence(self):
+        self.marketplace_files()
+        Path("dist/LICENSE").unlink(); self.commit()
+        with self.assertRaises(ValueError): module.package_marketplace("HEAD", "a")
 
 
 if __name__ == "__main__": unittest.main()

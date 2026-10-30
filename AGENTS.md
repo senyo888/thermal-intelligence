@@ -12,6 +12,10 @@ Thermal Intelligence is created and maintained by **Senyo (senyo888)**. Lead pub
 - Preserve unknown configuration fields and independent per-card settings. Do not silently remove functionality.
 - Make small, explainable changes; update the relevant documentation and run checks appropriate to the change. Keep implementation, tests, publication and deployment claims separate.
 
+## Contribution order
+
+Commit and push changes to `senyo888-patch-1` first, then open a pull request into `develop`. Prepare and validate release candidates through `develop`. Promotion to `main`, formal releases and installation upgrades require their separate approvals. Preserve the beta and RC runtime identities when carrying shared tooling or documentation between branches.
+
 ## Public and private material
 
 - Publish product guidance, useful contributor contracts and concise release notes. Keep conversations, requests, design briefs, prompts, decision journals, internal reviews and raw operational evidence in ignored `.private/` or `AGENTS.local.md`.

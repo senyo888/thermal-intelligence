@@ -7,6 +7,7 @@ import json
 import re
 import subprocess
 from pathlib import Path
+from check_marketplace import check as check_marketplace
 
 
 def git(*args):
@@ -51,9 +52,21 @@ def package(commit, output):
     return manifest
 
 
+def package_marketplace(commit, output):
+    """Validate the same immutable source before creating candidate assets."""
+    commit = git("rev-parse", "--verify", "--end-of-options", f"{commit}^{{commit}}").decode().strip()
+    distribution = check_marketplace(commit)
+    manifest = package(commit, output)
+    manifest["distribution"] = distribution
+    (Path(output) / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    return manifest
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--commit", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--marketplace", action="store_true", help="Require the reviewed Dashboard metadata and dist/ layout; creates files only, never publishes")
     args = parser.parse_args()
-    print(json.dumps(package(args.commit, args.output), indent=2))
+    builder = package_marketplace if args.marketplace else package
+    print(json.dumps(builder(args.commit, args.output), indent=2))

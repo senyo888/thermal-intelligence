@@ -12,6 +12,7 @@ Candidate: **0.1.0-rc.1** on `develop`. The [RC guide](rc.md) identifies the pac
 | VT response arc | Synthetic positive, restricted, mismatching, stale and expired evidence; real HA checks cover unmapped configurations |
 | Phone, tablet and desktop widths | Responsive Chromium fixtures, keyboard and reduced-motion checks; physical devices and Companion apps remain unverified |
 | HACS | Installation, updates and catalogue inclusion are unverified |
+| Home Assistant Marketplace | HA 2026.11.0b1 source reviewed; metadata and offline package checks prepared. Installation, migration, update and recovery remain unverified; see [Distribution](distribution.md) |
 | Other climate integrations | Provisional; require integration-specific checks |
 | Physical heating response | Unverified; activity and valve readings do not prove heat delivery |
 
