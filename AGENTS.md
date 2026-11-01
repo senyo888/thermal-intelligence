@@ -5,7 +5,7 @@ Thermal Intelligence is created and maintained by **Senyo (senyo888)**. Lead pub
 ## Engineering
 
 - Read [Architecture](ARCHITECTURE.md), [Configuration](docs/card-configuration.md) and [Compatibility](docs/compatibility.md). Verify the checkout, branch and working tree before editing; preserve concurrent work.
-- Keep the installable beta on `senyo888-patch-1`. `main` contains public documentation and the website; `develop` is the contribution branch. Do not copy runtime packages into either presentation surface.
+- Keep the installable beta on `senyo888-patch-1`. Prepare release candidates through `develop`, which contains the candidate source, tests and reproducible package. `main` contains public documentation and the website; promote selected content without copying runtime packages into this presentation branch.
 - Preserve the established card layout, dial, typography, icon alignment, dialogs and staggered LED animation. Compare UI changes at phone, tablet and desktop widths using synthetic fixtures.
 - Keep mode, preset, ownership, reported activity and physical response distinct. UI follows provider evidence. Preserve unknown, unavailable, stale and invalid states; unknown readiness never permits fallback controls.
 - Commands require explicit user intent and a captured target. Setup, rendering, editor saves and reconnects must never send thermostat commands or replay earlier requests.

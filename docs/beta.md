@@ -1,5 +1,7 @@
 # Install and test the beta
 
+Beta.4 is retained on `senyo888-patch-1`. For the candidate prepared through `develop`, see the [RC.1 guide](rc.md).
+
 Version **0.1.0-beta.4**, source commit `ea1268ac7a8dc5aa7f54723870808bf24a92cdc0`. This is a frontend module for controlled testing, with no TI backend required. Manual installation and rollback have been tested; see [compatibility](compatibility.md) for version coverage and remaining limits.
 
 ## Get the exact package

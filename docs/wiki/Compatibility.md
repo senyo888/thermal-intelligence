@@ -1,6 +1,8 @@
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-compatibility.png" alt="Thermal Intelligence Wiki — Compatibility" width="100%">
+
 # Compatibility
 
-Current beta: **0.1.0-beta.4**. The [installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta.md) identifies the exact tested artifact. A minimum supported Home Assistant version and a broader support range have not yet been established.
+Candidate: **0.1.0-rc.1** on `develop`. The [RC guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc.md) identifies the package and candidate checks. The table below records the beta.4 baseline; it is not an RC soak result. A minimum supported Home Assistant version and a broader support range have not yet been established.
 
 | Environment or feature | Coverage |
 | --- | --- |
@@ -18,6 +20,8 @@ Current beta: **0.1.0-beta.4**. The [installation guide](https://github.com/seny
 Beta.4 passed **135 unit tests, 81 browser tests and 5 packaging tests**. Coverage includes configuration preservation, provider identity and readiness, command races, no replay after reconnect, escaped rendering and degraded observations. The built module's health checks retain amber for incomplete observations and red for disconnected or unavailable thermostats. A completed scoped security review reported no findings.
 
 These results apply to the recorded versions and scenarios. They do not establish compatibility with every thermostat, browser or Home Assistant release.
+
+RC.1 changes release identity and packaging; it does not change thermostat commands, provider interpretation, response-arc rules or the health LED. A timed RC observation must record its own build identity, start and checkpoints. Historical beta checks do not count as an RC soak.
 
 ## Report a compatibility issue
 
