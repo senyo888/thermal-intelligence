@@ -1,4 +1,8 @@
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/develop/assets/presentation/wiki-installing-the-beta.png" alt="Thermal Intelligence Wiki — Historical beta installation" width="100%">
+
 # Install and test the beta
+
+This is the retained beta.4 installation record. For the current candidate, use [Install RC.1](Installing-the-release-candidate).
 
 Version **0.1.0-beta.4**, source commit `ea1268ac7a8dc5aa7f54723870808bf24a92cdc0`. This is a frontend module for controlled testing, with no TI backend required. Manual installation and rollback have been tested; see [compatibility](https://github.com/senyo888/thermal-intelligence/blob/main/docs/compatibility.md) for version coverage and remaining limits.
 

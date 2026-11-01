@@ -1,12 +1,14 @@
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/develop/assets/presentation/wiki-troubleshooting.png" alt="Thermal Intelligence Wiki — Troubleshooting" width="100%">
+
 # Troubleshooting and support
 
 ## The card is missing from Add Card
 
-Check that the verified beta module is registered once as a **JavaScript module** resource. Open a fresh browser document after changing its URL. The picker entry is **Thermal Intelligence Thermostat · Beta**. Keep legacy TI resources separate.
+Check that the verified RC.1 module is registered once as a **JavaScript module** resource. Open a fresh browser document after changing its URL. The picker entry is **Thermal Intelligence Thermostat · RC**. Keep legacy TI resources separate.
 
 ## The LED is amber
 
-Tap the LED to see which observation or restriction needs attention. Beta.4 accepts an explicitly null VT Off reason or Mode reason as **None reported**. Missing fields, unknown/unavailable observations, malformed values and real lock/readiness restrictions remain visible. An amber detail warning does not itself change command permissions.
+Tap the LED to see which observation or restriction needs attention. RC.1 displays an explicitly null VT Off reason or Mode reason as **None reported**. Missing fields, unknown/unavailable observations, malformed values and real lock/readiness restrictions remain visible. An amber detail warning does not itself change command permissions.
 
 ## Controls are unavailable
 
@@ -18,7 +20,7 @@ They describe different observations: temperature response, temperature slope an
 
 ## Update or rollback
 
-Use the exact module and resource procedure in [Installing the beta](Installing-the-beta). Retain the previous file and configuration. A frontend rollback cannot undo a provider command.
+Use the exact module and resource procedure in [Installing the release candidate](Installing-the-release-candidate). Retain the previous file and configuration. A frontend rollback cannot undo a provider command.
 
 ## Report a problem
 

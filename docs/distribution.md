@@ -10,9 +10,9 @@ Thermal Intelligence is available as a manually installed frontend prerelease. U
 
 The package contains the JavaScript module, software licence and a manifest identifying its source and hashes. Website content, images, development tools and private records are excluded. The bundle is self-contained and does not download runtime dependencies.
 
-## HACS and Home Assistant Marketplace
+## HACS custom repository and future Marketplace distribution
 
-Manual resource installation remains the available route. Dashboard package metadata and offline checks are prepared on `senyo888-patch-1` for review into `develop`; HACS and Home Assistant Marketplace installation, migration and catalogue inclusion remain unverified.
+Manual resource installation remains the available route. Dashboard package metadata and offline checks are present on `develop`. The next route is a versioned HACS custom Dashboard repository; see [HACS preparation](hacs.md). Installation, migration and catalogue inclusion need separate validation. Home Assistant Marketplace is a later distribution target.
 
 The root [`hacs.json`](../hacs.json) names `thermal-intelligence.js`, uses the `dist/` layout and hides the default branch as a download choice. `main` currently contains documentation rather than an installable package. Metadata on a source branch does not make that branch a selectable release or make the repository installable from the default branch.
 
@@ -46,7 +46,7 @@ The distribution check rejects wrong filenames, root modules that would shadow `
 | Check | Status |
 | --- | --- |
 | Repository description, topics, README images and software licence | Present |
-| Dashboard metadata, bounded install directory and repeatable candidate assets | Prepared on `senyo888-patch-1`; offline validation only |
+| Dashboard metadata, bounded install directory and repeatable candidate assets | Present on `develop`; offline validation only |
 | Installable default branch or published release containing the metadata and module | Pending |
 | Upstream HACS validation with no ignored checks | Pending against the published candidate |
 | HACS and Marketplace install, update, removal, migration and recovery | Pending in an isolated test environment |

@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1300" viewBox="0 0 1200 1300" role="img" aria-labelledby="title desc">
+<title id="title">Thermal Intelligence: devices, sensors and observations</title><desc id="desc">Heating hardware, indoor and outdoor sensors, weather services, room context and energy meters enter Home Assistant through their integrations. A selected climate entity and independent per-card sensor mappings feed separate TI provider and telemetry models. Deliberate user commands return through guarded Home Assistant services to the selected provider. Sensors do not have to pass through the thermostat provider.</desc>
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101d2c"/><stop offset="1" stop-color="#0b1019"/></linearGradient><marker id="blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8" fill="#77c9e9"/></marker><marker id="warm" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8" fill="#edb47f"/></marker></defs>
+<rect width="1200" height="1300" rx="24" fill="url(#bg)"/>
+<g font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
+<text x="48" y="48" font-size="16" fill="#edb47f">THERMAL INTELLIGENCE · RC.1</text>
+<text x="48" y="100" font-size="40" fill="#f1f4fa" font-weight="600">Many sources. One connected view.</text>
+<text x="48" y="139" font-size="21" fill="#bdccdd">Your devices and data reach TI through Home Assistant and explicit card mappings.</text>
+<text x="48" y="184" font-size="17" fill="#77c9e9">DEVICES &amp; EXTERNAL DATA</text>
+<rect x="48" y="205" width="208" height="137" rx="14" fill="#152335" stroke="#344d65"/>
+<text x="64" y="240" font-size="21" fill="#f1f4fa" font-weight="600">Heating hardware</text>
+<text x="64" y="271" font-size="18" fill="#bdccdd">Thermostats · TRVs</text>
+<text x="64" y="297" font-size="18" fill="#bdccdd">Heat sources</text>
+<text x="64" y="323" font-size="18" fill="#bdccdd">Reported device state</text>
+<path d="M152 342V374" fill="none" stroke="#77c9e9" stroke-width="2"/>
+<rect x="272" y="205" width="208" height="137" rx="14" fill="#152335" stroke="#344d65"/>
+<text x="288" y="240" font-size="21" fill="#f1f4fa" font-weight="600">Room sensors</text>
+<text x="288" y="271" font-size="18" fill="#bdccdd">Temperature</text>
+<text x="288" y="297" font-size="18" fill="#bdccdd">Humidity</text>
+<text x="288" y="323" font-size="18" fill="#bdccdd">Independent readings</text>
+<path d="M376 342V374" fill="none" stroke="#77c9e9" stroke-width="2"/>
+<rect x="496" y="205" width="208" height="137" rx="14" fill="#152335" stroke="#344d65"/>
+<text x="512" y="240" font-size="21" fill="#f1f4fa" font-weight="600">Outdoor &amp; weather</text>
+<text x="512" y="271" font-size="18" fill="#bdccdd">Outdoor probes</text>
+<text x="512" y="297" font-size="18" fill="#bdccdd">Weather services</text>
+<text x="512" y="323" font-size="18" fill="#bdccdd">Readings / conditions</text>
+<path d="M600 342V374" fill="none" stroke="#77c9e9" stroke-width="2"/>
+<rect x="720" y="205" width="208" height="137" rx="14" fill="#152335" stroke="#344d65"/>
+<text x="736" y="240" font-size="21" fill="#f1f4fa" font-weight="600">Room context</text>
+<text x="736" y="271" font-size="18" fill="#bdccdd">Window contacts</text>
+<text x="736" y="297" font-size="18" fill="#bdccdd">Presence / motion</text>
+<text x="736" y="323" font-size="18" fill="#bdccdd">Reported input state</text>
+<path d="M824 342V374" fill="none" stroke="#77c9e9" stroke-width="2"/>
+<rect x="944" y="205" width="208" height="137" rx="14" fill="#152335" stroke="#344d65"/>
+<text x="960" y="240" font-size="21" fill="#f1f4fa" font-weight="600">Energy &amp; power</text>
+<text x="960" y="271" font-size="18" fill="#bdccdd">Power sensors</text>
+<text x="960" y="297" font-size="18" fill="#bdccdd">Energy meters</text>
+<text x="960" y="323" font-size="18" fill="#bdccdd">Reported usage</text>
+<path d="M1048 342V374" fill="none" stroke="#77c9e9" stroke-width="2"/>
+<path d="M152 374H1048" fill="none" stroke="#77c9e9" stroke-width="2"/>
+<path d="M600 374V407" fill="none" stroke="#77c9e9" stroke-width="2" marker-end="url(#blue)"/>
+<rect x="48" y="421" width="1104" height="242" rx="14" fill="#101c2b" stroke="#526980"/>
+<text x="72" y="461" font-size="26" fill="#f1f4fa" font-weight="600">HOME ASSISTANT · integrations, providers and entities</text>
+<rect x="72" y="485" width="328" height="113" rx="14" fill="#152335" stroke="#344d65"/>
+<text x="88" y="518" font-size="22" fill="#f1f4fa" font-weight="600">Device &amp; sensor integrations</text>
+<text x="88" y="550" font-size="17" fill="#bdccdd">Sensor / binary-sensor entities</text>
+<text x="88" y="575" font-size="17" fill="#bdccdd">Weather and other entity attributes</text>
+<rect x="436" y="485" width="328" height="113" rx="14" fill="#152335" stroke="#344d65"/>
+<text x="452" y="518" font-size="22" fill="#f1f4fa" font-weight="600">Climate providers</text>
+<text x="452" y="550" font-size="17" fill="#bdccdd">Standard climate integration or VT</text>
+<text x="452" y="575" font-size="17" fill="#bdccdd">Targets, activity, readiness, features</text>
+<rect x="800" y="485" width="328" height="113" rx="14" fill="#152335" stroke="#344d65"/>
+<text x="816" y="518" font-size="22" fill="#f1f4fa" font-weight="600">Configured helpers</text>
+<text x="816" y="550" font-size="17" fill="#bdccdd">Existing trend sensors / helpers</text>
+<text x="816" y="575" font-size="17" fill="#bdccdd">Derived readings and preset values</text>
+<text x="72" y="636" font-size="19" fill="#bdccdd">Entities, attributes, units and availability · Registry identity · Provider-owned feature states</text>
+<path d="M310 663V705" fill="none" stroke="#77c9e9" stroke-width="2" marker-end="url(#blue)"/>
+<path d="M890 663V705" fill="none" stroke="#77c9e9" stroke-width="2" marker-end="url(#blue)"/>
+<rect x="48" y="719" width="530" height="149" rx="14" fill="#152335" stroke="#72bad9"/>
+<rect x="622" y="719" width="530" height="149" rx="14" fill="#152335" stroke="#72bad9"/>
+<text x="72" y="756" font-size="21" fill="#9dd7ef" font-weight="600">SELECTED CLIMATE ENTITY</text>
+<text x="72" y="793" font-size="20" fill="#bdccdd">Dial temperature and target · Modes / presets</text>
+<text x="72" y="825" font-size="20" fill="#bdccdd">Provider identity, capabilities and readiness</text>
+<text x="646" y="756" font-size="21" fill="#9dd7ef" font-weight="600">INDEPENDENT SOURCE MAPPINGS</text>
+<text x="646" y="793" font-size="20" fill="#bdccdd">Humidity · Trend · Valve · Power / energy</text>
+<text x="646" y="825" font-size="19" fill="#bdccdd">Room / outdoor readings · Context · Custom data</text>
+<text x="646" y="850" font-size="17" fill="#bdccdd">Optional room / output mappings for response evidence</text>
+<path d="M310 868V903" fill="none" stroke="#77c9e9" stroke-width="2" marker-end="url(#blue)"/>
+<path d="M890 868V903" fill="none" stroke="#77c9e9" stroke-width="2" marker-end="url(#blue)"/>
+<rect x="48" y="917" width="1104" height="163" rx="14" fill="#332542" stroke="#ba9be5" stroke-width="2"/>
+<text x="72" y="955" font-size="26" fill="#f1f4fa" font-weight="600">TI FRONTEND · your card, explanation and controls</text>
+<text x="72" y="997" font-size="23" fill="#f1f4fa" font-weight="600">Provider model</text>
+<text x="72" y="1033" font-size="20" fill="#bdccdd">Thermostat view, restrictions and request status</text>
+<text x="646" y="997" font-size="23" fill="#f1f4fa" font-weight="600">Telemetry and response model</text>
+<text x="646" y="1033" font-size="20" fill="#bdccdd">Mapped readings, status, colour and detail panels</text>
+<text x="48" y="1130" font-size="19" fill="#edb47f">DELIBERATE ACTIONS · separate from the observation paths</text>
+<rect x="48" y="1153" width="252" height="85" rx="14" fill="#152335" stroke="#7e634d"/>
+<text x="64" y="1187" font-size="23" fill="#f1f4fa" font-weight="600">Your action</text>
+<text x="64" y="1216" font-size="18" fill="#bdccdd">Choose a control</text>
+<path d="M305 1196H324" fill="none" stroke="#edb47f" stroke-width="2" marker-end="url(#warm)"/>
+<rect x="332" y="1153" width="252" height="85" rx="14" fill="#332542" stroke="#ba9be5" stroke-width="2"/>
+<text x="348" y="1187" font-size="23" fill="#f1f4fa" font-weight="600">TI checks</text>
+<text x="348" y="1216" font-size="18" fill="#bdccdd">Intent + readiness</text>
+<path d="M589 1196H608" fill="none" stroke="#edb47f" stroke-width="2" marker-end="url(#warm)"/>
+<rect x="616" y="1153" width="252" height="85" rx="14" fill="#152335" stroke="#7e634d"/>
+<text x="632" y="1187" font-size="23" fill="#f1f4fa" font-weight="600">HA services</text>
+<text x="632" y="1216" font-size="18" fill="#bdccdd">Captured target</text>
+<path d="M873 1196H892" fill="none" stroke="#edb47f" stroke-width="2" marker-end="url(#warm)"/>
+<rect x="900" y="1153" width="252" height="85" rx="14" fill="#152335" stroke="#7e634d"/>
+<text x="916" y="1187" font-size="23" fill="#f1f4fa" font-weight="600">Provider</text>
+<text x="916" y="1216" font-size="18" fill="#bdccdd">Regulation / device</text>
+<text x="48" y="1275" font-size="18" fill="#bdccdd">Available inputs depend on installed integrations and explicit configuration. Each source retains its own status.</text>
+</g></svg>
