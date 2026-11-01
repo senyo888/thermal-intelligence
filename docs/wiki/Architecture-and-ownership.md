@@ -43,4 +43,4 @@ An explicit action captures its thermostat target. TI checks capability and read
 
 House Climate, Effective Mode, Heating Control Centre and a portable TI backend are planned separately from the RC.1 frontend. Their future contracts will define control ownership and failure behaviour.
 
-[Full architecture contract](https://github.com/senyo888/thermal-intelligence/blob/develop/ARCHITECTURE.md) · [Command contract](https://github.com/senyo888/thermal-intelligence/blob/main/docs/command-contract.md) · [Provider contracts](https://github.com/senyo888/thermal-intelligence/blob/main/docs/provider-contracts.md)
+[Full architecture contract](https://github.com/senyo888/thermal-intelligence/blob/main/ARCHITECTURE.md) · [Command contract](https://github.com/senyo888/thermal-intelligence/blob/main/docs/command-contract.md) · [Provider contracts](https://github.com/senyo888/thermal-intelligence/blob/main/docs/provider-contracts.md)

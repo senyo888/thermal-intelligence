@@ -28,14 +28,16 @@ The destination must not already exist. The package contains `thermal-intelligen
 
 ## Installation and rollback
 
-1. Retain the previous trial module, resource URL and card configuration.
-2. Copy the verified RC module to a distinct versioned filename under `/config/www/thermal-intelligence/`.
-3. Add it once as a **JavaScript module** resource, or replace the previous beta trial resource URL. Do not register beta.4 and RC.1 together: they use the same trial custom elements.
+1. Back up the affected card configuration and resource list. For a trial update, retain the previous module and resource URL.
+2. Copy the verified RC module to `/config/www/thermal-intelligence/thermal-intelligence-rc1-763814e1e797.js`.
+3. Add `/local/thermal-intelligence/thermal-intelligence-rc1-763814e1e797.js` once as a **JavaScript module** resource, or replace the previous beta trial resource URL with it. Do not register beta.4 and RC.1 together: they use the same trial custom elements.
 4. Open a fresh browser document. Select **Thermal Intelligence Thermostat · RC** in Add Card, or open an existing trial card.
 
 The card type remains `custom:thermal-intelligence-beta-card`. Its name deliberately remains compatible with saved trial configurations. Existing legacy TI card types and resources remain separate. No Core restart or saved-configuration migration is required.
 
-To roll back, restore the retained beta.4 resource URL and open a fresh browser document. The [beta.4 guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta.md) gives its exact immutable module and hash. Do not restore a whole dashboard over unrelated edits.
+For a first installation, remove only the RC trial cards or test view and resource registration you added, then open a fresh browser document and verify the existing cards. Retain the module and original configuration for recovery.
+
+For a trial update, restore the retained beta.4 resource URL and open a fresh browser document. The [beta.4 guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta.md) gives its exact immutable module and hash. Do not restore a whole dashboard over unrelated edits.
 
 ## Validation and limits
 
