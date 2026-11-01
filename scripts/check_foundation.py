@@ -3,6 +3,7 @@
 """Check indexed public files. No network calls or workspace writes."""
 
 import hashlib
+import json
 import posixpath
 import re
 import subprocess
@@ -21,9 +22,51 @@ PRIVATE_DOCUMENTS = {
 }
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".svg", ".webp", ".gif"}
 
+# Frozen RC.1 distribution from 9d9ed9744c29a494d45501a8bb1359edd465c5c4.
+# Update only alongside an explicitly reviewed candidate promotion.
+DISTRIBUTION_HASHES = {
+    "dist/thermal-intelligence.js": "763814e1e797c72a8960fec2b928d945dc6fc1056d7ced366d4241ae81304117",
+    "dist/LICENSE": "fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0",
+}
+HACS_METADATA = {
+    "name": "Thermal Intelligence",
+    "filename": "thermal-intelligence.js",
+    "content_in_root": False,
+    "hide_default_branch": True,
+}
+
 
 def git(*args):
     return subprocess.check_output(["git", *args])
+
+
+def check_distribution(indexed):
+    errors = []
+    for name in {*DISTRIBUTION_HASHES, "hacs.json"}:
+        if indexed.get(name) != "100644":
+            errors.append(f"{name}: reviewed distribution file missing or not a regular non-executable file")
+            continue
+        data = git("show", f":{name}")
+        if name in DISTRIBUTION_HASHES:
+            if hashlib.sha256(data).hexdigest() != DISTRIBUTION_HASHES[name]:
+                errors.append(f"{name}: differs from the reviewed RC.1 snapshot")
+        else:
+            try:
+                metadata = json.loads(data)
+            except (ValueError, UnicodeDecodeError):
+                errors.append("hacs.json: invalid JSON")
+                continue
+            if metadata != HACS_METADATA or any(
+                type(metadata[key]) is not type(value)
+                for key, value in HACS_METADATA.items()
+            ):
+                errors.append("hacs.json: differs from the reviewed Dashboard metadata")
+    for name in indexed:
+        if name.startswith("dist/") and name not in DISTRIBUTION_HASHES:
+            errors.append(f"{name}: unexpected distribution payload")
+        if "/" not in name and name.endswith(".js"):
+            errors.append(f"{name}: root module could shadow the reviewed distribution")
+    return errors
 
 
 def main():
@@ -94,6 +137,7 @@ def main():
 
     if "LICENSE" not in indexed:
         errors.append("LICENSE: missing")
+    errors.extend(check_distribution(indexed))
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1

@@ -11,7 +11,7 @@ playwright-report/
 test-results/
 *.log
 
-# Runtime source and packages belong on senyo888-patch-1 at this stage.
+# Runtime development stays on its source branches; main may carry a reviewed distribution snapshot.
 
 # Private local agent adapters and browser outputs are not public contracts.
 /.codex/

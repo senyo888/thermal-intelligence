@@ -6,7 +6,9 @@ HACS is the planned next installation route for the RC.1 frontend. Thermal Intel
 
 ## Current route
 
-Use [manual RC.1 installation](Installing-the-release-candidate) today. Dashboard metadata and repeatable package checks are present on `develop`. The public default branch contains documentation; the versioned release and isolated HACS installation checks are still being prepared.
+Use [manual RC.1 installation](Installing-the-release-candidate) today. The default branch includes the reviewed RC.1 distribution snapshot and Dashboard metadata so HACS can inspect the repository when it is added. Candidate source and repeatable package checks remain on `develop`. Versioned release selection and isolated HACS installation checks are still being prepared.
+
+For TI's first-prerelease setup, with no stable release or selected visible version, HACS 2.0.5 checks the default branch before the added repository can show prereleases. The snapshot supplies that initial structure; the intended installation route selects a named release. `hide_default_branch` hides a download choice in the interface and is not an access-control or installation guard. See [distribution identity and selection](https://github.com/senyo888/thermal-intelligence/blob/main/docs/distribution.md#default-branch-discovery-and-release-selection).
 
 ## When the versioned release is available
 
@@ -15,7 +17,7 @@ These steps describe the intended route. Use them after the release guidance ide
 1. Back up the test environment and save the current dashboard/resource configuration.
 2. Check that `www/community/thermal-intelligence/` and its resource prefix are available for this package. If they contain existing TI or unrelated files, preserve them and review [resource ownership and migration](https://github.com/senyo888/thermal-intelligence/blob/main/docs/distribution.md#existing-installations-and-migration) first.
 3. In HACS, open the menu, choose **Custom repositories**, and enter `https://github.com/senyo888/thermal-intelligence` with category **Dashboard**.
-4. Open Thermal Intelligence and select the exact release named in the installation guidance. Follow its resource-registration instructions and verify that only one trial module is loaded.
+4. Open Thermal Intelligence, enable its prerelease/beta-version visibility, and select the exact release named in the installation guidance before downloading. If that release is unavailable, stop rather than downloading the default branch. Follow its resource-registration instructions and verify that only one trial module is loaded.
 5. Open a fresh browser document, then choose **Thermal Intelligence Thermostat · RC** in Add Card. Check the card, visual editor, provider observations and retained configuration.
 
 The existing manual trial resource needs a deliberate transition when moving to HACS. Beta and RC modules share registrations; keep existing legacy TI resources separate. See [update and rollback](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md).

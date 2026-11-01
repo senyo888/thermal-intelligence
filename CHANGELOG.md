@@ -12,7 +12,8 @@ There is no stable release yet. Release candidates are prepared through `develop
 
 ## Unreleased — distribution preparation
 
-- Add Dashboard package metadata for HACS and Home Assistant Marketplace, with the documentation-only default branch hidden from download choices.
+- Add Dashboard package metadata for HACS and Home Assistant Marketplace, with the default branch hidden from download choices.
+- Prepare default-branch discovery for HACS 2.0.5 using the unchanged RC.1 module and licence from the reviewed candidate. Versioned prerelease selection and isolated installation remain separate checks.
 - Include the software licence in `dist/` and validate installation files and reproducible candidate assets in CI.
 - Preserve the existing frontend and saved configurations. Live installer, migration and catalogue checks remain pending; manual installation is still the available route.
 
