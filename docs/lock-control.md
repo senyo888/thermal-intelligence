@@ -1,6 +1,6 @@
 # VT lock control
 
-The compact icon beside the thermostat name shows the lock state reported by **Versatile Thermostat (VT)**. From beta.2, a confirmed Home Assistant administrator can tap it to open a small control dialog when the card has verified the thermostat and its lock capabilities. Other accounts retain the read-only indicator.
+The compact icon beside the thermostat name shows the lock state reported by **Versatile Thermostat (VT)**. A confirmed Home Assistant administrator can tap it to open a small control dialog when the card has verified the thermostat and its lock capabilities. Other accounts retain the read-only indicator.
 
 ## Use the lock
 
@@ -19,7 +19,7 @@ If VT reports an automatic relock delay, the dialog explains it. VT owns that ti
 
 The indicator remains read-only unless the account is confirmed as an administrator, the card is connected outside preview/editing, the selected entity has a verified VT registry identity, VT reports it ready and available, the lock is configured, lock state, code requirement, user/automation scope and automatic relock delay are known, at least one lock scope is enabled, and both native lock/unlock services are available. Missing information does not become permission to send a command. Ordinary climate controls retain their existing lock restrictions.
 
-No additional card option is required, and saved configurations remain valid. The icon stays 14 px; the interactive version reserves a 44 px touch and keyboard target without covering nearby controls. Generic thermostat lock control is outside this beta's scope.
+No additional card option is required, and saved configurations remain valid. The icon stays 14 px; the interactive version reserves a 44 px touch and keyboard target without covering nearby controls. Generic thermostat lock control is outside the VT-specific lock interface.
 
 ## Code handling and provider limits
 
@@ -27,4 +27,4 @@ TI keeps the entered code out of saved card configuration, copied settings, requ
 
 The inspected **VT 10.5.1** implementation includes the attempted code in an invalid-code exception. TI suppresses that error text but does not repair upstream logging behavior. [VT lock implementation](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/feature_lock_manager.py), [native service definitions](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/services.yaml).
 
-Administrator-only interaction is a TI interface restriction. Home Assistant and VT remain responsible for backend permissions and code validation. See the [command contract](command-contract.md) and [exact beta evidence](beta.md) for implementation and validation boundaries.
+Administrator-only interaction is a TI interface restriction. Home Assistant and VT remain responsible for backend permissions and code validation. See the [command contract](command-contract.md) and [historical beta evidence](beta.md) for implementation and validation boundaries.

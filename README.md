@@ -1,19 +1,21 @@
-<p align="center"><img src="assets/presentation/thermal-intelligence-header.png" alt="Thermal Intelligence — thermostat control for Home Assistant. By Senyo." width="100%"></p>
+<p align="center"><img src="assets/presentation/thermal-intelligence-header.png" alt="Thermal Intelligence — thermostat control for Home Assistant" width="100%"></p>
 
 # Thermal Intelligence
 
-**A clear view of temperature, control and what your thermostat is actually reporting.**
+**Temperature, control and context in one Home Assistant card.**
 
-Created and maintained by **[Senyo · senyo888](https://github.com/senyo888)**.
-
-[![Release candidate 0.1.0-rc.1](https://img.shields.io/badge/RC-0.1.0--rc.1-d9a36c)](docs/rc.md)
-[![RC checks](https://github.com/senyo888/thermal-intelligence/actions/workflows/foundation.yml/badge.svg?branch=develop)](https://github.com/senyo888/thermal-intelligence/actions/workflows/foundation.yml?query=branch%3Adevelop)
+[![Release candidate 0.1.0-rc.1](https://img.shields.io/badge/Release%20candidate-0.1.0--rc.1-d9a36c)](docs/rc.md)
 [![Project Site](https://img.shields.io/badge/Project%20Site-GitHub%20Pages-5aa8d6)](https://senyo888.github.io/thermal-intelligence/)
-[![Software GPL-3.0-only](https://img.shields.io/badge/software-GPL--3.0--only-5e9bc5)](LICENSE)
+[![HACS custom repository in preparation](https://img.shields.io/badge/HACS-In%20preparation-41BDF5?logo=home-assistant&logoColor=white)](docs/hacs.md)
+[![Package version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsenyo888%2Fthermal-intelligence%2Fdevelop%2Fpackage.json&query=%24.version&label=Package%20Version&color=blue)](package.json)
+[![Licence GPL-3.0-only](https://img.shields.io/badge/License-GPL--3.0--only-blue)](LICENSE)
+[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/senyo888)
 
-[Website](https://senyo888.github.io/thermal-intelligence/) · [Wiki](https://github.com/senyo888/thermal-intelligence/wiki) · [RC installation](docs/rc.md) · [Configuration](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/card-configuration.md) · [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/compatibility.md) · [Report an issue](https://github.com/senyo888/thermal-intelligence/issues/new/choose)
+[Website](https://senyo888.github.io/thermal-intelligence/) · [Wiki](https://github.com/senyo888/thermal-intelligence/wiki) · [Install RC.1](docs/rc.md) · [Configuration](docs/card-configuration.md) · [Compatibility](docs/compatibility.md)
 
-Thermal Intelligence brings current and target temperatures, supported thermostat controls and device observations into one considered interface. The glass dial, restrained lighting, responsive controls and focused detail panels keep everyday readings clear and further detail close at hand.
+Thermal Intelligence brings current and target temperatures, supported thermostat controls and useful room observations into one considered interface. The glass dial, restrained lighting and focused detail panels keep everyday readings clear and further detail close at hand.
+
+**RC.1** is the standalone thermostat release candidate. Start with a standard Home Assistant climate entity or Versatile Thermostat (VT), then choose the readings and controls that suit each room.
 
 <table>
   <tr><th>Heat requested · rising</th><th>Idle · near target</th></tr>
@@ -28,141 +30,88 @@ Thermal Intelligence brings current and target temperatures, supported thermosta
   </tr>
 </table>
 
-*Four anonymised installation examples. Their source builds were not recorded; some header indicators belong to backend features outside the standalone beta. They show UI diversity, not a beta feature checklist. [Image notes](docs/image-notes.md).*
+*Selected installation examples. Explore the [state gallery](docs/ui-examples.md) and [image context](docs/image-notes.md).*
 
-## Marketplace preparation
+## Every detail has a purpose
 
-HACS and Home Assistant Marketplace packaging is prepared on `senyo888-patch-1` for review into `develop`. Manual installation remains the available route; an installable Marketplace release and migration testing are still pending. See [Distribution status](docs/distribution.md).
-
-## More information, without a crowded card
-
-The everyday view stays simple: the room temperature, your target, a clear status and controls within reach. Behind that simplicity, the dial, colour, icons and small indicators each have a purpose. Tap for context, expand for controls, then return to the quiet overview.
-
-### Read the room at a glance
-
-| Detail | What it tells you |
+| At a glance | What you can read |
 | --- | --- |
-| **Glass dial and outer arc** | The large reading is the current temperature; the pearl marker locates your target on the scale. The arc changes with the room's reported state and temperature response: orange for corroborated warming below target, cyan for reported cooling, green in the target band and lavender above it. Blue below target means warming is not yet established; Off and unavailable states are muted. Drag the marker or use minus/plus within the thermostat's reported limits. |
-| **Temperature-slope ring** | The fine ring around the sphere shows the direction of temperature change from your configured trend source. Warm orange/red tones indicate rising readings, blues indicate falling readings, and green or pale tones indicate a near-flat trend. The accompanying Rising, Falling or Stable label gives the rate and units, so the colour has an explanation. Missing trend data is shown as unavailable. |
-| **Dynamic status chip** | The chip adapts to the available evidence: reported Heating, Cooling or Idle; **Heat requested** for VT; or **TRV Open/Closed** with a reported valve percentage when mapped. **Heat enabled** means the mode is selected when activity is not reported. Tap the chip for the overview and the source behind the status. |
-| **Status LED** | The small LED summarises connection and readiness: green for the card's ready state, amber when controls or observations need attention, and red when disconnected or unavailable. Tap it to open temperatures, modes, provider details and request status. A press-and-hold opens the registered device's Home Assistant settings, with thermostat details as the fallback. |
+| **Glass dial and outer arc** | Current temperature, a target marker and colour that follows the room’s reported state and temperature response. Drag the marker or use minus/plus within the thermostat’s supported limits. |
+| **Temperature-slope ring** | Rising, falling or steady temperature, with a readable rate and units alongside the colour. |
+| **Status chip** | Reported Heating, Cooling or Idle; VT heat requests; or **TRV Open/Closed** with a mapped valve percentage. Tap for the source behind the status. |
+| **Status LED** | Green for readiness, amber for restrictions or observations needing attention, and red for a disconnected or unavailable thermostat. Tap for provider details and request status. |
 
-**Beta.4 removes a false amber warning.** VT can explicitly report no Off reason or Mode reason; these now read **None reported** in the overview. Missing, unknown, unavailable or malformed observations still need attention. Readiness and command guards are unchanged.
+The arc, slope ring and status chip describe different parts of the room’s story. A valve can close while the room temperature continues to rise. The [reading guide](https://github.com/senyo888/thermal-intelligence/wiki/Reading-the-card) explains these combinations and the observations used for each colour.
 
-The outer arc, slope ring and activity chip are deliberately independent: the arc combines the room's state with corroborated temperature response, the fine ring shows measured temperature slope, and the chip reports activity. Idle is a reported activity, not a universal arc colour. A rising temperature slope can continue after the valve closes; the closed TRV does not establish an orange response arc.
+## Your readings, arranged your way
 
-**Orange has a specific meaning.** With the optional VT response sources configured, the room must be below its effective target, the current heat request must be accepted, and fresh room and trend readings must agree that it is warming. An open valve or a heating request alone is insufficient. When those observations expire, the arc returns to blue and the LED overview explains why. Standard thermostats and cards without response mappings retain the temperature comparison and reported cooling colours; they do not invent accepted-output evidence. [Response setup and colour meanings](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/card-configuration.md#temperature-response-arc).
+Choose top-row readings, their order, labels and icons independently for each card. Humidity, trend, window, presence, motion and valve sources each add useful context. Configured icons open focused panels; missing or unknown readings remain clearly identified.
 
-The staggered glint of the small lights around the dial and the slope ring's gentle breathing preserve the original glass-and-light character. They add depth without replacing readable values or status text, and respect reduced-motion preferences.
+Set your own humidity display bands, select **Midnight Blue**, **Plum** or **Black**, and choose which details appear. The visual editor saves those preferences with the card.
 
-<table>
-  <tr><th>TRV open · rising</th><th>TRV closed · still rising</th></tr>
-  <tr>
-    <td valign="top" align="center"><img src="assets/presentation/trv-open-warming-example.png" alt="Anonymised TI example showing 19.9°C, rising temperature and TRV Open at 100%" width="260"></td>
-    <td valign="top" align="center"><img src="assets/presentation/trv-closed-rising-example.png" alt="Anonymised TI example showing 19.4°C, a blue outer arc, orange slope ring and TRV Closed at 0%" width="260"></td>
-  </tr>
-</table>
+The chevron opens **Controls & features**: supported modes, presets, fan or swing choices, and provider details. VT adds preset-temperature comparisons, feature observations and administrator [lock controls](docs/lock-control.md) where supported. When VT reports no optional Off or Mode reason, the overview shows **None reported**.
 
-*Anonymised installation examples, with source builds unrecorded. The right-hand card shows why these indicators are independent: a closed valve and a rising room temperature can occur together. Neither image alone proves physical heat delivery.*
+[Explore configuration](docs/card-configuration.md) · [See the detail panels](docs/ui-examples.md)
 
-### A top row that earns its space
+## Fits your thermostat
 
-Each configured icon combines a compact reading with colour that follows its meaning. Humidity follows your display bands; window, presence and motion distinguish **Open/Closed**, **Home/Away** and **Detected/Clear**; supported presets retain their own Frost, Eco, Comfort and Boost colours. Active, inactive and unknown observations receive distinct treatments, with missing information muted.
+Use one card for a compact room view, or arrange several independently configured cards across a wider dashboard. The layout adapts to the available space, with touch-sized controls, keyboard access and reduced-motion support.
 
-Choose which readings appear, their order, labels and icons for each card. Humidity, temperature, valve position and provider features can sit beside the room name without filling the main dial with detail. Tap a reading for its focused panel or Home Assistant source details. The compact VT lock indicates its reported state and opens [Lock/Unlock controls](docs/lock-control.md) for verified administrators when supported.
+Start in **Add Card → Thermal Intelligence Thermostat · RC**. Select the climate entity, then map optional humidity, trend and valve sources. TI works directly with Home Assistant and your thermostat provider.
 
-**Humidity presentation is customisable.** Set four boundaries for too dry, the start and end of your good range, and too wet. The display uses blue, amber, green, amber and red bands, with a reading and explanation in the humidity panel. These are visual preferences for this card; they do not change heating or humidity control. Save them through Home Assistant's visual card editor; the in-card adjustment panel provides a draft to copy.
+<img src="assets/presentation/multi-card-dashboard-example.png" alt="Illustrative multi-room TI installation with independent targets and varied readings" width="100%">
 
-<details>
-<summary>Explore window details and administrator lock controls</summary>
+*An installation example showing independently configured rooms. [More layouts and states](docs/ui-examples.md).*
 
-<table>
-  <tr><th>Window details</th><th>Administrator lock controls</th></tr>
-  <tr>
-    <td valign="top" align="center"><img src="assets/presentation/window-detection-example.png" alt="Window detail panel showing Closed, bypass Off, Frost temperature action, delays and reported valve opening" width="280"></td>
-    <td valign="top" align="center"><img src="assets/presentation/lock-controls.png" alt="Administrator lock dialog for a locked synthetic thermostat with an explicit Unlock thermostat action" width="280"></td>
-  </tr>
-</table>
+## Thermal Intelligence in your home
 
-The window panel separates detector state, configured response and reported valve opening. The lock dialog exposes the provider's scope and explicit action; a code field appears only when VT reports a configured code. [Lock behavior and limits](docs/lock-control.md).
+<a href="assets/presentation/ti-ownership.svg"><img src="assets/presentation/ti-ownership.svg" alt="Heating hardware, indoor and outdoor sensors, room context and energy sources feed Home Assistant. Selected climate and independent source mappings feed TI; deliberate actions follow a separate guarded service path." width="100%"></a>
 
-*Left: anonymised installation example, source build unrecorded. Right: actual beta.2 component with synthetic data and no configured code.*
+[Open the full-size diagram](assets/presentation/ti-ownership.svg).
 
-</details>
+| Responsibility | Owner |
+| --- | --- |
+| Device reports, room/outdoor measurements, context and energy | **Devices and data providers** |
+| Card, mapped observations and validated user requests | **TI frontend** |
+| States, registry and service access | **Home Assistant** |
+| Regulation, schedules and device operation | **Thermostat provider** |
 
-### Open only the controls you need
+**TI brings together the observations you select.** Thermostats, TRVs, independent room sensors, outdoor readings, window/presence sensors and energy sources reach the card through Home Assistant. The climate entity and optional sensor mappings follow separate paths, so each reading keeps its source and status.
 
-The chevron reveals **Controls & features**: the thermostat's supported HVAC modes and presets, fan or swing choices where advertised, and relevant provider and telemetry details. VT can also expose its preset-temperature comparison, Follow setting information and configured feature observations. Top-row icon settings are available here too. Tap the centre temperature to open the thermostat's native Home Assistant details.
+TI sends the actions you choose through Home Assistant’s services. Your thermostat provider retains regulation, schedules and device behaviour. [Architecture and ownership](ARCHITECTURE.md).
 
-This keeps occasional settings close without putting every control on the everyday face of the card. Home Assistant and the selected thermostat remain in charge.
+## Try RC.1
 
-<details>
-<summary>Explore expanded controls and preset details</summary>
+The [manual installation guide](docs/rc.md) provides the exact RC.1 module, SHA-256, setup and rollback steps. Keep existing TI resources in place and load one trial module at a time. Saved trial cards retain their configuration and `custom:thermal-intelligence-beta-card` type.
 
-<table>
-  <tr><th>Expanded controls</th><th>Preset detail</th></tr>
-  <tr>
-    <td valign="top" align="center"><img src="assets/presentation/thermostat-expanded.png" alt="Actual beta thermostat with Controls and features expanded" width="280"></td>
-    <td valign="top" align="center"><img src="assets/presentation/preset-details.png" alt="Actual beta preset detail panel with reported Eco, Comfort and Boost temperatures" width="280"></td>
-  </tr>
-</table>
+**HACS custom-repository distribution is the next step.** Its Dashboard metadata is prepared on `develop`; an installable release and isolated installation checks are pending. Follow [HACS preparation](docs/hacs.md) for the intended route. Marketplace remains part of the [distribution roadmap](docs/distribution.md).
 
-*Unedited beta.2 component captures using synthetic data. These show the expanded controls and detail panels; the beta.3 response-arc changes are described above.*
-
-</details>
-
-## One card, different setups
-
-Start with a standard climate entity or configure **Versatile Thermostat (VT)**. Add an explicit **thermostatic radiator valve (TRV)** opening source when available, or use the thermostat's reported activity. Optional humidity, trend and other sensors build up the view independently; the card does not require a TI backend. Dedicated Lab coverage includes Generic Thermostat and VT switch, climate, valve and combined climate/valve configurations. [Compatibility and its limits](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/compatibility.md) remain explicit.
-
-For a phone, keep a compact room view with the most useful readings. For a tablet or wider dashboard, place several independently configured cards together and expand the room you are working with. The layout adapts to the space available, the top row scrolls when needed, and controls retain touch-sized targets and keyboard access. Choose **Midnight Blue**, **Plum** or **Black**, and set activity and detail visibility per card. Responsive browser checks cover phone, tablet and desktop widths; physical-device validation is still pending.
-
-Ordinary setup is visual: **Add Card → Thermal Intelligence Thermostat · RC**, choose your thermostat, then select the readings and presentation that suit that card. [Configuration guide](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/card-configuration.md).
-
-<img src="assets/presentation/multi-card-dashboard-example.png" alt="Anonymised TI dashboard with eight numbered cards, independent targets, varied header telemetry and different arc and trend colours" width="100%">
-
-*Anonymised example of a wider TI dashboard, with source build unrecorded. The partially visible second row and clipped header text are retained from the supplied capture. This illustrates a wider layout; it is not a complete dashboard shipped with the standalone beta.*
-
-[Explore the full state gallery](docs/ui-examples.md) for larger examples and their explanations.
-
-<details>
-<summary>More combinations: Call for heat, Heat enabled and falling temperature</summary>
-
-<table>
-  <tr><th>Call for heat</th><th>Heat enabled</th><th>Above target · falling</th></tr>
-  <tr>
-    <td valign="top" align="center"><img src="assets/presentation/thermostat-call-for-heat-example.png" alt="Anonymised TI example showing Call for heat, 78% valve opening and falling temperature" width="220"></td>
-    <td valign="top" align="center"><img src="assets/presentation/thermostat-heat-enabled-example.png" alt="Anonymised TI example showing Heat enabled, 21.1°C and a 20.3°C target" width="220"></td>
-    <td valign="top" align="center"><img src="assets/presentation/trv-above-target-falling-example.png" alt="Anonymised TI example showing 23°C above a 19.7°C target, a lavender arc, blue slope ring and Closed window" width="220"></td>
-  </tr>
-</table>
-
-**Heat enabled** describes the selected HVAC mode; it does not prove active heating. A falling temperature trend does not establish active HVAC cooling. These additional installation examples have anonymised names and unrecorded source builds. [Image notes](docs/image-notes.md).
-
-</details>
-
-## Try the release candidate
-
-**[0.1.0-rc.1 is prepared through `develop`](https://github.com/senyo888/thermal-intelligence/tree/develop)**. Start with the [RC package and installation guide](docs/rc.md). Beta.4 remains available on `senyo888-patch-1`.
-
-RC.1 retains the beta.4 card behaviour and configuration. It appears as **Thermal Intelligence Thermostat · RC** in Add Card and keeps the prerelease card type so saved trial cards continue working. Keep existing TI resources in place; replace only a previous trial module, never load beta and RC modules together.
-
-The recorded beta checks cover HA **2026.10.0** and **2026.10.4** with VT **10.5.1**, including manual installation and test-environment rollback. RC validation and observation are recorded separately. Physical heating response, native phone/tablet acceptance, a minimum supported version range and HACS installation remain unverified. See [Compatibility](docs/compatibility.md). There is no stable release yet.
+[Compatibility and validation](docs/compatibility.md) records the tested versions, RC checks and remaining device coverage. RC.1 is a release candidate, with stable release acceptance tracked separately.
 
 ## Project direction
 
-The standalone thermostat is the first component. House Climate, Effective Mode, Heating Control Centre, a portable backend and broader mobile/tablet dashboards are planned. They are not included in this release candidate.
+The standalone thermostat is the first component. Planned work includes House Climate, Effective Mode, Heating Control Centre, a portable backend and broader mobile/tablet dashboards. These will build on explicit ownership and explainable provider observations.
 
-| Branch | Purpose |
-| --- | --- |
-| `main` | Public project presentation; future stable releases |
-| `develop` | Release-candidate source, tests and installable RC |
-| `senyo888-patch-1` | Retained beta.4 source and package |
+## Contributions
 
-## Support and contribution
+Useful reports include your TI, Home Assistant and provider versions, reproduction steps and a redacted configuration. Use the [issue forms](https://github.com/senyo888/thermal-intelligence/issues/new/choose), or read [Contributing](CONTRIBUTING.md) for code and documentation changes. [Changelog](CHANGELOG.md).
 
-Use the [issue forms](https://github.com/senyo888/thermal-intelligence/issues/new/choose) with your TI, HA and provider versions, reproduction steps and a redacted configuration. Report vulnerabilities through the [private security route](https://github.com/senyo888/thermal-intelligence/security/advisories/new).
+## Security
 
-Read [Contributing](CONTRIBUTING.md), [Security](SECURITY.md) and the [changelog](CHANGELOG.md). Software is licensed under [GPL-3.0-only](LICENSE); artwork and documentation have separate [scope notes](docs/licensing-options.md).
+Report vulnerabilities through [private vulnerability reporting](https://github.com/senyo888/thermal-intelligence/security/advisories/new). [Security](SECURITY.md) explains what to include and how to keep sensitive details private.
+
+## Support the project
+
+Star the repository, share useful feedback, or [sponsor development](https://github.com/sponsors/senyo888).
 
 [![Star Thermal Intelligence](https://img.shields.io/badge/Star%20%2F%20Support-Thermal%20Intelligence-2ea44f?logo=github&logoColor=white)](https://github.com/senyo888/thermal-intelligence)
+
+Software is licensed under [GPL-3.0-only](LICENSE). Documentation and artwork have separate [reuse terms](docs/licensing-options.md).
+
+---
+
+<p align="center">
+  <a href="https://senyo888.github.io/humidity-intelligence/"><img src="assets/presentation/humidity-intelligence-logo.png" alt="Humidity Intelligence" width="48"></a><br>
+  <sub>Explore our other projects</sub><br>
+  <a href="https://senyo888.github.io/humidity-intelligence/"><strong>Humidity Intelligence →</strong></a>
+</p>

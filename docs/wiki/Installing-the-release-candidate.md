@@ -1,6 +1,8 @@
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/develop/assets/presentation/wiki-installing-the-release-candidate.png" alt="Thermal Intelligence Wiki — Install RC.1" width="100%">
+
 # Release candidate 0.1.0-rc.1
 
-RC.1 is the standalone thermostat frontend prepared through `develop`. It retains beta.4's thermostat behaviour, response-arc rules, health LED, command guards and schema-1 configurations. Release identity, package metadata and the card-picker label are updated. No TI backend is included, and there is no stable release yet.
+RC.1 is the standalone thermostat frontend prepared through `develop`. It retains beta.4's thermostat behaviour, response-arc rules, health LED, command guards and schema-1 configurations. Release identity, package metadata and the card-picker label are updated. This candidate provides the standalone frontend; stable release acceptance is tracked separately.
 
 ## Package
 
@@ -41,6 +43,6 @@ RC.1 passed 135 unit tests, 81 Chromium browser tests and eight packaging tests.
 
 Manual RC installation, rollback to beta.4 and RC reapplication passed on HA **2026.10.0** with VT **10.5.1**. The existing TI resource, dashboard configuration and eleven fixture thermostat settings remained unchanged. Six trial cards rendered alongside the legacy card, and the RC picker entry was verified.
 
-A 48-hour Lab observation started on **29 October 2026 at 18:43 UTC**, with six-hour checkpoints. **It is in progress, not passed.** Periodic provider/resource samples and separate browser observations do not prove continuous uptime or physical heat delivery. Missing checkpoints remain gaps; elapsed time alone is insufficient. See [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/compatibility.md) for the existing baseline and remaining device/provider coverage.
+RC.1 observation is tracked against the exact module above. Compatibility results are updated after the completed controller run has been reviewed. Periodic checkpoints, browser observations and physical-device acceptance are recorded separately; each retains its own timing and coverage. See [Compatibility](Compatibility) for the recorded baseline and remaining coverage.
 
-RC.1 does not include the planned backend, schedules, holds, cutoff or recovery control. HACS installation remains unverified. An RC package or a completed observation does not make it a stable release.
+The backend, schedules, holds, cutoff and recovery control remain planned work. HACS installation requires separate validation. Stable release acceptance includes package, compatibility and installation checks alongside the reviewed observation result.

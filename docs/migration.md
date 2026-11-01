@@ -1,25 +1,25 @@
 # Update and rollback
 
-Beta.4 uses **schema 1**. Existing beta.1–beta.3 card configurations need no migration. The beta card type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`.
+RC.1 uses **schema 1** and retains beta.1–beta.4 card configurations. The trial card type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`.
 
-## Keep existing TI alongside the beta
+## Keep existing TI alongside the trial card
 
-Keep existing `custom:thermal-intelligence-card` instances and their resources in place. Add new beta cards through **Thermal Intelligence Thermostat · Beta**. The standalone beta does not provide the wider system's schedules, holds, ownership, cutoff or recovery controls; do not replace backend-dependent cards by changing their type.
+Keep existing `custom:thermal-intelligence-card` instances and their resources in place. Add new trial cards through **Thermal Intelligence Thermostat · RC**. The wider system keeps responsibility for schedules, holds, ownership, cutoff and recovery controls. Preserve its backend-dependent cards and their types.
 
-## Update an existing beta
+## Update an existing trial card
 
 1. Retain the previous bundle, resource URL and saved card configuration.
-2. Download the [exact beta.4 package](beta.md) and verify its digest.
-3. Save it under a new versioned filename and change only the beta resource URL. Do not register a second copy.
+2. Download the [exact RC.1 module](rc.md) and verify its digest.
+3. Save it under a new versioned filename and change only the trial resource URL. Do not register a second copy.
 4. Open a fresh browser document, reopen the visual editor and check the thermostat, provider details and source mappings.
 
 A frontend-only resource update does not require a Home Assistant Core restart. Saving or reopening card configuration sends no thermostat command.
 
 ## Roll back
 
-Restore the previous beta resource URL and open a fresh browser document. A custom element already registered in an open page cannot be replaced in place. Restore saved card configuration separately if you intentionally changed it; avoid overwriting newer dashboard edits.
+Restore the previous trial resource URL and open a fresh browser document. A custom element already registered in an open page cannot be replaced in place. Restore saved card configuration separately if you intentionally changed it; avoid overwriting newer dashboard edits.
 
-For a first installation, remove only the added beta cards/view and its resource registration. Keep existing resources and dashboards in place. Frontend rollback does not undo thermostat settings or a deliberate VT lock command; check the provider's reported state separately.
+For a first installation, remove only the added trial cards/view and its resource registration. Keep existing resources and dashboards in place. Frontend rollback does not undo thermostat settings or a deliberate VT lock command; check the provider's reported state separately.
 
 ## Version notes
 

@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/develop/assets/presentation/wiki-compatibility.png" alt="Thermal Intelligence Wiki — Compatibility" width="100%">
+
 # Compatibility
 
 Candidate: **0.1.0-rc.1** on `develop`. The [RC guide](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/rc.md) identifies the package and candidate checks. The table below records the beta.4 baseline; it is not an RC soak result. A minimum supported Home Assistant version and a broader support range have not yet been established.
