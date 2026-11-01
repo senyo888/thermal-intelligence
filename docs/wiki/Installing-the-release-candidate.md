@@ -37,7 +37,7 @@ The card type remains `custom:thermal-intelligence-beta-card`. Its name delibera
 
 For a first installation, remove only the RC trial cards or test view and resource registration you added, then open a fresh browser document and verify the existing cards. Retain the module and original configuration for recovery.
 
-For a trial update, restore the retained beta.4 resource URL and open a fresh browser document. The [beta.4 guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta.md) gives its exact immutable module and hash. Do not restore a whole dashboard over unrelated edits.
+For a trial update, restore the previous trial resource URL retained in step 1 and open a fresh browser document. If your previous version was beta.4, the [beta.4 guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta.md) gives its exact module and hash. Do not restore a whole dashboard over unrelated edits.
 
 ## Validation and limits
 
