@@ -1,8 +1,10 @@
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-state-gallery.png" alt="Thermal Intelligence Wiki — State gallery" width="100%">
+
 # Thermal Intelligence in different states
 
 These examples show how one card presents different combinations of temperature, trend and thermostat observations. The outer arc, fine slope ring and status chip carry separate information; they do not need to share one colour.
 
-**About these images:** These anonymised installation examples have unrecorded source builds. Some schedule, ownership and cutoff indicators belong to the wider TI system and are outside the standalone beta. See [Image notes](https://github.com/senyo888/thermal-intelligence/blob/main/docs/image-notes.md) for editing context and [the beta guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta.md) for the current package.
+**About these images:** These anonymised installation examples have unrecorded source builds. Some schedule, ownership and cutoff indicators belong to the wider TI system and are outside the standalone release candidate. See [Image notes](https://github.com/senyo888/thermal-intelligence/blob/main/docs/image-notes.md) for editing context and [the RC guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc.md) for the current package.
 
 ## A heat request and a reported valve opening
 
@@ -14,7 +16,7 @@ These examples show how one card presents different combinations of temperature,
   </tr>
 </table>
 
-Both captures show an orange arc and a rising trend. The chips report different facts: a thermostat heat request on the left, and a reported thermostatic radiator valve (TRV) opening on the right. Neither screenshot alone proves accepted output or physical heat transfer. In beta.4, orange requires the configured [response evidence](https://github.com/senyo888/thermal-intelligence/blob/main/docs/provider-contracts.md#temperature-response-evidence).
+Both captures show an orange arc and a rising trend. The chips report different facts: a thermostat heat request on the left, and a reported thermostatic radiator valve (TRV) opening on the right. Neither screenshot alone proves accepted output or physical heat transfer. In RC.1, orange requires the configured [response evidence](https://github.com/senyo888/thermal-intelligence/blob/main/docs/provider-contracts.md#temperature-response-evidence).
 
 ## A closed valve with different temperature trends
 
@@ -48,7 +50,7 @@ Both outer arcs are lavender because the displayed temperature is above target. 
 
 <img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/multi-card-dashboard-example.png" alt="Anonymised TI dashboard with eight numbered cards, varied header telemetry, green and lavender outer arcs, blue and orange slope rings, and a partially visible second row" width="100%">
 
-Each card keeps its own readings, target, status and header choices. The original capture includes only part of the second row; some header text is clipped at the horizontal viewport edge. Those limits are retained rather than filled in. This is an illustration of a wider installation layout, not proof of the beta's complete dashboard or physical tablet support.
+Each card keeps its own readings, target, status and header choices. The original capture includes only part of the second row; some header text is clipped at the horizontal viewport edge. Those limits are retained rather than filled in. This is an illustration of a wider installation layout, not a complete dashboard supplied with RC.1 or a physical-tablet validation record.
 
 <details>
 <summary>Explore detail panels</summary>

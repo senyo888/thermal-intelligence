@@ -1,6 +1,6 @@
 # Provider and observation contracts
 
-The beta.4 adapters use the Home Assistant 2026.10 climate contract and Versatile Thermostat (VT) 10.5.1 attributes. See [Compatibility](compatibility.md) for tested scenarios and limits. Unit tests use synthetic entities.
+The RC.1 adapters use the Home Assistant 2026.10 climate contract and Versatile Thermostat (VT) 10.5.1 attributes. See [Compatibility](compatibility.md) for tested scenarios and limits. Unit tests use synthetic entities.
 
 ## Identity and control eligibility
 

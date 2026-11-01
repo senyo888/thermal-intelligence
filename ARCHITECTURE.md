@@ -1,24 +1,35 @@
 # Thermal Intelligence architecture contract
 
-The standalone frontend is implemented on `senyo888-patch-1`. It presents Home Assistant/provider state and sends commands only after explicit user interaction. The optional backend and additional cards remain planned.
+The standalone frontend is prepared as a release candidate on `develop`; the last beta remains on `senyo888-patch-1`. It presents Home Assistant/provider state and sends commands only after explicit user interaction. The optional backend and additional cards remain planned.
 
 ## Ownership and layers
 
-```text
-Home Assistant state + entity registry + explicit card configuration
-                           │
-             Provider adapters (standard / VT / future TI)
-                           │
-       Capability + evidence model (pure, attributable, versioned)
-                           │
-           Presentation + visual editor + accessible interaction
-                           │ explicit user action only
-                Validated command dispatcher
-                           │
-            Home Assistant supported service + explicit target
-```
+![Devices, sensors and separate TI observation and command paths](assets/presentation/ti-ownership.svg)
 
-The frontend presents provider truth and dispatches explicit actions. It does not schedule, independently enforce house policy, reconstruct a controller's selected mode, or become a second autonomous writer. Removing the card cannot disable a backend. Later backend contracts must define their own deterministic decision, ownership, persistence and failure behavior.
+[Open the full-size graph](assets/presentation/ti-ownership.svg).
+
+Thermostats and TRVs are one part of the input landscape. Independent indoor sensors, outdoor probes, weather services, window contacts, presence/motion sensors and power/energy meters can also contribute observations through their Home Assistant integrations. Available inputs depend on the installed integrations and explicit configuration.
+
+| Layer | Responsibility |
+| --- | --- |
+| **Devices and external data** | Physical measurements, device reports, outdoor readings, weather conditions and metered usage |
+| **Home Assistant integrations and helpers** | Expose entities, attributes, units and availability; provide climate services, registry identity and any configured derived readings |
+| **Thermostat provider, such as VT** | Regulation, schedules, lock policy and accepted feature states; reads its own configured inputs |
+| **TI frontend** | Read the selected climate entity and independent source mappings, explain their status, and validate requests from explicit user actions |
+
+### Two observation paths
+
+The **selected climate entity** supplies the dial’s current temperature and target, advertised controls and provider details. The **independent source mappings** supply optional humidity, temperature trend, valve position, power, energy and named readings. Those sensors do not have to pass through VT. Existing HA trend sensors/helpers supply the trend; TI reads that configured result.
+
+An independent room or TRV temperature can be a named reading or an explicitly mapped response-arc input. The dial continues to use the selected climate entity’s `current_temperature`. Outdoor readings and weather conditions can be explicit scalar feature/custom-telemetry mappings; forecast processing and weather-driven heating policy belong to separate provider/backend contracts.
+
+Raw window, presence and motion inputs remain distinct from the feature states accepted by VT. TI preserves which source a reading came from, its availability, units and any configured freshness requirement. [Configuration and mapping reference](docs/card-configuration.md).
+
+### Explicit actions and future components
+
+Rendering, setup and reconnects read state. A command starts with explicit user intent and a captured target, then passes capability and readiness checks before calling the supported Home Assistant service. Displaying a sensor gives it no control authority.
+
+Regulation and house policy stay with the configured provider/backend, independently of the card. The planned TI backend sits outside this RC.1 frontend boundary; its future contracts must define deterministic decisions, ownership, persistence and failure behaviour.
 
 ## Evidence model
 
@@ -44,7 +55,7 @@ Define coalescing/cancellation behavior for rapid inputs and stale completions. 
 
 Use a versioned, validated card configuration with documented migrations. All declared first-release options must be available visually, including optional telemetry/provider details where retained. Preserve unknown/advanced fields during edits. Scope settings to a card instance unless the user explicitly selects a broader operation.
 
-Separate a no-entity setup state from operational validation. Stub generation, editor construction and preview have no device side effects. Escape dynamic text at DOM sinks. No unsafe HTML from entities, provider reason text or imported config. The beta registers only `thermal-intelligence-beta-card` and its editor, preserving legacy registrations. Guard duplicate resource loading without masking incompatible versions; see [migration](docs/migration.md).
+Separate a no-entity setup state from operational validation. Stub generation, editor construction and preview have no device side effects. Escape dynamic text at DOM sinks. No unsafe HTML from entities, provider reason text or imported config. The prerelease registers only `thermal-intelligence-beta-card` and its editor, preserving legacy registrations. Guard duplicate resource loading without masking incompatible versions; see [migration](docs/migration.md).
 
 ## Optional Humidity Intelligence interoperability
 
@@ -52,6 +63,6 @@ HI remains the authority for its seasonal humidity targets, Stability, selected 
 
 ## Code and documentation
 
-The beta separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. Synthetic fixtures and unit/browser tests live under `tests/`. The reproducible module is `dist/thermal-intelligence.js`.
+The [release-candidate source on `develop`](https://github.com/senyo888/thermal-intelligence/tree/develop) separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. Synthetic fixtures and unit/browser tests live under `tests/`. The reproducible module is `dist/thermal-intelligence.js`.
 
-The README introduces the product; the Wiki provides practical guidance; repository documents define configuration, compatibility and technical contracts. The website presents the same supported features and beta limits. See [distribution](docs/distribution.md) and [command contracts](docs/command-contract.md).
+The README introduces the product; the Wiki provides practical guidance; repository documents define configuration, compatibility and technical contracts. The website presents the same supported features and prerelease limits. See [distribution](docs/distribution.md) and [command contracts](docs/command-contract.md).

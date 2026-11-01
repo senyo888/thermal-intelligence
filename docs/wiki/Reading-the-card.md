@@ -1,6 +1,8 @@
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-reading-the-card.png" alt="Thermal Intelligence Wiki — Reading the card" width="100%">
+
 # Reading the card
 
-## More information, without a crowded card
+## Every detail has a purpose
 
 The everyday view stays simple: the room temperature, your target, a clear status and controls within reach. Behind that simplicity, the dial, colour, icons and small indicators each have a purpose. Tap for context, expand for controls, then return to the quiet overview.
 
@@ -13,11 +15,11 @@ The everyday view stays simple: the room temperature, your target, a clear statu
 | **Dynamic status chip** | The chip adapts to the available evidence: reported Heating, Cooling or Idle; **Heat requested** for VT; or **TRV Open/Closed** with a reported valve percentage when mapped. **Heat enabled** means the mode is selected when activity is not reported. Tap the chip for the overview and the source behind the status. |
 | **Status LED** | The small LED summarises connection and readiness: green for the card's ready state, amber when controls or observations need attention, and red when disconnected or unavailable. Tap it to open temperatures, modes, provider details and request status. A press-and-hold opens the registered device's Home Assistant settings, with thermostat details as the fallback. |
 
-**Beta.4 removes a false amber warning.** VT can explicitly report no Off reason or Mode reason; these now read **None reported** in the overview. Missing, unknown, unavailable or malformed observations still need attention. Readiness and command guards are unchanged.
+**Clear provider details.** When VT explicitly reports no optional Off reason or Mode reason, the overview shows **None reported**. Missing, unknown, unavailable or malformed observations still need attention. Readiness and command guards are unchanged.
 
 The outer arc, slope ring and activity chip are deliberately independent: the arc combines the room's state with corroborated temperature response, the fine ring shows measured temperature slope, and the chip reports activity. Idle is a reported activity, not a universal arc colour. A rising temperature slope can continue after the valve closes; the closed TRV does not establish an orange response arc.
 
-**Orange has a specific meaning.** With the optional VT response sources configured, the room must be below its effective target, the current heat request must be accepted, and fresh room and trend readings must agree that it is warming. An open valve or a heating request alone is insufficient. When those observations expire, the arc returns to blue and the LED overview explains why. Standard thermostats and cards without response mappings retain the temperature comparison and reported cooling colours; they do not invent accepted-output evidence. [Response setup and colour meanings](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md#temperature-response-arc).
+**Orange has a specific meaning.** With the optional VT response sources configured, the room must be below its effective target, the current heat request must be accepted, and fresh room and trend readings must agree that it is warming. An open valve or a heating request alone is insufficient. When those observations expire, the arc returns to blue and the LED overview explains why. Standard thermostats and cards without response mappings retain the temperature comparison and reported cooling colours; they do not invent accepted-output evidence. [Response setup and colour meanings](https://github.com/senyo888/thermal-intelligence/blob/main/docs/card-configuration.md#temperature-response-arc).
 
 The staggered glint of the small lights around the dial and the slope ring's gentle breathing preserve the original glass-and-light character. They add depth without replacing readable values or status text, and respect reduced-motion preferences.
 
@@ -31,7 +33,7 @@ The staggered glint of the small lights around the dial and the slope ring's gen
 
 *Anonymised installation examples, with source builds unrecorded. The right-hand card shows why these indicators are independent: a closed valve and a rising room temperature can occur together. Neither image alone proves physical heat delivery.*
 
-### A top row that earns its space
+### Your readings, arranged your way
 
 Each configured icon combines a compact reading with colour that follows its meaning. Humidity follows your display bands; window, presence and motion distinguish **Open/Closed**, **Home/Away** and **Detected/Clear**; supported presets retain their own Frost, Eco, Comfort and Boost colours. Active, inactive and unknown observations receive distinct treatments, with missing information muted.
 
@@ -73,6 +75,6 @@ This keeps occasional settings close without putting every control on the everyd
   </tr>
 </table>
 
-*Unedited beta.2 component captures using synthetic data. These show the expanded controls and detail panels; the beta.3 response-arc changes are described above.*
+*These beta.2 captures use synthetic data and illustrate controls retained in RC.1; the current response-arc behaviour is described above.*
 
 </details>

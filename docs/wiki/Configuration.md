@@ -1,6 +1,8 @@
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-configuration.png" alt="Thermal Intelligence Wiki — Configure your card" width="100%">
+
 # Configure your card
 
-Load the beta module, then choose **Add Card → Thermal Intelligence Thermostat · Beta**. Select your thermostat and use the visual editor for ordinary setup.
+Load the RC.1 module, then choose **Add Card → Thermal Intelligence Thermostat · RC**. Select your thermostat and use the visual editor for ordinary setup.
 
 - **Provider:** use verified registry identity or choose the provider explicitly. VT readiness and restrictions remain visible.
 - **Readings:** map humidity, trend and valve-position sources independently. Missing optional data affects only the relevant information.
@@ -23,8 +25,8 @@ Presence selects home/away preset temperatures. VT Motion selects motion/no-moti
 
 <img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/thermostat-expanded.png" alt="Beta component with expanded controls" width="290"> <img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/preset-details.png" alt="Beta preset temperatures panel" width="290">
 
-Actual beta.2 captures with synthetic data, illustrating controls retained in beta.4. [Image notes](https://github.com/senyo888/thermal-intelligence/blob/main/docs/image-notes.md).
+Actual beta.2 captures with synthetic data, illustrating controls retained in RC.1. [Image notes](https://github.com/senyo888/thermal-intelligence/blob/main/docs/image-notes.md).
 
 </details>
 
-Saved schema-1 configurations remain valid in beta.4. Unknown fields survive editor round trips; preserving a field does not make an unsupported option operational. [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md).
+Saved schema-1 configurations remain valid in RC.1. Unknown fields survive editor round trips; preserving a field does not make an unsupported option operational. [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md).

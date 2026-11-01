@@ -1,6 +1,6 @@
 # Contributing to Thermal Intelligence
 
-Open pull requests against `develop`. The current installable beta is on `senyo888-patch-1`; an issue may specify that branch when a change needs the beta source. `main` contains public documentation and the website. There is no stable release yet.
+Open source pull requests against `develop`, which carries the release candidate. The retained beta is on `senyo888-patch-1`; an issue may specify that branch when a change needs the beta source. `main` contains public documentation and the website, with content promotion reviewed separately. There is no stable release yet.
 
 Read [Architecture](ARCHITECTURE.md) and [AGENTS.md](AGENTS.md). Keep changes focused and describe the problem, resulting behaviour and checks actually run. Update configuration, compatibility, migration and release notes when affected.
 
@@ -21,7 +21,7 @@ scripts/security/scan_secrets.sh tracked
 scripts/security/scan_secrets.sh full-history
 ```
 
-The secret checks require Gitleaks. Keep detailed reports private. On the beta branch, also run the relevant unit/browser tests and build/package checks documented in `package.json`. A successful source or browser test is not proof of physical heating or HACS installation.
+The secret checks require Gitleaks. Keep detailed reports private. On a source branch, also run the relevant unit/browser tests and build/package checks documented in its `package.json` ([release-candidate source](https://github.com/senyo888/thermal-intelligence/tree/develop)). A successful source or browser test is not proof of physical heating or HACS installation.
 
 The [issue forms](https://github.com/senyo888/thermal-intelligence/issues/new/choose) cover bugs, setup help, feature suggestions and gallery submissions. Use [private vulnerability reporting](https://github.com/senyo888/thermal-intelligence/security/advisories/new) for security issues.
 
