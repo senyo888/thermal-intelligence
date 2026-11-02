@@ -69,7 +69,7 @@ Check file and resource ownership before an installer manages `www/community/the
 
 The later [Marketplace resource manager](https://github.com/home-assistant/core/blob/6cfd47af9851a1552ad6f58c926b5814689a9f1d/homeassistant/components/marketplace/repositories/plugin.py) has its own prefix-based resource handling. Validate that migration separately.
 
-HA 2026.11.0b1 is a prerelease source-review baseline, not a tested TI installation. Test storage-mode resources, YAML resources, `frontend.extra_module_url`, legacy `/hacsfiles/` paths, `/local/community/` paths, duplicate loading and fresh-document caching separately. Preserve genuine unknown and unavailable provider states. An HA/HACS migration may require a full backup restore; reverting a JS resource only rolls back the frontend. Keep these checks separate from the running RC observation and from physical heating claims.
+HA 2026.11.0b1 is a prerelease source-review baseline, not a tested TI installation. Test storage-mode resources, YAML resources, `frontend.extra_module_url`, legacy `/hacsfiles/` paths, `/local/community/` paths, duplicate loading and fresh-document caching separately. Preserve genuine unknown and unavailable provider states. An HA/HACS migration may require a full backup restore; reverting a JS resource only rolls back the frontend. Keep these checks separate from the recorded RC observation and from physical heating claims.
 
 ## Resource loading
 
