@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-only
-"""Exercise branch-target boundaries against synthetic indexed Git blobs."""
+"""Exercise branch targets and snapshot integrity against synthetic Git blobs."""
 
 import contextlib
 import hashlib
@@ -21,7 +21,7 @@ SPEC.loader.exec_module(foundation)
 class FoundationTargetTests(unittest.TestCase):
     """Candidate changes must not bypass shared checks or weaken main validation."""
 
-    def run_foundation(self, environment, *, changed_payload=True, extra=None, licence=None):
+    def run_foundation(self, environment, *, changed_payload=True, extra=None, licence=None, modes=None):
         """Run the public entry point with controlled index contents and CI context."""
         blobs = {
             "dist/thermal-intelligence.js": b"// frozen synthetic module\n",
@@ -33,11 +33,13 @@ class FoundationTargetTests(unittest.TestCase):
         if changed_payload:
             blobs["dist/thermal-intelligence.js"] += b"\n// next candidate fixture\n"
         blobs.update(extra or {})
+        index_modes = modes or {}
 
         def git(*args):
             """Serve only the index reads used by the foundation entry point."""
             if args == ("ls-files", "--stage", "-z"):
-                return b"".join(f"100644 {'0' * 40} 0\t{name}\0".encode() for name in blobs)
+                return b"".join(f"{index_modes.get(name, '100644')} {'0' * 40} 0\t{name}\0".encode()
+                                for name in blobs)
             if len(args) == 2 and args[0] == "show" and args[1].startswith(":"):
                 return blobs[args[1][1:]]
             raise AssertionError(f"Unexpected Git call: {args}")
@@ -89,6 +91,43 @@ class FoundationTargetTests(unittest.TestCase):
         """The approved snapshot remains acceptable on main."""
         code, _ = self.run_foundation({"GITHUB_REF": "refs/heads/main"}, changed_payload=False)
         self.assertEqual(code, 0)
+
+    def test_main_rejects_changed_distribution_licence(self):
+        """Main rejects changed distribution licence bytes with an unchanged module."""
+        code, output = self.run_foundation({"GITHUB_REF": "refs/heads/main"},
+                                           changed_payload=False,
+                                           extra={"dist/LICENSE": b"changed licence\n"})
+        self.assertEqual(code, 1)
+        self.assertIn("dist/LICENSE: differs from the reviewed RC.1 snapshot", output)
+
+    def test_main_rejects_incorrect_hacs_metadata(self):
+        """Main rejects invalid JSON, changed values and equal values of wrong types."""
+        invalid_payloads = {
+            "invalid_json": (b"{not json\n", "invalid JSON"),
+            "changed_value": (json.dumps({**foundation.HACS_METADATA,
+                                          "hide_default_branch": False}).encode() + b"\n",
+                              "differs from the reviewed Dashboard metadata"),
+            "wrong_type": (json.dumps({**foundation.HACS_METADATA,
+                                       "content_in_root": 0}).encode() + b"\n",
+                           "differs from the reviewed Dashboard metadata"),
+        }
+        for case, (payload, diagnostic) in invalid_payloads.items():
+            with self.subTest(case=case):
+                code, output = self.run_foundation({"GITHUB_REF": "refs/heads/main"},
+                                                   changed_payload=False,
+                                                   extra={"hacs.json": payload})
+                self.assertEqual(code, 1)
+                self.assertIn(f"hacs.json: {diagnostic}", output)
+
+    def test_distribution_files_must_be_non_executable(self):
+        """Every frozen payload and metadata file must use non-executable mode 100644."""
+        for name in ("hacs.json", "dist/thermal-intelligence.js", "dist/LICENSE"):
+            with self.subTest(name=name):
+                code, output = self.run_foundation({"GITHUB_REF": "refs/heads/main"},
+                                                   changed_payload=False, modes={name: "100755"})
+                self.assertEqual(code, 1)
+                self.assertIn(f"{name}: reviewed distribution file missing or not a regular non-executable file",
+                              output)
 
     def test_candidate_still_rejects_private_files(self):
         """Candidate routing never disables the shared private-file boundary."""
