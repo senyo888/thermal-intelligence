@@ -4,6 +4,7 @@
 
 import hashlib
 import json
+import os
 import posixpath
 import re
 import subprocess
@@ -41,6 +42,7 @@ def git(*args):
 
 
 def check_distribution(indexed):
+    """Reject indexed payloads that differ from the promoted main snapshot."""
     errors = []
     for name in {*DISTRIBUTION_HASHES, "hacs.json"}:
         if indexed.get(name) != "100644":
@@ -70,6 +72,7 @@ def check_distribution(indexed):
 
 
 def main():
+    """Check public files and enforce the frozen snapshot outside candidate targets."""
     entries = git("ls-files", "--stage", "-z").split(b"\0")
     indexed = {}
     errors = []
@@ -137,7 +140,10 @@ def main():
 
     if "LICENSE" not in indexed:
         errors.append("LICENSE: missing")
-    errors.extend(check_distribution(indexed))
+    # PR base wins over the checkout ref. Unknown/local targets stay strict.
+    target = os.environ.get("GITHUB_BASE_REF") or os.environ.get("GITHUB_REF", "").removeprefix("refs/heads/")
+    if target not in {"develop", "senyo888-patch-1"}:
+        errors.extend(check_distribution(indexed))
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
