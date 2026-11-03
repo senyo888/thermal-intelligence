@@ -55,7 +55,7 @@ The source-branch distribution check rejects wrong filenames, root modules that 
 | --- | --- |
 | Repository description, topics, README images and software licence | Present |
 | Dashboard metadata and reviewed default-branch snapshot | Prepared for discovery; offline validation only |
-| Repeatable versioned candidate assets | Prepared on `develop`; publication pending |
+| Repeatable versioned candidate assets | Published as prerelease [v0.1.0-rc.1](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.1), targeting `9d9ed9744c29a494d45501a8bb1359edd465c5c4`; installation acceptance remains pending |
 | Named prerelease selection through HACS | Pending in an isolated test environment |
 | Upstream HACS validation with no ignored checks | Pending against the published candidate |
 | HACS and Marketplace install, update, removal, migration and recovery | Pending in an isolated test environment |

@@ -84,7 +84,7 @@ TI sends the actions you choose through Home Assistant’s services. Your thermo
 
 The [manual installation guide](docs/rc.md) provides the exact RC.1 module, SHA-256, setup and rollback steps. Keep existing TI resources in place and load one trial module at a time. Saved trial cards retain their configuration and `custom:thermal-intelligence-beta-card` type.
 
-**HACS custom-repository distribution is the next step.** Its Dashboard metadata is prepared on `develop`; an installable release and isolated installation checks are pending. Follow [HACS preparation](docs/hacs.md) for the intended route. Marketplace remains part of the [distribution roadmap](docs/distribution.md).
+**RC.1 is published for a controlled HACS trial.** Prerelease [v0.1.0-rc.1](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.1) contains the module, licence and package manifest. Upstream HACS validation and isolated installation checks remain pending; this route is not yet recommended for existing installations. Follow [HACS preparation](docs/hacs.md) for the trial gates. Marketplace remains part of the [distribution roadmap](docs/distribution.md).
 
 [Compatibility and validation](docs/compatibility.md) records the tested versions, RC checks and remaining device coverage. RC.1 is a release candidate, with stable release acceptance tracked separately.
 

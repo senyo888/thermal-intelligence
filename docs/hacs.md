@@ -4,13 +4,13 @@ HACS is the planned next installation route for the RC.1 frontend. Thermal Intel
 
 ## Current route
 
-Use [manual RC.1 installation](rc.md) today. The default branch includes the reviewed RC.1 distribution snapshot and Dashboard metadata so HACS can inspect the repository when it is added. Candidate source and repeatable package checks remain on `develop`. Versioned release selection and isolated HACS installation checks are still being prepared.
+Use [manual RC.1 installation](rc.md) today. The default branch includes the reviewed RC.1 distribution snapshot and Dashboard metadata so HACS can inspect the repository when it is added. Candidate source and repeatable package checks remain on `develop`. Prerelease [v0.1.0-rc.1](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.1) is published for a controlled trial. Upstream HACS validation, exact named-release selection and isolated installation checks remain pending. Publication alone does not establish HACS installation acceptance.
 
 For TI's first-prerelease setup, with no stable release or selected visible version, HACS 2.0.5 checks the default branch before the added repository can show prereleases. The snapshot supplies that initial structure; the intended installation route selects a named release. `hide_default_branch` hides a download choice in the interface and is not an access-control or installation guard. See [distribution identity and selection](distribution.md#default-branch-discovery-and-release-selection).
 
-## When the versioned release is available
+## Controlled HACS trial
 
-These steps describe the intended route. Use them after the release guidance identifies a published, validated candidate and the supported HACS version.
+These steps describe the proposed controlled trial on a disposable, isolated target with a rehearsed restore and inert devices. The proposed comparison is Home Assistant 2026.10.0, VT 10.5.1 and HACS 2.0.5; it is a trial baseline, not a supported version range. Complete the pinned upstream HACS validation and verify Add plus exact v0.1.0-rc.1 selection before an installation attempt.
 
 1. Back up the test environment and save the current dashboard/resource configuration.
 2. Check that `www/community/thermal-intelligence/` and its resource prefix are available for this package. If they contain existing TI or unrelated files, preserve them and review [resource ownership and migration](distribution.md#existing-installations-and-migration) first.

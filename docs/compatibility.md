@@ -20,7 +20,13 @@ Beta.4 passed **135 unit tests, 81 browser tests and 5 packaging tests**. Covera
 
 These results apply to the recorded versions and scenarios. They do not establish compatibility with every thermostat, browser or Home Assistant release.
 
-RC.1 changes release identity and packaging; it does not change thermostat commands, provider interpretation, response-arc rules or the health LED. A timed RC observation must record its own build identity, start and checkpoints. Historical beta checks do not count as an RC soak.
+RC.1 changes release identity and packaging; it does not change thermostat commands, provider interpretation, response-arc rules or the health LED.
+
+## RC.1 observation and package checks
+
+The 48-hour RC.1 controller observation completed on 2 November 2026 against module SHA-256 `763814e1e797c72a8960fec2b928d945dc6fc1056d7ced366d4241ae81304117`. All nine scheduled checkpoints passed Home Assistant Core, served-module identity, VT provider and reported-version checks on Home Assistant 2026.10.0 with VT 10.5.1. UI coverage was recorded at the first checkpoint; eight later UI observations, including the final retained-page and fresh-render checks, were unavailable. These are periodic observations, not proof of continuous uptime, browser execution or physical heating. The UI gaps remain part of this result.
+
+The versioned RC.1 package at `9d9ed9744c29a494d45501a8bb1359edd465c5c4` passed 135 unit, 81 synthetic browser, 13 packaging and eight distribution tests on 2 November 2026. Repeated packages matched byte for byte. These offline checks do not establish HACS installation, migration, removal, recovery or update acceptance; a genuine update test needs two approved, installer-visible versions. Physical-device, Companion, code-protected lock and mapped response-arc acceptance remain separate.
 
 ## Report a compatibility issue
 
