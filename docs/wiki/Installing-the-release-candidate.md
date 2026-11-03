@@ -4,6 +4,8 @@
 
 RC.1 is the standalone thermostat frontend prepared through `develop`. It retains beta.4's thermostat behaviour, response-arc rules, health LED, command guards and schema-1 configurations. Release identity, package metadata and the card-picker label are updated. This candidate provides the standalone frontend; stable release acceptance is tracked separately.
 
+Prerelease [v0.1.0-rc.1](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.1) is the controlled HACS trial package, targeting `9d9ed9744c29a494d45501a8bb1359edd465c5c4`. Its module matches the manual package below byte for byte; its distribution metadata and packaging checks have separate offline validation. Upstream HACS validation and installation acceptance remain pending. See the release notes for the exact assets and trial gates.
+
 ## Package
 
 Reviewed source: [`74d7be46a7657f65f77e0dde346fae9e15212154`](https://github.com/senyo888/thermal-intelligence/tree/74d7be46a7657f65f77e0dde346fae9e15212154). [Download the exact module](https://raw.githubusercontent.com/senyo888/thermal-intelligence/74d7be46a7657f65f77e0dde346fae9e15212154/dist/thermal-intelligence.js).
@@ -45,6 +47,6 @@ RC.1 passed 135 unit tests, 81 Chromium browser tests and eight packaging tests.
 
 Manual RC installation, rollback to beta.4 and RC reapplication passed on HA **2026.10.0** with VT **10.5.1**. The existing TI resource, dashboard configuration and eleven fixture thermostat settings remained unchanged. Six trial cards rendered alongside the legacy card, and the RC picker entry was verified.
 
-RC.1 observation is tracked against the exact module above. Compatibility results are updated after the completed controller run has been reviewed. Periodic checkpoints, browser observations and physical-device acceptance are recorded separately; each retains its own timing and coverage. See [Compatibility](Compatibility) for the recorded baseline and remaining coverage.
+The 48-hour RC.1 controller observation completed on 2 November 2026. All nine scheduled checkpoints passed Home Assistant Core, served-module identity, VT provider and reported-version checks on Home Assistant 2026.10.0 with VT 10.5.1. UI coverage was recorded at the initial checkpoint; the eight later UI observations, including the final retained-page and fresh-render checks, were unavailable. Those gaps remain part of the result. Periodic checkpoints do not establish continuous uptime, browser execution or physical heating response. See [Compatibility](Compatibility) for the recorded baseline and remaining coverage.
 
 The backend, schedules, holds, cutoff and recovery control remain planned work. HACS installation requires separate validation. Stable release acceptance includes package, compatibility and installation checks alongside the reviewed observation result.
