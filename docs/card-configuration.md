@@ -2,7 +2,7 @@
 
 The health LED distinguishes connection/readiness and incomplete provider observations from heating activity. VT's explicitly null **Off reason** and **Mode reason** mean **None reported**, not a telemetry failure. Missing fields and genuine unknown or unavailable values remain visible in the overview and may keep the LED amber; disconnected or unavailable thermostats remain red. An amber provider-detail warning does not itself change command permissions: the existing readiness and capability guards remain authoritative.
 
-This guide describes **0.1.0-beta.4**. See [Compatibility](compatibility.md) for tested Home Assistant and provider versions.
+This guide describes **0.1.0-beta.5**, retaining the beta.4 schema-1 configuration. See [Compatibility](compatibility.md) for tested Home Assistant and provider versions.
 
 The card presents a selected climate entity, its advertised controls and explicit optional observations. It does not need a TI backend, create schedules or take ownership of an existing controller. See the [provider contracts](provider-contracts.md) for capability and evidence rules, and the [command contract](command-contract.md) for request tracking and uncertainty.
 
@@ -99,7 +99,7 @@ Measured temperature trend retains the existing TI labels and colours. Values wi
 
 **TRV** stands for **thermostatic radiator valve**. An explicitly mapped valve source retains **TRV Open/Closed** and its reported percentage. An open valve does not establish boiler firing or heat delivery. Without a valve mapping, the output summary uses the selected climate entity's reported activity; known VT heating remains **Heat requested**.
 
-VT's reported lock state appears as a small lock/unlock icon beside the card name. Hover text and an accessible label identify the state; a question-mark lock means the state is unknown or unavailable. From beta.2, verified administrators can tap the icon for the [lock control dialog](lock-control.md); other accounts retain a read-only indicator. No per-card option is needed. User controls follow VT's reported lock scope, and missing state for a configured lock keeps them disabled.
+When VT explicitly reports a configured lock, its state appears as a small lock/unlock icon beside the card name. Explicitly disabled locking hides the icon and retires a residual locked flag; unknown configuration never clears a reported user lock. Hover text and an accessible label identify the state; a question-mark lock means the state is unknown or unavailable. From beta.2, verified administrators can tap the icon for the [lock control dialog](lock-control.md); other accounts retain a read-only indicator. No per-card option is needed. User controls follow VT's reported lock scope, and missing state for a configured lock keeps them disabled.
 
 ### Temperature response arc
 

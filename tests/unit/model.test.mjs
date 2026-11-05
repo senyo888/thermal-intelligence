@@ -76,6 +76,29 @@ test('VT lock restrictions distinguish user locks from automation-only locks', (
   assert.equal(buildModel(h, config, vtIdentity).lock.status, 'unknown');
 });
 
+test('disabled VT lock ignores a retained active flag without bypassing readiness or connection', () => {
+  const h = fixture({ is_ready: true, is_lock_configured: false, specific_states: { is_locked: true } });
+  const read = () => buildModel(h, config, vtIdentity);
+  assert.equal(read().lock, null); assert.equal(read().canSet, true);
+  assert.equal(read().details.find(row => row.label === 'Locked').status, 'disabled');
+  for (const value of [false, undefined, null, 'true', 1]) {
+    h.states[entity].attributes.is_ready = value; assert.equal(read().canSet, false);
+  }
+  h.states[entity].attributes.is_ready = true; h.connected = false; assert.equal(read().canSet, false);
+  h.connected = true; h.states[entity].state = 'unavailable'; assert.equal(read().canSet, false);
+  h.states[entity].state = 'heat'; h.states[entity].attributes.is_lock_configured = true;
+  assert.equal(read().canSet, false); assert.equal(read().lock.status, 'locked');
+});
+
+test('unknown VT lock configuration has no header icon and cannot retire a reported user lock', () => {
+  for (const is_lock_configured of [undefined, null, 'false', 'true', 0, 1]) {
+    const h = fixture({ is_ready: true, is_lock_configured, specific_states: { is_locked: true } });
+    const m = buildModel(h, config, vtIdentity);
+    assert.equal(m.lock, null); assert.equal(m.canSet, false);
+    assert.equal(m.details.find(row => row.label === 'Locked').status, 'unknown');
+  }
+});
+
 test('VT lock indication requires provider evidence and never invents an unlocked state', () => {
   const h = fixture({ is_ready: true, is_lock_configured: true, specific_states: { is_locked: false } });
   const read = () => buildModel(h, config, vtIdentity).lock;

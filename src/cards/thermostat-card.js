@@ -439,10 +439,11 @@ export class ThermalIntelligenceCard extends HTMLElement {
     const model = this.model(), observable = model.connected === true && model.available === true
       && this._registryStatus === 'verified' && this._identity?.entity_id === this.config.entity
       && this._identity?.platform === 'versatile_thermostat' && this._hass?.states?.[this.config.entity]?.entity_id === this.config.entity;
-    const state = !observable ? 'Unavailable' : model.lock?.status === 'locked' ? 'Locked' : model.lock?.status === 'unlocked' ? 'Unlocked' : 'Unknown';
+    const configured = model.attrs.is_lock_configured;
+    const state = !observable ? 'Unavailable' : configured === false ? 'Lock not configured' : model.lock?.status === 'locked' ? 'Locked' : model.lock?.status === 'unlocked' ? 'Unlocked' : 'Unknown';
     root.querySelector('[data-lock-current]').textContent = `VT reports: ${state}`;
-    root.querySelector('[data-lock-scope]').textContent = observable ? lockScope(capability) : 'Lock details are unavailable.';
-    root.querySelector('[data-lock-relock]').textContent = observable ? lockRelock(capability) : '';
+    root.querySelector('[data-lock-scope]').textContent = observable && configured === true ? lockScope(capability) : 'Lock details are unavailable.';
+    root.querySelector('[data-lock-relock]').textContent = observable && configured === true ? lockRelock(capability) : '';
     const input = root.querySelector('[data-lock-code]');
     input.disabled = !intent.codeRequired || intent.submitted || intent.invalid;
     const status = this._coordinator.status;

@@ -1,7 +1,8 @@
-**Thermal Intelligence · beta.4**
+**Thermal Intelligence · beta.5 candidate**
 
 - [Home](Home)
-- [Install the beta](Installing-the-beta)
+- [Beta.5 package and limits](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/beta-5.md)
+- [Historical beta.4 installation](Installing-the-beta)
 - [Configuration](Configuration)
 - [Reading the card](Reading-the-card)
 - [State gallery](State-gallery)

@@ -1,6 +1,6 @@
 # Compatibility
 
-Current beta: **0.1.0-beta.4**. The [installation guide](beta.md) identifies the exact tested artifact. A minimum supported Home Assistant version and a broader support range have not yet been established.
+Current beta candidate: **0.1.0-beta.5**. The [beta.5 guide](beta-5.md) records its identity and validation limits. The environment and installation results below are historical beta.4 evidence; they have not been repeated for beta.5. A minimum supported Home Assistant version and a broader support range have not yet been established.
 
 | Environment or feature | Coverage |
 | --- | --- |
@@ -23,3 +23,7 @@ These results apply to the recorded versions and scenarios. They do not establis
 ## Report a compatibility issue
 
 Include your TI, Home Assistant, provider and browser/Companion versions, installation method, a minimal redacted card configuration and reproduction steps. State whether the issue affects rendering, controls, provider observations or resource loading. Use the [issue forms](https://github.com/senyo888/thermal-intelligence/issues/new/choose).
+
+## Beta.5 disabled-lock correction
+
+The correction covers VT reporting `is_lock_configured: false` with a residual true locked flag, plus unknown configuration and removal while a lock dialog is open. Synthetic source and built-module checks are recorded in the [beta.5 guide](beta-5.md). No beta.5 installation, physical control or HACS lifecycle acceptance is claimed.

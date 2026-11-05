@@ -2,6 +2,13 @@
 
 There is no stable release yet. Installable beta source and packages are on `senyo888-patch-1`.
 
+## 0.1.0-beta.5 — 5 November 2026
+
+- Hide the VT lock indicator when the provider does not explicitly report a configured lock.
+- When VT explicitly reports locking disabled, ignore a retained locked flag for ordinary controls; readiness, connection and other command checks still apply.
+- Invalidate an open lock action when configuration is removed, without sending Unlock or closing the dialog automatically. Unknown configuration never clears a reported user lock.
+- Keep schema-1 card settings unchanged. This beta does not modify the published RC.1 package.
+
 ## Unreleased — distribution preparation
 
 - Add Dashboard package metadata for HACS and Home Assistant Marketplace, with the documentation-only default branch hidden from download choices.

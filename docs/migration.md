@@ -1,6 +1,6 @@
 # Update and rollback
 
-Beta.4 uses **schema 1**. Existing beta.1–beta.3 card configurations need no migration. The beta card type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`.
+Beta.5 retains **schema 1**. Existing beta.1–beta.4 card configurations need no migration. The beta card type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`.
 
 ## Keep existing TI alongside the beta
 
@@ -9,7 +9,7 @@ Keep existing `custom:thermal-intelligence-card` instances and their resources i
 ## Update an existing beta
 
 1. Retain the previous bundle, resource URL and saved card configuration.
-2. Download the [exact beta.4 package](beta.md) and verify its digest.
+2. Download the [exact beta.5 candidate](beta-5.md) and verify its digest.
 3. Save it under a new versioned filename and change only the beta resource URL. Do not register a second copy.
 4. Open a fresh browser document, reopen the visual editor and check the thermostat, provider details and source mappings.
 
@@ -27,8 +27,13 @@ For a first installation, remove only the added beta cards/view and its resource
 | --- | --- |
 | beta.1 → beta.2 | Adds administrator lock controls without a new option. Codes are entered at runtime and never saved in card configuration. |
 | beta.2 → beta.3 | Adds optional `response_arc` settings. Unmapped cards retain their existing fallback. Beta.2 preserves the unknown object but cannot display corroborated warming. |
+| beta.4 → beta.5 | No new settings. Explicitly disabled VT locking no longer shows a residual lock or blocks ordinary controls. Rolling back can restore that false lock block. |
 | beta.3 → beta.4 | No new settings. Explicitly null VT Off/Mode reasons show **None reported**. Returning to beta.3 can restore the false amber warning. |
 
 Unknown top-level options and nested feature, telemetry, humidity and response fields survive editor round trips; preservation does not make an unknown option operational. Unsupported explicit schema versions are rejected.
 
 For early development configurations, `background` selects `blue`, `plum` or `black`; the prototype `theme` field is preserved but inactive. Explicit legacy two-boundary humidity guides keep their three-band meaning until you choose the four-boundary format. See [configuration](card-configuration.md) for mappings, precedence and visual settings.
+
+## RC.1 coexistence
+
+Beta.5 and the published RC.1 use the same trial card and editor registrations. Load only one of those modules in a browser document; changing the trial resource requires a fresh document. Keep the separate legacy TI resources and cards unchanged. Beta.5 is an untagged beta candidate, not an update to the RC.1 tag or its release assets.

@@ -1,6 +1,6 @@
 # Compatibility
 
-Current beta: **0.1.0-beta.4**. The [installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta.md) identifies the exact tested artifact. A minimum supported Home Assistant version and a broader support range have not yet been established.
+Current beta candidate: **0.1.0-beta.5**. The [beta.5 guide](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/beta-5.md) records its exact identity and limits. The table below retains historical beta.4 evidence, not beta.5 live acceptance. A minimum supported version range is not established.
 
 | Environment or feature | Coverage |
 | --- | --- |
