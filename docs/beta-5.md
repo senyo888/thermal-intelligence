@@ -8,7 +8,23 @@ A lock icon requires explicitly configured locking. Explicitly disabled locking 
 
 ## Package and testing
 
-The exact immutable source, module digest and completed validation will be recorded here after candidate verification. This preparation is not installation or physical-device acceptance. Do not substitute the moving branch name for an exact package identity.
+The [exact source commit](https://github.com/senyo888/thermal-intelligence/tree/c7105a9c7a551ef99a2f2d9d8807d0286312fcdf) is `c7105a9c7a551ef99a2f2d9d8807d0286312fcdf`. Its [compiled module](https://raw.githubusercontent.com/senyo888/thermal-intelligence/c7105a9c7a551ef99a2f2d9d8807d0286312fcdf/dist/thermal-intelligence.js) is **176,471 bytes**, SHA-256:
+
+```text
+3d101d5a338499b81a331129c7eac9d722eb558b3780b7bf1176c45426cfd835
+```
+
+The [software licence](https://github.com/senyo888/thermal-intelligence/blob/c7105a9c7a551ef99a2f2d9d8807d0286312fcdf/LICENSE) and editable source accompany that commit. From its checkout, create an exact package in an unused directory:
+
+```sh
+python3 scripts/package_beta.py \
+  --commit c7105a9c7a551ef99a2f2d9d8807d0286312fcdf \
+  --output /tmp/thermal-intelligence-beta-5
+```
+
+The package contains the module, licence and a manifest binding the exact source commit/tree, channel and hashes. Repeated builds and both package formats reproduced identical bytes. This does not publish a GitHub release or validate a live installer.
+
+Validation passed **137 unit tests, 82 synthetic browser checks, 13 packaging tests and 8 distribution tests**, plus public-file, privacy and redacted secret checks. Browser coverage includes disabled/configured/unknown states, 390/768/1440px layouts, clearing entered codes, full capability restoration without reviving the old action, and zero service calls during those passive transitions. These are source and synthetic built-module results, not installation or physical-device acceptance.
 
 The module retains `custom:thermal-intelligence-beta-card`, `thermal-intelligence-beta-card-editor` and schema-1 settings. Beta.4, beta.5 and RC.1 share these trial registrations: use one trial module per document and open a fresh document after changing its resource. The separate legacy TI card and resource remain untouched.
 
