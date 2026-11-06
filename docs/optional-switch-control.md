@@ -1,6 +1,6 @@
 # Optional switch control
 
-The beta.6 development candidate adds one optional switch beside the thermostat's Mode and Fan choices. It is a card feature: it uses an existing Home Assistant switch and needs no TI controller, integration or add-on. It is not included in released RC.1 or beta.5.
+The beta.6 candidate adds one optional switch beside the thermostat's Mode and Fan choices. It is a card feature: it uses an existing Home Assistant switch and needs no TI controller, integration or add-on. It is not included in released RC.1 or beta.5.
 
 ## Set up the control
 
@@ -45,4 +45,4 @@ Setup, rendering, editor changes, cancellation, reconnect and removing/disabling
 
 Keep the pre-enrollment card configuration and its previous module. RC.1 and beta.5 do not accept schema 2, so rollback requires restoring **both configuration and module**. Removing a mapping or restoring an older module does not turn the switch off or reverse integration/automation effects.
 
-The beta.6 development work has synthetic validation only. It does not establish HACS/Marketplace installation, a minimum HA version, provider delivery, physical-device behavior or Lab acceptance. Publication and installation remain separate.
+The beta.6 candidate has synthetic validation only. It does not establish HACS/Marketplace installation, a minimum HA version, provider delivery, physical-device behavior or Lab acceptance. Publication and installation remain separate.

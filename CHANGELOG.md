@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0-beta.6 — unreleased
+## 0.1.0-beta.6 — 6 November 2026 (untagged beta)
 
 - Add one explicitly enrolled standard-provider switch control, with visual configuration and confirmation before On and Off.
 - Keep optional-control registry identity, target, reported state and request evidence separate from climate commands; preserve schema-1 behavior and no replay.

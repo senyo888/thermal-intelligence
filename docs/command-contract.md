@@ -67,7 +67,7 @@ Public request status contains the desired boolean lock state, never the entered
 
 Service acknowledgement and a fresh matching provider observation are both required to report an observed result. Stale observations, reconnect, context changes, timeout and later automatic relocking must not manufacture success or retry. The latest provider state remains authoritative. Rendering, opening/dismissing a dialog, setup, preview, editor saves and reconnect never dispatch commands.
 
-## Optional mapped-switch requests (beta.6 development)
+## Optional mapped-switch requests (beta.6)
 
 `requestMapped()` is a closed third entry point in the same coordinator, with `entity` for the climate anchor, `target` for the registered switch, and boolean `on`. It never widens `request()` or `requestLock()`. Only `switch.turn_on`/`switch.turn_off` and a scalar `entity_id` payload are constructed. All three request kinds share the unresolved-transport gate. Current-session proof and explicit schema-2 enrollment are required by the card. No administrator-only rule is added; HA enforces backend permissions.
 

@@ -1,6 +1,6 @@
 # Compatibility
 
-Published beta candidate: **0.1.0-beta.5**. This checkout prepares **0.1.0-beta.6** with [optional switch controls](optional-switch-control.md); it is not published or installed. The [beta.5 guide](beta-5.md) records its identity and validation limits. The environment and installation results below are historical beta.4 evidence; they have not been repeated for beta.5. A minimum supported Home Assistant version and a broader support range have not yet been established.
+Published beta candidate: **0.1.0-beta.6**, with [optional switch controls](optional-switch-control.md). The [beta.6 guide](beta-6.md) records its exact identity and synthetic validation limits. It has not been installed or tested against a real provider. The environment and installation results below are historical beta.4 evidence; they have not been repeated for beta.5 or beta.6. A minimum supported Home Assistant version and a broader support range have not yet been established.
 
 | Environment or feature | Coverage |
 | --- | --- |

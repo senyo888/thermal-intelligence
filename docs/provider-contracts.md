@@ -136,6 +136,6 @@ Run the model suite with `node --test tests/unit/model.test.mjs` after installin
 
 Only literal `is_lock_configured: false` retires a retained locked flag from the user-control readiness guard. Unknown or malformed configuration cannot do so. The header requires explicit configured-true; the detail row reports disabled or unknown separately. Provider availability and literal `is_ready: true` remain necessary. A configuration transition invalidates the captured lock action without sending an unlock, changing the provider or replaying a request.
 
-## Optional switch eligibility (beta.6 development)
+## Optional switch eligibility (beta.6)
 
 The optional row requires an enrolled schema-2 mapping, an available/ready registered standard climate anchor and an exact registered switch. Current-session registry lookup plus subscription is required for this new path; remembered VT identity never falls back to standard. Known group/template platforms are excluded. Missing proof or switch state disables only this row. Climate Off and temperature-specific `canSet` do not prohibit an otherwise eligible switch. Provider-reported On/Off may be optimistic and does not prove physical association, heat, or authorization. See [Optional switch control](optional-switch-control.md) for Honeywell mode effects and the narrower compatibility boundary.

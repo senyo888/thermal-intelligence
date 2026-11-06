@@ -1,6 +1,6 @@
 # Distribution
 
-Thermal Intelligence is currently available as a manually installed frontend beta. Use the [beta.5 candidate guide](beta-5.md) for the exact module, source commit and SHA-256 digest.
+Thermal Intelligence is currently available as a manually installed frontend beta. Use the [beta.6 candidate guide](beta-6.md) for the exact module, source commit and SHA-256 digest.
 
 | Branch | Contents |
 | --- | --- |
@@ -14,7 +14,7 @@ The package contains the JavaScript module, software licence and a manifest iden
 
 Manual resource installation remains the available route. Dashboard package metadata and offline checks are prepared on `senyo888-patch-1` for review into `develop`; HACS and Home Assistant Marketplace installation, migration and catalogue inclusion remain unverified.
 
-The root [`hacs.json`](../hacs.json) names `thermal-intelligence.js`, uses the `dist/` layout and hides the default branch as a download choice. The published RC.1 has its own immutable tag and release assets. Beta.5 is an untagged branch candidate; its metadata does not make it a named GitHub release or establish installer acceptance.
+The root [`hacs.json`](../hacs.json) names `thermal-intelligence.js`, uses the `dist/` layout and hides the default branch as a download choice. The published RC.1 has its own immutable tag and release assets. Beta.6 is an untagged branch candidate; its metadata does not make it a named GitHub release or establish installer acceptance.
 
 The build writes `thermal-intelligence.js` and a copy of the software `LICENSE` to `dist/`. The distribution check rejects any extra files, including leftovers from earlier builds. There are no runtime dependencies to fetch. No minimum Home Assistant or HACS version is declared until the supported range is established. The manifest does not use integration-only ZIP or persistent-directory options. See the official [Dashboard requirements](https://www.hacs.xyz/docs/publish/plugin/) and [manifest guidance](https://www.hacs.xyz/docs/publish/start/).
 
