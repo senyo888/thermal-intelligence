@@ -1,6 +1,6 @@
 # Distribution
 
-Thermal Intelligence is currently available as a manually installed frontend beta. Use the [beta.6 candidate guide](beta-6.md) for the exact module, source commit and SHA-256 digest.
+Thermal Intelligence is currently available as a manually installed frontend beta. Use the [beta.7 candidate guide](beta-7.md) for the exact module, source commit and SHA-256 digest.
 
 | Branch | Contents |
 | --- | --- |

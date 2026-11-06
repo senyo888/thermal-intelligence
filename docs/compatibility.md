@@ -1,6 +1,6 @@
 # Compatibility
 
-Current source candidate: **0.1.0-beta.7**, correcting an absent-device-ID mismatch in [optional switch controls](optional-switch-control.md). The [beta.6 guide](beta-6.md) preserves the previous package identity. Beta.7 live acceptance is pending. The table below records historical beta.4 evidence; beta.6 observations are listed separately. A minimum supported Home Assistant version and a broader support range have not yet been established.
+Published beta candidate: **0.1.0-beta.7**, correcting an absent-device-ID mismatch in [optional switch controls](optional-switch-control.md). The [beta.7 guide](beta-7.md) records the exact package and validation limits; the [beta.6 guide](beta-6.md) preserves the previous identity. Beta.7 live acceptance is pending. The table below records historical beta.4 evidence; beta.6 observations are listed separately. A minimum supported Home Assistant version and a broader support range have not yet been established.
 
 | Environment or feature | Coverage |
 | --- | --- |

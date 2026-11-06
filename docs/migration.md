@@ -1,6 +1,6 @@
 # Update and rollback
 
-Beta.6 retains existing **schema-1** configurations. Explicit enrollment of its optional switch control uses **schema 2**; keep the original configuration for rollback. The beta card type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`.
+Beta.7 retains existing **schema-1** and **schema-2** configurations. Explicit enrollment of the optional switch control, introduced in beta.6, uses **schema 2**; keep the original configuration for rollback. The beta card type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`.
 
 ## Keep existing TI alongside the beta
 
@@ -9,7 +9,7 @@ Keep existing `custom:thermal-intelligence-card` instances and their resources i
 ## Update an existing beta
 
 1. Retain the previous bundle, resource URL and saved card configuration.
-2. Download the [exact beta.6 candidate](beta-6.md) and verify its digest.
+2. Download the [exact beta.7 candidate](beta-7.md) and verify its digest.
 3. Save it under a new versioned filename and change only the beta resource URL. Do not register a second copy.
 4. Open a fresh browser document, reopen the visual editor and check the thermostat, provider details and source mappings.
 

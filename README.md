@@ -6,12 +6,12 @@
 
 Created and maintained by **[Senyo · senyo888](https://github.com/senyo888)**.
 
-[![Beta 0.1.0-beta.6](https://img.shields.io/badge/beta-0.1.0--beta.6-d9a36c)](docs/beta-6.md)
+[![Beta 0.1.0-beta.7](https://img.shields.io/badge/beta-0.1.0--beta.7-d9a36c)](docs/beta-7.md)
 [![Beta checks](https://github.com/senyo888/thermal-intelligence/actions/workflows/foundation.yml/badge.svg?branch=senyo888-patch-1)](https://github.com/senyo888/thermal-intelligence/actions/workflows/foundation.yml?query=branch%3Asenyo888-patch-1)
 [![Project Site](https://img.shields.io/badge/Project%20Site-GitHub%20Pages-5aa8d6)](https://senyo888.github.io/thermal-intelligence/)
 [![Software GPL-3.0-only](https://img.shields.io/badge/software-GPL--3.0--only-5e9bc5)](LICENSE)
 
-[Website](https://senyo888.github.io/thermal-intelligence/) · [Wiki](https://github.com/senyo888/thermal-intelligence/wiki) · [Beta installation](docs/beta-6.md) · [Configuration](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md) · [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/compatibility.md) · [Report an issue](https://github.com/senyo888/thermal-intelligence/issues/new/choose)
+[Website](https://senyo888.github.io/thermal-intelligence/) · [Wiki](https://github.com/senyo888/thermal-intelligence/wiki) · [Beta installation](docs/beta-7.md) · [Configuration](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md) · [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/compatibility.md) · [Report an issue](https://github.com/senyo888/thermal-intelligence/issues/new/choose)
 
 Thermal Intelligence brings current and target temperatures, supported thermostat controls and device observations into one considered interface. The glass dial, restrained lighting, responsive controls and focused detail panels keep everyday readings clear and further detail close at hand.
 
@@ -145,11 +145,11 @@ Ordinary setup is visual: **Add Card → Thermal Intelligence Thermostat · Beta
 
 ## Try the beta
 
-The installable beta and its source are on **[senyo888-patch-1](https://github.com/senyo888/thermal-intelligence/tree/senyo888-patch-1)**. Start with the [verified package and installation guide](docs/beta-6.md).
+The installable beta and its source are on **[senyo888-patch-1](https://github.com/senyo888/thermal-intelligence/tree/senyo888-patch-1)**. Start with the [verified package and installation guide](docs/beta-7.md).
 
 The beta has separate card and editor names so it can coexist with an existing Thermal Intelligence installation. Keep existing cards and resources in place, and add **Thermal Intelligence Thermostat · Beta** for testing.
 
-Earlier beta.4 testing covered HA **2026.10.0** and **2026.10.4** with VT **10.5.1**, including manual installation and test-environment rollback. Beta.6 has source and synthetic browser validation; those earlier live results have not been repeated for this candidate. Physical heating response, native phone/tablet use, a minimum supported version range and HACS installation remain unverified. See [Compatibility](docs/compatibility.md) for the scope of each check. This is a beta; there is no stable release yet.
+Earlier beta.4 testing covered HA **2026.10.0** and **2026.10.4** with VT **10.5.1**. A beta.6 manual trial on HA **2026.11.0** with VT **10.6.3** found the registry mismatch corrected in beta.7. Beta.7 has source and synthetic browser validation; its live acceptance is pending. Physical heating response, native phone/tablet use, a minimum supported version range and HACS installation remain unverified. See [Compatibility](docs/compatibility.md) for the scope of each check. This is a beta; there is no stable release yet.
 
 ## Project direction
 
@@ -159,7 +159,7 @@ The standalone thermostat is the first component. House Climate, Effective Mode,
 | --- | --- |
 | `main` | Public project presentation; future stable releases |
 | `develop` | Release-candidate source, tests and installable RC |
-| `senyo888-patch-1` | Beta.6 optional-switch candidate; no live installation validation |
+| `senyo888-patch-1` | Beta.7 registry correction; live acceptance pending |
 
 ## Support and contribution
 
