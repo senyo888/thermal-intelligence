@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-beta.6 — unreleased
+
+- Add one explicitly enrolled standard-provider switch control, with visual configuration and confirmation before On and Off.
+- Keep optional-control registry identity, target, reported state and request evidence separate from climate commands; preserve schema-1 behavior and no replay.
+- Document integration side effects, including Honeywell emergency-heat Off requesting system Off, and configuration-plus-module rollback.
+
+
 There is no stable release yet. Installable beta source and packages are on `senyo888-patch-1`.
 
 ## 0.1.0-beta.5 — 5 November 2026

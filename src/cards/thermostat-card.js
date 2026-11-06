@@ -2,12 +2,15 @@
 import { normalizeConfig, CARD_TYPE, EDITOR_TAG } from '../model/config.js';
 import { buildModel, targetPayload, quantize } from '../model/climate.js';
 import { CommandCoordinator } from '../commands/coordinator.js';
-import { styles } from './styles.js';
+import { styles, mappedControlStyles } from './styles.js';
 import { renderCard } from './source-view.js';
 import { renderDialog, dialogStyles } from './dialogs.js';
 import { humidityBands, moveHumidityBoundary } from '../model/humidity.js';
 import { lockCapability } from '../providers/lock-control.js';
 import { lockDialog, lockScope, lockRelock } from './lock-dialog.js';
+import { mappedCapability } from '../model/mapped-control.js';
+import { MappedRegistry } from '../providers/mapped-registry.js';
+import { mappedDialog } from './mapped-dialog.js';
 
 const format = value => Number.isFinite(value) ? new Intl.NumberFormat(undefined, { maximumSignificantDigits: 12 }).format(value) : '—';
 const previewHosts = new Set(['hui-card-preview', 'hui-dialog-edit-card', 'hui-dialog-create-card', 'hui-card-element-editor']);
@@ -21,6 +24,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     this._identity = null; this._identityToken = 0; this._knownVT = new Set(); this._vtByConnection = new WeakMap(); this._configRevision = 0;
     this._open = false; this._activeTarget = 'temperature'; this._registryStatus = 'idle';
     this._coordinator = new CommandCoordinator({ onChange: () => this._scheduleRender() });
+    this._mappedRegistry = new MappedRegistry(() => { this._updateContext(); this._scheduleRender(); });
   }
   static getStubConfig(hass, entities = [], fallback = []) {
     const candidates = [...entities, ...fallback, ...Object.keys(hass?.states ?? {})];
@@ -42,6 +46,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     if (this._draftContext && !this._draftStillValid(model)) this._cancelDraft('Thermostat context changed. The draft was cancelled.');
     this._updateContext(model);
     this._coordinator.observe(value?.states?.[this.config.entity]);
+    this._coordinator.observe(value?.states?.[this._mappedCapability(model).entity]);
     this._scheduleRender();
   }
   get hass() { return this._hass; }
@@ -50,7 +55,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
   set editMode(value) { this._editMode = value === true; this._cancelDraft(); this._updateContext(); this._scheduleRender(); }
   get editMode() { return this._editMode; }
   connectedCallback() { this._refreshIdentity(); this._updateContext(); this._scheduleRender(); }
-  disconnectedCallback() { this._closeDialog(); clearTimeout(this._collapseTimer); clearTimeout(this._freshnessTimer); this._identityToken++; this._registryKey = null; this._cancelDraft(); this._coordinator.cancel('Card detached. Any remote outcome remains unverified.'); }
+  disconnectedCallback() { this._closeDialog(); this._mappedRegistry.stop(); clearTimeout(this._collapseTimer); clearTimeout(this._freshnessTimer); this._identityToken++; this._registryKey = null; this._cancelDraft(); this._coordinator.cancel('Card detached. Any remote outcome remains unverified.'); }
   _isPreview() {
     if (this._preview || this._editMode || this.config.preview === true) return true;
     let node = this;
@@ -62,8 +67,14 @@ export class ThermalIntelligenceCard extends HTMLElement {
   }
   _updateContext(model = this.model()) {
     const capability = this._lockCapability();
-    this._coordinator.updateContext({ hass: this._hass, entity: this.config.entity, preview: this._isPreview(), contextKey: this._configRevision, model: { ready: model.ready && this._registryStatus !== 'loading', lockReady: capability.allowed } });
+    const mapped = this._mappedCapability(model);
+    this._coordinator.updateContext({ hass: this._hass, entity: this.config.entity, preview: this._isPreview(), contextKey: this._configRevision, model: { ready: model.ready && this._registryStatus !== 'loading', lockReady: capability.allowed, mapped } });
     this._checkLockIntent(capability);
+    this._checkMappedIntent(mapped);
+  }
+  _mappedCapability(model = this.model()) {
+    const proof = this._mappedRegistry.sync(this._hass, this.config, this.isConnected);
+    return mappedCapability({ config:this.config, hass:this._hass, proof, model, preview:this._isPreview(), attached:this.isConnected, knownVT:this._knownVT.has(this.config.entity) });
   }
   _lockCapability() {
     return lockCapability({ hass:this._hass, entity:this.config.entity, identity:this._identity, registryStatus:this._registryStatus, preview:this._isPreview(), attached:this.isConnected });
@@ -323,6 +334,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     button.onkeydown=event=>{if(event.key==='Enter'&&event.shiftKey){event.preventDefault();clear();this._deviceSettings();}};
   }
   _closeDialog() {
+    this._mappedIntent = null;
     this._clearLockCode(); this._lockIntent = null;
     const host = this._dialogHost,returnFocus=this._dialogReturnFocus; this._dialogHost = null; this._dialogSpec = null; this._dialogMarkup = null; this._settingsDraft = null; this._displayDraft = null;this._dialogReturnFocus=null;
     host?.shadowRoot.querySelector('dialog')?.close(); host?.remove(); this._activity();
@@ -330,10 +342,13 @@ export class ThermalIntelligenceCard extends HTMLElement {
   }
   _openDialog(kind='overview',rowKey) {
     const capability = kind === 'lock' ? this._lockCapability() : null;
+    const mapped = kind === 'mapped' ? this._mappedCapability() : null;
+    if (kind === 'mapped' && (!mapped.allowed || this._coordinator.busy)) return;
     if (kind === 'lock' && (!capability.allowed || this._coordinator.busy)) return;
     const returnFocus=this._dialogReturnFocus||this.shadowRoot.activeElement?.getAttribute('data-focus');
     this._closeDialog(); this._cancelDraft(); this._dialogSpec = {kind,rowKey}; this._displayDraft = structuredClone(this.config);this._dialogReturnFocus=returnFocus;
     if (kind === 'lock') this._lockIntent = { entity:this.config.entity, revision:this._configRevision, session:this._session(), signature:capability.signature, locked:!capability.locked, codeRequired:capability.codeRequired, submitted:false, invalid:false, message:'' };
+    if (kind === 'mapped') this._mappedIntent = { entity:this.config.entity, target:mapped.entity, item:mapped.item, revision:this._configRevision, session:this._session(), signature:mapped.signature, identityKey:mapped.identityKey, on:mapped.reported === 'off', submitted:false, invalid:false, message:'' };
     this._dialogHost = document.createElement('div'); this._dialogHost.attachShadow({mode:'open'});
     this._dialogHost.style.cssText='--primary-text-color:#eff5ff;--secondary-text-color:#a9b8cb;--card-background-color:#0d1622;--input-fill-color:#152234;--secondary-background-color:#152234;--divider-color:#34465c;--primary-color:#8ac9f1;color-scheme:dark';
     this.shadowRoot.append(this._dialogHost); this._renderDialog(true);
@@ -341,6 +356,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
   _renderDialog(show=false) {
     if (!this._dialogHost || !this._dialogSpec) return;
     if (this._dialogSpec.kind === 'lock') { this._renderLockDialog(show); return; }
+    if (this._dialogSpec.kind === 'mapped') { this._renderMappedDialog(show); return; }
     // Keep the actual editor node and its draft while telemetry changes.
     if (!show && this._dialogSpec.kind === 'settings') {
       const editor = this._dialogHost.shadowRoot.querySelector('[data-dialog-editor]'); if (editor) editor.hass = this._hass;
@@ -403,6 +419,51 @@ export class ThermalIntelligenceCard extends HTMLElement {
     if (focus) root.querySelector(`[data-focus="${CSS.escape(focus)}"]`)?.focus({preventScroll:true});
     else if(summaryId)root.querySelector(`#${CSS.escape(summaryId)} > summary`)?.focus({preventScroll:true});
     else if(actionAttribute)root.querySelector(`[${actionAttribute}="${CSS.escape(actionValue)}"]`)?.focus({preventScroll:true});
+  }
+  _mappedIntentReason(intent, capability) {
+    if (!intent || this._mappedIntent !== intent || intent.entity !== this.config.entity || intent.target !== capability.entity
+        || intent.revision !== this._configRevision || !this._sameSession(intent.session, this._session())) return 'Control context changed. Close and reopen the switch control.';
+    if (intent.invalid) return intent.message;
+    if (!capability.allowed) return capability.reason;
+    if (intent.signature !== capability.signature) return 'Switch state or eligibility changed. Close and reopen to choose an action.';
+    return '';
+  }
+  _checkMappedIntent(capability = this._mappedCapability()) {
+    const intent = this._mappedIntent;
+    if (!intent || intent.invalid) return;
+    const reason = intent.submitted
+      ? (!capability.allowed || intent.identityKey !== capability.identityKey || !this._sameSession(intent.session, this._session()) ? 'Switch control is no longer available. Check its current state.' : '')
+      : this._mappedIntentReason(intent, capability);
+    if (reason) { intent.invalid = true; intent.message = reason; }
+  }
+  _renderMappedDialog(show = false) {
+    const intent = this._mappedIntent, root = this._dialogHost?.shadowRoot;
+    if (!intent || !root) return;
+    const capability = this._mappedCapability(); this._checkMappedIntent(capability);
+    if (!root.querySelector('[data-mapped-dialog]')) {
+      root.innerHTML = mappedDialog(intent.item, intent.on);
+      root.querySelector('dialog').addEventListener('cancel', event => { event.preventDefault(); this._closeDialog(); });
+      root.querySelector('[data-mapped-close]').onclick = () => this._closeDialog();
+      root.querySelector('[data-mapped-submit]').onclick = () => this._submitMapped();
+    }
+    root.querySelector('[data-mapped-current]').textContent = `Switch reports: ${this._hass?.connected === true ? capability.reported : 'unavailable'}`;
+    const status = this._coordinator.status;
+    root.querySelector('[data-mapped-message]').textContent = intent.message || (intent.submitted && status.domain === 'switch' && status.target === intent.target ? status.message : 'No command has been sent.');
+    root.querySelector('[data-mapped-close]').textContent = intent.submitted ? 'Close' : 'Cancel';
+    root.querySelector('[data-mapped-submit]').disabled = intent.submitted || intent.invalid || !capability.allowed || this._coordinator.busy;
+    if (show) root.querySelector('dialog').showModal();
+  }
+  _submitMapped() {
+    const intent = this._mappedIntent;
+    if (!intent || intent.submitted || intent.invalid || this._coordinator.busy) return;
+    const reason = this._mappedIntentReason(intent, this._mappedCapability());
+    if (reason) { intent.invalid = true; intent.message = reason; this._renderMappedDialog(); return; }
+    intent.submitted = true; this._draftMessage = ''; this._updateContext();
+    this._coordinator.requestMapped({
+      hass:this._hass, entity:intent.entity, target:intent.target, on:intent.on, preview:this._isPreview(), contextKey:intent.revision,
+      validate: ({ entity, target, values }) => ({ allowed: !this._mappedIntentReason(intent, this._mappedCapability()) && entity === intent.entity && target === intent.target && values.on === intent.on }),
+    });
+    this._renderMappedDialog(); this._scheduleRender();
   }
   _clearLockCode() {
     const input = this._dialogHost?.shadowRoot.querySelector('[data-lock-code]');
@@ -518,7 +579,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     const statusMessage = this._draftMessage || (status.phase !== 'idle' ? status.message : this._registryStatus === 'loading' ? 'Checking thermostat provider identity…' : model.readiness.status === 'locked' ? '' : model.reason || '');
     // Unrelated HA updates must not replace an open native select or its focus.
     // Readiness, capabilities and command status still participate in this markup.
-    const html = `<style>${styles}</style>` + renderCard({ config:this.config,model,open:this._open,allowed:this._guard(model).allowed,lockAllowed:this._lockCapability().allowed,busy:this._coordinator.busy,
+    const html = `<style>${styles}${mappedControlStyles}</style>` + renderCard({ config:this.config,model,open:this._open,allowed:this._guard(model).allowed,lockAllowed:this._lockCapability().allowed,optionalControl:this._mappedCapability(model),busy:this._coordinator.busy,
       draftValues:this._draftContext?{...model.targets,[this._targetKey(model)]:this._draft}:null,statusMessage,preview:this._isPreview(),animationOffset:this._animationOffset });
     if (html === this._viewHTML) {
       this._renderDialog(); this._scheduleFreshness(); return;
@@ -529,6 +590,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     for (const button of this.shadowRoot.querySelectorAll('[data-info]')) button.onclick=()=>this._moreInfo(button.dataset.info);
     for (const button of this.shadowRoot.querySelectorAll('[data-device]')) this._bindDevice(button);
     for (const button of this.shadowRoot.querySelectorAll('[data-lock-controls]')) button.onclick=()=>this._openDialog('lock');
+    this.shadowRoot.querySelector('[data-mapped-control]')?.addEventListener('click', () => this._openDialog('mapped'));
     for (const button of this.shadowRoot.querySelectorAll('[data-status-overview]')) button.onclick=()=>this._openDialog('overview');
     for (const button of this.shadowRoot.querySelectorAll('[data-presets]')) button.onclick=()=>this._openDialog('presets');
     for (const button of this.shadowRoot.querySelectorAll('[data-icon-settings]')) button.onclick=()=>this._openDialog('settings');

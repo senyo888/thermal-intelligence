@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { readLockFacts } from '../providers/lock-control.js';
+import { switchTimestamp } from '../model/mapped-control.js';
 
 const CHOICE_FIELDS = Object.freeze({
   set_hvac_mode: "hvac_mode",
@@ -54,11 +55,12 @@ function context({ hass, entity, preview, contextKey, model }) {
     socket: hass?.connection?.socket,
     ready: model?.ready !== false,
     lockReady: model?.lockReady === true,
+    mapped: model?.mapped,
   };
 }
 
 function usable(value, kind = 'climate') {
-  return value.connected && !value.preview && (kind === 'lock' ? value.lockReady && value.admin : value.ready)
+  return value.connected && !value.preview && (kind === 'lock' ? value.lockReady && value.admin : kind === 'mapped' ? value.mapped?.allowed === true : value.ready)
     && typeof value.user === "string" && value.user.length > 0
     && value.connection !== null && typeof value.connection === "object";
 }
@@ -67,7 +69,8 @@ function sameContext(a, b, kind = 'climate') {
   return usable(a, kind) && usable(b, kind)
     && a.entity === b.entity && a.user === b.user
     && a.connection === b.connection && a.socket === b.socket
-    && a.contextKey === b.contextKey;
+    && a.contextKey === b.contextKey
+    && (kind !== 'mapped' || (a.mapped?.entity === b.mapped?.entity && a.mapped?.identityKey === b.mapped?.identityKey));
 }
 
 function serviceAvailable(hass, service, domain = 'climate') {
@@ -91,6 +94,7 @@ function matches(state, service, values, kind) {
     const facts = readLockFacts(state);
     return facts.available && facts.ready && facts.configured && facts.known && facts.locked === values.locked;
   }
+  if (kind === 'mapped') return state.state === (values.on ? 'on' : 'off');
   return Object.entries(values).every(([key, value]) => {
     const observed = service === "set_hvac_mode" ? state.state : state.attributes?.[key];
     return typeof value === "number"
@@ -103,12 +107,12 @@ function makeStatus(phase, message, job) {
   return Object.freeze({
     phase,
     message,
-    ...(job ? { target: job.context.entity, service: job.service, values: job.values,
-      ...(job.kind === 'lock' ? { domain: job.domain } : {}) } : {}),
+    ...(job ? { target: job.target, service: job.service, values: job.values,
+      ...(job.kind !== 'climate' ? { domain: job.domain } : {}) } : {}),
   });
 }
 
-/** Explicit climate/VT lock requests only; observing or changing context never dispatches. */
+/** Explicit climate, VT lock and mapped switch requests; observation never dispatches. */
 export class CommandCoordinator {
   constructor({
     onChange = () => {}, timeoutMs = 10000,
@@ -175,9 +179,16 @@ export class CommandCoordinator {
         entity: job.context.entity,
         preview: false,
         contextKey: job.context.contextKey,
-        model: { ready: job.context.ready, lockReady: job.context.lockReady },
+        model: { ready: job.context.ready, lockReady: job.context.lockReady, mapped: job.context.mapped },
       }), job.kind);
-    if (!same || job.kind !== 'lock') return same;
+    if (!same) return false;
+    if (job.kind === 'mapped') {
+      const states = this._context.hass?.states;
+      return states?.[job.target]?.entity_id === job.target && ['on', 'off'].includes(states[job.target].state)
+        && states?.[job.context.entity]?.entity_id === job.context.entity
+        && !['unknown', 'unavailable'].includes(states[job.context.entity].state);
+    }
+    if (job.kind !== 'lock') return same;
     const state = this._context.hass?.states?.[job.context.entity];
     const facts = readLockFacts(state);
     return state?.entity_id === job.context.entity && facts.available && facts.ready
@@ -191,8 +202,11 @@ export class CommandCoordinator {
         && readLockFacts(this._context.hass?.states?.[job.context.entity]).locked !== job.baselineLocked) {
       return { allowed: false, reason: 'The lock state changed. Review the current state before trying again.' };
     }
+    if (job.kind === 'mapped' && !job.dispatched && this._context.hass?.states?.[job.target]?.state !== job.baselineState) {
+      return { allowed: false, reason: 'The switch state changed. Review the current state before trying again.' };
+    }
     try {
-      const result = job.validate({ entity: job.context.entity, service: job.service, values: job.values });
+      const result = job.validate({ entity: job.context.entity, target: job.target, service: job.service, values: job.values });
       if (result && typeof result.then === "function") {
         // An unsupported asynchronous validator must not leave an unhandled rejection.
         Promise.resolve(result).catch(() => {});
@@ -200,7 +214,7 @@ export class CommandCoordinator {
       }
       if (result?.allowed === true) return { allowed: true };
       // Lock validation can only publish fixed text: no raw input or provider error may escape.
-      const reason = job.kind !== 'lock' && typeof result?.reason === "string"
+      const reason = job.kind === 'climate' && typeof result?.reason === "string"
         ? result.reason.replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, 240)
         : "";
       return { allowed: false, reason: reason || "Controls are not available." };
@@ -264,12 +278,24 @@ export class CommandCoordinator {
 
   _rejectRequest(message) { return Promise.resolve(this._publish('failed', message)); }
 
-  _prepareRequest({ hass, entity, service, values, preview, validate, contextKey, kind, domain, facts }) {
+  requestMapped({ hass, entity, target, on, preview, validate, contextKey } = {}) {
+    if (this._disposed) return Promise.resolve(makeStatus('failed', 'This card is no longer active.'));
+    if (this.busy) return Promise.resolve(makeStatus('failed', 'A previous request is still unresolved.'));
+    if (preview !== false) return this._rejectRequest('Controls are disabled during setup and preview.');
+    if (typeof entity !== 'string' || !ENTITY.test(entity) || typeof target !== 'string' || !/^switch\.[a-z0-9_]+$/.test(target)) return this._rejectRequest('Select one thermostat and one explicit switch.');
+    if (typeof on !== 'boolean' || typeof validate !== 'function') return this._rejectRequest('An explicit direction and current capability check are required.');
+    if (target !== this._context?.mapped?.entity || this._context?.mapped?.allowed !== true) return this._rejectRequest('The selected switch is not eligible.');
+    const prepared = this._prepareRequest({ hass, entity, target, service: on ? 'turn_on' : 'turn_off', values: Object.freeze({ on }), preview, validate, contextKey, kind: 'mapped', domain: 'switch' });
+    if (prepared.job) this._dispatch(prepared.job, { entity_id: prepared.job.target });
+    return prepared.result;
+  }
+
+  _prepareRequest({ hass, entity, target = entity, service, values, preview, validate, contextKey, kind, domain, facts }) {
     const reject = message => ({ result: this._rejectRequest(message) });
     const captured = context({
       hass, entity, preview,
       contextKey: contextKey === undefined ? this._context?.contextKey : contextKey,
-      model: kind === 'lock' ? { lockReady: this._context?.lockReady } : undefined,
+      model: kind === 'lock' ? { lockReady: this._context?.lockReady } : kind === 'mapped' ? { mapped: this._context?.mapped } : undefined,
     });
     if (!usable(captured, kind)) return reject(kind === 'lock'
       ? 'An eligible administrator lock-control context is required.' : 'An active authenticated Home Assistant connection is required.');
@@ -277,9 +303,10 @@ export class CommandCoordinator {
     if (!sameContext(captured, this._context, kind)) return reject("The selected control context has changed.");
     if (!serviceAvailable(hass, service, domain)) return reject("The selected service is unavailable.");
 
-    const baseline = hass.states?.[entity];
+    const baseline = hass.states?.[target];
     const job = {
-      context: captured, service, values, validate, kind, domain,
+      context: captured, target, service, values, validate, kind, domain,
+      baselineState: baseline?.state,
       ...(kind === 'lock' ? { lockSettings: lockSettings(facts), baselineLocked: facts.locked } : {}),
       call: hass.callService.bind(hass), baseline,
       lastObservation: baseline, lastTimestamp: timestamp(baseline),
@@ -293,6 +320,11 @@ export class CommandCoordinator {
     if (this._job !== job) return { result };
     if (!initial.allowed) {
       this._finish(job, "failed", initial.reason);
+      return { result };
+    }
+    if (kind === 'mapped' && baseline?.state === (values.on ? 'on' : 'off')) {
+      if (!this._contextStillMatches(job) || this._context.hass?.states?.[target]?.state !== baseline.state) this._finish(job, 'failed', 'The switch context changed before confirmation.');
+      else this._finish(job, 'observed', 'The requested switch state is already reported. No command was sent.');
       return { result };
     }
     if (kind === 'lock' && facts.locked === values.locked) {
@@ -331,6 +363,20 @@ export class CommandCoordinator {
   }
 
   _dispatch(job, payload) {
+    if (job.kind === 'mapped') {
+      const current = this._validation(job);
+      if (!current.allowed || this._job !== job || !this._contextStillMatches(job)
+          || this._context.hass?.states?.[job.target]?.state !== job.baselineState
+          || !serviceAvailable(this._context.hass, job.service, job.domain)) {
+        this._finish(job, 'failed', 'Switch context changed before dispatch.');
+        return;
+      }
+      // Capture immediately before the actual call, after synchronous validation/presentation.
+      job.baseline = this._context.hass?.states?.[job.target];
+      job.lastObservation = job.baseline;
+      job.baselineTimestamp = switchTimestamp(job.baseline);
+      job.lastTimestamp = job.baselineTimestamp;
+    }
     this._flight = job;
     job.dispatched = true;
     try {
@@ -354,6 +400,7 @@ export class CommandCoordinator {
 
   _observedMessage(job) {
     return job.kind === 'lock' ? 'Requested lock state observed. Versatile Thermostat owns any automatic relocking.'
+      : job.kind === 'mapped' ? 'Requested switch state reported after the request. Physical response and causation are unverified.'
       : 'Setting observed. This does not establish physical heating.';
   }
 
@@ -374,6 +421,11 @@ export class CommandCoordinator {
       return;
     }
     job.accepted = true;
+    if (job.kind === 'mapped') {
+      // Reconcile the current target before completing from a pre-acknowledgement match.
+      this.observe(this._context.hass?.states?.[job.target]);
+      if (this._job !== job) return;
+    }
     if (job.observedMatch) {
       this._finish(job, "observed", this._observedMessage(job));
     } else {
@@ -383,13 +435,25 @@ export class CommandCoordinator {
 
   observe(state) {
     const job = this._job;
-    if (this._disposed || !job?.dispatched || state?.entity_id !== job.context.entity) return this.status;
+    if (this._disposed || !job?.dispatched || state?.entity_id !== job.target) return this.status;
     if (!this._contextStillMatches(job)) {
       this._retire(job, "Control context changed; the outcome is uncertain.");
       return this.status;
     }
-    if (state === job.lastObservation) return this.status;
-    const nextTimestamp = timestamp(state);
+    if (job.kind !== 'mapped' && state === job.lastObservation) return this.status;
+    const nextTimestamp = job.kind === 'mapped' ? switchTimestamp(state) : timestamp(state);
+    if (job.kind === 'mapped' && (job.baselineTimestamp === null || nextTimestamp === null)) {
+      job.observedMatch = false;
+      return this.status;
+    }
+    if (job.kind === 'mapped' && nextTimestamp === job.lastTimestamp) {
+      // Conflicting evidence at the same instant cannot establish an order. A later
+      // distinct update is required; another equal-time match cannot undo this doubt.
+      const previousMatch = job.observedMatch;
+      job.observedMatch = previousMatch && matches(state, job.service, job.values, job.kind);
+      if (previousMatch && !job.observedMatch && !job.accepted) this._publish('pending', 'Conflicting switch updates; waiting for a later report.', job);
+      return this.status;
+    }
     if (job.lastTimestamp !== null && (nextTimestamp === null || nextTimestamp <= job.lastTimestamp)) return this.status;
     job.lastObservation = state;
     if (nextTimestamp !== null) job.lastTimestamp = nextTimestamp;

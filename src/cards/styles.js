@@ -45,3 +45,6 @@ const LOCK_INDICATOR = `
 .lock-indicator[data-lock-state=unknown],.lock-indicator[data-lock-state=unavailable]{color:#8795a8}
 `;
 export const styles=STYLE+CARD_POLISH+LOCK_INDICATOR;
+
+// Optional control shares the existing wrapping choice grid; other grids are unchanged.
+export const mappedControlStyles = `.mapped-choice{min-width:0;color:#a9b8cb;font-size:11px;overflow-wrap:anywhere}.mapped-choice button{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:44px;margin-top:5px}.mapped-choice ha-icon{width:18px;height:18px;--mdc-icon-size:18px;flex:none}.mapped-choice small{line-height:1.5}.control-choices>label{min-width:0;overflow-wrap:anywhere}`;

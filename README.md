@@ -2,6 +2,9 @@
 
 # Thermal Intelligence
 
+Development checkout: **beta.6 optional switch controls**, pending publication and live acceptance. The published beta.5 package and RC.1 release remain unchanged. [Feature guide](docs/optional-switch-control.md).
+
+
 **A clear view of temperature, control and what your thermostat is actually reporting.**
 
 Created and maintained by **[Senyo · senyo888](https://github.com/senyo888)**.

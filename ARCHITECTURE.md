@@ -1,6 +1,6 @@
 # Thermal Intelligence architecture contract
 
-The standalone frontend is implemented on `senyo888-patch-1`. It presents Home Assistant/provider state and sends commands only after explicit user interaction. The optional backend and additional cards remain planned.
+Published beta packages use `senyo888-patch-1`; isolated development candidates are validated before publication. It presents Home Assistant/provider state and sends commands only after explicit user interaction. The optional backend and additional cards remain planned.
 
 ## Ownership and layers
 
@@ -55,3 +55,7 @@ HI remains the authority for its seasonal humidity targets, Stability, selected 
 The beta separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. Synthetic fixtures and unit/browser tests live under `tests/`. The reproducible module is `dist/thermal-intelligence.js`.
 
 The README introduces the product; the Wiki provides practical guidance; repository documents define configuration, compatibility and technical contracts. The website presents the same supported features and beta limits. See [distribution](docs/distribution.md) and [command contracts](docs/command-contract.md).
+
+## Explicit optional switch path
+
+The beta.6 development candidate adds one schema-2 enrolled switch to the existing card. `model/mapped-control.js` validates the row independently of climate controls; `providers/mapped-registry.js` maintains current-session registry proof. The shared coordinator keeps the climate anchor distinct from the captured switch dispatch/observation target. It admits only On/Off, with confirmation, no replay and strict mapped-target timestamps. This is frontend request handling, not a new backend or controller. See [Optional switch control](docs/optional-switch-control.md).

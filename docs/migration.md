@@ -34,6 +34,10 @@ Unknown top-level options and nested feature, telemetry, humidity and response f
 
 For early development configurations, `background` selects `blue`, `plum` or `black`; the prototype `theme` field is preserved but inactive. Explicit legacy two-boundary humidity guides keep their three-band meaning until you choose the four-boundary format. See [configuration](card-configuration.md) for mappings, precedence and visual settings.
 
+## Unreleased beta.6 development configuration
+
+The optional switch control is a local development feature, separate from published beta.5 and RC.1. Existing schema-1 cards stay unchanged. Explicit enrollment uses schema 2; older modules reject that schema. Retain the original schema-1 card configuration before enabling it. To roll back, restore both the original configuration and its matching module/resource, then open a fresh browser document. Removing the optional row does not send Off or undo external effects. See [optional switch setup and limits](optional-switch-control.md).
+
 ## RC.1 coexistence
 
 Beta.5 and the published RC.1 use the same trial card and editor registrations. Load only one of those modules in a browser document; changing the trial resource requires a fresh document. Keep the separate legacy TI resources and cards unchanged. Beta.5 is an untagged beta candidate, not an update to the RC.1 tag or its release assets.

@@ -32,7 +32,7 @@ test('setup config has public defaults and preserves unknown nested fields witho
 });
 
 test('invalid config is rejected rather than silently normalised to control defaults', () => {
-  for (const bad of [null, [], { schema_version: 2 }, { schema_version: '1' }, { entity: null }, { entity: 'sensor.example' }, { entity: 'climate.' }, { adapter: null }, { adapter: 'guess' }, { theme: null }, { step: 0 }, { step: -1 }, { step: NaN }, { step: '0.5' }, { show_details: 'false' }, { preset_labels: [] }, { preset_labels: { eco: '<script>' } }, { telemetry: [{ kind: 'humidity', entity: 'sensor.example', attribute: '__proto__.x' }] }, { humidity_bands: { low: 70, high: 20 } }]) {
+  for (const bad of [null, [], { schema_version: 3 }, { schema_version: '1' }, { entity: null }, { entity: 'sensor.example' }, { entity: 'climate.' }, { adapter: null }, { adapter: 'guess' }, { theme: null }, { step: 0 }, { step: -1 }, { step: NaN }, { step: '0.5' }, { show_details: 'false' }, { preset_labels: [] }, { preset_labels: { eco: '<script>' } }, { telemetry: [{ kind: 'humidity', entity: 'sensor.example', attribute: '__proto__.x' }] }, { humidity_bands: { low: 70, high: 20 } }]) {
     assert.throws(() => normalizeConfig(bad), undefined, JSON.stringify(bad));
   }
 });

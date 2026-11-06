@@ -1,6 +1,6 @@
 # Compatibility
 
-Current beta candidate: **0.1.0-beta.5**. The [beta.5 guide](beta-5.md) records its identity and validation limits. The environment and installation results below are historical beta.4 evidence; they have not been repeated for beta.5. A minimum supported Home Assistant version and a broader support range have not yet been established.
+Published beta candidate: **0.1.0-beta.5**. This checkout prepares **0.1.0-beta.6** with [optional switch controls](optional-switch-control.md); it is not published or installed. The [beta.5 guide](beta-5.md) records its identity and validation limits. The environment and installation results below are historical beta.4 evidence; they have not been repeated for beta.5. A minimum supported Home Assistant version and a broader support range have not yet been established.
 
 | Environment or feature | Coverage |
 | --- | --- |
@@ -27,3 +27,7 @@ Include your TI, Home Assistant, provider and browser/Companion versions, instal
 ## Beta.5 disabled-lock correction
 
 The correction covers VT reporting `is_lock_configured: false` with a residual true locked flag, plus unknown configuration and removal while a lock dialog is open. Synthetic source and built-module checks are recorded in the [beta.5 guide](beta-5.md). No beta.5 installation, physical control or HACS lifecycle acceptance is claimed.
+
+## Optional switch development coverage
+
+The beta.6 candidate targets one registered standard climate plus one registered switch, with both-direction confirmation and visual enrollment. Synthetic fixtures cover Honeywell-like On/emergency-heat and Off/system-Off effects, unknown identity/state, registry/session invalidation and explicit-target request ordering. This is not real Honeywell, HACS/Marketplace, Lab or physical-device acceptance. Unsupported helpers, VT, group/template switches and multiple mappings remain explicit. Accounts unable to read/subscribe to the entity registry cannot use this optional row.

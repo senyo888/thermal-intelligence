@@ -28,3 +28,7 @@ Actual beta.2 captures with synthetic data, illustrating controls retained in be
 </details>
 
 Saved schema-1 configurations remain valid in beta.4. Unknown fields survive editor round trips; preserving a field does not make an unsupported option operational. [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md).
+
+## Optional switch development candidate
+
+The beta.6 development candidate adds one explicitly enabled switch beside Mode/Fan for a registered standard thermostat. Its visual editor requires enrollment and runtime confirmation in both directions. It needs no TI controller. Released RC.1 and beta.5 do not include it. See the [optional-control guide](../optional-switch-control.md) for the exact schema, Honeywell Off behavior, restrictions and configuration-plus-module rollback.

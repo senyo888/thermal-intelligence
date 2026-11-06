@@ -2,7 +2,7 @@
 
 The health LED distinguishes connection/readiness and incomplete provider observations from heating activity. VT's explicitly null **Off reason** and **Mode reason** mean **None reported**, not a telemetry failure. Missing fields and genuine unknown or unavailable values remain visible in the overview and may keep the LED amber; disconnected or unavailable thermostats remain red. An amber provider-detail warning does not itself change command permissions: the existing readiness and capability guards remain authoritative.
 
-This guide describes **0.1.0-beta.5**, retaining the beta.4 schema-1 configuration. See [Compatibility](compatibility.md) for tested Home Assistant and provider versions.
+This guide describes the **0.1.0-beta.6 development candidate**. Existing schema-1 cards remain supported; explicitly enabling an optional switch uses schema 2. Published RC.1 and beta.5 do not include this feature. See [Compatibility](compatibility.md) for tested Home Assistant and provider versions.
 
 The card presents a selected climate entity, its advertised controls and explicit optional observations. It does not need a TI backend, create schedules or take ownership of an existing controller. See the [provider contracts](provider-contracts.md) for capability and evidence rules, and the [command contract](command-contract.md) for request tracking and uncertainty.
 
@@ -26,7 +26,7 @@ The YAML below describes the same configuration contract. The preview shows the 
 | YAML key | Visual field | Default | Accepted value and behavior |
 | --- | --- | --- | --- |
 | `type` | Managed by the card | `custom:thermal-intelligence-beta-card` | This exact card type. Include it in a complete YAML configuration. |
-| `schema_version` | Managed by the card | `1` | Numeric `1`. Unsupported versions are rejected. |
+| `schema_version` | Managed by the card | `1` | Numeric `1` (existing cards) or `2` (explicit optional-control enrollment). Unsupported versions are rejected. |
 | `entity` | Thermostat entity | Empty string | A `climate.*` entity ID. Empty is the safe setup state. Entity names do not establish provider identity. |
 | `adapter` | Provider | `auto` | `auto`, `standard` or `vtherm`; see identity rules below. |
 | `name` | Card name | No override | Plain text. When omitted or empty, use the entity's friendly name, then its entity ID. |
@@ -43,6 +43,8 @@ The YAML below describes the same configuration contract. The preview shows the 
 | `humidity_bands` | Four humidity guide boundaries, or explicit legacy low/high | Original `30/40/60/70` guides | `{dry_below, good_min, good_max, wet_above}` requires ordered integers within 0–100. Existing `{low, high}` remains an explicit legacy format. Local display classification only; details below. |
 
 Names, labels, units and preset keys must be plain text without markup delimiters or control characters. Optional numbers use YAML numbers, not quoted numeric strings. Boolean options use `true` or `false`. Clear an optional setting by omitting it; `null` is not a substitute for a valid recognized value.
+
+See [Optional switch control](optional-switch-control.md) for the visual editor, explicit `mapped_controls` schema, eligibility, confirmation and rollback. Ordinary editor saves do not enroll an existing card.
 
 Unknown top-level options, unknown fields within feature/telemetry rows, and unknown fields within `humidity_bands` survive normalization and editor round trips. Preservation does not make an unknown option operational. The editor patches the selected field instead of rebuilding a reduced configuration. There are no implicit private entity bindings or shared card settings.
 
