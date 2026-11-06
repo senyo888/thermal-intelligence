@@ -1,6 +1,6 @@
 # Compatibility
 
-Published beta candidate: **0.1.0-beta.6**, with [optional switch controls](optional-switch-control.md). The [beta.6 guide](beta-6.md) records its exact identity and synthetic validation limits. It has not been installed or tested against a real provider. The environment and installation results below are historical beta.4 evidence; they have not been repeated for beta.5 or beta.6. A minimum supported Home Assistant version and a broader support range have not yet been established.
+Current source candidate: **0.1.0-beta.7**, correcting an absent-device-ID mismatch in [optional switch controls](optional-switch-control.md). The [beta.6 guide](beta-6.md) preserves the previous package identity. Beta.7 live acceptance is pending. The table below records historical beta.4 evidence; beta.6 observations are listed separately. A minimum supported Home Assistant version and a broader support range have not yet been established.
 
 | Environment or feature | Coverage |
 | --- | --- |
@@ -30,4 +30,10 @@ The correction covers VT reporting `is_lock_configured: false` with a residual t
 
 ## Optional switch development coverage
 
-The beta.6 candidate targets one registered standard climate plus one registered switch, with both-direction confirmation and visual enrollment. Synthetic fixtures cover Honeywell-like On/emergency-heat and Off/system-Off effects, unknown identity/state, registry/session invalidation and explicit-target request ordering. This is not real Honeywell, HACS/Marketplace, Lab or physical-device acceptance. Unsupported helpers, VT, group/template switches and multiple mappings remain explicit. Accounts unable to read/subscribe to the entity registry cannot use this optional row.
+The optional control targets one registered standard climate plus one registered switch, with both-direction confirmation and visual enrollment. Synthetic fixtures cover Honeywell-like On/emergency-heat and Off/system-Off effects, unknown identity/state, registry/session invalidation and explicit-target request ordering. This is not real Honeywell, HACS/Marketplace or physical-device acceptance. Unsupported helpers, VT, group/template switches and multiple mappings remain explicit. Accounts unable to read/subscribe to the entity registry cannot use this optional row.
+
+## Beta.6 observations and beta.7 correction
+
+On HA 2026.11.0 with VT 10.6.3, a manual beta.6 trial passed passive rendering, editor cancellation and browser reconnect checks. An inert VT fixture confirmed that explicitly disabled locking permits deliberate temperature changes and that restoring the original lock settings blocks them again. These checks do not prove physical heating or installer lifecycle behavior.
+
+The optional switch test found that HA frontend metadata used an own `device_id: undefined` while its registry API returned `device_id: null`. Beta.6 falsely reported unavailable registry proof. Beta.7 accepts only those equivalent absent device IDs; actual device changes and other identity mismatches remain blocked. Synthetic tests cover both selected entities and confirmation invalidation. A dedicated eligible switch is still needed for positive live On/Off acceptance.

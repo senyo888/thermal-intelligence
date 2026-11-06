@@ -25,6 +25,7 @@ For a first installation, remove only the added beta cards/view and its resource
 
 | Update | Configuration and rollback behaviour |
 | --- | --- |
+| beta.6 → beta.7 | No new settings or schema changes. Corrects a false registry mismatch for absent device IDs. Returning to beta.6 can restore the block. |
 | beta.1 → beta.2 | Adds administrator lock controls without a new option. Codes are entered at runtime and never saved in card configuration. |
 | beta.2 → beta.3 | Adds optional `response_arc` settings. Unmapped cards retain their existing fallback. Beta.2 preserves the unknown object but cannot display corroborated warming. |
 | beta.5 → beta.6 | Optional switch enrollment requires schema 2. Older modules reject it; restore both the saved schema-1 configuration and its module when rolling back. |
@@ -41,4 +42,4 @@ The optional switch control is available in the untagged beta.6 candidate; it is
 
 ## RC.1 coexistence
 
-Beta.5, beta.6 and the published RC.1 use the same trial card and editor registrations. Load only one of those modules in a browser document; changing the trial resource requires a fresh document. Keep the separate legacy TI resources and cards unchanged. Beta.6 is an untagged beta candidate, not an update to the RC.1 tag or its release assets.
+All betas and the published RC.1 use the same trial card and editor registrations. Load only one trial module in a browser document; changing the trial resource requires a fresh document. Keep the separate legacy TI resources and cards unchanged. Untagged beta updates do not change the RC.1 tag or its release assets.

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0-beta.7 — 6 November 2026 (untagged beta)
+
+- Accept equivalent absent device IDs when comparing Home Assistant frontend metadata with its entity-registry response. This fixes a false unavailable status for optional switch controls on device-less entities.
+- Keep real identity differences, unsupported providers, explicit confirmation and no-replay checks unchanged. No configuration migration is needed; returning to beta.6 can restore the false block.
+
 ## 0.1.0-beta.6 — 6 November 2026 (untagged beta)
 
 - Add one explicitly enrolled standard-provider switch control, with visual configuration and confirmation before On and Off.

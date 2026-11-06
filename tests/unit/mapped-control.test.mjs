@@ -200,3 +200,35 @@ test('registry subscription failure or missing registration cannot authorize the
     r.sync(h,config(),true);await tick();assert.equal(r.proof.status,'unavailable');r.stop();
   }
 });
+
+test('registry proof equates only null and undefined device IDs on either selected entity', async () => {
+  const cases = [
+    ['device_id', undefined, null, 'verified'],
+    ['device_id', null, undefined, 'verified'],
+    ['device_id', null, null, 'verified'],
+    ['device_id', undefined, undefined, 'verified'],
+    ['device_id', 'device-a', 'device-a', 'verified'],
+    ['device_id', 'device-a', 'device-b', 'unavailable'],
+    ['device_id', undefined, 'device-a', 'unavailable'],
+    ['device_id', 'device-a', null, 'unavailable'],
+    ['device_id', '', null, 'unavailable'],
+    ['device_id', false, undefined, 'unavailable'],
+    ...['id', 'unique_id', 'config_entry_id'].map(key => [key, undefined, null, 'unavailable']),
+    ['entity_id', 'climate.changed', anchor, 'unavailable'],
+    ['platform', 'template', 'honeywell', 'unavailable'],
+  ];
+  for (const selected of [anchor, target]) for (const [key, frontend, api, expected] of cases) {
+    const entries = Object.fromEntries([anchor, target].map(entity => [entity, {entity_id:entity, platform:'honeywell'}]));
+    entries[selected][key] = api;
+    const h = {
+      connected:true, user:{id:'user'},
+      connection:{socket:{}, subscribeEvents:async () => () => {}},
+      entities:{[selected]:{...entries[selected], [key]:frontend}},
+      callWS:async msg => entries[msg.entity_id],
+    };
+    const r = new MappedRegistry(() => {});
+    r.sync(h, config(), true); await tick();
+    assert.equal(r.proof.status, expected, `${selected} ${key}: ${String(frontend)} / ${String(api)}`);
+    r.stop();
+  }
+});

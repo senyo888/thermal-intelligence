@@ -14,9 +14,11 @@ async function setup(page, options = {}) {
     fixture.hass.connection.subscribeEvents = async fn => { fixture.registryListeners.add(fn); return () => fixture.registryListeners.delete(fn); };
     fixture.hass.entities = {};
     fixture.registry = {
-      'climate.fixture_thermostat': { entity_id:'climate.fixture_thermostat', platform:options.vt ? 'versatile_thermostat' : 'honeywell', id:'example-anchor' },
-      'switch.fixture_aux': { entity_id:'switch.fixture_aux', platform:options.platform || 'honeywell', id:'example-switch' },
+      'climate.fixture_thermostat': { entity_id:'climate.fixture_thermostat', platform:options.vt ? 'versatile_thermostat' : 'honeywell', id:'example-anchor', device_id:null },
+      'switch.fixture_aux': { entity_id:'switch.fixture_aux', platform:options.platform || 'honeywell', id:'example-switch', device_id:null },
     };
+    // Device-less entries in HA's frontend own an undefined device_id; the API returns null.
+    fixture.hass.entities = Object.fromEntries(Object.entries(fixture.registry).map(([id, entry]) => [id, {...entry, device_id:undefined}]));
     fixture.hass.callWS = async message => { if(fixture.registryFailure) throw Error('Unavailable');return structuredClone(fixture.registry[message.entity_id]); };
     fixture.hass.states['switch.fixture_aux'] = {entity_id:'switch.fixture_aux',state:options.on ? 'on' : 'off',last_updated:'2026-01-01T00:00:00.000Z',attributes:{friendly_name:'Example emergency heat'}};
     fixture.hass.services.switch = {turn_on:{},turn_off:{}};
@@ -64,6 +66,16 @@ test('Cancel, Escape, editor saves, render and passive reconnect produce no swit
   await editor(page).getByLabel('Card name',{exact:true}).fill('Edited thermostat');await editor(page).getByLabel('Card name',{exact:true}).press('Tab');
   await page.evaluate(()=>{fixture.hass.connected=false;fixture.refresh();fixture.hass.connected=true;fixture.hass.connection.socket={};fixture.refresh();});
   await expect(button(page)).toBeEnabled();expect(await calls(page)).toEqual([]);
+});
+
+test('a real device identity change invalidates a device-less confirmation without dispatch or replay', async({page}) => {
+  await setup(page); await button(page).click(); await expect(submit(page)).toBeEnabled();
+  await page.evaluate(() => { fixture.hass.entities['switch.fixture_aux'].device_id='different-device'; fixture.refresh(); });
+  await expect.poll(() => page.evaluate(() => fixture.cards[0]._mappedRegistry.proof.status)).toBe('unavailable');
+  await expect(submit(page)).toBeDisabled(); expect(await calls(page)).toEqual([]);
+  await page.evaluate(() => { fixture.hass.entities['switch.fixture_aux'].device_id=null; fixture.refresh(); });
+  await expect.poll(() => page.evaluate(() => fixture.cards[0]._mappedRegistry.proof.status)).toBe('verified');
+  await expect(submit(page)).toBeDisabled(); expect(await calls(page)).toEqual([]);
 });
 
 test('card setConfig rejects accessor and inherited enrollment without invoking getters or enabling a row', async({page}) => {

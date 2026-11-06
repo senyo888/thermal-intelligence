@@ -2,6 +2,10 @@
 import { mappedControl, ownValue } from '../model/mapped-control.js';
 
 const fields = ['entity_id', 'platform', 'id', 'unique_id', 'config_entry_id', 'device_id'];
+const absentDeviceId = value => value === null || value === undefined;
+// HA's frontend may use undefined where the registry API returns a null device_id.
+const sameField = (key, left, right) => left === right
+  || (key === 'device_id' && absentDeviceId(left) && absentDeviceId(right));
 const identity = (entry, entity) => {
   if (ownValue(entry, 'entity_id') !== entity || typeof ownValue(entry, 'platform') !== 'string' || !entry.platform.trim()) throw Error('Invalid registry entry');
   return Object.freeze(Object.fromEntries(fields.filter(key => Object.hasOwn(entry, key)).map(key => [key, ownValue(entry, key)])));
@@ -66,7 +70,7 @@ export class MappedRegistry {
       const [anchor, target] = entries.map((entry, i) => identity(entry, ids[i]));
       for (const [i, entry] of [anchor, target].entries()) {
         const current = hass.entities?.[ids[i]];
-        if (current && fields.some(key => Object.hasOwn(current, key) && Object.hasOwn(entry, key) && ownValue(current, key) !== entry[key])) throw Error('Registry metadata changed');
+        if (current && fields.some(key => Object.hasOwn(current, key) && Object.hasOwn(entry, key) && !sameField(key, ownValue(current, key), entry[key]))) throw Error('Registry metadata changed');
       }
       this.proof = Object.freeze({ status: 'verified', generation: token, anchor, target }); this.onChange();
     }).catch(() => {
