@@ -1,6 +1,6 @@
 # Compatibility
 
-Published beta candidate: **0.1.0-beta.7**, correcting an absent-device-ID mismatch in [optional switch controls](optional-switch-control.md). The [beta.7 guide](beta-7.md) records the exact package and validation limits; the [beta.6 guide](beta-6.md) preserves the previous identity. Beta.7 live acceptance is pending. The table below records historical beta.4 evidence; beta.6 observations are listed separately. A minimum supported Home Assistant version and a broader support range have not yet been established.
+Published beta candidate: **0.1.0-beta.7**, correcting an absent-device-ID mismatch in [optional switch controls](optional-switch-control.md). The [beta.7 guide](beta-7.md) records the exact package and validation limits; the [beta.6 guide](beta-6.md) preserves the previous identity. Beta.7 passed the bounded inert-switch Lab checks recorded below on 6 November 2026. The table records historical beta.4 evidence; later observations have their own sections. A minimum supported Home Assistant version and a broader support range have not yet been established.
 
 | Environment or feature | Coverage |
 | --- | --- |
@@ -36,4 +36,23 @@ The optional control targets one registered standard climate plus one registered
 
 On HA 2026.11.0 with VT 10.6.3, a manual beta.6 trial passed passive rendering, editor cancellation and browser reconnect checks. An inert VT fixture confirmed that explicitly disabled locking permits deliberate temperature changes and that restoring the original lock settings blocks them again. These checks do not prove physical heating or installer lifecycle behavior.
 
-The optional switch test found that HA frontend metadata used an own `device_id: undefined` while its registry API returned `device_id: null`. Beta.6 falsely reported unavailable registry proof. Beta.7 accepts only those equivalent absent device IDs; actual device changes and other identity mismatches remain blocked. Synthetic tests cover both selected entities and confirmation invalidation. A dedicated eligible switch is still needed for positive live On/Off acceptance.
+The optional switch test found that HA frontend metadata used an own `device_id: undefined` while its registry API returned `device_id: null`. Beta.6 falsely reported unavailable registry proof. Beta.7 accepts only those equivalent absent device IDs; actual device changes and other identity mismatches remain blocked. Synthetic tests cover both selected entities and confirmation invalidation.
+
+## Beta.7 Lab acceptance — 6 November 2026
+
+The [exact beta.7 module](beta-7.md#exact-package) was manually installed on HA **2026.11.0** with VT **10.6.3**. A registered generic thermostat and a dedicated built-in Command Line switch both exposed the absent device-ID shapes above; registry proof was verified for both. The switch ran only inert commands and reported state optimistically, with no physical device attached.
+
+| Check | Recorded result |
+| --- | --- |
+| Passive rendering and editor open/cancel | No TI service requests in the monitored window |
+| Confirmation cancellation | No request; the fixture remained Off |
+| Confirmed On and Off | Each sent one TI request and one corresponding HA service event; acknowledgement plus a newer matching switch state reached the observed result |
+| Passive reconnect | Current attached card regained registry proof; no replay |
+| Thermostat commands during the isolated functional test | None observed |
+| Cleanup and coexistence | Temporary fixture and enrollment removed; original dashboard configuration restored; other resources and legacy TI preserved |
+
+One Core restart loaded the test fixture; a frontend module update itself does not require a Core restart. Startup/provider events and the later fixture cleanup reload were recorded separately from the functional On/Off pair. These results do not claim globally zero climate activity or uninterrupted observation during the restart.
+
+At the end of the recorded interval, HA was connected, Repairs was empty and the captured log response had no ERROR records. Startup output-availability warnings recovered within the interval; known VT native-temperature deprecation warnings remained. This is dated, bounded health evidence, not a warning-free or continuous-uptime claim.
+
+The test establishes the real-HA registry, frontend and service path for this inert fixture. Its reported state is not independent physical feedback or proof of causation. Real Honeywell behavior, broader backend permissions, physical phone/tablet and Companion acceptance, HACS/Marketplace installer lifecycle, backup restore rehearsal and a new controller-managed soak remain unverified. TI remains a standalone card; the Lab controller is test infrastructure, not a product dependency.

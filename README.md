@@ -32,7 +32,7 @@ Thermal Intelligence brings current and target temperatures, supported thermosta
 
 ## Marketplace preparation
 
-HACS and Home Assistant Marketplace packaging is prepared on `senyo888-patch-1` for review into `develop`. Manual installation remains the available route; an installable Marketplace release and migration testing are still pending. See [Distribution status](docs/distribution.md).
+Beta.7 is available through manual installation. The separate published RC.1 includes HACS Dashboard metadata and release assets; its upstream validation passed, but installer lifecycle testing remains unverified. Beta.7 has no named release for installer selection. See [Distribution status](docs/distribution.md).
 
 ## More information, without a crowded card
 
@@ -149,7 +149,7 @@ The installable beta and its source are on **[senyo888-patch-1](https://github.c
 
 The beta has separate card and editor names so it can coexist with an existing Thermal Intelligence installation. Keep existing cards and resources in place, and add **Thermal Intelligence Thermostat · Beta** for testing.
 
-Earlier beta.4 testing covered HA **2026.10.0** and **2026.10.4** with VT **10.5.1**. A beta.6 manual trial on HA **2026.11.0** with VT **10.6.3** found the registry mismatch corrected in beta.7. Beta.7 has source and synthetic browser validation; its live acceptance is pending. Physical heating response, native phone/tablet use, a minimum supported version range and HACS installation remain unverified. See [Compatibility](docs/compatibility.md) for the scope of each check. This is a beta; there is no stable release yet.
+On **6 November 2026**, a manual beta.7 trial on HA **2026.11.0** with VT **10.6.3** passed the registry correction and confirmed On/Off tests using an inert switch. Cancellation, passive rendering and reconnect produced no unintended TI service requests in the observed windows. Physical response, real Honeywell behavior, native phone/tablet use, a minimum supported version range and HACS/Marketplace installation remain unverified. See [Compatibility](docs/compatibility.md) for the dated results and earlier beta coverage. This is a beta; there is no stable release yet.
 
 ## Project direction
 
@@ -159,7 +159,7 @@ The standalone thermostat is the first component. House Climate, Effective Mode,
 | --- | --- |
 | `main` | Public project presentation; future stable releases |
 | `develop` | Release-candidate source, tests and installable RC |
-| `senyo888-patch-1` | Beta.7 registry correction; live acceptance pending |
+| `senyo888-patch-1` | Beta.7 registry correction; bounded inert-switch Lab acceptance passed |
 
 ## Support and contribution
 

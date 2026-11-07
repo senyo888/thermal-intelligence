@@ -24,9 +24,11 @@ The package includes the module, licence and manifest with source commit/tree an
 
 ## Validation and limits
 
-**152 unit tests, 94 synthetic browser checks, 13 packaging tests and 8 distribution tests passed.** The added regression fails on beta.6. It checks absent device IDs on either selected entity and preserves real device/other identity mismatches. Browser fixtures use HA's device-less metadata shape and verify that a real identity change invalidates confirmation without sending or replaying a request. Existing provider exclusions and command guards remain covered. Foundation, public-data, whitespace and redacted secret checks passed.
+Before publication, **152 unit tests, 94 synthetic browser checks, 13 packaging tests and 8 distribution tests passed.** The added regression fails on beta.6. It checks absent device IDs on either selected entity and preserves real device/other identity mismatches. Browser fixtures use HA's device-less metadata shape and verify that a real identity change invalidates confirmation without sending or replaying a request. Existing provider exclusions and command guards remain covered. Foundation, public-data, whitespace and redacted secret checks passed.
 
-Beta.7 has not yet been installed or accepted with a live eligible switch. Its correction follows a beta.6 test on HA 2026.11.0; that finding and the separate inert VT disabled-lock check are recorded in [Compatibility](compatibility.md). Synthetic tests do not prove physical response, real Honeywell behavior, backend permissions, HACS/Marketplace installation or a minimum supported HA version.
+On **6 November 2026**, the exact module above was manually installed and checked on HA **2026.11.0** with VT **10.6.3**. A registered generic thermostat and dedicated inert Command Line switch verified the corrected registry proof. Confirmed On and Off each produced one TI request, one corresponding HA service event and a newer matching reported state. Cancellation, passive rendering, editor open/cancel and reconnect produced no unintended TI requests in the observed windows. The temporary fixture and enrollment were removed, and the original dashboard configuration was restored.
+
+This proves the bounded real-HA frontend, registry and service path on an optimistic fixture, not physical feedback. Real Honeywell behavior, broader backend permissions, physical phone/tablet and Companion use, HACS/Marketplace installation, restore rehearsal and a new controller-managed soak remain unverified. See [Compatibility](compatibility.md#beta7-lab-acceptance--6-november-2026) for the scope and earlier beta.6 disabled-lock result. No minimum supported HA version is established.
 
 ## Update and rollback
 

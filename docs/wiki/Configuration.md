@@ -9,7 +9,7 @@ Load the beta module, then choose **Add Card → Thermal Intelligence Thermostat
 - **Humidity guides:** choose four boundaries for too dry, the good range and too wet. These change display colours only. Save through the visual card editor; the in-card adjustment panel provides a draft to copy.
 - **Response arc:** optional read-only VT mappings support the corroborated warming indication. A valve percentage alone does not provide that evidence.
 
-[Full configuration reference and examples](https://github.com/senyo888/thermal-intelligence/blob/main/docs/card-configuration.md) · [Response-source setup](https://github.com/senyo888/thermal-intelligence/blob/main/docs/card-configuration.md#temperature-response-arc)
+[Full configuration reference and examples](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md) · [Response-source setup](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/card-configuration.md#temperature-response-arc)
 
 <details>
 <summary>VT Presence and Motion</summary>
@@ -27,8 +27,8 @@ Actual beta.2 captures with synthetic data, illustrating controls retained in be
 
 </details>
 
-Saved schema-1 configurations remain valid in beta.4. Unknown fields survive editor round trips; preserving a field does not make an unsupported option operational. [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md).
+Saved schema-1 configurations remain valid in beta.7. Unknown fields survive editor round trips; preserving a field does not make an unsupported option operational. [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/migration.md).
 
 ## Optional switch development candidate
 
-The beta.6 candidate adds one explicitly enabled switch beside Mode/Fan for a registered standard thermostat. Its visual editor requires enrollment and runtime confirmation in both directions. It needs no TI controller. Released RC.1 and beta.5 do not include it. See the [optional-control guide](../optional-switch-control.md) for the exact schema, Honeywell Off behavior, restrictions and configuration-plus-module rollback.
+Available from beta.6 and retained in beta.7, the card offers one explicitly enabled switch beside Mode/Fan for a registered standard thermostat. Its visual editor requires enrollment and runtime confirmation in both directions. It needs no TI controller. Released RC.1 and beta.5 do not include it. See the [optional-control guide](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/optional-switch-control.md) for the exact schema, Honeywell Off behavior, restrictions and configuration-plus-module rollback.
