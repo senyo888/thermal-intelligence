@@ -1,6 +1,6 @@
 # Compatibility
 
-Candidate: **0.1.0-rc.1** on `develop`. The [RC guide](rc.md) identifies the package and candidate checks. The table below records the beta.4 baseline; it is not an RC soak result. A minimum supported Home Assistant version and a broader support range have not yet been established.
+Current preparation: **0.1.0-rc.2**, integrating the reviewed beta.5–beta.7 changes and a correction to stale request-status presentation. See the [RC.2 guide](rc.md). RC.1 remains the published prerelease; beta.7 remains an untagged beta. The historical observations below apply only to their named builds and scenarios. A minimum supported Home Assistant version and broader support range have not yet been established.
 
 | Environment or feature | Coverage |
 | --- | --- |
@@ -25,3 +25,40 @@ RC.1 changes release identity and packaging; it does not change thermostat comma
 ## Report a compatibility issue
 
 Include your TI, Home Assistant, provider and browser/Companion versions, installation method, a minimal redacted card configuration and reproduction steps. State whether the issue affects rendering, controls, provider observations or resource loading. Use the [issue forms](https://github.com/senyo888/thermal-intelligence/issues/new/choose).
+
+## Beta.5 disabled-lock correction
+
+The correction covers VT reporting `is_lock_configured: false` with a residual true locked flag, plus unknown configuration and removal while a lock dialog is open. Synthetic source and built-module checks are recorded in the [beta.5 guide](beta-5.md). No beta.5 installation, physical control or HACS lifecycle acceptance is claimed.
+
+## Optional switch development coverage
+
+The optional control targets one registered standard climate plus one registered switch, with both-direction confirmation and visual enrollment. Synthetic fixtures cover Honeywell-like On/emergency-heat and Off/system-Off effects, unknown identity/state, registry/session invalidation and explicit-target request ordering. This is not real Honeywell, HACS/Marketplace or physical-device acceptance. Unsupported helpers, VT, group/template switches and multiple mappings remain explicit. Accounts unable to read/subscribe to the entity registry cannot use this optional row.
+
+## Beta.6 observations and beta.7 correction
+
+On HA 2026.11.0 with VT 10.6.3, a manual beta.6 trial passed passive rendering, editor cancellation and browser reconnect checks. An inert VT fixture confirmed that explicitly disabled locking permits deliberate temperature changes and that restoring the original lock settings blocks them again. These checks do not prove physical heating or installer lifecycle behavior.
+
+The optional switch test found that HA frontend metadata used an own `device_id: undefined` while its registry API returned `device_id: null`. Beta.6 falsely reported unavailable registry proof. Beta.7 accepts only those equivalent absent device IDs; actual device changes and other identity mismatches remain blocked. Synthetic tests cover both selected entities and confirmation invalidation.
+
+## Beta.7 Lab acceptance — 6 November 2026
+
+The [exact beta.7 module](beta-7.md#exact-package) was manually installed on HA **2026.11.0** with VT **10.6.3**. A registered generic thermostat and a dedicated built-in Command Line switch both exposed the absent device-ID shapes above; registry proof was verified for both. The switch ran only inert commands and reported state optimistically, with no physical device attached.
+
+| Check | Recorded result |
+| --- | --- |
+| Passive rendering and editor open/cancel | No TI service requests in the monitored window |
+| Confirmation cancellation | No request; the fixture remained Off |
+| Confirmed On and Off | Each sent one TI request and one corresponding HA service event; acknowledgement plus a newer matching switch state reached the observed result |
+| Passive reconnect | Current attached card regained registry proof; no replay |
+| Thermostat commands during the isolated functional test | None observed |
+| Cleanup and coexistence | Temporary fixture and enrollment removed; original dashboard configuration restored; other resources and legacy TI preserved |
+
+One Core restart loaded the test fixture; a frontend module update itself does not require a Core restart. Startup/provider events and the later fixture cleanup reload were recorded separately from the functional On/Off pair. These results do not claim globally zero climate activity or uninterrupted observation during the restart.
+
+At the end of the recorded interval, HA was connected, Repairs was empty and the captured log response had no ERROR records. Startup output-availability warnings recovered within the interval; known VT native-temperature deprecation warnings remained. This is dated, bounded health evidence, not a warning-free or continuous-uptime claim.
+
+The test establishes the real-HA registry, frontend and service path for this inert fixture. Its reported state is not independent physical feedback or proof of causation. Real Honeywell behavior, broader backend permissions, physical phone/tablet and Companion acceptance, HACS/Marketplace installer lifecycle, backup restore rehearsal and a new controller-managed soak remain unverified. TI remains a standalone card; the Lab controller is test infrastructure, not a product dependency.
+
+## RC.2 acceptance boundary
+
+RC.2 needs its own candidate checks, named-release installer selection and installation acceptance. Historical beta.7 inert-switch checks do not establish physical-device response, whole-home compatibility or an RC.2 soak. Marketplace support in Home Assistant 2026.11 changes the installation route; it does not turn source review into a tested installation.

@@ -1,7 +1,11 @@
-**Thermal Intelligence · RC.1**
+**Thermal Intelligence · RC.2 preparation**
 
-- [Wiki home](Home)
-- [Install RC.1](Installing-the-release-candidate)
+- [Home](Home)
+- [RC.2 candidate](Installing-the-release-candidate)
+- [Marketplace installation](Installing-with-Marketplace)
+- [Published RC.1 record](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/rc-1.md)
+- [Beta.7 package and limits](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/beta-7.md)
+- [Historical beta.4 installation](Installing-the-beta)
 - [Configuration](Configuration)
 - [Reading the card](Reading-the-card)
 - [State gallery](State-gallery)

@@ -32,7 +32,7 @@ test('setup config has public defaults and preserves unknown nested fields witho
 });
 
 test('invalid config is rejected rather than silently normalised to control defaults', () => {
-  for (const bad of [null, [], { schema_version: 2 }, { schema_version: '1' }, { entity: null }, { entity: 'sensor.example' }, { entity: 'climate.' }, { adapter: null }, { adapter: 'guess' }, { theme: null }, { step: 0 }, { step: -1 }, { step: NaN }, { step: '0.5' }, { show_details: 'false' }, { preset_labels: [] }, { preset_labels: { eco: '<script>' } }, { telemetry: [{ kind: 'humidity', entity: 'sensor.example', attribute: '__proto__.x' }] }, { humidity_bands: { low: 70, high: 20 } }]) {
+  for (const bad of [null, [], { schema_version: 3 }, { schema_version: '1' }, { entity: null }, { entity: 'sensor.example' }, { entity: 'climate.' }, { adapter: null }, { adapter: 'guess' }, { theme: null }, { step: 0 }, { step: -1 }, { step: NaN }, { step: '0.5' }, { show_details: 'false' }, { preset_labels: [] }, { preset_labels: { eco: '<script>' } }, { telemetry: [{ kind: 'humidity', entity: 'sensor.example', attribute: '__proto__.x' }] }, { humidity_bands: { low: 70, high: 20 } }]) {
     assert.throws(() => normalizeConfig(bad), undefined, JSON.stringify(bad));
   }
 });
@@ -74,6 +74,29 @@ test('VT lock restrictions distinguish user locks from automation-only locks', (
   delete h.states[entity].attributes.specific_states.is_locked;
   assert.equal(buildModel(h, config, vtIdentity).canSet, false);
   assert.equal(buildModel(h, config, vtIdentity).lock.status, 'unknown');
+});
+
+test('disabled VT lock ignores a retained active flag without bypassing readiness or connection', () => {
+  const h = fixture({ is_ready: true, is_lock_configured: false, specific_states: { is_locked: true } });
+  const read = () => buildModel(h, config, vtIdentity);
+  assert.equal(read().lock, null); assert.equal(read().canSet, true);
+  assert.equal(read().details.find(row => row.label === 'Locked').status, 'disabled');
+  for (const value of [false, undefined, null, 'true', 1]) {
+    h.states[entity].attributes.is_ready = value; assert.equal(read().canSet, false);
+  }
+  h.states[entity].attributes.is_ready = true; h.connected = false; assert.equal(read().canSet, false);
+  h.connected = true; h.states[entity].state = 'unavailable'; assert.equal(read().canSet, false);
+  h.states[entity].state = 'heat'; h.states[entity].attributes.is_lock_configured = true;
+  assert.equal(read().canSet, false); assert.equal(read().lock.status, 'locked');
+});
+
+test('unknown VT lock configuration has no header icon and cannot retire a reported user lock', () => {
+  for (const is_lock_configured of [undefined, null, 'false', 'true', 0, 1]) {
+    const h = fixture({ is_ready: true, is_lock_configured, specific_states: { is_locked: true } });
+    const m = buildModel(h, config, vtIdentity);
+    assert.equal(m.lock, null); assert.equal(m.canSet, false);
+    assert.equal(m.details.find(row => row.label === 'Locked').status, 'unknown');
+  }
 });
 
 test('VT lock indication requires provider evidence and never invents an unlocked state', () => {

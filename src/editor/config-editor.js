@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { normalizeConfig, TELEMETRY_KINDS } from '../model/config.js';
+import { normalizeConfig, assertConfigAuthorityData, TELEMETRY_KINDS } from '../model/config.js';
 import { HUMIDITY_DEFAULTS, HUMIDITY_KEYS } from '../model/humidity.js';
 import { STATE_TELEMETRY } from '../model/state-telemetry.js';
+import { mappedControl } from '../model/mapped-control.js';
 
 const UNSAFE_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 const KIND_LABELS = { humidity: 'Humidity', trend: 'Temperature trend', valve: 'Valve position', energy: 'Energy', power: 'Power', custom: 'Custom telemetry', ...Object.fromEntries(Object.entries(STATE_TELEMETRY).map(([key, value]) => [key, value.label])) };
@@ -96,6 +97,7 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     this._buffers = new Map();
     this._sections = new Map();
     this._newPreset = { key: '', label: '' };
+    this._newSwitch = { entity: '', label: '', icon: 'mdi:power' };
     this._pendingInventory = false;
   }
 
@@ -115,6 +117,7 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
 
   setConfig(config) {
     try {
+      assertConfigAuthorityData(config ?? {});
       const copy = clone(config ?? {});
       const signature = JSON.stringify(copy);
       if (signature === this._sourceSignature || signature === this._lastEmittedSignature) {
@@ -360,7 +363,7 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     if (!climates.length) basic.append(element('p', 'status info', this._hass ? 'No climate entities are available. Add or enable a thermostat in Home Assistant, then select it here. This setup state sends no commands.' : 'Waiting for Home Assistant to provide the thermostat list.'));
     form.append(basic);
 
-    form.append(this._sourceMappings(states), this._responseArc(states), this._features(states), this._telemetry(states), this._presets(states), this._advanced());
+    form.append(this._optionalSwitch(states), this._sourceMappings(states), this._responseArc(states), this._features(states), this._telemetry(states), this._presets(states), this._advanced());
     form.append(element('p', 'hint', 'Save the card in Home Assistant when you are finished. Unknown advanced options are preserved.'));
     this.shadowRoot.replaceChildren(style, form);
     this._restore(snapshot, focus);
@@ -590,6 +593,58 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     }, { className: 'add' }));
     section.append(stack);
     return section;
+  }
+
+  _optionalSwitch(states) {
+    const section = this._details('mapped-control', 'Optional switch control');
+    const stack = element('div', 'stack');
+    stack.append(element('p', 'hint', 'Add one registered switch for a standard thermostat. Both On and Off require confirmation. Configuring, disabling or removing this control sends no command. Features remain read-only.'));
+    const present = own(this._draft, 'mapped_controls');
+    const candidate = present && record(this._draft.mapped_controls) ? mappedControl({ ...this._draft, mapped_controls: { ...this._draft.mapped_controls, enabled: true } }) : null;
+    const editable = this._draft.schema_version === 2 && candidate?.status === 'enabled';
+    if (present && !editable) {
+      stack.append(element('p', 'status info', 'A saved optional-control section is not enrolled or has an unsupported shape. It stays unchanged and cannot be enabled here. Replace that section deliberately to configure a new switch.'));
+      stack.append(this._button('Replace saved optional-control section', 'replace-mapped', () => {
+        const next = clone(this._draft); delete next.mapped_controls;
+        this._commit(next, { open:'mapped-control' });
+      }));
+      section.append(stack); return section;
+    }
+    const item = editable ? this._draft.mapped_controls.items[0] : this._newSwitch;
+    const switches = Object.keys(states).filter(id => /^switch\.[a-z0-9_]+$/.test(id)).sort();
+    const options = [['', 'Select one switch'], ...switches.map(id => [id, `${states[id]?.attributes?.friendly_name || id} · ${id}`])];
+    if (item.entity && !switches.includes(item.entity)) options.push([item.entity, `${item.entity} · currently unavailable`]);
+    const change = (key, value) => {
+      if (!editable) { this._newSwitch[key] = value; this._buffers.delete(`mapped.${key}`); if (key === 'entity') this._render({ open:'mapped-control' }); return; }
+      const next = patchConfig(this._draft, ['mapped_controls', 'items', 0, key], value || undefined);
+      const checked = mappedControl({ ...next, mapped_controls:{ ...next.mapped_controls, enabled:true } });
+      if (checked.status !== 'enabled') { this._error = checked.reason; this._refreshFieldState(); return; }
+      this._commit(next, { field:`mapped.${key}`, open:'mapped-control', rerender:key === 'entity' });
+    };
+    stack.append(this._field('Switch entity', 'mapped.entity', item.entity, { options, onChange:value => change('entity', value) }));
+    stack.append(this._field('Switch label', 'mapped.label', item.label, { placeholder:'Optional switch', onChange:value => change('label', value) }));
+    stack.append(this._field('Switch icon', 'mapped.icon', item.icon, { placeholder:'mdi:power', onChange:value => change('icon', value) }));
+    stack.append(element('p', 'hint', `Selected target: ${item.entity || 'none'}. The switch may change thermostat mode or trigger automations. Turning it off may stop heating; TI does not restore a previous mode.`));
+    if (editable) {
+      stack.append(this._checkbox('Enable this switch control', 'mapped.enabled', this._draft.mapped_controls.enabled === true, value => this._change(['mapped_controls', 'enabled'], value, { rerender:true, open:'mapped-control' })));
+      stack.append(this._button('Remove switch control', 'remove-mapped', () => {
+        const next = clone(this._draft); delete next.mapped_controls;
+        this._commit(next, { open:'mapped-control' });
+      }));
+    } else {
+      stack.append(this._button('Enable selected switch control', 'enroll-mapped', () => {
+        const selected = { ...this._newSwitch };
+        for (const key of ['entity','label','icon']) if (this._buffers.has(`mapped.${key}`)) selected[key] = this._buffers.get(`mapped.${key}`);
+        for (const key of ['label','icon']) if (!selected[key]) delete selected[key];
+        const next = { ...clone(this._draft), schema_version:2, mapped_controls:{version:1, enabled:true, items:[{ kind:'switch_on_off', ...selected }] } };
+        const checked = mappedControl(next);
+        if (checked.status !== 'enabled') { this._error = checked.reason; this._refreshFieldState(); return; }
+        for (const key of ['entity','label','icon']) this._buffers.delete(`mapped.${key}`);
+        this._commit(next, { open:'mapped-control' });
+      }));
+      stack.append(element('p', 'hint', 'Enabling opts this card into configuration schema 2. Keep the previous saved configuration with the previous card module for rollback.'));
+    }
+    section.append(stack); return section;
   }
 
   _advanced() {

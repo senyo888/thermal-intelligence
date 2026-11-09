@@ -43,6 +43,37 @@ test.beforeEach(async({page})=>{
 });
 test.afterEach(async({page})=>{expect(page.runtimeErrors).toEqual([]);});
 
+test('removing lock configuration hides residual locked state without an unlock or dialog auto-close',async({page},testInfo)=>{
+  await setup(page,{codeRequired:true});await trigger(page).click();await input(page).fill(marker);
+  await page.evaluate(()=>{
+    const id='climate.fixture_thermostat',old=fixture.hass.states[id];
+    fixture.configuredLockManager=structuredClone(old.attributes.lock_manager);
+    fixture.hass.states={...fixture.hass.states,[id]:{...old,attributes:{...old.attributes,is_lock_configured:false,lock_manager:undefined}}};
+    fixture.refresh();
+  });
+  await expect(card(page).locator('.lock-indicator')).toHaveCount(0);
+  expect(await page.evaluate(()=>fixture.cards[0].model().canSet)).toBe(true);
+  await expect(dialog(page)).toBeVisible();await expect(action(page)).toBeDisabled();
+  await expect(dialog(page)).toContainText('Lock not configured');await expect(input(page)).toHaveValue('');
+  expect(await calls(page)).toEqual([]);
+  for(const width of [390,768,1440]){
+    await page.setViewportSize({width,height:1000});
+    await expect(card(page).locator('.lock-indicator')).toHaveCount(0);
+    await expect(dialog(page)).toBeVisible();
+    await page.screenshot({path:testInfo.outputPath(`disabled-lock-${width}.png`),fullPage:true});
+  }
+  await page.evaluate(()=>{Object.assign(fixture.hass.states['climate.fixture_thermostat'].attributes,{is_lock_configured:true,lock_manager:fixture.configuredLockManager});fixture.refresh();const c=fixture.cards[0];c._dialogHost.shadowRoot.querySelector('[data-lock-code]').value='fresh-synthetic-code';c._submitLock();});
+  await expect(trigger(page)).toBeEnabled();
+  expect(await page.evaluate(()=>fixture.cards[0]._lockIntent.invalid)).toBe(true);
+  await expect(input(page)).toBeDisabled();
+  await expect(action(page)).toBeDisabled();expect(await calls(page)).toEqual([]);
+  expect(await page.evaluate(()=>fixture.cards[0].model().canSet)).toBe(false);
+  await page.keyboard.press('Escape');
+  await page.evaluate(()=>{fixture.hass.states['climate.fixture_thermostat'].attributes.is_ready=false;fixture.refresh();});
+  expect(await page.evaluate(()=>fixture.cards[0].model().canSet)).toBe(false);
+  expect(await calls(page)).toEqual([]);
+});
+
 test('eligible administrator has an aligned 14px glyph and separate 44px keyboard/touch target',async({page})=>{
   await setup(page);
   for(const width of [237,334,460]) {

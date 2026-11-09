@@ -4,18 +4,18 @@
 
 **Temperature, control and context in one Home Assistant card.**
 
-[![Release candidate 0.1.0-rc.1](https://img.shields.io/badge/Release%20candidate-0.1.0--rc.1-d9a36c)](docs/rc.md)
+[![Release candidate 0.1.0-rc.2](https://img.shields.io/badge/Release%20candidate-0.1.0--rc.2-d9a36c)](docs/rc.md)
 [![Project Site](https://img.shields.io/badge/Project%20Site-GitHub%20Pages-5aa8d6)](https://senyo888.github.io/thermal-intelligence/)
 [![HACS custom repository in preparation](https://img.shields.io/badge/HACS-In%20preparation-41BDF5?logo=home-assistant&logoColor=white)](docs/hacs.md)
 [![Package version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsenyo888%2Fthermal-intelligence%2Fdevelop%2Fpackage.json&query=%24.version&label=Package%20Version&color=blue)](package.json)
 [![Licence GPL-3.0-only](https://img.shields.io/badge/License-GPL--3.0--only-blue)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/senyo888)
 
-[Website](https://senyo888.github.io/thermal-intelligence/) · [Wiki](https://github.com/senyo888/thermal-intelligence/wiki) · [Install RC.1](docs/rc.md) · [Configuration](docs/card-configuration.md) · [Compatibility](docs/compatibility.md)
+[Website](https://senyo888.github.io/thermal-intelligence/) · [Wiki](https://github.com/senyo888/thermal-intelligence/wiki) · [Marketplace installation](docs/marketplace.md) · [Configuration](docs/card-configuration.md) · [Compatibility](docs/compatibility.md)
 
 Thermal Intelligence brings current and target temperatures, supported thermostat controls and useful room observations into one considered interface. The glass dial, restrained lighting and focused detail panels keep everyday readings clear and further detail close at hand.
 
-**RC.1** is the standalone thermostat release candidate. Start with a standard Home Assistant climate entity or Versatile Thermostat (VT), then choose the readings and controls that suit each room.
+**RC.2 is in preparation** for the standalone thermostat card. Start with a standard Home Assistant climate entity or Versatile Thermostat (VT), then choose the readings and controls that suit each room.
 
 <table>
   <tr><th>Heat requested · rising</th><th>Idle · near target</th></tr>
@@ -49,7 +49,7 @@ Choose top-row readings, their order, labels and icons independently for each ca
 
 Set your own humidity display bands, select **Midnight Blue**, **Plum** or **Black**, and choose which details appear. The visual editor saves those preferences with the card.
 
-The chevron opens **Controls & features**: supported modes, presets, fan or swing choices, and provider details. VT adds preset-temperature comparisons, feature observations and administrator [lock controls](docs/lock-control.md) where supported. When VT reports no optional Off or Mode reason, the overview shows **None reported**.
+The chevron opens **Controls & features**: supported modes, presets, fan or swing choices, and provider details. VT adds preset-temperature comparisons, feature observations and administrator [lock controls](docs/lock-control.md) where supported. When VT reports no optional Off or Mode reason, the overview shows **None reported**. RC.2 also carries beta.7’s [optional switch control](docs/optional-switch-control.md) for an explicitly selected, eligible standard thermostat and switch, with confirmation before either action.
 
 [Explore configuration](docs/card-configuration.md) · [See the detail panels](docs/ui-examples.md)
 
@@ -80,13 +80,13 @@ Start in **Add Card → Thermal Intelligence Thermostat · RC**. Select the clim
 
 TI sends the actions you choose through Home Assistant’s services. Your thermostat provider retains regulation, schedules and device behaviour. [Architecture and ownership](ARCHITECTURE.md).
 
-## Try RC.1
+## Installation
 
-The [manual installation guide](docs/rc.md) provides the exact RC.1 module, SHA-256, setup and rollback steps. Keep existing TI resources in place and load one trial module at a time. Saved trial cards retain their configuration and `custom:thermal-intelligence-beta-card` type.
+For Home Assistant 2026.11 and later, use the [Marketplace installation guide](docs/marketplace.md). RC.2 has not been published yet; the [candidate guide](docs/rc.md) records its preparation and limits. [RC.1](docs/rc-1.md) remains the published prerelease. Keep existing TI resources separate and load one trial module at a time.
 
-**HACS custom-repository distribution is the next step.** Its Dashboard metadata is prepared on `develop`; an installable release and isolated installation checks are pending. Follow [HACS preparation](docs/hacs.md) for the intended route. Marketplace remains part of the [distribution roadmap](docs/distribution.md).
+On older Home Assistant installations, see the [HACS guide](docs/hacs.md). TI is a custom Dashboard repository, not a backend integration. Installer acceptance and catalogue inclusion remain separate from package validation.
 
-[Compatibility and validation](docs/compatibility.md) records the tested versions, RC checks and remaining device coverage. RC.1 is a release candidate, with stable release acceptance tracked separately.
+[Compatibility and validation](docs/compatibility.md) records the tested versions, RC checks and remaining device coverage. RC.2 is being prepared for further acceptance checks; it is not a stable release.
 
 ## Project direction
 

@@ -1,6 +1,13 @@
 # Changelog
 
-There is no stable release yet. Release candidates are prepared through `develop`; beta.4 remains on `senyo888-patch-1`.
+There is no stable release yet. Release candidates are prepared through `develop`; beta.7 remains on `senyo888-patch-1`.
+
+## 0.1.0-rc.2 — in preparation
+
+- Integrate the beta.5 disabled-lock correction and beta.6–beta.7 optional switch control with its registry identity checks. Keep schema-1 cards unchanged and require explicit schema-2 enrollment.
+- Retire completed request notices after context loss or contrary provider state; preserve request outcomes, failure/uncertainty and no-replay guards.
+- Align installation guidance with Home Assistant Marketplace while retaining older HACS and immutable RC.1 guidance.
+- Retain Playwright 1.65.0 tooling and RC package identity. RC.2 is not published or installed yet.
 
 ## 0.1.0-rc.1 — 29 October 2026
 
@@ -8,7 +15,26 @@ There is no stable release yet. Release candidates are prepared through `develop
 - Show **Thermal Intelligence Thermostat · RC** in the card picker. Keep the existing prerelease element names so saved trial cards continue working alongside legacy TI.
 - Add explicit beta/RC package channels and reproducibility checks for branch and pull-request builds.
 - Configure weekly dependency updates for npm tooling and GitHub Actions, with provider compatibility reviewed separately.
-- HACS installation and a stable release remain unavailable. See the [RC guide](docs/rc.md) for validation limits.
+- HACS installation and a stable release remain unavailable. See the [RC.1 record](docs/rc-1.md) for validation limits.
+
+## 0.1.0-beta.7 — 6 November 2026 (untagged beta)
+
+- Accept equivalent absent device IDs when comparing Home Assistant frontend metadata with its entity-registry response. This fixes a false unavailable status for optional switch controls on device-less entities.
+- Keep real identity differences, unsupported providers, explicit confirmation and no-replay checks unchanged. No configuration migration is needed; returning to beta.6 can restore the false block.
+
+## 0.1.0-beta.6 — 6 November 2026 (untagged beta)
+
+- Add one explicitly enrolled standard-provider switch control, with visual configuration and confirmation before On and Off.
+- Keep optional-control registry identity, target, reported state and request evidence separate from climate commands; preserve schema-1 behavior and no replay.
+- Document integration side effects, including Honeywell emergency-heat Off requesting system Off, and configuration-plus-module rollback.
+
+
+## 0.1.0-beta.5 — 5 November 2026
+
+- Hide the VT lock indicator when the provider does not explicitly report a configured lock.
+- When VT explicitly reports locking disabled, ignore a retained locked flag for ordinary controls; readiness, connection and other command checks still apply.
+- Invalidate an open lock action when configuration is removed, without sending Unlock or closing the dialog automatically. Unknown configuration never clears a reported user lock.
+- Keep schema-1 card settings unchanged. This beta does not modify the published RC.1 package.
 
 ## Unreleased — distribution preparation
 

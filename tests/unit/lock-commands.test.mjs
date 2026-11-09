@@ -219,3 +219,14 @@ test('disconnect, timeout and late settlement never replay; a new deliberate act
   assert.equal(g.coordinator.busy, true); g.observe(state(false, 1)); g.resolve(); await tick();
   assert.equal(g.coordinator.status.phase, 'uncertain'); assert.equal(g.coordinator.busy, false); assert.equal(g.calls.length, 1);
 });
+
+test('a later provider relock retires the old unlock presentation without changing evidence', async () => {
+  const f = setup(), pending = f.request();
+  f.resolve(); await tick(); f.observe(state(false, 1));
+  const outcome = await pending;
+  assert.equal(f.coordinator.presentationStatus, outcome);
+  f.observe(state(true, 2));
+  assert.equal(f.coordinator.presentationStatus.phase, 'idle');
+  assert.equal(f.coordinator.status, outcome);
+  assert.equal(f.calls.length, 1);
+});

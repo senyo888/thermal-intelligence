@@ -1,4 +1,6 @@
-# Install and test the beta
+# Beta.4 installation record
+
+The next candidate is [beta.5](beta-5.md). This page preserves the exact beta.4 artifact and its historical validation.
 
 Beta.4 is retained on `senyo888-patch-1`. For the candidate prepared through `develop`, see the [RC.1 guide](rc.md).
 

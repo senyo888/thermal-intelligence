@@ -1,6 +1,8 @@
 <img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/develop/assets/presentation/wiki-installing-the-beta.png" alt="Thermal Intelligence Wiki — Historical beta installation" width="100%">
 
-# Install and test the beta
+# Beta.4 installation record
+
+For the current candidate, use the [beta.7 guide](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/beta-7.md). This page preserves the exact beta.4 artifact and its historical validation.
 
 This is the retained beta.4 installation record. For the current candidate, use [Install RC.1](Installing-the-release-candidate).
 

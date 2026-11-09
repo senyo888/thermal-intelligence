@@ -36,10 +36,36 @@ function safeText(value, name, { empty = false } = {}) {
   return value;
 }
 
-export function normalizeConfig(raw) {
+export function assertConfigAuthorityData(raw) {
   if (!isRecord(raw)) throw new Error('Card configuration must be an object.');
+  // Spreading configuration must never materialize accessor-backed command authority.
+  const data = (object, key) => {
+    const descriptor = Object.getOwnPropertyDescriptor(object, key);
+    if (descriptor && !Object.hasOwn(descriptor, 'value')) throw new Error(`${key} must be plain configuration data.`);
+    return descriptor?.value;
+  };
+  const schema = data(raw, 'schema_version'), mapping = data(raw, 'mapped_controls');
+  // Schema-1 blobs are inert. Walk only recognized schema-2 fields, never unrelated
+  // future settings. JSON-shaped malformed rows still reach row-local validation.
+  if (schema !== 2) return;
+  const plain = value => {
+    if (value && typeof value === 'object' && !Array.isArray(value) && !isRecord(value)) throw new Error('Optional control must use plain configuration objects.');
+    return isRecord(value);
+  };
+  if (!plain(mapping)) return;
+  data(mapping, 'version'); data(mapping, 'enabled');
+  const items = data(mapping, 'items');
+  if (!Array.isArray(items) || items.length !== 1) return;
+  const item = data(items, '0');
+  if (!plain(item)) return;
+  for (const key of ['kind', 'entity', 'label', 'icon']) data(item, key);
+}
+
+export function normalizeConfig(raw) {
+  assertConfigAuthorityData(raw);
   if (raw.type !== undefined && raw.type !== CARD_TYPE) throw new Error(`Card type must be ${CARD_TYPE}.`);
-  if (raw.schema_version !== undefined && raw.schema_version !== SCHEMA_VERSION) throw new Error('Unsupported configuration schema_version.');
+  const schemaVersion = Object.getOwnPropertyDescriptor(raw, 'schema_version')?.value;
+  if (schemaVersion !== undefined && ![SCHEMA_VERSION, 2].includes(schemaVersion)) throw new Error('Unsupported configuration schema_version.');
   const entity = raw.entity === undefined ? '' : raw.entity;
   if (typeof entity !== 'string' || (entity !== '' && (!ENTITY.test(entity) || !entity.startsWith('climate.')))) {
     throw new Error('Select a climate entity.');
@@ -50,7 +76,7 @@ export function normalizeConfig(raw) {
   if (!BACKGROUNDS.includes(background)) throw new Error('Background must be blue, plum or black.');
   // Retain a saved prototype setting for round trips; the source UI uses background.
   if (raw.theme !== undefined && !['auto', 'light', 'dark'].includes(raw.theme)) throw new Error('Legacy theme must be auto, light or dark.');
-  const result = { ...raw, type: CARD_TYPE, schema_version: SCHEMA_VERSION, entity, adapter, background };
+  const result = { ...raw, type: CARD_TYPE, schema_version: schemaVersion ?? SCHEMA_VERSION, entity, adapter, background };
   for (const key of ['trend_entity', 'humidity_entity', 'valve_position_entity']) {
     if (raw[key] !== undefined && (typeof raw[key] !== 'string' || (raw[key] !== '' && (!ENTITY.test(raw[key]) || !raw[key].startsWith('sensor.'))))) {
       throw new Error(`${key} must be a sensor entity ID or empty.`);

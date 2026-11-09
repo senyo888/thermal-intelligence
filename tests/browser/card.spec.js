@@ -536,3 +536,17 @@ for(const width of [390,820,1440]) test(`responsive layout and keyboard at ${wid
   await marker(page).focus();await page.keyboard.press('ArrowUp');
   expect((await calls(page)).length).toBe(1);
 });
+
+test('current degradation replaces completed success consistently on card and overview', async ({page}) => {
+  await increase(page).click();
+  await expect(card(page).locator('[data-request-status]')).toContainText('Setting observed');
+  const details = await overview(page);
+  await expect(details.locator('[data-dialog-status]').first()).toContainText('Setting observed');
+  await page.evaluate(() => { fixture.hass.connected=false; fixture.refresh(); });
+  await expect(card(page).locator('[data-request-status]')).toContainText('disconnected');
+  await expect(details.locator('[data-dialog-status]').first()).toContainText('disconnected');
+  await expect(details).not.toContainText('Setting observed');
+  await page.evaluate(() => { fixture.hass.connected=true; fixture.refresh(); });
+  await expect(card(page).locator('[data-request-status]')).not.toContainText('Setting observed');
+  expect((await calls(page)).length).toBe(1);
+});
