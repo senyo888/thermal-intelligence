@@ -113,6 +113,31 @@ class FoundationTargetTests(unittest.TestCase):
         code, _ = self.run_foundation({"GITHUB_REF": "refs/heads/main"}, changed_payload=False)
         self.assertEqual(code, 0)
 
+    def test_wiki_mirror_links_use_actual_repository_targets(self):
+        """A matching .md file cannot make an extensionless repository link work."""
+        for destination, expected in (("Target", 1), ("Target.md", 0), ("Target.md#section", 0)):
+            with self.subTest(destination=destination):
+                code, output = self.run_foundation({"GITHUB_BASE_REF": "develop"}, extra={
+                    "docs/wiki/Home.md": f"[Target]({destination})\n".encode(),
+                    "docs/wiki/Target.md": b"# Section\n",
+                })
+                self.assertEqual(code, expected, output)
+
+    def test_canonical_wiki_urls_require_a_matching_indexed_mirror(self):
+        """Canonical Wiki navigation is checked locally without network claims."""
+        prefix = "https://github.com/senyo888/thermal-intelligence/wiki/"
+        for destination, expected in ((prefix + "Target", 0),
+                                      (prefix + "Target#section", 0),
+                                      (prefix + "Missing", 1),
+                                      (prefix + "Target.md", 1),
+                                      (prefix + "../Target", 1)):
+            with self.subTest(destination=destination):
+                code, output = self.run_foundation({"GITHUB_BASE_REF": "develop"}, extra={
+                    "docs/wiki/Home.md": f"[Target]({destination})\n".encode(),
+                    "docs/wiki/Target.md": b"# Section\n",
+                })
+                self.assertEqual(code, expected, output)
+
     def test_main_rejects_changed_distribution_licence(self):
         """Main rejects changed distribution licence bytes with an unchanged module."""
         code, output = self.run_foundation({"GITHUB_REF": "refs/heads/main"},

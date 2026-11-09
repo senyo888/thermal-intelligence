@@ -32,6 +32,48 @@ async function pointAtTarget(page,value,min=7,max=30) {
   return svgPoint(page,100+72*Math.cos(angle),100+72*Math.sin(angle));
 }
 const editor = page => page.locator('thermal-intelligence-beta-card-editor');
+
+test('inert mapping getters cannot block ordinary dialog snapshots or run on open', async({page},info)=>{
+  await page.evaluate(()=>{
+    window.mappingGetterReads=0;
+    const mapping={version:1,enabled:true,items:[],extra:{nested:['retained']}};
+    Object.defineProperty(mapping.extra,'future',{enumerable:true,get(){window.mappingGetterReads++;throw Error('Inert getter must not run');}});
+    fixture.cards[0].setConfig({...fixture.config,schema_version:1,mapped_controls:mapping});
+  });
+  for(const kind of ['overview','humidity','settings']){
+    await page.evaluate(kind=>fixture.cards[0]._openDialog(kind),kind);
+    await expect(card(page).getByRole('dialog')).toBeVisible();
+    expect(await page.evaluate(()=>window.mappingGetterReads)).toBe(0);
+    expect(await page.evaluate(()=>fixture.cards[0]._displayDraft.mapped_controls.extra.nested)).toEqual(['retained']);
+    if(kind!=='overview'){
+      await expect(card(page).locator('[data-export-unavailable]')).toBeVisible();
+      await expect(card(page).locator('[data-copy-settings],[data-copy-humidity]')).toBeDisabled();
+      if(kind==='settings'){
+        const embedded=card(page).locator('[data-dialog-editor]');
+        await embedded.getByLabel('Card name',{exact:true}).fill('Draft name');
+        await embedded.getByLabel('Card name',{exact:true}).press('Tab');
+        await expect(card(page).locator('[data-settings-export]')).toHaveValue('');
+        await expect(card(page).locator('[data-settings-export]')).toBeDisabled();
+        for(const width of [390,768,1440]){
+          await page.setViewportSize({width,height:1000});
+          await expect(card(page).locator('[data-export-unavailable]')).toBeVisible();
+          const fits=await card(page).getByRole('dialog').evaluate(node=>node.scrollWidth<=node.clientWidth+1);
+          expect(fits).toBe(true);
+          await page.screenshot({path:info.outputPath(`incomplete-export-${width}.png`),fullPage:true});
+        }
+      } else {
+        await page.evaluate(()=>{const input=fixture.cards[0]._dialogHost.shadowRoot.querySelector('[data-humidity-boundary="dry_below"]');input.value='25';input.dispatchEvent(new Event('input'));});
+        await expect(card(page).locator('[data-copy-humidity]')).toBeDisabled();
+      }
+      await page.evaluate(()=>fixture.cards[0]._dialogHost.shadowRoot.querySelector('[data-copy-settings],[data-copy-humidity]').dispatchEvent(new MouseEvent('click')));
+    }
+    await page.evaluate(()=>{fixture.cards[0]._displayDraft.mapped_controls.extra.nested.push('draft');fixture.cards[0]._closeDialog();});
+    expect(await page.evaluate(()=>fixture.cards[0].config.mapped_controls.extra.nested)).toEqual(['retained']);
+  }
+  expect(await calls(page)).toEqual([]);
+  expect(await page.evaluate(()=>window.mappingGetterReads)).toBe(0);
+  expect(await page.evaluate(()=>typeof Object.getOwnPropertyDescriptor(fixture.cards[0].config.mapped_controls.extra,'future').get)).toBe('function');
+});
 const field = (page,name) => editor(page).locator(`[data-field="${name}"]`);
 const calls = page => page.evaluate(()=>fixture.calls);
 async function reset(page,scenario='standard',config={}) {

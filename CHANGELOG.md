@@ -7,7 +7,9 @@ There is no stable release yet. Release candidates are prepared through `develop
 - Integrate the beta.5 disabled-lock correction and beta.6–beta.7 optional switch control with its registry identity checks. Keep schema-1 cards unchanged and require explicit schema-2 enrollment.
 - Retire successful request notices after context loss or contrary provider state; notify presentation consumers and retain report ordering, request outcomes, failure/uncertainty and no-replay guards.
 - Snapshot optional-control configuration until an explicit configuration update, and restore rejected switch label/icon edits before unrelated settings can be saved.
+- Keep dialog drafts from evaluating configuration getters; preserve unknown plain data and disable incomplete configuration exports with an explanation.
 - Align installation guidance with Home Assistant Marketplace while retaining older HACS and immutable RC.1 guidance.
+- Use canonical Wiki links in the repository mirror and check their indexed page targets without implying Wiki publication.
 - Retain Playwright 1.65.0 tooling and RC package identity. RC.2 is not published or installed yet.
 
 ## 0.1.0-rc.1 — 29 October 2026

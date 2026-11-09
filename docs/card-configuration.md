@@ -21,6 +21,8 @@ Fields validate before emitting an accepted configuration. An incomplete or inva
 
 Rejected edits to an enrolled switch label or icon restore the displayed saved value and explain the rejection before another field can be saved. Accepted optional-control data is copied at `setConfig`; later mutation of the caller's mapping does not change the active card until another explicit configuration update.
 
+Dialog drafts copy configuration data without evaluating JavaScript getters or serialization hooks. Unknown plain data stays intact. If a configuration contains values that cannot be copied safely, dialogs keep working, the accepted configuration stays unchanged, and Settings/humidity export is disabled with an explanation. Edit that card in Home Assistant rather than exporting a partial configuration.
+
 The YAML below describes the same configuration contract. The preview shows the normalized configuration as JSON; it does not include a YAML importer. Type and schema version are managed by the card and editor rather than exposed as ordinary display settings.
 
 ## Top-level options

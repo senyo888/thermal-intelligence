@@ -129,12 +129,23 @@ def main():
             errors.append(f"{name}: unbalanced Markdown fences")
         for destination in re.findall(r"\[[^\]]*\]\(([^)\n]+)\)", text):
             target = urlsplit(destination.strip("<>"))
-            if target.scheme or target.netloc or not target.path:
+            wiki_root = "/senyo888/thermal-intelligence/wiki"
+            if target.scheme == "https" and target.netloc == "github.com" and (
+                target.path == wiki_root or target.path.startswith(wiki_root + "/")
+            ):
+                # Canonical Wiki routes render in both the repo mirror and Wiki.
+                # Check the intended page locally; this does not prove publication.
+                slug = unquote(target.path.removeprefix(wiki_root).removeprefix("/")) or "Home"
+                if "/" in slug or slug in {".", ".."} or slug.endswith(".md"):
+                    errors.append(f"{name}: use a canonical Wiki page URL: {destination}")
+                    continue
+                resolved = f"docs/wiki/{slug}.md"
+            elif target.scheme or target.netloc or not target.path:
                 continue
+            else:
+                # GitHub repository rendering requires the actual indexed path.
+                resolved = posixpath.normpath(str(path.parent / unquote(target.path)))
             links += 1
-            resolved = posixpath.normpath(str(path.parent / unquote(target.path)))
-            if name.startswith("docs/wiki/") and not PurePosixPath(resolved).suffix:
-                resolved += ".md"
             if resolved not in indexed:
                 errors.append(f"{name}: local link is not an indexed file: {resolved}")
 

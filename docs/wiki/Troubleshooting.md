@@ -12,15 +12,15 @@ Tap the LED to see which observation or restriction needs attention. The card di
 
 ## Controls are unavailable
 
-Check the selected entity, connection, provider readiness, advertised capabilities and VT lock scope. Missing readiness cannot enable fallback controls. Lock actions also require a verified administrator and complete provider capabilities; see [VT lock control](VT-lock-control).
+Check the selected entity, connection, provider readiness, advertised capabilities and VT lock scope. Missing readiness cannot enable fallback controls. Lock actions also require a verified administrator and complete provider capabilities; see [VT lock control](https://github.com/senyo888/thermal-intelligence/wiki/VT-lock-control).
 
 ## The arc, ring and status differ
 
-They describe different observations: temperature response, temperature slope and thermostat/valve activity. A room can keep warming after its valve closes. A falling room temperature does not establish active HVAC cooling. See [Reading the card](Reading-the-card).
+They describe different observations: temperature response, temperature slope and thermostat/valve activity. A room can keep warming after its valve closes. A falling room temperature does not establish active HVAC cooling. See [Reading the card](https://github.com/senyo888/thermal-intelligence/wiki/Reading-the-card).
 
 ## Update or rollback
 
-Use the exact module and resource procedure in [Installing the release candidate](Installing-the-release-candidate). Retain the previous file and configuration. A frontend rollback cannot undo a provider command.
+Use the exact module and resource procedure in [Installing the release candidate](https://github.com/senyo888/thermal-intelligence/wiki/Installing-the-release-candidate). Retain the previous file and configuration. A frontend rollback cannot undo a provider command.
 
 ## Report a problem
 

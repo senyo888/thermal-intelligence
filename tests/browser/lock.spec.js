@@ -43,6 +43,19 @@ test.beforeEach(async({page})=>{
 });
 test.afterEach(async({page})=>{expect(page.runtimeErrors).toEqual([]);});
 
+test('lock confirmation never evaluates inert future configuration getters',async({page})=>{
+  await setup(page);
+  await page.evaluate(()=>{
+    window.mappingGetterReads=0;
+    const extra={kept:['value']};
+    Object.defineProperty(extra,'future',{enumerable:true,get(){window.mappingGetterReads++;throw Error('Never run');}});
+    fixture.cards[0].setConfig({...fixture.config,schema_version:1,mapped_controls:{extra}});
+  });
+  await expect(trigger(page)).toBeEnabled();await trigger(page).click();
+  await expect(dialog(page)).toBeVisible();expect(await page.evaluate(()=>window.mappingGetterReads)).toBe(0);
+  await page.keyboard.press('Escape');expect(await calls(page)).toEqual([]);
+});
+
 test('removing lock configuration hides residual locked state without an unlock or dialog auto-close',async({page},testInfo)=>{
   await setup(page,{codeRequired:true});await trigger(page).click();await input(page).fill(marker);
   await page.evaluate(()=>{

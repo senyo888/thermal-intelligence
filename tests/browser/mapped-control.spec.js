@@ -253,6 +253,20 @@ test('caller mutation cannot retarget or enable the active optional control befo
   await expect(button(page)).toHaveCount(0);expect(await calls(page)).toEqual([]);
 });
 
+test('switch confirmation never evaluates unrelated configuration getters', async({page}) => {
+  await setup(page);
+  await page.evaluate(()=>{
+    window.mappingGetterReads=0;
+    const config=structuredClone(fixture.config);config.mapped_controls.extra={kept:['value']};
+    Object.defineProperty(config.mapped_controls.extra,'future',{enumerable:true,get(){window.mappingGetterReads++;return 'not data';}});
+    fixture.cards[0].setConfig(config);
+  });
+  await expect(button(page)).toBeEnabled();await button(page).click();
+  await expect(dialog(page)).toBeVisible();await expect(dialog(page)).toContainText('switch.fixture_aux');
+  expect(await page.evaluate(()=>window.mappingGetterReads)).toBe(0);
+  await page.keyboard.press('Escape');expect(await calls(page)).toEqual([]);
+});
+
 test('external switch change removes historical success without claiming no command was sent', async ({page}) => {
   await setup(page); await button(page).click(); await submit(page).click();
   await expect(dialog(page).locator('[data-mapped-message]')).toContainText('Requested switch state reported');

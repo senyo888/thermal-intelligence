@@ -2,7 +2,7 @@
 
 # Compatibility
 
-Current preparation: **0.1.0-rc.2**, integrating the reviewed beta.5–beta.7 changes and a correction to stale request-status presentation. See the [RC.2 guide](Installing-the-release-candidate). RC.1 remains the published prerelease; beta.7 remains an untagged beta. The historical observations below apply only to their named builds and scenarios. A minimum supported Home Assistant version and broader support range have not yet been established.
+Current preparation: **0.1.0-rc.2**, integrating the reviewed beta.5–beta.7 changes and a correction to stale request-status presentation. See the [RC.2 guide](https://github.com/senyo888/thermal-intelligence/wiki/Installing-the-release-candidate). RC.1 remains the published prerelease; beta.7 remains an untagged beta. The historical observations below apply only to their named builds and scenarios. A minimum supported Home Assistant version and broader support range have not yet been established.
 
 | Environment or feature | Coverage |
 | --- | --- |

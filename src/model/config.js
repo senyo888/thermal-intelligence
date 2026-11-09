@@ -74,6 +74,34 @@ function snapshotMapping(value, seen = new WeakMap()) {
   return Object.defineProperties(copy, descriptors);
 }
 
+/** Project a dialog draft without executing accessors or serialization hooks.
+ * Unknown JSON data stays independent; unsupported values make export incomplete.
+ * The accepted configuration is never changed by this presentation-only copy.
+ */
+export function snapshotDialogConfig(config) {
+  let complete = true;
+  const omitted = Symbol('omitted'), ancestors = new WeakSet();
+  const copy = value => {
+    if (value === null || typeof value === 'string' || typeof value === 'boolean'
+      || (typeof value === 'number' && Number.isFinite(value))) return value;
+    if ((!Array.isArray(value) && !isRecord(value)) || ancestors.has(value)) {
+      complete = false; return omitted;
+    }
+    ancestors.add(value);
+    const descriptors = Object.getOwnPropertyDescriptors(value);
+    const result = Array.isArray(value) ? new Array(descriptors.length.value) : Object.create(null);
+    for (const [key, descriptor] of Object.entries(descriptors)) {
+      if (!descriptor.enumerable) continue;
+      if (!Object.hasOwn(descriptor, 'value')) { complete = false; continue; }
+      const child = copy(descriptor.value);
+      if (child !== omitted) Object.defineProperty(result, key, {value:child, enumerable:true, writable:true, configurable:true});
+    }
+    ancestors.delete(value);
+    return result;
+  };
+  return {config:copy(config), complete};
+}
+
 export function normalizeConfig(raw) {
   assertConfigAuthorityData(raw);
   if (raw.type !== undefined && raw.type !== CARD_TYPE) throw new Error(`Card type must be ${CARD_TYPE}.`);

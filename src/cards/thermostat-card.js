@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { normalizeConfig, CARD_TYPE, EDITOR_TAG } from '../model/config.js';
+import { normalizeConfig, snapshotDialogConfig, CARD_TYPE, EDITOR_TAG } from '../model/config.js';
 import { buildModel, targetPayload, quantize } from '../model/climate.js';
 import { CommandCoordinator } from '../commands/coordinator.js';
 import { styles, mappedControlStyles } from './styles.js';
@@ -336,7 +336,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
   _closeDialog() {
     this._mappedIntent = null;
     this._clearLockCode(); this._lockIntent = null;
-    const host = this._dialogHost,returnFocus=this._dialogReturnFocus; this._dialogHost = null; this._dialogSpec = null; this._dialogMarkup = null; this._settingsDraft = null; this._displayDraft = null;this._dialogReturnFocus=null;
+    const host = this._dialogHost,returnFocus=this._dialogReturnFocus; this._dialogHost = null; this._dialogSpec = null; this._dialogMarkup = null; this._settingsDraft = null; this._displayDraft = null;this._displayExportComplete = false;this._dialogReturnFocus=null;
     host?.shadowRoot.querySelector('dialog')?.close(); host?.remove(); this._activity();
     if(host&&returnFocus)this.shadowRoot.querySelector(`[data-focus="${CSS.escape(returnFocus)}"]`)?.focus({preventScroll:true});
   }
@@ -346,7 +346,9 @@ export class ThermalIntelligenceCard extends HTMLElement {
     if (kind === 'mapped' && (!mapped.allowed || this._coordinator.busy)) return;
     if (kind === 'lock' && (!capability.allowed || this._coordinator.busy)) return;
     const returnFocus=this._dialogReturnFocus||this.shadowRoot.activeElement?.getAttribute('data-focus');
-    this._closeDialog(); this._cancelDraft(); this._dialogSpec = {kind,rowKey}; this._displayDraft = structuredClone(this.config);this._dialogReturnFocus=returnFocus;
+    this._closeDialog(); this._cancelDraft(); this._dialogSpec = {kind,rowKey};
+    const draft = snapshotDialogConfig(this.config);
+    this._displayDraft = draft.config; this._displayExportComplete = draft.complete; this._dialogReturnFocus=returnFocus;
     if (kind === 'lock') this._lockIntent = { entity:this.config.entity, revision:this._configRevision, session:this._session(), signature:capability.signature, locked:!capability.locked, codeRequired:capability.codeRequired, submitted:false, invalid:false, message:'' };
     if (kind === 'mapped') this._mappedIntent = { entity:this.config.entity, target:mapped.entity, item:mapped.item, revision:this._configRevision, session:this._session(), signature:mapped.signature, identityKey:mapped.identityKey, on:mapped.reported === 'off', submitted:false, invalid:false, message:'' };
     this._dialogHost = document.createElement('div'); this._dialogHost.attachShadow({mode:'open'});
@@ -383,16 +385,23 @@ export class ThermalIntelligenceCard extends HTMLElement {
     for (const button of root.querySelectorAll('[data-dialog-preset]')) button.onclick=()=>this._request('set_preset_mode',{preset_mode:button.dataset.dialogPreset});
     for (const button of root.querySelectorAll('[data-dialog-settings]')) button.onclick=()=>this._openDialog('settings');
     const editor = root.querySelector('[data-dialog-editor]');
+    if (!this._displayExportComplete && root.querySelector('[data-copy-settings],[data-copy-humidity]')) {
+      for (const button of root.querySelectorAll('[data-copy-settings],[data-copy-humidity]')) button.disabled = true;
+      const notice = document.createElement('p'); notice.className = 'note'; notice.dataset.exportUnavailable = '';
+      notice.textContent = 'This configuration contains values that cannot be copied safely. Edit the card in Home Assistant; export is unavailable here.';
+      root.querySelector('.body,.content')?.prepend(notice);
+    }
     if (editor) {
-      editor.setConfig(this.config); editor.hass = this._hass;
+      editor.setConfig(this._displayDraft); editor.hass = this._hass;
       editor.addEventListener('config-changed',event=>{
         event.stopPropagation(); this._settingsDraft=event.detail.config;
-        const output=root.querySelector('[data-settings-export]');if(output)output.value=JSON.stringify(this._settingsDraft,null,2);
+        const output=root.querySelector('[data-settings-export]');if(output)output.value=this._displayExportComplete?JSON.stringify(this._settingsDraft,null,2):'';
       });
-      const output=root.querySelector('[data-settings-export]');if(output)output.value=JSON.stringify(this.config,null,2);
+      const output=root.querySelector('[data-settings-export]');if(output){output.value=this._displayExportComplete?JSON.stringify(this._displayDraft,null,2):'';output.disabled=!this._displayExportComplete;}
       root.querySelector('[data-copy-settings]')?.addEventListener('click',async()=>{
+        if(!this._displayExportComplete)return;
         const statusNode=root.querySelector('[data-dialog-status]');
-        try {await navigator.clipboard.writeText(JSON.stringify(this._settingsDraft||this.config,null,2));if(statusNode)statusNode.textContent='Configuration copied. Paste it into this card’s Home Assistant configuration editor, then save.';}
+        try {await navigator.clipboard.writeText(JSON.stringify(this._settingsDraft||this._displayDraft,null,2));if(statusNode)statusNode.textContent='Configuration copied. Paste it into this card’s Home Assistant configuration editor, then save.';}
         catch {output?.focus();output?.select();if(statusNode)statusNode.textContent='Select and copy the configuration below. Save it in this card’s Home Assistant configuration editor.';}
       });
     }
@@ -403,7 +412,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
       const update=renderDialog({...this._dialogSpec,model:this.model(),config:this._displayDraft});this._paintHumidityDraft(update.html);
     };
     root.querySelector('[data-copy-humidity]')?.addEventListener('click',async()=>{
-      if(!humidityBands(this._displayDraft))return;
+      if(!this._displayExportComplete||!humidityBands(this._displayDraft))return;
       const statusNode=root.querySelector('[data-dialog-status]');
       const text=JSON.stringify(this._displayDraft,null,2);
       try{await navigator.clipboard.writeText(text);if(statusNode)statusNode.textContent='Configuration copied. Paste it into this card’s Home Assistant configuration editor, then save.';}
@@ -560,7 +569,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
       input.disabled=replacement.disabled;
       for(const attribute of ['aria-invalid','aria-valuetext'])if(replacement.hasAttribute(attribute))input.setAttribute(attribute,replacement.getAttribute(attribute));
     }
-    const copy=root.querySelector('[data-copy-humidity]'), newCopy=next.querySelector('[data-copy-humidity]');if(copy&&newCopy)copy.disabled=newCopy.disabled;
+    const copy=root.querySelector('[data-copy-humidity]'), newCopy=next.querySelector('[data-copy-humidity]');if(copy&&newCopy)copy.disabled=!this._displayExportComplete||newCopy.disabled;
     for(const button of root.querySelectorAll('[data-dialog-info]'))button.onclick=()=>this._moreInfo(button.dataset.dialogInfo);
   }
   _scheduleFreshness() {

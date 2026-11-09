@@ -4,4 +4,4 @@ For Home Assistant 2026.11 and later, follow the [Marketplace installation guide
 
 RC.2 is not published yet. RC.1 remains the published prerelease. A source or package check does not establish Marketplace install, update or removal acceptance. Keep existing legacy TI separate and load exactly one trial module.
 
-[Candidate status](Installing-the-release-candidate) · [Earlier Home Assistant: HACS](HACS-custom-repository) · [Configuration](Configuration)
+[Candidate status](https://github.com/senyo888/thermal-intelligence/wiki/Installing-the-release-candidate) · [Earlier Home Assistant: HACS](https://github.com/senyo888/thermal-intelligence/wiki/HACS-custom-repository) · [Configuration](https://github.com/senyo888/thermal-intelligence/wiki/Configuration)

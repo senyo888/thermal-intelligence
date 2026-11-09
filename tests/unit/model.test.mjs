@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeConfig, finiteNumber } from '../../src/model/config.js';
+import { normalizeConfig, finiteNumber, snapshotDialogConfig } from '../../src/model/config.js';
 import { buildModel, quantize, targetPayload, FEATURES } from '../../src/model/climate.js';
 import { readOwnPath } from '../../src/model/telemetry.js';
 import { HUMIDITY_DEFAULTS, humidityBands, humidityBand, humidityGradient, moveHumidityBoundary, validHumidityBands, legacyHumidityBands } from '../../src/model/humidity.js';
@@ -10,6 +10,42 @@ const entity = 'climate.example';
 const identity = { entity_id: entity, platform: 'generic_thermostat' };
 const vtIdentity = { entity_id: entity, platform: 'versatile_thermostat' };
 const config = { entity };
+
+test('dialog snapshots preserve independent unknown JSON data without changing live configuration', () => {
+  const shared={kept:['value']};
+  const source=normalizeConfig({entity,schema_version:1,future:{left:shared,right:shared},mapped_controls:{extra:{nested:[1,true,null]}}});
+  const {config:draft,complete}=snapshotDialogConfig(source);
+  assert.equal(complete,true);
+  assert.deepEqual(JSON.parse(JSON.stringify(draft)),JSON.parse(JSON.stringify(source)));
+  draft.future.left.kept.push('draft');draft.mapped_controls.extra.nested[0]=2;
+  assert.deepEqual(source.future.left.kept,['value']);
+  assert.equal(source.mapped_controls.extra.nested[0],1);
+});
+
+test('dialog snapshots never invoke accessor or serialization hooks and flag incomplete exports', () => {
+  let reads=0;
+  const extra={kept:{nested:['value']},toJSON(){reads++;throw Error('Never serialize the live object');}};
+  Object.defineProperty(extra,'future',{enumerable:true,get(){reads++;throw Error('Never read this getter');}});
+  const source=normalizeConfig({entity,schema_version:1,mapped_controls:{extra}});
+  const descriptor=Object.getOwnPropertyDescriptor(source.mapped_controls.extra,'future');
+  const {config:draft,complete}=snapshotDialogConfig(source);
+  assert.equal(complete,false);
+  assert.deepEqual(JSON.parse(JSON.stringify(draft.mapped_controls.extra)),{kept:{nested:['value']}});
+  assert.equal(reads,0);
+  assert.deepEqual(Object.getOwnPropertyDescriptor(source.mapped_controls.extra,'future'),descriptor);
+  assert.equal(source.mapped_controls.extra.toJSON,extra.toJSON);
+});
+
+test('non-data values and cyclic future data cannot become a purported complete dialog export', () => {
+  let reads=0;
+  const cycle={kept:true};cycle.self=cycle;
+  const custom=Object.create({toJSON(){reads++;throw Error('No inherited hook');}});
+  const {config:draft,complete}=snapshotDialogConfig({cycle,custom,big:1n,nonfinite:NaN});
+  assert.equal(complete,false);
+  assert.deepEqual(JSON.parse(JSON.stringify(draft)),{cycle:{kept:true}});
+  assert.equal(reads,0);
+  assert.equal(cycle.self,cycle);
+});
 function fixture(attributes = {}, options = {}) {
   return {
     connected: true,
