@@ -486,8 +486,8 @@ test('presentation changes cannot clear an unresolved transport or revive its la
   assert.equal(f.calls.length, 1);
 });
 
-test('unavailable observation and detachment dismiss success but preserve its result', async () => {
-  for (const invalidate of [f => f.coordinator.observe(state(21, 2, { state: 'unavailable' })), f => f.coordinator.cancel()]) {
+test('unavailable observation, detachment and disposal dismiss success but preserve its result', async () => {
+  for (const invalidate of [f => f.coordinator.observe(state(21, 2, { state: 'unavailable' })), f => f.coordinator.cancel(), f => f.coordinator.dispose()]) {
     const f = setup(), pending = f.request();
     f.transport.resolve(); await tick(); f.coordinator.observe(state(21, 1));
     const outcome = await pending; invalidate(f);

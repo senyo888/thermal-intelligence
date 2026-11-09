@@ -447,8 +447,10 @@ export class ThermalIntelligenceCard extends HTMLElement {
       root.querySelector('[data-mapped-submit]').onclick = () => this._submitMapped();
     }
     root.querySelector('[data-mapped-current]').textContent = `Switch reports: ${this._hass?.connected === true ? capability.reported : 'unavailable'}`;
-    const status = this._coordinator.status;
-    root.querySelector('[data-mapped-message]').textContent = intent.message || (intent.submitted && status.domain === 'switch' && status.target === intent.target ? status.message : 'No command has been sent.');
+    const status = this._coordinator.presentationStatus;
+    root.querySelector('[data-mapped-message]').textContent = intent.message || (intent.submitted
+      ? status.domain === 'switch' && status.target === intent.target ? status.message : 'Check the current reported state before another action.'
+      : 'No command has been sent.');
     root.querySelector('[data-mapped-close]').textContent = intent.submitted ? 'Close' : 'Cancel';
     root.querySelector('[data-mapped-submit]').disabled = intent.submitted || intent.invalid || !capability.allowed || this._coordinator.busy;
     if (show) root.querySelector('dialog').showModal();
@@ -507,9 +509,9 @@ export class ThermalIntelligenceCard extends HTMLElement {
     root.querySelector('[data-lock-relock]').textContent = observable && configured === true ? lockRelock(capability) : '';
     const input = root.querySelector('[data-lock-code]');
     input.disabled = !intent.codeRequired || intent.submitted || intent.invalid;
-    const status = this._coordinator.status;
+    const status = this._coordinator.presentationStatus;
     const ownStatus = intent.submitted && status.target === intent.entity && status.domain === 'versatile_thermostat';
-    root.querySelector('[data-lock-message]').textContent = intent.message || (ownStatus ? status.message : '');
+    root.querySelector('[data-lock-message]').textContent = intent.message || (ownStatus ? status.message : intent.submitted ? 'Check the current reported state before another action.' : '');
     root.querySelector('[data-lock-dismiss]').textContent = intent.submitted ? 'Close' : 'Cancel';
     root.querySelector('[data-lock-submit]').disabled = intent.submitted || intent.invalid || !capability.allowed || this._coordinator.busy || (intent.codeRequired && input.value.length === 0);
     if (show) root.querySelector('dialog').showModal();

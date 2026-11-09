@@ -189,3 +189,13 @@ test('automation-only scope and disabled relock are explained without changing t
   await setup(page,{lockUsers:false,lockAutomations:true,relock:0});await expect(card(page).locator('[data-adjust][data-delta="1"]')).toBeEnabled();await trigger(page).click();
   await expect(dialog(page)).toContainText('Locks changes from automations. User controls remain available.');await expect(dialog(page)).toContainText('Automatic relocking is off.');expect(await calls(page)).toEqual([]);
 });
+
+test('reported relock removes historical unlock success from the open action dialog', async ({page}) => {
+  await setup(page); await trigger(page).click(); await action(page).click();
+  await expect(dialog(page).locator('[data-lock-message]')).toContainText('Requested lock state observed');
+  await page.evaluate(() => fixture.applyLock(true));
+  await expect(dialog(page).locator('[data-lock-current]')).toContainText('Locked');
+  await expect(dialog(page).locator('[data-lock-message]')).not.toContainText('Requested lock state observed');
+  await expect(action(page)).toBeDisabled();
+  expect((await calls(page)).length).toBe(1);
+});

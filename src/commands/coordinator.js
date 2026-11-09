@@ -502,6 +502,7 @@ export class CommandCoordinator {
   dispose() {
     if (this._disposed) return;
     this._disposed = true;
+    this._observedPresentation = null;
     if (this._job) this._retire(this._job, "The card was detached; the request outcome is uncertain.");
     this._onChange = () => {};
     this._context = null;

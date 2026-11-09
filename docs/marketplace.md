@@ -15,8 +15,8 @@ Keep legacy TI modules and cards separate. Beta and RC trial modules share `cust
 ## Add the repository and select a version
 
 1. Open **Settings → Marketplace → Add from link**. Connect GitHub through Home Assistant if requested, then add `https://github.com/senyo888/thermal-intelligence`. If a type is requested, select **Dashboard**.
-2. For a prerelease, open the repository’s device under **Settings → Devices & services → Marketplace**. Enable its disabled **Pre-release** entity, then turn on that switch.
-3. Open Thermal Intelligence. Use **Install**, or **Install another version** from its menu, and inspect the selected version. For RC.2, proceed only once `v0.1.0-rc.2` is published and explicitly selected. Stop if it is absent; a branch or “latest” is not equivalent.
+2. Open Thermal Intelligence, then its three-dot menu → **Install another version**. For a first prerelease installation, choose the exact published tag here; there is no installed-repository Pre-release switch yet.
+3. Select `v0.1.0-rc.2` only after publication and verify that name in the confirmation dialog. Stop if it is absent; a branch or “latest” is not equivalent.
 4. Review the installation dialog and confirm. Storage-mode dashboard resources are registered automatically. For YAML-managed resources, use the URL shown by the installer instead. Do not add a duplicate resource.
 5. Open a fresh browser document. If Home Assistant reports that `www` did not exist at startup and requires a restart, stop and plan that separately.
 
@@ -33,6 +33,8 @@ Choose **Add Card → Thermal Intelligence Thermostat · RC**. Confirm the repor
 Optional switch enrollment is deliberate and uses schema 2. Read its [eligibility, confirmation and provider side effects](optional-switch-control.md) before enabling it. A reported setting or valve position does not establish physical heating.
 
 ## Update and recovery
+
+After installation, enable the repository’s disabled **Pre-release** entity under **Settings → Devices & services → Marketplace**, then turn on that switch if you want future prerelease updates. This is separate from first-install version selection.
 
 Read the release notes and take a fresh backup before an update. Verify the exact new version and served hash again. Test update, removal and recovery separately; installing the same version twice does not prove update behavior.
 

@@ -213,3 +213,13 @@ test('saved configuration rollback removes the new row without an Off command or
   await setup(page);await page.evaluate(()=>{fixture.addCard({...fixture.config,schema_version:1});fixture.configure({type:'custom:thermal-intelligence-beta-card',entity:'climate.fixture_thermostat',adapter:'auto',schema_version:1});});
   await expect(page.locator('[data-mapped-control]')).toHaveCount(0);expect(await calls(page)).toEqual([]);
 });
+
+test('external switch change removes historical success without claiming no command was sent', async ({page}) => {
+  await setup(page); await button(page).click(); await submit(page).click();
+  await expect(dialog(page).locator('[data-mapped-message]')).toContainText('Requested switch state reported');
+  await page.evaluate(() => fixture.applySwitch(false));
+  await expect(dialog(page).locator('[data-mapped-current]')).toContainText('off');
+  await expect(dialog(page).locator('[data-mapped-message]')).toHaveText('Check the current reported state before another action.');
+  await expect(submit(page)).toBeDisabled();
+  expect((await calls(page)).length).toBe(1);
+});
