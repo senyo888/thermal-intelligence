@@ -2,9 +2,7 @@
 
 # Beta.4 installation record
 
-For the current candidate, use the [beta.7 guide](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/beta-7.md). This page preserves the exact beta.4 artifact and its historical validation.
-
-This is the retained beta.4 installation record. For the current candidate, use [Install RC.1](Installing-the-release-candidate).
+For the current candidate, see [RC.2 preparation](Installing-the-release-candidate). This page preserves the exact beta.4 artifact and its historical validation. The [beta.7 guide](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/beta-7.md) records the later untagged beta package.
 
 Version **0.1.0-beta.4**, source commit `ea1268ac7a8dc5aa7f54723870808bf24a92cdc0`. This is a frontend module for controlled testing, with no TI backend required. Manual installation and rollback have been tested; see [compatibility](https://github.com/senyo888/thermal-intelligence/blob/main/docs/compatibility.md) for version coverage and remaining limits.
 

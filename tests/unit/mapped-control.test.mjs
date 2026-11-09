@@ -243,3 +243,64 @@ test('later switch change retires only the completed presentation', async () => 
   assert.equal(f.coordinator.status, outcome);
   assert.equal(f.calls.length, 1);
 });
+
+test('newer matching reports advance success ordering without accepting delayed contrary evidence', async () => {
+  const f=setup(), pending=f.request();
+  f.resolve(); await tick(); f.observe(true, 1);
+  const outcome=await pending;
+  f.observe(true, 3); f.observe(false, 2);
+  assert.equal(f.coordinator.presentationStatus, outcome);
+  f.observe(false, 3);
+  assert.equal(f.coordinator.presentationStatus.phase, 'idle', 'equal-time contradiction remains uncertain');
+  assert.equal(f.coordinator.status, outcome);
+  assert.equal(f.calls.length, 1);
+});
+
+test('mapped no-op success uses the same timestamp precision as later switch reports', async () => {
+  const f=setup(); f.observe(true,3); f.update();
+  const outcome=await f.request();
+  assert.equal(outcome.phase,'observed');
+  assert.equal(f.calls.length,0);
+  f.observe(false,2);
+  assert.equal(f.coordinator.presentationStatus,outcome);
+  f.observe(true,5); f.observe(false,4);
+  assert.equal(f.coordinator.presentationStatus,outcome);
+  f.observe(false,6);
+  assert.equal(f.coordinator.presentationStatus.phase,'idle');
+  assert.equal(f.coordinator.status,outcome);
+  assert.equal(f.calls.length,0);
+});
+
+test('normalization snapshots mapping data so caller mutations require a new configuration', () => {
+  const raw=config(); raw.mapped_controls.extra={nested:{kept:true}};
+  const saved=normalizeConfig(raw);
+  raw.mapped_controls.enabled=false;
+  raw.mapped_controls.items[0].entity='switch.changed';
+  raw.mapped_controls.items.push({kind:'switch_on_off',entity:'switch.another'});
+  raw.mapped_controls.extra.nested.kept=false;
+  assert.equal(mappedControl(saved).status,'enabled');
+  assert.equal(mappedControl(saved).item.entity,target);
+  assert.equal(saved.mapped_controls.items.length,1);
+  assert.equal(saved.mapped_controls.extra.nested.kept,true);
+  const disabled=normalizeConfig(raw);
+  assert.equal(mappedControl(disabled).status,'disabled');
+  raw.mapped_controls.enabled=true; raw.mapped_controls.items.pop();
+  assert.equal(mappedControl(disabled).status,'disabled','caller cannot re-enable the saved mapping');
+  assert.equal(mappedControl(normalizeConfig(raw)).item.entity,'switch.changed');
+});
+
+test('mapping snapshots retain inert future data without invoking nested getters', () => {
+  let reads=0;
+  const raw=config(); raw.schema_version=1;
+  raw.mapped_controls.extra={nested:['kept']};
+  Object.defineProperty(raw.mapped_controls.extra,'future',{enumerable:true,get(){reads++;return 'not data';}});
+  const saved=normalizeConfig(raw);
+  raw.mapped_controls.items[0].entity='switch.changed';
+  raw.mapped_controls.extra.nested[0]='changed';
+  assert.equal(mappedControl(saved).status,'disabled');
+  assert.equal(saved.mapped_controls.items[0].entity,target);
+  assert.equal(saved.mapped_controls.extra.nested[0],'kept');
+  assert.equal(Object.getOwnPropertyDescriptor(saved.mapped_controls.extra,'future').get,
+    Object.getOwnPropertyDescriptor(raw.mapped_controls.extra,'future').get);
+  assert.equal(reads,0);
+});

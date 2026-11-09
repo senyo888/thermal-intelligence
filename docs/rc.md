@@ -28,7 +28,7 @@ Replace `REVIEWED_COMMIT` with the selected immutable SHA. The destination must 
 
 ## Validation and limits
 
-Local candidate checks passed 158 unit tests, 97 Chromium browser tests, 13 packaging tests, eight distribution tests and ten foundation regression tests. These checks cover synthetic behavior and packaging, not a live installation. Candidate results must be bound to the reviewed commit and package. Historical beta checks do not count as RC.2 installation, physical-device acceptance or soak completion. Service acceptance, reported setting, native-device output and room warming remain separate evidence. See [Compatibility](compatibility.md).
+Local candidate checks passed 163 unit tests, 99 Chromium browser tests, 13 packaging tests, eight distribution tests and twelve foundation regression tests. These checks cover synthetic behavior and packaging, not a live installation. Candidate results must be bound to the reviewed commit and package. Historical beta checks do not count as RC.2 installation, physical-device acceptance or soak completion. Service acceptance, reported setting, native-device output and room warming remain separate evidence. See [Compatibility](compatibility.md).
 
 The card sends no requests during setup, rendering, editor cancellation or reconnect. A completed request’s stored result remains historical evidence; its success notice is removed when context or current provider evidence no longer supports displaying it. Failed and unresolved outcomes retain their uncertainty, and late replies cannot replay a request.
 

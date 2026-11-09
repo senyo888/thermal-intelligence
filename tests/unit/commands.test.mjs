@@ -461,6 +461,7 @@ test('new contrary reports retire success presentation; ordinary telemetry and o
   const outcome = await pending;
   f.coordinator.observe(state(19, 1));
   f.coordinator.observe(state(21, 3));
+  f.coordinator.observe(state(19, 2));
   assert.equal(f.coordinator.presentationStatus, outcome);
   f.coordinator.observe(state(22, 4));
   assert.equal(f.coordinator.presentationStatus.phase, 'idle');
@@ -493,6 +494,26 @@ test('unavailable observation, detachment and disposal dismiss success but prese
     const outcome = await pending; invalidate(f);
     assert.equal(f.coordinator.presentationStatus.phase, 'idle');
     assert.equal(f.coordinator.status, outcome);
+    assert.equal(f.calls.length, 1);
+  }
+});
+
+test('retiring successful presentation notifies once without rewriting the result or dispatching', async () => {
+  for (const retire of [
+    f => f.coordinator.updateContext({ hass:f.hass, entity:ENTITY, preview:false, contextKey:2 }),
+    f => f.coordinator.observe(state(22, 2)),
+    f => f.coordinator.observe(state(21, 0, { state:'unavailable' })),
+    f => f.coordinator.cancel(),
+  ]) {
+    const f=setup(), pending=f.request();
+    f.transport.resolve(); await tick(); f.coordinator.observe(state(21, 1));
+    const outcome=await pending, count=f.notifications.length;
+    retire(f);
+    assert.equal(f.notifications.length, count+1);
+    assert.equal(f.notifications.at(-1).phase, 'idle');
+    assert.equal(f.coordinator.status, outcome);
+    retire(f);
+    assert.equal(f.notifications.length, count+1);
     assert.equal(f.calls.length, 1);
   }
 });

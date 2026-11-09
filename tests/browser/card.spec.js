@@ -547,6 +547,7 @@ test('current degradation replaces completed success consistently on card and ov
   await expect(details.locator('[data-dialog-status]').first()).toContainText('disconnected');
   await expect(details).not.toContainText('Setting observed');
   await page.evaluate(() => { fixture.hass.connected=true; fixture.refresh(); });
-  await expect(card(page).locator('[data-request-status]')).not.toContainText('Setting observed');
+  await expect(card(page).locator('[data-request-status]')).toHaveText('');
+  await expect(details.locator('[data-dialog-status]')).toHaveCount(0);
   expect((await calls(page)).length).toBe(1);
 });

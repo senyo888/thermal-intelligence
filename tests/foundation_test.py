@@ -21,6 +21,27 @@ SPEC.loader.exec_module(foundation)
 class FoundationTargetTests(unittest.TestCase):
     """Candidate changes must not bypass shared checks or weaken main validation."""
 
+    def test_distribution_pins_match_frozen_rc1_fixture(self):
+        """Verify real frozen pins independently of the synthetic policy fixtures."""
+        root = ROOT / "tests/fixtures/rc-1"
+        self.assertEqual(foundation.DISTRIBUTION_HASHES, {
+            name: hashlib.sha256((root / name).read_bytes()).hexdigest()
+            for name in ("dist/thermal-intelligence.js", "dist/LICENSE")
+        })
+
+    def test_playwright_config_is_not_an_installable_root_module(self):
+        """Only the named test configuration is exempt; shadow modules stay blocked."""
+        for environment in ({}, {"GITHUB_REF": "refs/heads/main"}, {"GITHUB_BASE_REF": "unknown"}):
+            with self.subTest(environment=environment):
+                code, _ = self.run_foundation(environment, changed_payload=False,
+                    extra={"playwright.config.js": b"// synthetic test configuration\n"})
+                self.assertEqual(code, 0)
+                for name in ("thermal-intelligence.js", "other.js", "playwright.config.extra.js"):
+                    code, output = self.run_foundation(environment, changed_payload=False,
+                        extra={name: b"// unexpected root module\n"})
+                    self.assertEqual(code, 1)
+                    self.assertIn("root module could shadow", output)
+
     def run_foundation(self, environment, *, changed_payload=True, extra=None, licence=None, modes=None):
         """Run the public entry point with controlled index contents and CI context."""
         blobs = {

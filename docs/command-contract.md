@@ -78,3 +78,5 @@ This path requires acknowledgement plus a valid mapped `last_updated` baseline i
 ## Completed-result presentation
 
 The stored terminal result describes one captured request. A success notice is removed after a selected-entity, configuration, session, readiness or preview change, detachment, or a contrary provider report. Returning to the previous context does not revive it. Current degradation takes precedence on the card and general dialogs. Failed or uncertain outcomes remain visible; presentation does not release an unresolved transport, alter its evidence or send a new request.
+
+Retiring successful presentation notifies consumers with the current presentation status while preserving the stored result. Newer matching reports advance its ordering timestamp; delayed older contradictions cannot remove it. Equal-time contradictions or unknown/unavailable observations still retire the notice. Mapped switch no-op results use the same timestamp precision as later reports.

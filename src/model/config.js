@@ -61,6 +61,19 @@ export function assertConfigAuthorityData(raw) {
   for (const key of ['kind', 'entity', 'label', 'icon']) data(item, key);
 }
 
+/** Copy mapping data without evaluating accessors or aliasing nested JSON values. */
+function snapshotMapping(value, seen = new WeakMap()) {
+  if (!Array.isArray(value) && !isRecord(value)) return value;
+  if (seen.has(value)) return seen.get(value);
+  const copy = Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value));
+  seen.set(value, copy);
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  for (const descriptor of Object.values(descriptors)) {
+    if (Object.hasOwn(descriptor, 'value')) descriptor.value = snapshotMapping(descriptor.value, seen);
+  }
+  return Object.defineProperties(copy, descriptors);
+}
+
 export function normalizeConfig(raw) {
   assertConfigAuthorityData(raw);
   if (raw.type !== undefined && raw.type !== CARD_TYPE) throw new Error(`Card type must be ${CARD_TYPE}.`);
@@ -77,6 +90,7 @@ export function normalizeConfig(raw) {
   // Retain a saved prototype setting for round trips; the source UI uses background.
   if (raw.theme !== undefined && !['auto', 'light', 'dark'].includes(raw.theme)) throw new Error('Legacy theme must be auto, light or dark.');
   const result = { ...raw, type: CARD_TYPE, schema_version: schemaVersion ?? SCHEMA_VERSION, entity, adapter, background };
+  if (Object.hasOwn(raw, 'mapped_controls')) result.mapped_controls = snapshotMapping(raw.mapped_controls);
   for (const key of ['trend_entity', 'humidity_entity', 'valve_position_entity']) {
     if (raw[key] !== undefined && (typeof raw[key] !== 'string' || (raw[key] !== '' && (!ENTITY.test(raw[key]) || !raw[key].startsWith('sensor.'))))) {
       throw new Error(`${key} must be a sensor entity ID or empty.`);

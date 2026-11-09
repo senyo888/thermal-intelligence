@@ -141,6 +141,13 @@ export class CommandCoordinator {
       ? makeStatus('idle', '') : this._status;
   }
 
+  /** Retire only visible success; notify once while retaining the request result. */
+  _retirePresentation() {
+    if (!this._observedPresentation) return;
+    this._observedPresentation = null;
+    this._notify(this.presentationStatus);
+  }
+
   // An uncertain transport can still be in flight. Do not overlap another call.
   get busy() { return !this._disposed && (this._job !== null || this._flight !== null); }
 
@@ -240,7 +247,7 @@ export class CommandCoordinator {
     if (this._disposed) return this.status;
     this._context = context({ hass, entity, preview, contextKey, model });
     if (this._observedPresentation && !sameContext(this._observedPresentation.context, this._context, this._observedPresentation.kind)) {
-      this._observedPresentation = null;
+      this._retirePresentation();
     }
     if (this._job && !this._contextStillMatches(this._job)) {
       this._retire(this._job, "Control context changed; the outcome is uncertain.");
@@ -325,7 +332,7 @@ export class CommandCoordinator {
       baselineState: baseline?.state,
       ...(kind === 'lock' ? { lockSettings: lockSettings(facts), baselineLocked: facts.locked } : {}),
       call: hass.callService.bind(hass), baseline,
-      lastObservation: baseline, lastTimestamp: timestamp(baseline),
+      lastObservation: baseline, lastTimestamp: kind === 'mapped' ? switchTimestamp(baseline) : timestamp(baseline),
       accepted: false, observedMatch: false, dispatched: false,
       timer: null, finished: false, resolve: null,
     };
@@ -456,7 +463,9 @@ export class CommandCoordinator {
       if (['unknown', 'unavailable'].includes(state.state)
           || ((presentation.timestamp === null || stamp === null || stamp >= presentation.timestamp)
             && !matches(state, presentation.service, presentation.values, presentation.kind))) {
-        this._observedPresentation = null;
+        this._retirePresentation();
+      } else if (stamp !== null && (presentation.timestamp === null || stamp > presentation.timestamp)) {
+        presentation.timestamp = stamp;
       }
     }
     const job = this._job;
@@ -494,7 +503,7 @@ export class CommandCoordinator {
   }
 
   cancel(reason = "Tracking stopped; the request outcome is uncertain.") {
-    this._observedPresentation = null;
+    this._retirePresentation();
     if (this._job) this._retire(this._job, reason);
     return this.status;
   }

@@ -618,7 +618,13 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
       if (!editable) { this._newSwitch[key] = value; this._buffers.delete(`mapped.${key}`); if (key === 'entity') this._render({ open:'mapped-control' }); return; }
       const next = patchConfig(this._draft, ['mapped_controls', 'items', 0, key], value || undefined);
       const checked = mappedControl({ ...next, mapped_controls:{ ...next.mapped_controls, enabled:true } });
-      if (checked.status !== 'enabled') { this._error = checked.reason; this._refreshFieldState(); return; }
+      if (checked.status !== 'enabled') {
+        this._buffers.delete(`mapped.${key}`);
+        this._error = `${checked.reason} This change was not applied; the saved value has been restored.`;
+        this._invalidField = '';
+        this._render({ open:'mapped-control', focus:`mapped.${key}` });
+        return;
+      }
       this._commit(next, { field:`mapped.${key}`, open:'mapped-control', rerender:key === 'entity' });
     };
     stack.append(this._field('Switch entity', 'mapped.entity', item.entity, { options, onChange:value => change('entity', value) }));

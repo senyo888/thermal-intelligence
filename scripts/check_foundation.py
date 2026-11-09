@@ -66,7 +66,7 @@ def check_distribution(indexed):
     for name in indexed:
         if name.startswith("dist/") and name not in DISTRIBUTION_HASHES:
             errors.append(f"{name}: unexpected distribution payload")
-        if "/" not in name and name.endswith(".js"):
+        if "/" not in name and name.endswith(".js") and name != "playwright.config.js":
             errors.append(f"{name}: root module could shadow the reviewed distribution")
     return errors
 

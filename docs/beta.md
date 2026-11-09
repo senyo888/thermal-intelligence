@@ -1,8 +1,8 @@
 # Beta.4 installation record
 
-The next candidate is [beta.5](beta-5.md). This page preserves the exact beta.4 artifact and its historical validation.
+This page preserves the exact beta.4 artifact and its historical validation. [Beta.5](beta-5.md) followed beta.4; the latest untagged beta package is [beta.7](beta-7.md).
 
-Beta.4 is retained on `senyo888-patch-1`. For the candidate prepared through `develop`, see the [RC.1 guide](rc.md).
+For the candidate prepared through `develop`, see [RC.2 preparation](rc.md). The [published RC.1 record](rc-1.md) remains separate.
 
 Version **0.1.0-beta.4**, source commit `ea1268ac7a8dc5aa7f54723870808bf24a92cdc0`. This is a frontend module for controlled testing, with no TI backend required. Manual installation and rollback have been tested; see [compatibility](compatibility.md) for version coverage and remaining limits.
 

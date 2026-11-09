@@ -8,6 +8,10 @@ Keep existing `custom:thermal-intelligence-card` instances and their resources i
 
 ## Update an existing trial card
 
+Use the installer that owns the existing trial. On Home Assistant 2026.11 and later, update a Marketplace-managed installation through Marketplace; on older systems with HACS, update through HACS. Retain its generated resource URL and installer ownership, then verify the selected version and served hash. Do not replace a managed resource with a manually copied file. See the [Marketplace](marketplace.md) or [HACS](hacs.md) guide.
+
+### Update a manually installed trial card
+
 1. Retain the previous bundle, resource URL and saved card configuration.
 2. Use the [candidate package record](rc.md) and verify its digest. RC.2 is not yet published; do not substitute a branch download for an unavailable named release.
 3. Save it under a new versioned filename and change only the beta resource URL. Do not register a second copy.
@@ -15,7 +19,7 @@ Keep existing `custom:thermal-intelligence-card` instances and their resources i
 
 A frontend-only resource update does not require a Home Assistant Core restart. Saving or reopening card configuration sends no thermostat command.
 
-## Roll back
+## Roll back a manually installed trial card
 
 Restore the previous trial resource URL and open a fresh browser document. A custom element already registered in an open page cannot be replaced in place. Restore saved card configuration separately if you intentionally changed it; avoid overwriting newer dashboard edits.
 
@@ -46,6 +50,6 @@ The optional switch control is available from beta.6 and retained in RC.2; it is
 
 All betas and the published RC.1 use the same trial card and editor registrations. Load only one trial module in a browser document; changing the trial resource requires a fresh document. Keep the separate legacy TI resources and cards unchanged. Untagged beta updates do not change the RC.1 tag or its release assets.
 
-## Marketplace-managed installations
+## Installer-managed recovery
 
-On Home Assistant 2026.11 and later, follow [Marketplace installation and recovery](marketplace.md). Keep the generated resource URL and installer ownership intact. The manual resource procedure above is not an installer downgrade or a full environment restore. Save the card configuration as well as its module before changing schema or installation method.
+On Home Assistant 2026.11 and later, follow [Marketplace installation and recovery](marketplace.md); older installations retain their [HACS](hacs.md) ownership. Use the saved recovery or backup procedure for the affected installer. The manual resource procedure above is not an installer downgrade or a full environment restore. Save the card configuration as well as its module before changing schema or installation method. A documented migration route does not establish tested migration acceptance.

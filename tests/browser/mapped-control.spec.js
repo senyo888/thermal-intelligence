@@ -210,8 +210,47 @@ test('choices wrap at card width and retain keyboard targets, long labels and de
 });
 
 test('saved configuration rollback removes the new row without an Off command or changing another card', async({page}) => {
-  await setup(page);await page.evaluate(()=>{fixture.addCard({...fixture.config,schema_version:1});fixture.configure({type:'custom:thermal-intelligence-beta-card',entity:'climate.fixture_thermostat',adapter:'auto',schema_version:1});});
-  await expect(page.locator('[data-mapped-control]')).toHaveCount(0);expect(await calls(page)).toEqual([]);
+  await setup(page);await page.evaluate(()=>{const second=fixture.addCard();second._open=true;second.render();});
+  const second=page.locator('thermal-intelligence-beta-card').nth(1).locator('[data-mapped-control]');
+  await expect(second).toHaveCount(1);
+  await page.evaluate(()=>fixture.cards[0].setConfig({type:'custom:thermal-intelligence-beta-card',entity:'climate.fixture_thermostat',adapter:'auto',schema_version:1}));
+  await expect(button(page)).toHaveCount(0);await expect(second).toHaveCount(1);expect(await calls(page)).toEqual([]);
+});
+
+test('rejected switch label and icon edits restore the saved value before unrelated edits can export', async({page}) => {
+  for (const [label,invalid,key] of [['Switch label','<b>invalid</b>','label'],['Switch icon','https://example.com/icon','icon']]) {
+    await setup(page); await editor(page).locator('[data-section="mapped-control"] > summary').click();
+    const saved=await page.evaluate(key=>fixture.config.mapped_controls.items[0][key],key);
+    const field=editor(page).getByLabel(label,{exact:true});
+    await field.fill(invalid); await field.press('Tab');
+    await expect(field).toHaveValue(saved);
+    await expect(editor(page).locator('.status.error')).toBeVisible();
+    await page.evaluate(()=>{fixture.editor._pendingInventory=true;fixture.editor._render({open:'mapped-control'});});
+    await expect(field).toHaveValue(saved);
+    await editor(page).getByLabel('Card name',{exact:true}).fill('Unrelated name');
+    await editor(page).getByLabel('Card name',{exact:true}).press('Tab');
+    expect(await page.evaluate(key=>fixture.config.mapped_controls.items[0][key],key)).toBe(saved);
+    await expect(field).toHaveValue(saved);
+    await field.fill(key==='label'?'Corrected label':'mdi:power'); await field.press('Tab');
+    expect(await page.evaluate(key=>fixture.config.mapped_controls.items[0][key],key)).toBe(key==='label'?'Corrected label':'mdi:power');
+    expect(await calls(page)).toEqual([]);
+  }
+});
+
+test('caller mutation cannot retarget or enable the active optional control before setConfig', async({page}) => {
+  await setup(page);
+  await page.evaluate(()=>{
+    fixture.retainedConfig=structuredClone(fixture.config);
+    fixture.cards[0].setConfig(fixture.retainedConfig);
+    fixture.retainedConfig.mapped_controls.items[0].entity='switch.changed';
+    fixture.retainedConfig.mapped_controls.enabled=false;
+    fixture.refresh();
+  });
+  await expect(button(page)).toBeEnabled();
+  await button(page).click();await expect(dialog(page)).toContainText('switch.fixture_aux');
+  await expect(dialog(page)).not.toContainText('switch.changed');
+  await page.evaluate(()=>fixture.cards[0].setConfig(fixture.retainedConfig));
+  await expect(button(page)).toHaveCount(0);expect(await calls(page)).toEqual([]);
 });
 
 test('external switch change removes historical success without claiming no command was sent', async ({page}) => {
