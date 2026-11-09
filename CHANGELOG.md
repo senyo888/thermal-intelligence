@@ -36,11 +36,11 @@ There is no stable release yet. Release candidates are prepared through `develop
 - Invalidate an open lock action when configuration is removed, without sending Unlock or closing the dialog automatically. Unknown configuration never clears a reported user lock.
 - Keep schema-1 card settings unchanged. This beta does not modify the published RC.1 package.
 
-## Unreleased — distribution preparation
+## RC.1 distribution — published 3 November 2026
 
-- Add Dashboard package metadata for HACS and Home Assistant Marketplace, with the documentation-only default branch hidden from download choices.
+- Add Dashboard package metadata for HACS and Home Assistant Marketplace, with the default branch hidden from download choices and its reviewed RC.1 snapshot retained for discovery.
 - Include the software licence in `dist/` and validate installation files and reproducible candidate assets in CI.
-- Preserve the existing frontend and saved configurations. Live installer, migration and catalogue checks remain pending; manual installation is still the available route.
+- Preserve the existing frontend and saved configurations. RC.1 is published with its three immutable assets. Installer lifecycle, migration and catalogue checks remain separate; see [distribution status](docs/distribution.md).
 
 ## Documentation — 27 October 2026
 

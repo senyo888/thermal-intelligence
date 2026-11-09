@@ -29,7 +29,7 @@ Actual beta.2 captures with synthetic data, illustrating controls retained in la
 
 </details>
 
-Saved schema-1 configurations remain valid in beta.7. Unknown fields survive editor round trips; preserving a field does not make an unsupported option operational. [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/migration.md).
+Saved schema-1 configurations remain valid in RC.2. Unknown fields survive editor round trips; preserving a field does not make an unsupported option operational. [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/migration.md).
 
 ## Optional switch control
 

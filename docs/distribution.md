@@ -4,7 +4,7 @@ RC.2 is in preparation. [RC.1](rc-1.md) remains the published prerelease, and [b
 
 | Branch | Contents |
 | --- | --- |
-| `main` | Public documentation, images and website |
+| `main` | Public documentation, images, website and the frozen published RC.1 distribution snapshot |
 | `develop` | Release-candidate source, tests and reproducible candidate package |
 | `senyo888-patch-1` | Standalone thermostat source, tests and installable beta |
 

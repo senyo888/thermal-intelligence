@@ -20,7 +20,7 @@ Keep legacy TI modules and cards separate. Beta and RC trial modules share `cust
 4. Review the installation dialog and confirm. Storage-mode dashboard resources are registered automatically. For YAML-managed resources, use the URL shown by the installer instead. Do not add a duplicate resource.
 5. Open a fresh browser document. If Home Assistant reports that `www` did not exist at startup and requires a restart, stop and plan that separately.
 
-These steps follow the [official Marketplace instructions](https://www.home-assistant.io/integrations/marketplace/). UI labels can vary with translation.
+These steps follow the [official Marketplace instructions](https://www.home-assistant.io/integrations/marketplace/). The [version selector](https://github.com/home-assistant/frontend/blob/a67b691a451e0b3fc469679b07158f963a61842c/src/panels/marketplace/dialogs/dialog-marketplace-install.ts#L618) supports explicit prerelease selection before installation; update preferences are separate. UI labels can vary with translation.
 
 ## Verify the trial
 
