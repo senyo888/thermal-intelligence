@@ -36,10 +36,77 @@ function safeText(value, name, { empty = false } = {}) {
   return value;
 }
 
-export function normalizeConfig(raw) {
+export function assertConfigAuthorityData(raw) {
   if (!isRecord(raw)) throw new Error('Card configuration must be an object.');
+  // Spreading configuration must never materialize accessor-backed command authority.
+  const data = (object, key) => {
+    const descriptor = Object.getOwnPropertyDescriptor(object, key);
+    if (descriptor && !Object.hasOwn(descriptor, 'value')) throw new Error(`${key} must be plain configuration data.`);
+    return descriptor?.value;
+  };
+  const schema = data(raw, 'schema_version'), mapping = data(raw, 'mapped_controls');
+  // Schema-1 blobs are inert. Walk only recognized schema-2 fields, never unrelated
+  // future settings. JSON-shaped malformed rows still reach row-local validation.
+  if (schema !== 2) return;
+  const plain = value => {
+    if (value && typeof value === 'object' && !Array.isArray(value) && !isRecord(value)) throw new Error('Optional control must use plain configuration objects.');
+    return isRecord(value);
+  };
+  if (!plain(mapping)) return;
+  data(mapping, 'version'); data(mapping, 'enabled');
+  const items = data(mapping, 'items');
+  if (!Array.isArray(items) || items.length !== 1) return;
+  const item = data(items, '0');
+  if (!plain(item)) return;
+  for (const key of ['kind', 'entity', 'label', 'icon']) data(item, key);
+}
+
+/** Copy mapping data without evaluating accessors or aliasing nested JSON values. */
+function snapshotMapping(value, seen = new WeakMap()) {
+  if (!Array.isArray(value) && !isRecord(value)) return value;
+  if (seen.has(value)) return seen.get(value);
+  const copy = Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value));
+  seen.set(value, copy);
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  for (const descriptor of Object.values(descriptors)) {
+    if (Object.hasOwn(descriptor, 'value')) descriptor.value = snapshotMapping(descriptor.value, seen);
+  }
+  return Object.defineProperties(copy, descriptors);
+}
+
+/** Project a dialog draft without executing accessors or serialization hooks.
+ * Unknown JSON data stays independent; unsupported values make export incomplete.
+ * The accepted configuration is never changed by this presentation-only copy.
+ */
+export function snapshotDialogConfig(config) {
+  let complete = true;
+  const omitted = Symbol('omitted'), ancestors = new WeakSet();
+  const copy = value => {
+    if (value === null || typeof value === 'string' || typeof value === 'boolean'
+      || (typeof value === 'number' && Number.isFinite(value))) return value;
+    if ((!Array.isArray(value) && !isRecord(value)) || ancestors.has(value)) {
+      complete = false; return omitted;
+    }
+    ancestors.add(value);
+    const descriptors = Object.getOwnPropertyDescriptors(value);
+    const result = Array.isArray(value) ? new Array(descriptors.length.value) : Object.create(null);
+    for (const [key, descriptor] of Object.entries(descriptors)) {
+      if (!descriptor.enumerable) continue;
+      if (!Object.hasOwn(descriptor, 'value')) { complete = false; continue; }
+      const child = copy(descriptor.value);
+      if (child !== omitted) Object.defineProperty(result, key, {value:child, enumerable:true, writable:true, configurable:true});
+    }
+    ancestors.delete(value);
+    return result;
+  };
+  return {config:copy(config), complete};
+}
+
+export function normalizeConfig(raw) {
+  assertConfigAuthorityData(raw);
   if (raw.type !== undefined && raw.type !== CARD_TYPE) throw new Error(`Card type must be ${CARD_TYPE}.`);
-  if (raw.schema_version !== undefined && raw.schema_version !== SCHEMA_VERSION) throw new Error('Unsupported configuration schema_version.');
+  const schemaVersion = Object.getOwnPropertyDescriptor(raw, 'schema_version')?.value;
+  if (schemaVersion !== undefined && ![SCHEMA_VERSION, 2].includes(schemaVersion)) throw new Error('Unsupported configuration schema_version.');
   const entity = raw.entity === undefined ? '' : raw.entity;
   if (typeof entity !== 'string' || (entity !== '' && (!ENTITY.test(entity) || !entity.startsWith('climate.')))) {
     throw new Error('Select a climate entity.');
@@ -50,7 +117,8 @@ export function normalizeConfig(raw) {
   if (!BACKGROUNDS.includes(background)) throw new Error('Background must be blue, plum or black.');
   // Retain a saved prototype setting for round trips; the source UI uses background.
   if (raw.theme !== undefined && !['auto', 'light', 'dark'].includes(raw.theme)) throw new Error('Legacy theme must be auto, light or dark.');
-  const result = { ...raw, type: CARD_TYPE, schema_version: SCHEMA_VERSION, entity, adapter, background };
+  const result = { ...raw, type: CARD_TYPE, schema_version: schemaVersion ?? SCHEMA_VERSION, entity, adapter, background };
+  if (Object.hasOwn(raw, 'mapped_controls')) result.mapped_controls = snapshotMapping(raw.mapped_controls);
   for (const key of ['trend_entity', 'humidity_entity', 'valve_position_entity']) {
     if (raw[key] !== undefined && (typeof raw[key] !== 'string' || (raw[key] !== '' && (!ENTITY.test(raw[key]) || !raw[key].startsWith('sensor.'))))) {
       throw new Error(`${key} must be a sensor entity ID or empty.`);

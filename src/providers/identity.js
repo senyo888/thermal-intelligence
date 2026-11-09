@@ -34,7 +34,9 @@ export function providerReadiness(provider, attributes) {
   if (!own(attributes, 'is_ready') || typeof attributes.is_ready !== 'boolean') {
     return { status: 'unknown', ready: false, reason: 'Versatile Thermostat readiness is unknown.' };
   }
-  if (attributes.is_ready) {
+  // VT retains the previous locked flag when both lock scopes are disabled.
+  // Only explicit disabled configuration retires that flag; unknown stays guarded.
+  if (attributes.is_ready && readOwnPath(attributes, 'is_lock_configured').value !== false) {
     const locked = readOwnPath(attributes, 'specific_states.is_locked');
     const lockUsers = readOwnPath(attributes, 'lock_manager.lock_users');
     if (locked.value === true && lockUsers.value !== false) return { status: 'locked', ready: false, reason: 'Versatile Thermostat is locked for user control, or the lock scope is unknown.' };

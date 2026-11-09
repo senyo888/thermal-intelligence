@@ -29,7 +29,7 @@ Raw window, presence and motion inputs remain distinct from the feature states a
 
 Rendering, setup and reconnects read state. A command starts with explicit user intent and a captured target, then passes capability and readiness checks before calling the supported Home Assistant service. Displaying a sensor gives it no control authority.
 
-Regulation and house policy stay with the configured provider/backend, independently of the card. The planned TI backend sits outside this RC.1 frontend boundary; its future contracts must define deterministic decisions, ownership, persistence and failure behaviour.
+Regulation and house policy stay with the configured provider/backend, independently of the card. The planned TI backend sits outside the standalone frontend boundary; its future contracts must define deterministic decisions, ownership, persistence and failure behaviour.
 
 ## Evidence model
 
@@ -65,4 +65,8 @@ HI remains the authority for its seasonal humidity targets, Stability, selected 
 
 The frontend separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. Synthetic fixtures and unit/browser tests live under `tests/`. The reproducible module is `dist/thermal-intelligence.js`.
 
-The README introduces the product; the Wiki provides practical guidance; repository documents define configuration, compatibility and technical contracts. The website presents the same supported features and prerelease limits. See [distribution](docs/distribution.md) and [command contracts](docs/command-contract.md).
+The README introduces the product; the Wiki provides practical guidance; repository documents define configuration, compatibility and technical contracts. The website presents the same supported features and beta limits. See [distribution](docs/distribution.md) and [command contracts](docs/command-contract.md).
+
+## Explicit optional switch path
+
+Introduced in beta.6 and retained in RC.2, the card supports one schema-2 enrolled switch to the existing card. `model/mapped-control.js` validates the row independently of climate controls; `providers/mapped-registry.js` maintains current-session registry proof. The shared coordinator keeps the climate anchor distinct from the captured switch dispatch/observation target. It admits only On/Off, with confirmation, no replay and strict mapped-target timestamps. This is frontend request handling, not a new backend or controller. See [Optional switch control](docs/optional-switch-control.md).

@@ -430,3 +430,90 @@ test("HVAC mode observation reads state, not a coincidental attribute", async ()
   f.coordinator.observe(state(19, 2, { state: "off" }));
   assert.equal((await pending).phase, "observed");
 });
+
+test('observed presentation follows current context without rewriting the request result', async () => {
+  const variants = [
+    { entity: 'climate.other' }, { contextKey: 2 }, { preview: true },
+    { model: { ready: false } },
+    f => ({ hass: { ...f.hass, connected: false } }),
+    f => ({ hass: { ...f.hass, connection: { socket: {} } } }),
+    f => ({ hass: { ...f.hass, user: { id: 'another-user' } } }),
+  ];
+  for (const variant of variants) {
+    const f = setup(), pending = f.request();
+    f.transport.resolve(); await tick();
+    f.coordinator.observe(state(21, 1));
+    const outcome = await pending;
+    assert.equal(f.coordinator.presentationStatus, outcome);
+    const change = typeof variant === 'function' ? variant(f) : variant;
+    f.coordinator.updateContext({ hass: f.hass, entity: ENTITY, preview: false, ...change });
+    assert.equal(f.coordinator.presentationStatus.phase, 'idle');
+    assert.equal(f.coordinator.status, outcome, 'historical evidence remains immutable');
+    f.coordinator.updateContext({ hass: f.hass, entity: ENTITY, preview: false });
+    assert.equal(f.coordinator.presentationStatus.phase, 'idle', 'reconnect cannot revive success');
+    assert.equal(f.calls.length, 1);
+  }
+});
+
+test('new contrary reports retire success presentation; ordinary telemetry and older reports do not', async () => {
+  const f = setup(), pending = f.request();
+  f.transport.resolve(); await tick(); f.coordinator.observe(state(21, 2));
+  const outcome = await pending;
+  f.coordinator.observe(state(19, 1));
+  f.coordinator.observe(state(21, 3));
+  f.coordinator.observe(state(19, 2));
+  assert.equal(f.coordinator.presentationStatus, outcome);
+  f.coordinator.observe(state(22, 4));
+  assert.equal(f.coordinator.presentationStatus.phase, 'idle');
+  f.coordinator.observe(state(21, 5));
+  assert.equal(f.coordinator.presentationStatus.phase, 'idle');
+  assert.equal(f.coordinator.status, outcome);
+  assert.equal(f.calls.length, 1);
+});
+
+test('presentation changes cannot clear an unresolved transport or revive its late success', async () => {
+  const f = setup(), pending = f.request();
+  f.coordinator.observe(state(21, 1));
+  assert.equal(f.coordinator.presentationStatus.phase, 'pending');
+  f.timeout(); const outcome = await pending;
+  f.coordinator.cancel();
+  f.coordinator.updateContext({ hass: { ...f.hass, connected: false }, entity: ENTITY, preview: false });
+  assert.equal(f.coordinator.presentationStatus, outcome);
+  assert.equal(outcome.phase, 'uncertain');
+  assert.equal(f.coordinator.busy, true);
+  f.transport.resolve(); await tick();
+  assert.equal(f.coordinator.busy, false);
+  assert.equal(f.coordinator.presentationStatus, outcome);
+  assert.equal(f.calls.length, 1);
+});
+
+test('unavailable observation, detachment and disposal dismiss success but preserve its result', async () => {
+  for (const invalidate of [f => f.coordinator.observe(state(21, 2, { state: 'unavailable' })), f => f.coordinator.cancel(), f => f.coordinator.dispose()]) {
+    const f = setup(), pending = f.request();
+    f.transport.resolve(); await tick(); f.coordinator.observe(state(21, 1));
+    const outcome = await pending; invalidate(f);
+    assert.equal(f.coordinator.presentationStatus.phase, 'idle');
+    assert.equal(f.coordinator.status, outcome);
+    assert.equal(f.calls.length, 1);
+  }
+});
+
+test('retiring successful presentation notifies once without rewriting the result or dispatching', async () => {
+  for (const retire of [
+    f => f.coordinator.updateContext({ hass:f.hass, entity:ENTITY, preview:false, contextKey:2 }),
+    f => f.coordinator.observe(state(22, 2)),
+    f => f.coordinator.observe(state(21, 0, { state:'unavailable' })),
+    f => f.coordinator.cancel(),
+  ]) {
+    const f=setup(), pending=f.request();
+    f.transport.resolve(); await tick(); f.coordinator.observe(state(21, 1));
+    const outcome=await pending, count=f.notifications.length;
+    retire(f);
+    assert.equal(f.notifications.length, count+1);
+    assert.equal(f.notifications.at(-1).phase, 'idle');
+    assert.equal(f.coordinator.status, outcome);
+    retire(f);
+    assert.equal(f.notifications.length, count+1);
+    assert.equal(f.calls.length, 1);
+  }
+});

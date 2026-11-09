@@ -2,7 +2,7 @@
 
 # Configure your card
 
-Load the RC.1 module, then choose **Add Card → Thermal Intelligence Thermostat · RC**. Select your thermostat and use the visual editor for ordinary setup.
+After installing the selected RC module, then choose **Add Card → Thermal Intelligence Thermostat · RC**. Select your thermostat and use the visual editor for ordinary setup.
 
 - **Provider:** use verified registry identity or choose the provider explicitly. VT readiness and restrictions remain visible.
 - **Readings:** map humidity, trend and valve-position sources independently. Missing optional data affects only the relevant information.
@@ -25,8 +25,12 @@ Presence selects home/away preset temperatures. VT Motion selects motion/no-moti
 
 <img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/thermostat-expanded.png" alt="Beta component with expanded controls" width="290"> <img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/preset-details.png" alt="Beta preset temperatures panel" width="290">
 
-Actual beta.2 captures with synthetic data, illustrating controls retained in RC.1. [Image notes](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/image-notes.md).
+Actual beta.2 captures with synthetic data, illustrating controls retained in later candidates. [Image notes](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/image-notes.md).
 
 </details>
 
-Saved schema-1 configurations remain valid in RC.1. Unknown fields survive editor round trips; preserving a field does not make an unsupported option operational. [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/migration.md).
+Saved schema-1 configurations remain valid in RC.2. Unknown fields survive editor round trips; preserving a field does not make an unsupported option operational. [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/migration.md).
+
+## Optional switch control
+
+Available from beta.6 and retained in beta.7 and RC.2, the card offers one explicitly enabled switch beside Mode/Fan for a registered standard thermostat. Its visual editor requires enrollment and runtime confirmation in both directions. It needs no TI controller. Released RC.1 and beta.5 do not include it. See the [optional-control guide](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/optional-switch-control.md) for the exact schema, Honeywell Off behavior, restrictions and configuration-plus-module rollback.

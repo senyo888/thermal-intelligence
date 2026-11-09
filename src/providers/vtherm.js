@@ -6,7 +6,7 @@ import { finiteNumber } from '../model/config.js';
 export function vthermLock(attributes, observable) {
   const locked = readOwnPath(attributes, 'specific_states.is_locked').value;
   const configured = readOwnPath(attributes, 'is_lock_configured').value;
-  if (configured !== true && locked !== true && (configured === false || typeof locked !== 'boolean')) return null;
+  if (configured !== true) return null;
   if (!observable) return { status: 'unavailable', label: 'VT lock state unavailable', icon: 'mdi:lock-question' };
   if (typeof locked !== 'boolean') return { status: 'unknown', label: 'VT lock state unknown', icon: 'mdi:lock-question' };
   return locked
@@ -61,7 +61,7 @@ export function vthermDetails(attributes, observable) {
     ['Readiness', 'is_ready'], ['Initialized', 'specific_states.is_initialized'],
     ['Device active', 'specific_states.is_device_active'], ['Activity requested', 'specific_states.should_device_be_active'],
     ['Off reason', 'specific_states.hvac_off_reason'], ['Mode reason', 'specific_states.hvac_mode_reason'],
-    ['Locked', 'specific_states.is_locked'], ['Sleeping', 'specific_states.is_sleeping'],
+    ['Locked', 'specific_states.is_locked', 'is_lock_configured'], ['Sleeping', 'specific_states.is_sleeping'],
     ['Window', 'window_manager.window_state', 'is_window_configured'],
     ['Automatic window detection', 'window_manager.window_auto_state', 'is_window_auto_configured'],
     ['Presence', 'presence_manager.presence_state', 'is_presence_configured'],
