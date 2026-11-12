@@ -20,7 +20,7 @@ The build writes `thermal-intelligence.js` and a copy of the software `LICENSE` 
 
 ### Check and prepare a candidate
 
-From a source checkout:
+From a clean source checkout of the exact reviewed commit, replacing `REVIEWED_COMMIT` below with that same SHA:
 
 ```sh
 npm ci --no-audit --no-fund
