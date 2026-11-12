@@ -4,6 +4,8 @@ Thermal Intelligence is a standalone **Dashboard** card. It uses your existing c
 
 [RC.2 is published](rc.md) and passed a bounded custom-repository Lab installation on 9 November 2026. See the [dated validation record](rc2-validation.md) for its exact scope. Update, removal and recovery coverage remain incomplete. TI is not claimed to be in the default catalogue; add its repository link.
 
+In Home Assistant 2026.11.1, TI uses the Marketplace [Dashboard category icon](https://github.com/home-assistant/frontend/blob/e32bc0696ebefde323f5b791269ad0c57f3f99d9/src/panels/marketplace/tools/repository-icon.ts); custom listing images are supported for integrations. TI's repository description uses its README artwork. [Relative image links](https://github.com/home-assistant/frontend/blob/e32bc0696ebefde323f5b791269ad0c57f3f99d9/src/panels/marketplace/tools/markdown.ts) resolve against the installed version, available version or default branch, in that order. An installed RC.2 therefore retains its versioned README and images after later documentation changes on `main`.
+
 ## Before installation
 
 Save a fresh backup, export it and verify the downloaded archive. Retain your trial card configuration, resource URL and previous module. Archive integrity is not a restore rehearsal; confirm your recovery method before a trial.
