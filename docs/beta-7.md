@@ -12,7 +12,7 @@ No new settings, controller or backend are required. Existing schema-1 and schem
 
 This untagged beta was published through `senyo888-patch-1`. It does not change the RC.1 tag or release assets. The [beta.6 package](beta-6.md) remains available at its recorded commit.
 
-From a source checkout containing the exact commit, create a package in an unused directory:
+From a clean checkout of `9196b9e77b9403b4dde953f136fc84aca9a6331a`, create a package in an unused directory:
 
 ```sh
 python3 scripts/package_beta.py \

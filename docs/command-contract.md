@@ -55,7 +55,7 @@ const result = await commands.request({
 
 `status` is an immutable snapshot containing phase/message and, for tracked requests, target/service/values. `busy` is separate because a timed-out transport may remain unsettled. Context updates and observations are synchronous and perform no I/O. The request promise resolves with its terminal tracked outcome; it does not reject merely because a command fails. A busy attempt returns a failed result without replacing the existing request's status.
 
-Run `node --test tests/unit/commands.test.mjs`. Fixtures cover both acknowledgement/observation orders, late rejection, external changes, stale state, preview, context replacement, disconnected/authentication/service gaps, payload mutation, unsupported writes, rapid attempts, timeout, cancellation, disposal and rendering exceptions. Live Generic Thermostat/VT evidence remains a separate gate.
+From a clean checkout of released RC.2 commit `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`, run `node --test tests/unit/commands.test.mjs`. Fixtures cover both acknowledgement/observation orders, late rejection, external changes, stale state, preview, context replacement, disconnected/authentication/service gaps, payload mutation, unsupported writes, rapid attempts, timeout, cancellation, disposal and rendering exceptions. Live Generic Thermostat/VT evidence remains a separate gate.
 
 ## Administrator VT lock requests
 
