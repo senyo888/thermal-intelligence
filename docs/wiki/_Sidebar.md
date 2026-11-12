@@ -2,7 +2,7 @@
 
 - [Home](https://github.com/senyo888/thermal-intelligence/wiki/Home)
 - [RC.2 candidate](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc.md)
-- [Marketplace installation](https://github.com/senyo888/thermal-intelligence/wiki/Installing-with-Marketplace)
+- [Marketplace installation](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md)
 - [Published RC.1 record](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-1.md)
 - [Beta.7 package and limits](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta-7.md)
 - [Historical beta.4 installation](https://github.com/senyo888/thermal-intelligence/wiki/Installing-the-beta)
@@ -13,7 +13,7 @@
 - [VT lock control](https://github.com/senyo888/thermal-intelligence/wiki/VT-lock-control)
 - [Compatibility](https://github.com/senyo888/thermal-intelligence/wiki/Compatibility)
 - [Troubleshooting](https://github.com/senyo888/thermal-intelligence/wiki/Troubleshooting)
-- [HACS custom repository](https://github.com/senyo888/thermal-intelligence/wiki/HACS-custom-repository)
+- [HACS custom repository](https://github.com/senyo888/thermal-intelligence/blob/main/docs/hacs.md)
 
 **Project**
 
