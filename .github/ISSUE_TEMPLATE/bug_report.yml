@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        TI is in beta. For runtime reports, identify the exact beta version or source commit.
+        TI v0.1.0-rc.2 is a prerelease. For runtime reports, identify the exact TI version or source commit.
         Remove tokens, private URLs, device IDs and home details. Do not attach full backups.
   - type: input
     id: version
@@ -31,7 +31,7 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: HA, provider/version, HACS or manual installation, browser/OS or Companion version. Use not applicable for documentation-only reports.
+      description: HA, provider/version, Marketplace (formerly HACS) or manual installation, browser/OS or Companion version. Use not applicable for documentation-only reports.
     validations:
       required: true
   - type: textarea

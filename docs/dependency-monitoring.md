@@ -8,7 +8,7 @@ Thermal Intelligence bundles its own frontend code and downloads no runtime modu
 | GitHub Actions | Weekly Dependabot pull requests to `develop`; preserve immutable action pins and least-privilege workflow permissions |
 | Versatile Thermostat | Review upstream releases for readiness, lock services, restrictions, response observations, climate/valve control and attribute-schema changes |
 | Home Assistant Core and Frontend | Review releases and developer notes for climate APIs, registry identity, service calls, custom-card/editor contracts, rendering and resource caching |
-| Node.js, Gitleaks and HACS | Review supported runtime/tool versions, verified download hashes and installation compatibility; HACS is not yet a supported TI installation route |
+| Node.js, Gitleaks, Marketplace and older HACS | Review supported runtime/tool versions, verified download hashes and installer compatibility; the bounded RC.2 Marketplace result does not establish older HACS or full installer lifecycle acceptance |
 
 Version-update configuration is read from `.github/dependabot.yml` on the default branch. Security-update pull requests use the default branch; reproduce and review relevant fixes through `develop`. Dependency updates require passing checks and review. They never authorise automatic merges, provider upgrades or changes to an installed system.
 

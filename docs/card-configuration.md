@@ -2,7 +2,7 @@
 
 The health LED distinguishes connection/readiness and incomplete provider observations from heating activity. VT's explicitly null **Off reason** and **Mode reason** mean **None reported**, not a telemetry failure. Missing fields and genuine unknown or unavailable values remain visible in the overview and may keep the LED amber; disconnected or unavailable thermostats remain red. An amber provider-detail warning does not itself change command permissions: the existing readiness and capability guards remain authoritative.
 
-This guide describes **0.1.0-rc.1**, retaining the beta.4 configuration contract. See [Compatibility](compatibility.md) for tested Home Assistant and provider versions.
+This guide describes the published **0.1.0-rc.2 prerelease**. Existing schema-1 cards remain supported; explicitly enabling an optional switch uses schema 2. Published RC.1 and beta.5 do not include this feature. See [Compatibility](compatibility.md) for tested Home Assistant and provider versions.
 
 The card presents a selected climate entity, its advertised controls and explicit optional observations. It does not need a TI backend, create schedules or take ownership of an existing controller. See the [provider contracts](provider-contracts.md) for capability and evidence rules, and the [command contract](command-contract.md) for request tracking and uncertainty.
 
@@ -19,6 +19,10 @@ Ordinary configuration is available through the visual editor:
 
 Fields validate before emitting an accepted configuration. An incomplete or invalid draft shows an error and leaves the card on its last accepted configuration. The no-climate scenario remains a usable setup state. Configuration belongs to each card instance; editing one card does not update other copies.
 
+Rejected edits to an enrolled switch label or icon restore the displayed saved value and explain the rejection before another field can be saved. Accepted optional-control data is copied at `setConfig`; later mutation of the caller's mapping does not change the active card until another explicit configuration update.
+
+Dialog drafts copy configuration data without evaluating JavaScript getters or serialization hooks. Unknown plain data stays intact. If a configuration contains values that cannot be copied safely, dialogs keep working, the accepted configuration stays unchanged, and Settings/humidity export is disabled with an explanation. Edit that card in Home Assistant rather than exporting a partial configuration.
+
 The YAML below describes the same configuration contract. The preview shows the normalized configuration as JSON; it does not include a YAML importer. Type and schema version are managed by the card and editor rather than exposed as ordinary display settings.
 
 ## Top-level options
@@ -26,7 +30,7 @@ The YAML below describes the same configuration contract. The preview shows the 
 | YAML key | Visual field | Default | Accepted value and behavior |
 | --- | --- | --- | --- |
 | `type` | Managed by the card | `custom:thermal-intelligence-beta-card` | This exact card type. Include it in a complete YAML configuration. |
-| `schema_version` | Managed by the card | `1` | Numeric `1`. Unsupported versions are rejected. |
+| `schema_version` | Managed by the card | `1` | Numeric `1` (existing cards) or `2` (explicit optional-control enrollment). Unsupported versions are rejected. |
 | `entity` | Thermostat entity | Empty string | A `climate.*` entity ID. Empty is the safe setup state. Entity names do not establish provider identity. |
 | `adapter` | Provider | `auto` | `auto`, `standard` or `vtherm`; see identity rules below. |
 | `name` | Card name | No override | Plain text. When omitted or empty, use the entity's friendly name, then its entity ID. |
@@ -43,6 +47,8 @@ The YAML below describes the same configuration contract. The preview shows the 
 | `humidity_bands` | Four humidity guide boundaries, or explicit legacy low/high | Original `30/40/60/70` guides | `{dry_below, good_min, good_max, wet_above}` requires ordered integers within 0–100. Existing `{low, high}` remains an explicit legacy format. Local display classification only; details below. |
 
 Names, labels, units and preset keys must be plain text without markup delimiters or control characters. Optional numbers use YAML numbers, not quoted numeric strings. Boolean options use `true` or `false`. Clear an optional setting by omitting it; `null` is not a substitute for a valid recognized value.
+
+See [Optional switch control](optional-switch-control.md) for the visual editor, explicit `mapped_controls` schema, eligibility, confirmation and rollback. Ordinary editor saves do not enroll an existing card.
 
 Unknown top-level options, unknown fields within feature/telemetry rows, and unknown fields within `humidity_bands` survive normalization and editor round trips. Preservation does not make an unknown option operational. The editor patches the selected field instead of rebuilding a reduced configuration. There are no implicit private entity bindings or shared card settings.
 
@@ -99,7 +105,7 @@ Measured temperature trend retains the existing TI labels and colours. Values wi
 
 **TRV** stands for **thermostatic radiator valve**. An explicitly mapped valve source retains **TRV Open/Closed** and its reported percentage. An open valve does not establish boiler firing or heat delivery. Without a valve mapping, the output summary uses the selected climate entity's reported activity; known VT heating remains **Heat requested**.
 
-VT's reported lock state appears as a small lock/unlock icon beside the card name. Hover text and an accessible label identify the state; a question-mark lock means the state is unknown or unavailable. From beta.2, verified administrators can tap the icon for the [lock control dialog](lock-control.md); other accounts retain a read-only indicator. No per-card option is needed. User controls follow VT's reported lock scope, and missing state for a configured lock keeps them disabled.
+When VT explicitly reports a configured lock, its state appears as a small lock/unlock icon beside the card name. Explicitly disabled locking hides the icon and retires a residual locked flag; unknown configuration never clears a reported user lock. Hover text and an accessible label identify the state; a question-mark lock means the state is unknown or unavailable. From beta.2, verified administrators can tap the icon for the [lock control dialog](lock-control.md); other accounts retain a read-only indicator. No per-card option is needed. User controls follow VT's reported lock scope, and missing state for a configured lock keeps them disabled.
 
 ### Temperature response arc
 
@@ -245,11 +251,11 @@ The original humidity guides use four strictly increasing integer boundaries: `d
 
 An existing `humidity_bands: {low: 35, high: 65}` retains the explicit legacy three-band format: below, within both inclusive bounds, or above. The editor identifies that format and offers an intentional reset to the original four boundaries. The formats cannot be mixed, and no automatic conversion invents the two missing boundaries. Unknown nested fields survive edits and reset. Canonical boundaries require integers; legacy bounds retain their finite numeric contract `0 ≤ low < high ≤ 100`.
 
-All humidity colours are **Local display band** preferences. They are not HI seasonal targets, Stability, lanes, controller reasons or safety thresholds. This beta has no automatic HI contract or HI service path.
+All humidity colours are **Local display band** preferences. They are not HI seasonal targets, Stability, lanes, controller reasons or safety thresholds. This card has no automatic HI contract or HI service path.
 
 Activity is kept separate from mode, preset and ownership. Standard `hvac_action` is integration-reported activity; VT `heating` is presented as **Heat requested**, with physical heat delivery unverified. Ownership remains unknown without an authoritative ownership contract.
 
-When details are enabled, applicable VT regulation observations include the provider's climate regulation mode/internal target or proportional function/demand and requested valve opening. These are read-only, type-gated observations with their own sources and availability states. The internal target retains its provider-declared unit, and requested valve opening is distinct from a measured valve-position source. See the [VT detail contract](provider-contracts.md#activity-and-vt-details) for exact paths and limitations; there is no regulation-setting control in this beta.
+When details are enabled, applicable VT regulation observations include the provider's climate regulation mode/internal target or proportional function/demand and requested valve opening. These are read-only, type-gated observations with their own sources and availability states. The internal target retains its provider-declared unit, and requested valve opening is distinct from a measured valve-position source. See the [VT detail contract](provider-contracts.md#activity-and-vt-details) for exact paths and limitations; there is no regulation-setting control in this card.
 
 Only deliberate runtime controls may request a supported service. Setup, visual editing, preview, configuration saves, rendering and reconnection do not request heating writes. Requests retain their captured target; acknowledgement, matching state and physical behavior are distinct. Uncertain outcomes are displayed and are not automatically replayed. See the [command lifecycle](command-contract.md) for exact behavior.
 
@@ -262,7 +268,7 @@ See [Compatibility](compatibility.md) for authenticated Home Assistant checks an
 
 ## Run the synthetic preview
 
-Use Node.js 22 or newer. From the repository root:
+Use Node.js 22 or newer. From the root of a clean checkout of released RC.2 commit `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`:
 
 ```sh
 npm ci
