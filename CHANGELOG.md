@@ -12,7 +12,7 @@ Published prerelease; [subsequent validation through 12 November](docs/rc2-valid
 - Keep dialog drafts from evaluating configuration getters; preserve unknown plain data and disable incomplete configuration exports with an explanation.
 - Align installation guidance with Home Assistant Marketplace while retaining older HACS and immutable RC.1 guidance.
 - Use canonical Wiki links in the repository mirror and check their indexed page targets without implying Wiki publication.
-- Retain Playwright 1.65.0 tooling and RC package identity. RC.2 is not published or installed yet.
+- Retain Playwright 1.65.0 tooling and RC package identity. RC.2 was published on 9 November 2026; subsequent installation and control results are recorded separately above.
 
 ## 0.1.0-rc.1 — 29 October 2026
 

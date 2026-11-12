@@ -16,7 +16,7 @@ These examples show how one card presents different combinations of temperature,
   </tr>
 </table>
 
-Both captures show an orange arc and a rising trend. The chips report different facts: a thermostat heat request on the left, and a reported thermostatic radiator valve (TRV) opening on the right. Neither screenshot alone proves accepted output or physical heat transfer. In RC.1, orange requires the configured [response evidence](https://github.com/senyo888/thermal-intelligence/blob/main/docs/provider-contracts.md#temperature-response-evidence).
+Both captures show an orange arc and a rising trend. The chips report different facts: a thermostat heat request on the left, and a reported thermostatic radiator valve (TRV) opening on the right. Neither screenshot alone proves accepted output or physical heat transfer. In RC.2, orange requires the configured [response evidence](https://github.com/senyo888/thermal-intelligence/blob/main/docs/provider-contracts.md#temperature-response-evidence).
 
 ## A closed valve with different temperature trends
 
@@ -50,7 +50,7 @@ Both outer arcs are lavender because the displayed temperature is above target. 
 
 <img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/multi-card-dashboard-example.png" alt="Anonymised TI dashboard with eight numbered cards, varied header telemetry, green and lavender outer arcs, blue and orange slope rings, and a partially visible second row" width="100%">
 
-Each card keeps its own readings, target, status and header choices. The original capture includes only part of the second row; some header text is clipped at the horizontal viewport edge. Those limits are retained rather than filled in. This is an illustration of a wider installation layout, not a complete dashboard supplied with RC.1 or a physical-tablet validation record.
+Each card keeps its own readings, target, status and header choices. The original capture includes only part of the second row; some header text is clipped at the horizontal viewport edge. Those limits are retained rather than filled in. This is an illustration of a wider installation layout, not a complete dashboard supplied with the standalone card or a physical-tablet validation record.
 
 <details>
 <summary>Explore detail panels</summary>
