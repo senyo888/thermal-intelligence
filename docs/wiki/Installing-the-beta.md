@@ -14,7 +14,7 @@ Use the [reviewed source commit](https://github.com/senyo888/thermal-intelligenc
 3d58fcddbeaf72b9f9927e67b04269f78d6e69d0b09460cfd06b12b1ed575a2c
 ```
 
-The [software licence](https://github.com/senyo888/thermal-intelligence/blob/ea1268ac7a8dc5aa7f54723870808bf24a92cdc0/LICENSE) and editable source accompany that commit. From a checkout, the deterministic package command is:
+The [software licence](https://github.com/senyo888/thermal-intelligence/blob/ea1268ac7a8dc5aa7f54723870808bf24a92cdc0/LICENSE) and editable source accompany that commit. From a clean checkout of `ea1268ac7a8dc5aa7f54723870808bf24a92cdc0`, the deterministic package command is:
 
 ```sh
 python3 scripts/package_beta.py \
