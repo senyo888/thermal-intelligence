@@ -8,7 +8,7 @@ This manual describes RC.2 prerelease. Use a standard Home Assistant climate ent
 
 ## Start here
 
-1. Read the [RC.2 candidate status](https://github.com/senyo888/thermal-intelligence/wiki/Installing-the-release-candidate) and [Marketplace installation guide](https://github.com/senyo888/thermal-intelligence/wiki/Installing-with-Marketplace).
+1. Read the [RC.2 candidate status](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc.md) and [Marketplace installation guide](https://github.com/senyo888/thermal-intelligence/wiki/Installing-with-Marketplace).
 2. [Configure your card](https://github.com/senyo888/thermal-intelligence/wiki/Configuration) with Home Assistant’s visual editor.
 3. [Read the card](https://github.com/senyo888/thermal-intelligence/wiki/Reading-the-card): arc, slope ring, status chip, LED and top-row readings.
 4. [Explore the state gallery](https://github.com/senyo888/thermal-intelligence/wiki/State-gallery) and [check compatibility](https://github.com/senyo888/thermal-intelligence/wiki/Compatibility).

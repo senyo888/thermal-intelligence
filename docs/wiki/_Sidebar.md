@@ -1,7 +1,7 @@
 **Thermal Intelligence · RC.2 prerelease**
 
 - [Home](https://github.com/senyo888/thermal-intelligence/wiki/Home)
-- [RC.2 candidate](https://github.com/senyo888/thermal-intelligence/wiki/Installing-the-release-candidate)
+- [RC.2 candidate](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc.md)
 - [Marketplace installation](https://github.com/senyo888/thermal-intelligence/wiki/Installing-with-Marketplace)
 - [Published RC.1 record](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-1.md)
 - [Beta.7 package and limits](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta-7.md)
