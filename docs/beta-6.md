@@ -10,7 +10,7 @@ The switch may affect thermostat modes or trigger other automations. Honeywell e
 - [Download the exact module](https://raw.githubusercontent.com/senyo888/thermal-intelligence/cb8d285aa116a52c1da5ee7669ab2874592f2363/dist/thermal-intelligence.js): **195,917 bytes**.
 - SHA256: `3e66911e9c371991da09b3105d961650567fdabc6cf52352f4b250f236b1ee2f`.
 
-This is an untagged beta on `senyo888-patch-1`, not a GitHub release. RC.1 keeps its original tag and assets. The [beta.5 package](beta-5.md) remains available at its recorded commit.
+This untagged beta was published through `senyo888-patch-1`, not a GitHub release. RC.1 keeps its original tag and assets. The [beta.5 package](beta-5.md) remains available at its recorded commit.
 
 From a source checkout containing that commit, create a package in an unused directory:
 
