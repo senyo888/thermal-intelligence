@@ -1,6 +1,18 @@
 # Changelog
 
-There is no stable release yet. Release candidates are prepared through `develop`; beta.4 remains on `senyo888-patch-1`.
+There is no stable release yet. Future release candidates are prepared through `develop`; beta work uses `senyo888-patch-1`.
+
+## 0.1.0-rc.2 — 9 November 2026
+
+Published prerelease; [subsequent validation through 12 November](docs/rc2-validation.md) records scoped Lab/Stable acceptance and remaining limits. The released package is unchanged.
+
+- Integrate the beta.5 disabled-lock correction and beta.6–beta.7 optional switch control with its registry identity checks. Keep schema-1 cards unchanged and require explicit schema-2 enrollment.
+- Retire successful request notices after context loss or contrary provider state; notify presentation consumers and retain report ordering, request outcomes, failure/uncertainty and no-replay guards.
+- Snapshot optional-control configuration until an explicit configuration update, and restore rejected switch label/icon edits before unrelated settings can be saved.
+- Keep dialog drafts from evaluating configuration getters; preserve unknown plain data and disable incomplete configuration exports with an explanation.
+- Align installation guidance with Home Assistant Marketplace while retaining older HACS and immutable RC.1 guidance.
+- Use canonical Wiki links in the repository mirror and check their indexed page targets without implying Wiki publication.
+- Retain Playwright 1.65.0 tooling and RC package identity. RC.2 is not published or installed yet.
 
 ## 0.1.0-rc.1 — 29 October 2026
 
@@ -8,15 +20,32 @@ There is no stable release yet. Release candidates are prepared through `develop
 - Show **Thermal Intelligence Thermostat · RC** in the card picker. Keep the existing prerelease element names so saved trial cards continue working alongside legacy TI.
 - Add explicit beta/RC package channels and reproducibility checks for branch and pull-request builds.
 - Configure weekly dependency updates for npm tooling and GitHub Actions, with provider compatibility reviewed separately.
-- HACS installation and a stable release remain unavailable. See the [RC guide](docs/rc.md) for validation limits.
+- HACS installation and a stable release remain unavailable. See the [RC.1 record](docs/rc-1.md) for validation limits.
 
-## Unreleased — distribution preparation
+## 0.1.0-beta.7 — 6 November 2026 (untagged beta)
 
-- Add Dashboard package metadata for HACS and Home Assistant Marketplace, with the default branch hidden from download choices.
-- Prepare default-branch discovery for HACS 2.0.5 using the unchanged RC.1 module and licence from the reviewed candidate. Versioned prerelease selection and isolated installation remain separate checks.
+- Accept equivalent absent device IDs when comparing Home Assistant frontend metadata with its entity-registry response. This fixes a false unavailable status for optional switch controls on device-less entities.
+- Keep real identity differences, unsupported providers, explicit confirmation and no-replay checks unchanged. No configuration migration is needed; returning to beta.6 can restore the false block.
+
+## 0.1.0-beta.6 — 6 November 2026 (untagged beta)
+
+- Add one explicitly enrolled standard-provider switch control, with visual configuration and confirmation before On and Off.
+- Keep optional-control registry identity, target, reported state and request evidence separate from climate commands; preserve schema-1 behavior and no replay.
+- Document integration side effects, including Honeywell emergency-heat Off requesting system Off, and configuration-plus-module rollback.
+
+
+## 0.1.0-beta.5 — 5 November 2026
+
+- Hide the VT lock indicator when the provider does not explicitly report a configured lock.
+- When VT explicitly reports locking disabled, ignore a retained locked flag for ordinary controls; readiness, connection and other command checks still apply.
+- Invalidate an open lock action when configuration is removed, without sending Unlock or closing the dialog automatically. Unknown configuration never clears a reported user lock.
+- Keep schema-1 card settings unchanged. This beta does not modify the published RC.1 package.
+
+## RC.1 distribution — published 3 November 2026
+
+- Add Dashboard package metadata for HACS and Home Assistant Marketplace, with the default branch hidden from download choices and its reviewed RC.1 snapshot retained for discovery.
 - Include the software licence in `dist/` and validate installation files and reproducible candidate assets in CI.
-- Keep frozen default-branch snapshot checks separate from evolving candidate branches, with regression coverage for PR targets and general publication checks.
-- Preserve the existing frontend and saved configurations. Live installer, migration and catalogue checks remain pending; manual installation is still the available route.
+- Preserve the existing frontend and saved configurations. RC.1 is published with its three immutable assets. Installer lifecycle, migration and catalogue checks remain separate; see [distribution status](docs/distribution.md).
 
 ## Documentation — 27 October 2026
 

@@ -21,6 +21,30 @@ SPEC.loader.exec_module(foundation)
 class FoundationTargetTests(unittest.TestCase):
     """Candidate changes must not bypass shared checks or weaken main validation."""
 
+    def test_distribution_pins_match_released_rc2_manifest(self):
+        """Bind main's pins to the unchanged released manifest, not evolving dist."""
+        data = (ROOT / "tests/fixtures/rc-2/manifest.json").read_bytes()
+        self.assertEqual(hashlib.sha256(data).hexdigest(),
+                         "c30c6dfaeeacf2bc8bfc2ece61e9d472d811ef4120fb50dd57a0bf4aefa0d55c")
+        manifest = json.loads(data)
+        self.assertEqual(manifest["source_commit"], "6d0833f20e9e071d94d2f09f00c1a4d4a34f1805")
+        self.assertEqual(foundation.DISTRIBUTION_HASHES, {
+            f"dist/{item['path']}": item["sha256"] for item in manifest["files"]
+        })
+
+    def test_playwright_config_is_not_an_installable_root_module(self):
+        """Only the named test configuration is exempt; shadow modules stay blocked."""
+        for environment in ({}, {"GITHUB_REF": "refs/heads/main"}, {"GITHUB_BASE_REF": "unknown"}):
+            with self.subTest(environment=environment):
+                code, _ = self.run_foundation(environment, changed_payload=False,
+                    extra={"playwright.config.js": b"// synthetic test configuration\n"})
+                self.assertEqual(code, 0)
+                for name in ("thermal-intelligence.js", "other.js", "playwright.config.extra.js"):
+                    code, output = self.run_foundation(environment, changed_payload=False,
+                        extra={name: b"// unexpected root module\n"})
+                    self.assertEqual(code, 1)
+                    self.assertIn("root module could shadow", output)
+
     def run_foundation(self, environment, *, changed_payload=True, extra=None, licence=None, modes=None):
         """Run the public entry point with controlled index contents and CI context."""
         blobs = {
@@ -61,7 +85,7 @@ class FoundationTargetTests(unittest.TestCase):
             with self.subTest(environment=environment):
                 code, output = self.run_foundation(environment)
                 self.assertEqual(code, 1)
-                self.assertIn("differs from the reviewed RC.1 snapshot", output)
+                self.assertIn("differs from the reviewed RC.2 snapshot", output)
 
     def test_candidate_pushes_accept_evolving_payload(self):
         """Candidate and beta pushes do not inherit the main payload freeze."""
@@ -85,12 +109,37 @@ class FoundationTargetTests(unittest.TestCase):
             with self.subTest(environment=environment):
                 code, output = self.run_foundation(environment)
                 self.assertEqual(code, 1)
-                self.assertIn("differs from the reviewed RC.1 snapshot", output)
+                self.assertIn("differs from the reviewed RC.2 snapshot", output)
 
     def test_exact_main_snapshot_passes(self):
         """The approved snapshot remains acceptable on main."""
         code, _ = self.run_foundation({"GITHUB_REF": "refs/heads/main"}, changed_payload=False)
         self.assertEqual(code, 0)
+
+    def test_wiki_mirror_links_use_actual_repository_targets(self):
+        """A matching .md file cannot make an extensionless repository link work."""
+        for destination, expected in (("Target", 1), ("Target.md", 0), ("Target.md#section", 0)):
+            with self.subTest(destination=destination):
+                code, output = self.run_foundation({"GITHUB_BASE_REF": "develop"}, extra={
+                    "docs/wiki/Home.md": f"[Target]({destination})\n".encode(),
+                    "docs/wiki/Target.md": b"# Section\n",
+                })
+                self.assertEqual(code, expected, output)
+
+    def test_canonical_wiki_urls_require_a_matching_indexed_mirror(self):
+        """Canonical Wiki navigation is checked locally without network claims."""
+        prefix = "https://github.com/senyo888/thermal-intelligence/wiki/"
+        for destination, expected in ((prefix + "Target", 0),
+                                      (prefix + "Target#section", 0),
+                                      (prefix + "Missing", 1),
+                                      (prefix + "Target.md", 1),
+                                      (prefix + "../Target", 1)):
+            with self.subTest(destination=destination):
+                code, output = self.run_foundation({"GITHUB_BASE_REF": "develop"}, extra={
+                    "docs/wiki/Home.md": f"[Target]({destination})\n".encode(),
+                    "docs/wiki/Target.md": b"# Section\n",
+                })
+                self.assertEqual(code, expected, output)
 
     def test_main_rejects_changed_distribution_licence(self):
         """Main rejects changed distribution licence bytes with an unchanged module."""
@@ -98,7 +147,7 @@ class FoundationTargetTests(unittest.TestCase):
                                            changed_payload=False,
                                            extra={"dist/LICENSE": b"changed licence\n"})
         self.assertEqual(code, 1)
-        self.assertIn("dist/LICENSE: differs from the reviewed RC.1 snapshot", output)
+        self.assertIn("dist/LICENSE: differs from the reviewed RC.2 snapshot", output)
 
     def test_main_rejects_incorrect_hacs_metadata(self):
         """Main rejects invalid JSON, changed values and equal values of wrong types."""

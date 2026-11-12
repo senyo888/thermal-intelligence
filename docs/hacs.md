@@ -1,29 +1,19 @@
-# HACS custom repository
+# HACS on Home Assistant before 2026.11
 
-HACS is the planned next installation route for the RC.1 frontend. Thermal Intelligence belongs in HACS’s **Dashboard** category. It installs a dashboard resource; it does not add a Home Assistant backend integration.
+For Home Assistant 2026.11 and later, use [Marketplace](marketplace.md). Do not install HACS alongside Marketplace. The older HACS route below is for systems that still use that integration.
 
-## Current route
+Thermal Intelligence is a **Dashboard** custom repository. It installs a frontend resource, not a TI backend integration. [RC.2](rc.md) and the older [RC.1](rc-1.md) are published prereleases. RC.1 passed all eight applicable upstream validator checks on 3 November 2026, but that does not establish installation or update acceptance. See [distribution evidence](distribution.md).
 
-Use [manual RC.1 installation](rc.md) today. The default branch includes the reviewed RC.1 distribution snapshot and Dashboard metadata so HACS can inspect the repository when it is added. Candidate source and repeatable package checks remain on `develop`. Prerelease [v0.1.0-rc.1](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.1) is published for a controlled trial. Upstream HACS validation, exact named-release selection and isolated installation checks remain pending. Publication alone does not establish HACS installation acceptance.
+## Controlled installation
 
-For TI's first-prerelease setup, with no stable release or selected visible version, HACS 2.0.5 checks the default branch before the added repository can show prereleases. The snapshot supplies that initial structure; the intended installation route selects a named release. `hide_default_branch` hides a download choice in the interface and is not an access-control or installation guard. See [distribution identity and selection](distribution.md#default-branch-discovery-and-release-selection).
+1. Save and verify a fresh backup. Retain the current module, resource and card configuration, and establish recovery before changing an installation.
+2. Check `www/community/thermal-intelligence/` and its resource namespace for existing ownership. Preserve legacy TI and unrelated files. Follow the [resource checks](marketplace.md#before-installation) before migration.
+3. In HACS, choose **Custom repositories** and add `https://github.com/senyo888/thermal-intelligence` as **Dashboard**.
+4. Enable prerelease visibility and select the exact published version named in its guide before downloading. For RC.2 select `v0.1.0-rc.2`. Do not substitute the default branch.
+5. Verify the installer-generated resource, exact version and served hash. Use one trial registration and a fresh browser document. Select **Thermal Intelligence Thermostat · RC** and check passive rendering, editor cancellation and reconnect before deliberate controls.
 
-## Controlled HACS trial
+For the first prerelease, HACS 2.0.5 can inspect the default branch during repository discovery. The default branch’s frozen RC.2 snapshot supplies the structure. `hide_default_branch` hides a download choice; it does not prove which version was installed. Named-release selection and bytes must both be verified.
 
-These steps describe the proposed controlled trial on a disposable, isolated target with a rehearsed restore and inert devices. The proposed comparison is Home Assistant 2026.10.0, VT 10.5.1 and HACS 2.0.5; it is a trial baseline, not a supported version range. Complete the pinned upstream HACS validation and verify Add plus exact v0.1.0-rc.1 selection before an installation attempt.
+Install, update, removal, manual-to-installer migration and recovery still require their own acceptance. A module/resource rollback does not restore installer state or the whole environment. Schema-2 rollback to RC.1 also requires the original schema-1 configuration. See [migration](migration.md).
 
-1. Back up the test environment and save the current dashboard/resource configuration.
-2. Check that `www/community/thermal-intelligence/` and its resource prefix are available for this package. If they contain existing TI or unrelated files, preserve them and review [resource ownership and migration](distribution.md#existing-installations-and-migration) first.
-3. In HACS, open the menu, choose **Custom repositories**, and enter `https://github.com/senyo888/thermal-intelligence` with category **Dashboard**.
-4. Open Thermal Intelligence, enable its prerelease/beta-version visibility, and select the exact release named in the installation guidance before downloading. If that release is unavailable, stop rather than downloading the default branch. Follow its resource-registration instructions and verify that only one trial module is loaded.
-5. Open a fresh browser document, then choose **Thermal Intelligence Thermostat · RC** in Add Card. Check the card, visual editor, provider observations and retained configuration.
-
-The existing manual trial resource needs a deliberate transition when moving to HACS. Beta and RC modules share registrations; keep existing legacy TI resources separate. See [update and rollback](migration.md).
-
-## Installation acceptance
-
-Before recommending this route, validate install, update, removal, manual-to-HACS migration and recovery on an isolated target. Record the exact TI, Home Assistant and HACS versions, resource paths, fresh-document rendering and restore result. A frontend resource rollback and a full environment restore cover different changes.
-
-The [distribution guide](distribution.md) tracks packaging, release and catalogue requirements. Adding a custom repository is separate from inclusion in HACS’s default catalogue. Marketplace testing remains a later distribution step.
-
-Official references: [HACS custom repositories](https://www.hacs.xyz/docs/faq/custom_repositories/) · [Dashboard package requirements](https://www.hacs.xyz/docs/publish/plugin/).
+Adding a custom repository is separate from default catalogue inclusion. Official references: [HACS custom repositories](https://www.hacs.xyz/docs/faq/custom_repositories/) and [Dashboard requirements](https://www.hacs.xyz/docs/publish/plugin/).
