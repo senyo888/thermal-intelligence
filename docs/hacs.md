@@ -12,7 +12,7 @@ Thermal Intelligence is a **Dashboard** custom repository. It installs a fronten
 4. Enable prerelease visibility and select the exact published version named in its guide before downloading. For RC.2 select `v0.1.0-rc.2`. Do not substitute the default branch.
 5. Verify the installer-generated resource, exact version and served hash. Use one trial registration and a fresh browser document. Select **Thermal Intelligence Thermostat · RC** and check passive rendering, editor cancellation and reconnect before deliberate controls.
 
-For the first prerelease, HACS 2.0.5 can inspect the default branch during repository discovery. The default branch’s frozen RC.1 snapshot supplies the structure while RC.2 source promotion is pending. Select the named RC.2 release for its package. `hide_default_branch` hides a download choice; it does not prove which version was installed. Named-release selection and bytes must both be verified.
+For the first prerelease, HACS 2.0.5 can inspect the default branch during repository discovery. The default branch’s separately reviewed snapshot supplies discovery structure; it is not proof of a named-release installation. Select the named RC.2 release for its package. `hide_default_branch` hides a download choice; it does not prove which version was installed. Named-release selection and bytes must both be verified.
 
 Install, update, removal, manual-to-installer migration and recovery still require their own acceptance. A module/resource rollback does not restore installer state or the whole environment. Schema-2 rollback to RC.1 also requires the original schema-1 configuration. See [migration](migration.md).
 

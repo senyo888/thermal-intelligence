@@ -15,7 +15,7 @@
 
 Thermal Intelligence brings current and target temperatures, supported thermostat controls and useful room observations into one considered interface. The glass dial, restrained lighting and focused detail panels keep everyday readings clear and further detail close at hand.
 
-**RC.2 is published as a prerelease** for the standalone thermostat card. Start with a standard Home Assistant climate entity or Versatile Thermostat (VT), then choose the readings and controls that suit each room.
+**RC.2 is published as a prerelease** for the standalone thermostat card. [RC.3](docs/rc-3.md) is an unpublished candidate correcting three request-status and presentation issues; its source promotion does not install or publish it. Start with a standard Home Assistant climate entity or Versatile Thermostat (VT), then choose the readings and controls that suit each room.
 
 <table>
   <tr><th>Heat requested · rising</th><th>Idle · near target</th></tr>

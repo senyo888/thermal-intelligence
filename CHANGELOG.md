@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0-rc.3 — candidate, unpublished
+
+- Preserve submillisecond ordering when climate or VT lock reports contradict an earlier match before acknowledgement.
+- Show thermostat-reported activity when a valve mapping is explicitly disabled.
+- Keep long headings within read-only-lock layouts without header telemetry.
+- Isolate delayed synthetic observations across fixture resets and complete both stale registry reads in the rejection regression.
+
+Configuration schemas and trial registrations are unchanged. See the [candidate record](docs/rc-3.md); no RC.3 installation or live acceptance is claimed here.
+
 There is no stable release yet. Future release candidates are prepared through `develop`; beta work uses `senyo888-patch-1`.
 
 ## 0.1.0-rc.2 — 9 November 2026

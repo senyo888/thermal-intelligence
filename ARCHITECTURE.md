@@ -1,6 +1,6 @@
 # Thermal Intelligence architecture contract
 
-The standalone frontend is published as RC.2. This contract describes the [released RC.2 source](https://github.com/senyo888/thermal-intelligence/tree/6d0833f20e9e071d94d2f09f00c1a4d4a34f1805); `main` still carries documentation and the frozen RC.1 discovery snapshot pending source promotion. Candidates are prepared through `develop`, with beta work on `senyo888-patch-1`. The card presents Home Assistant/provider state and sends commands only after explicit user interaction. A future TI backend is a separate component and is not required by this card.
+The standalone frontend is published as RC.2. This contract describes the [released RC.2 source](https://github.com/senyo888/thermal-intelligence/tree/6d0833f20e9e071d94d2f09f00c1a4d4a34f1805); `main` carries documentation and a separately promoted frozen snapshot. The [RC.3 candidate](docs/rc-3.md) preserves this architecture while correcting request-result ordering and two presentation defects; it is not yet a published release. Candidates are prepared through `develop`, with beta work on `senyo888-patch-1`. The card presents Home Assistant/provider state and sends commands only after explicit user interaction. A future TI backend is a separate component and is not required by this card.
 
 ## Ownership and layers
 

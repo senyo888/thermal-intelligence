@@ -1,10 +1,10 @@
 # Distribution
 
-[RC.2](rc.md) is the current published prerelease. Its original source is `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`; promotion of that source and distribution to `main` is pending. Future candidates use `develop`. [RC.1](rc-1.md) and [beta.7](beta-7.md) remain dated historical packages. Use [Marketplace](marketplace.md) for Home Assistant 2026.11 and later, or [HACS](hacs.md) on older installations.
+[RC.2](rc.md) is the current published prerelease. Its original source is `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`. [RC.3](rc-3.md) is an unpublished candidate adopted through `develop`; its source promotion and versioned publication are separate steps. [RC.1](rc-1.md) and [beta.7](beta-7.md) remain dated historical packages. Use [Marketplace](marketplace.md) for Home Assistant 2026.11 and later, or [HACS](hacs.md) on older installations.
 
 | Branch | Contents |
 | --- | --- |
-| `main` | Public documentation, website and frozen RC.1 discovery snapshot; RC.2 source promotion pending |
+| `main` | Public documentation, website and separately reviewed frozen discovery snapshot |
 | `develop` | Release-candidate source, tests and reproducible candidate package |
 | `senyo888-patch-1` | Branch for beta development and packages; verify its current commit before use |
 
@@ -37,7 +37,7 @@ python3 -B scripts/check_marketplace.py --commit REVIEWED_COMMIT
 python3 -B scripts/package_beta.py --commit REVIEWED_COMMIT --marketplace --output /tmp/ti-marketplace-candidate
 ```
 
-The destination must not exist. This produces separate `thermal-intelligence.js`, `LICENSE` and `manifest.json` files locally. The manifest records the immutable source, package hashes and distribution metadata. These are candidate release assets; the command does not publish or install them. `hacs.json` stays at the repository root of the selected source revision. The released RC.1 source already contains its own metadata; promoting RC.2 does not change that release.
+The destination must not exist. This produces separate `thermal-intelligence.js`, `LICENSE` and `manifest.json` files locally. The manifest records the immutable source, package hashes and distribution metadata. These are candidate release assets; the command does not publish or install them. `hacs.json` stays at the repository root of the selected source revision. The released RC.1 source already contains its own metadata; preparing or promoting RC.3 does not change that release.
 
 The distribution check rejects wrong filenames, root modules that would shadow `dist/`, missing or changed licence text, extra payload files, symlinks, executable files, source maps and mismatched module versions. It deliberately accepts only TI's reviewed manifest options. CI checks the committed input and reproduces both manual and Marketplace candidate packages.
 
@@ -72,4 +72,4 @@ RC.2 retains `custom:thermal-intelligence-beta-card`, with the picker name **The
 
 ## Default-branch discovery and release selection
 
-The default branch still carries the exact published RC.1 module and licence for repository discovery, with a strict hash check. Select the named RC.2 release for RC.2 installation; the branch discovery payload is not its installed version. Both Marketplace and HACS read `hacs.json`; branch inspection or matching bytes alone do not prove named-release selection. Capture the selected version and installer origin as well as the served bytes. Reproduce published assets from their original release commit; a later promotion commit would change manifest provenance and is not a replacement release.
+The default branch carries its separately reviewed module and licence for repository discovery, with a strict hash check. Select the named RC.2 release for RC.2 installation; the branch discovery payload is not its installed version. Both Marketplace and HACS read `hacs.json`; branch inspection or matching bytes alone do not prove named-release selection. Capture the selected version and installer origin as well as the served bytes. Reproduce published assets from their original release commit; a later promotion commit would change manifest provenance and is not a replacement release.

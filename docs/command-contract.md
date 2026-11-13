@@ -1,5 +1,7 @@
 # Standalone climate command lifecycle
 
+The [unpublished RC.3 candidate](rc-3.md) preserves the published RC.2 configuration and control boundaries while correcting submillisecond request-result ordering, explicitly disabled valve presentation and read-only lock heading fit. RC.2 acceptance remains dated evidence for RC.2.
+
 Implemented in `src/commands/coordinator.js`; unit fixtures establish the cases below. This is a frontend request contract, not live Home Assistant/provider compatibility or physical-device validation.
 
 ## Explicit action boundary

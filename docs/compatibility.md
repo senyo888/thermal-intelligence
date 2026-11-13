@@ -1,5 +1,7 @@
 # Compatibility
 
+The [unpublished RC.3 candidate](rc-3.md) preserves the published RC.2 configuration and control boundaries while correcting submillisecond request-result ordering, explicitly disabled valve presentation and read-only lock heading fit. RC.2 acceptance remains dated evidence for RC.2.
+
 Current published prerelease: **0.1.0-rc.2**. The [dated validation record](rc2-validation.md) covers the exact released package, Marketplace Lab installation and two-card trial on HA 2026.11.1 with VT 10.6.4 plus local provider extensions. Both cards passed bounded controls and followed a natural 25-minute house-policy Boost return, with 16m38s of subsequent observation. The maintainer confirmed physical heating.
 
 One external output adapter was unavailable for about 10m16s before automatic recovery. This is not an uninterrupted controller-health pass or a formal soak. Broad provider/device support, physical mobile/Companion acceptance, installer lifecycle coverage and restore rehearsal remain incomplete. A minimum supported HA version has not been established.

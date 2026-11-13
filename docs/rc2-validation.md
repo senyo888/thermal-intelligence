@@ -29,6 +29,16 @@ One existing output adapter became unavailable for about 10 minutes 16 seconds a
 
 The cards continued to display provider requests and mapped observations. **Ready** describes VT initialization; it does not certify a separate adapter, device connection or physical output. The controller incident remains a separate investigation and is not attributed to RC.2 by this record. Another adapter's pre-existing recovery was also outside the two-card acceptance scope.
 
+## Confirmed limitations — 13 November 2026
+
+Subsequent synthetic regressions confirmed three defects in the published RC.2 runtime:
+
+- A climate or VT lock request can retain an earlier matching report if a contradictory report arrives within the same millisecond before the service acknowledgement. The request can then display **Observed** for an obsolete setting. This does not send another command; check current provider state independently of that completion notice.
+- An explicitly empty valve mapping can display **TRV unavailable** instead of the selected thermostat's reported activity. An empty mapping disables that source; it does not establish a failed TRV.
+- With no header telemetry, a long title can overflow beside a read-only lock indicator.
+
+These findings do not replace the dated installation and trial results above. They remain defects in the released RC.2 assets. Runtime corrections are prepared in the separately reviewed [RC.3 candidate](rc-3.md); none changes the released RC.2 snapshot. The promotion's test fixture now discards delayed observations after a scenario reset, and its registry test completes both pending reads before checking stale-session rejection. Those test corrections do not change installed behavior.
+
 ## Remaining acceptance
 
 Physical phone/tablet and Companion coverage, broader thermostat integrations, an RC.2 physical optional-switch test, installer two-version update/removal/recovery, backup restore rehearsal and a formal RC.2 soak remain incomplete. Verified backup exports, archive integrity and database checks provide recovery evidence; they are not a rehearsed restore.

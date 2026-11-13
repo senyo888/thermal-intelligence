@@ -1,5 +1,7 @@
 # Provider and observation contracts
 
+The [unpublished RC.3 candidate](rc-3.md) preserves the published RC.2 configuration and control boundaries while correcting submillisecond request-result ordering, explicitly disabled valve presentation and read-only lock heading fit. RC.2 acceptance remains dated evidence for RC.2.
+
 The RC.2 adapters retain the Home Assistant 2026.10 climate contract and Versatile Thermostat (VT) 10.5.1 attributes. See [Compatibility](compatibility.md) for tested scenarios and limits. Unit tests use synthetic entities.
 
 ## Identity and control eligibility
