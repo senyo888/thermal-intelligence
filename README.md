@@ -7,7 +7,7 @@
 [![Release candidate 0.1.0-rc.2](https://img.shields.io/badge/Release%20candidate-0.1.0--rc.2-d9a36c)](docs/rc.md)
 [![Project Site](https://img.shields.io/badge/Project%20Site-GitHub%20Pages-5aa8d6)](https://senyo888.github.io/thermal-intelligence/)
 [![Marketplace installation guide](https://img.shields.io/badge/Marketplace-Installation%20guide-41BDF5?logo=home-assistant&logoColor=white)](docs/marketplace.md)
-[![Package version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsenyo888%2Fthermal-intelligence%2Fmain%2Fpackage.json&query=%24.version&label=Package%20Version&color=blue)](package.json)
+[![Candidate 0.1.0-rc.3](https://img.shields.io/badge/Candidate-0.1.0--rc.3-blue)](docs/rc-3.md)
 [![Licence GPL-3.0-only](https://img.shields.io/badge/License-GPL--3.0--only-blue)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/senyo888)
 
