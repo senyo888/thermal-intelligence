@@ -7,6 +7,7 @@ const ENTITY = 'climate.synthetic_vt';
 const SECRET = '0007-synthetic-private-code';
 const allow = () => ({ allowed: true });
 const tick = () => new Promise(resolve => queueMicrotask(resolve));
+const serialized = value => JSON.stringify(value, (_key, item) => typeof item === 'bigint' ? item.toString() : item);
 
 function state(locked = true, revision = 0, codeRequired = false) {
   return { entity_id: ENTITY, state: 'off', last_updated: `2026-01-01T00:00:${String(revision).padStart(2, '0')}.000Z`, attributes: {
@@ -60,14 +61,14 @@ test('code is exact dispatch-only data, absent from job, public status, callback
   const result = f.request({ validate(value) { validated.push(value); return { allowed: true }; } });
   assert.equal(f.calls[0].payload.code, SECRET);
   assert.deepEqual(Object.keys(f.calls[0].payload).sort(), ['code', 'entity_id']);
-  assert.equal(JSON.stringify(f.coordinator).includes(SECRET), false);
-  assert.equal(JSON.stringify([f.notifications, validated]).includes(SECRET), false);
+  assert.equal(serialized(f.coordinator).includes(SECRET), false);
+  assert.equal(serialized([f.notifications, validated]).includes(SECRET), false);
   assert.equal(Object.hasOwn(f.coordinator._job, 'code'), false);
   assert.equal(Object.hasOwn(f.coordinator._job.values, 'code'), false);
   f.reject(Error(`upstream echoed ${SECRET}`));
   const outcome = await result;
   assert.equal(outcome.phase, 'failed');
-  assert.equal(JSON.stringify([f.coordinator, f.notifications, outcome]).includes(SECRET), false);
+  assert.equal(serialized([f.coordinator, f.notifications, outcome]).includes(SECRET), false);
 });
 
 test('unknown or missing configured code cannot dispatch; no-code operations omit unsolicited credentials', async () => {
@@ -229,4 +230,21 @@ test('a later provider relock retires the old unlock presentation without changi
   assert.equal(f.coordinator.presentationStatus.phase, 'idle');
   assert.equal(f.coordinator.status, outcome);
   assert.equal(f.calls.length, 1);
+});
+
+test('submillisecond contrary lock reports supersede a match before acknowledgement', async () => {
+  for (const field of ['last_updated', 'last_changed']) {
+    const f = setup();
+    const result = f.request();
+    const observation = (locked, fraction) => ({...state(locked, 0),
+      last_updated: undefined, [field]: `2026-01-01T00:00:01.${fraction}Z`,
+    });
+    f.observe(observation(false, '001100'));
+    f.observe(observation(true, '001900'));
+    f.resolve(); await tick();
+    assert.equal(f.coordinator.status.phase, 'accepted');
+    f.observe(observation(false, '001901'));
+    assert.equal((await result).phase, 'observed');
+    assert.equal(f.calls.length, 1);
+  }
 });

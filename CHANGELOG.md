@@ -1,8 +1,18 @@
 # Changelog
 
-There is no stable release yet. Release candidates are prepared through `develop`; beta.7 remains on `senyo888-patch-1`.
+There is no stable release yet. Future release candidates are prepared through `develop`; beta work uses `senyo888-patch-1`.
 
-## 0.1.0-rc.2 — in preparation
+## 0.1.0-rc.3 — in preparation
+
+- Preserve submillisecond ordering for climate and VT lock reports. A newer contrary report received before acknowledgement prevents an obsolete **Observed** result.
+- Show the thermostat's reported activity when a valve mapping is explicitly disabled, while retaining genuine unavailable or invalid valve states.
+- Keep long titles within the card beside a read-only lock indicator when header telemetry is empty.
+- Prevent delayed synthetic observations from crossing fixture resets, and complete both pending registry reads in the stale-session regression.
+- Retain card types, configuration schemas, command targets and permission checks. This candidate is not published or installed; see the [RC.3 record](docs/rc-3.md).
+
+## 0.1.0-rc.2 — 9 November 2026
+
+Published prerelease; [subsequent validation through 12 November](docs/rc2-validation.md) records scoped Lab/Stable acceptance and remaining limits. The released package is unchanged.
 
 - Integrate the beta.5 disabled-lock correction and beta.6–beta.7 optional switch control with its registry identity checks. Keep schema-1 cards unchanged and require explicit schema-2 enrollment.
 - Retire successful request notices after context loss or contrary provider state; notify presentation consumers and retain report ordering, request outcomes, failure/uncertainty and no-replay guards.
@@ -10,7 +20,7 @@ There is no stable release yet. Release candidates are prepared through `develop
 - Keep dialog drafts from evaluating configuration getters; preserve unknown plain data and disable incomplete configuration exports with an explanation.
 - Align installation guidance with Home Assistant Marketplace while retaining older HACS and immutable RC.1 guidance.
 - Use canonical Wiki links in the repository mirror and check their indexed page targets without implying Wiki publication.
-- Retain Playwright 1.65.0 tooling and RC package identity. RC.2 is not published or installed yet.
+- Retain Playwright 1.65.0 tooling and RC package identity. RC.2 was published on 9 November 2026; subsequent installation and control results are recorded separately above.
 
 ## 0.1.0-rc.1 — 29 October 2026
 

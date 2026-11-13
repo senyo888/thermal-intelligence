@@ -7,7 +7,7 @@
 [![Release candidate 0.1.0-rc.2](https://img.shields.io/badge/Release%20candidate-0.1.0--rc.2-d9a36c)](docs/rc.md)
 [![Project Site](https://img.shields.io/badge/Project%20Site-GitHub%20Pages-5aa8d6)](https://senyo888.github.io/thermal-intelligence/)
 [![Marketplace installation guide](https://img.shields.io/badge/Marketplace-Installation%20guide-41BDF5?logo=home-assistant&logoColor=white)](docs/marketplace.md)
-[![Package version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsenyo888%2Fthermal-intelligence%2Fdevelop%2Fpackage.json&query=%24.version&label=Package%20Version&color=blue)](package.json)
+[![Candidate 0.1.0-rc.3](https://img.shields.io/badge/Candidate-0.1.0--rc.3-blue)](docs/rc-3.md)
 [![Licence GPL-3.0-only](https://img.shields.io/badge/License-GPL--3.0--only-blue)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/senyo888)
 
@@ -15,7 +15,7 @@
 
 Thermal Intelligence brings current and target temperatures, supported thermostat controls and useful room observations into one considered interface. The glass dial, restrained lighting and focused detail panels keep everyday readings clear and further detail close at hand.
 
-**RC.2 is in preparation** for the standalone thermostat card. Start with a standard Home Assistant climate entity or Versatile Thermostat (VT), then choose the readings and controls that suit each room.
+**RC.2 is published as a prerelease** for the standalone thermostat card. Start with a standard Home Assistant climate entity or Versatile Thermostat (VT), then choose the readings and controls that suit each room.
 
 <table>
   <tr><th>Heat requested · rising</th><th>Idle · near target</th></tr>
@@ -31,6 +31,8 @@ Thermal Intelligence brings current and target temperatures, supported thermosta
 </table>
 
 *Selected installation examples. Explore the [state gallery](docs/ui-examples.md) and [image context](docs/image-notes.md).*
+
+**RC.3 is in preparation** with three corrections to request-result ordering and card presentation. See the [candidate record](docs/rc-3.md). Published RC.2 assets and existing installations are unchanged.
 
 ## Every detail has a purpose
 
@@ -82,11 +84,11 @@ TI sends the actions you choose through Home Assistant’s services. Your thermo
 
 ## Installation
 
-For Home Assistant 2026.11 and later, use the [Marketplace installation guide](docs/marketplace.md). RC.2 has not been published yet; the [candidate guide](docs/rc.md) records its preparation and limits. [RC.1](docs/rc-1.md) remains the published prerelease. Keep existing TI resources separate and load one trial module at a time.
+For Home Assistant 2026.11 and later, use the [Marketplace installation guide](docs/marketplace.md) and select **v0.1.0-rc.2** explicitly. The [RC.2 guide](docs/rc.md) records the exact release and rollback requirements. Keep existing TI resources separate and load one trial module at a time.
 
 On older Home Assistant installations, see the [HACS guide](docs/hacs.md). TI is a custom Dashboard repository, not a backend integration. Installer acceptance and catalogue inclusion remain separate from package validation.
 
-[Compatibility and validation](docs/compatibility.md) records the tested versions, RC checks and remaining device coverage. RC.2 is being prepared for further acceptance checks; it is not a stable release.
+[Compatibility and validation](docs/compatibility.md) records tested versions and remaining coverage. [Dated RC.2 results](docs/rc2-validation.md) include a Marketplace Lab installation, bounded two-card controls and a full house-policy Boost cycle with maintainer-observed heating. A recovered external controller incident and incomplete broader acceptance remain explicit. RC.2 is not a stable release.
 
 ## Project direction
 

@@ -1,12 +1,12 @@
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/develop/assets/presentation/wiki-architecture-and-ownership.png" alt="Thermal Intelligence Wiki — Thermal Intelligence in your home" width="100%">
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-architecture-and-ownership.png" alt="Thermal Intelligence Wiki — Thermal Intelligence in your home" width="100%">
 
 # Thermal Intelligence in your home
 
 Thermal Intelligence brings together a selected thermostat and the additional observations you choose. Thermostats and TRVs sit alongside independent room sensors, outdoor data and other integrations in the wider system.
 
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/develop/assets/presentation/ti-ownership.svg" alt="Devices and independent sensors feed Home Assistant, then separate climate and telemetry mappings feed TI. Deliberate commands use a guarded return path." width="100%">
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/ti-ownership.svg" alt="Devices and independent sensors feed Home Assistant, then separate climate and telemetry mappings feed TI. Deliberate commands use a guarded return path." width="100%">
 
-[Open the full-size graph](https://raw.githubusercontent.com/senyo888/thermal-intelligence/develop/assets/presentation/ti-ownership.svg).
+[Open the full-size graph](https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/ti-ownership.svg).
 
 ## Devices and external data
 
@@ -43,4 +43,4 @@ An explicit action captures its thermostat target. TI checks capability and read
 
 House Climate, Effective Mode, Heating Control Centre and a portable TI backend are planned separately from the standalone frontend. Their future contracts will define control ownership and failure behaviour.
 
-[Full architecture contract](https://github.com/senyo888/thermal-intelligence/blob/develop/ARCHITECTURE.md) · [Command contract](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/command-contract.md) · [Provider contracts](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/provider-contracts.md)
+[Full architecture contract](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/ARCHITECTURE.md) · [Command contract](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/command-contract.md) · [Provider contracts](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/provider-contracts.md)

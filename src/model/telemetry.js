@@ -199,7 +199,7 @@ function trendPresentation(row, climate) {
 }
 
 function outputPresentation(valve, climate, connected) {
-  if (valve) {
+  if (valve && valve.status !== 'disabled') {
     const percentage = valve.status === 'available' ? valve.value : null;
     const value = percentage === null ? 'Unavailable' : percentage > 0 && percentage < 1 ? '<1%' : `${Number(percentage.toFixed(1))}%`;
     return { kind: 'trv', icon: 'mdi:pipe-valve', percentage, display: value,

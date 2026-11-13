@@ -72,7 +72,7 @@ An explicitly disabled climate regulation flag yields **disabled** for its mode/
 
 ## Optional telemetry
 
-Telemetry is an explicit per-card list. Its supported configuration is `{kind, entity, attribute?, label?, unit?, max_age_seconds?}`. Kinds are `humidity`, `trend`, `valve`, `energy`, `power` and `custom`. An empty entity represents a disabled row. There is no automatic entity search, private default, or inference from similarly named entities.
+Telemetry is an explicit per-card list. Its supported configuration is `{kind, entity, attribute?, label?, unit?, max_age_seconds?}`. Kinds are `humidity`, `trend`, `valve`, `energy`, `power` and `custom`. An empty entity represents a disabled row. In RC.3, a disabled valve row leaves the thermostat's reported activity visible; it does not imply an unavailable TRV or fall through to another valve mapping. There is no automatic entity search, private default, or inference from similarly named entities.
 
 `attribute` is a dot-separated own-property path. Prototype properties and the keys `__proto__`, `constructor` and `prototype` are rejected. With no attribute, the source is the entity state and its declared `unit_of_measurement`. An attribute requires its own explicit unit for typed numeric telemetry: the parent entity's unit does not necessarily describe a nested value. A configured unit conflicting with a state sensor's unit is invalid; the card does not reinterpret or convert it.
 

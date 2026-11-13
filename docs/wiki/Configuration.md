@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/develop/assets/presentation/wiki-configuration.png" alt="Thermal Intelligence Wiki — Configure your card" width="100%">
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-configuration.png" alt="Thermal Intelligence Wiki — Configure your card" width="100%">
 
 # Configure your card
 
@@ -11,7 +11,7 @@ After installing the selected RC module, then choose **Add Card → Thermal Inte
 - **Humidity guides:** choose four boundaries for too dry, the good range and too wet. These change display colours only. Save through the visual card editor; the in-card adjustment panel provides a draft to copy.
 - **Response arc:** optional read-only VT mappings support the corroborated warming indication. A valve percentage alone does not provide that evidence.
 
-[Full configuration reference and examples](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/card-configuration.md) · [Response-source setup](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/card-configuration.md#temperature-response-arc)
+[Full configuration reference and examples](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/card-configuration.md) · [Response-source setup](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/card-configuration.md#temperature-response-arc)
 
 <details>
 <summary>VT Presence and Motion</summary>
@@ -25,12 +25,12 @@ Presence selects home/away preset temperatures. VT Motion selects motion/no-moti
 
 <img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/thermostat-expanded.png" alt="Beta component with expanded controls" width="290"> <img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/preset-details.png" alt="Beta preset temperatures panel" width="290">
 
-Actual beta.2 captures with synthetic data, illustrating controls retained in later candidates. [Image notes](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/image-notes.md).
+Actual beta.2 captures with synthetic data, illustrating controls retained in later candidates. [Image notes](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/image-notes.md).
 
 </details>
 
-Saved schema-1 configurations remain valid in RC.2. Unknown fields survive editor round trips; preserving a field does not make an unsupported option operational. [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/migration.md).
+Saved schema-1 configurations remain valid in RC.2. Unknown fields survive editor round trips; preserving a field does not make an unsupported option operational. [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/migration.md).
 
 ## Optional switch control
 
-Available from beta.6 and retained in beta.7 and RC.2, the card offers one explicitly enabled switch beside Mode/Fan for a registered standard thermostat. Its visual editor requires enrollment and runtime confirmation in both directions. It needs no TI controller. Released RC.1 and beta.5 do not include it. See the [optional-control guide](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/optional-switch-control.md) for the exact schema, Honeywell Off behavior, restrictions and configuration-plus-module rollback.
+Available from beta.6 and retained in beta.7 and RC.2, the card offers one explicitly enabled switch beside Mode/Fan for a registered standard thermostat. Its visual editor requires enrollment and runtime confirmation in both directions. It needs no TI controller. Released RC.1 and beta.5 do not include it. See the [optional-control guide](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/optional-switch-control.md) for the exact schema, Honeywell Off behavior, restrictions and configuration-plus-module rollback.

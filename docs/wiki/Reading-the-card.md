@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/develop/assets/presentation/wiki-reading-the-card.png" alt="Thermal Intelligence Wiki — Reading the card" width="100%">
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-reading-the-card.png" alt="Thermal Intelligence Wiki — Reading the card" width="100%">
 
 # Reading the card
 
@@ -19,7 +19,7 @@ The everyday view stays simple: the room temperature, your target, a clear statu
 
 The outer arc, slope ring and activity chip are deliberately independent: the arc combines the room's state with corroborated temperature response, the fine ring shows measured temperature slope, and the chip reports activity. Idle is a reported activity, not a universal arc colour. A rising temperature slope can continue after the valve closes; the closed TRV does not establish an orange response arc.
 
-**Orange has a specific meaning.** With the optional VT response sources configured, the room must be below its effective target, the current heat request must be accepted, and fresh room and trend readings must agree that it is warming. An open valve or a heating request alone is insufficient. When those observations expire, the arc returns to blue and the LED overview explains why. Standard thermostats and cards without response mappings retain the temperature comparison and reported cooling colours; they do not invent accepted-output evidence. [Response setup and colour meanings](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/card-configuration.md#temperature-response-arc).
+**Orange has a specific meaning.** With the optional VT response sources configured, the room must be below its effective target, the current heat request must be accepted, and fresh room and trend readings must agree that it is warming. An open valve or a heating request alone is insufficient. When those observations expire, the arc returns to blue and the LED overview explains why. Standard thermostats and cards without response mappings retain the temperature comparison and reported cooling colours; they do not invent accepted-output evidence. [Response setup and colour meanings](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/card-configuration.md#temperature-response-arc).
 
 The staggered glint of the small lights around the dial and the slope ring's gentle breathing preserve the original glass-and-light character. They add depth without replacing readable values or status text, and respect reduced-motion preferences.
 
@@ -37,7 +37,7 @@ The staggered glint of the small lights around the dial and the slope ring's gen
 
 Each configured icon combines a compact reading with colour that follows its meaning. Humidity follows your display bands; window, presence and motion distinguish **Open/Closed**, **Home/Away** and **Detected/Clear**; supported presets retain their own Frost, Eco, Comfort and Boost colours. Active, inactive and unknown observations receive distinct treatments, with missing information muted.
 
-Choose which readings appear, their order, labels and icons for each card. Humidity, temperature, valve position and provider features can sit beside the room name without filling the main dial with detail. Tap a reading for its focused panel or Home Assistant source details. The compact VT lock indicates its reported state and opens [Lock/Unlock controls](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/lock-control.md) for verified administrators when supported.
+Choose which readings appear, their order, labels and icons for each card. Humidity, temperature, valve position and provider features can sit beside the room name without filling the main dial with detail. Tap a reading for its focused panel or Home Assistant source details. The compact VT lock indicates its reported state and opens [Lock/Unlock controls](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/lock-control.md) for verified administrators when supported.
 
 **Humidity presentation is customisable.** Set four boundaries for too dry, the start and end of your good range, and too wet. The display uses blue, amber, green, amber and red bands, with a reading and explanation in the humidity panel. These are visual preferences for this card; they do not change heating or humidity control. Save them through Home Assistant's visual card editor; the in-card adjustment panel provides a draft to copy.
 
@@ -52,7 +52,7 @@ Choose which readings appear, their order, labels and icons for each card. Humid
   </tr>
 </table>
 
-The window panel separates detector state, configured response and reported valve opening. The lock dialog exposes the provider's scope and explicit action; a code field appears only when VT reports a configured code. [Lock behavior and limits](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/lock-control.md).
+The window panel separates detector state, configured response and reported valve opening. The lock dialog exposes the provider's scope and explicit action; a code field appears only when VT reports a configured code. [Lock behavior and limits](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/lock-control.md).
 
 *Left: anonymised installation example, source build unrecorded. Right: actual beta.2 component with synthetic data and no configured code.*
 
@@ -75,6 +75,6 @@ This keeps occasional settings close without putting every control on the everyd
   </tr>
 </table>
 
-*These beta.2 captures use synthetic data and illustrate controls retained in RC.1; the current response-arc behaviour is described above.*
+*These beta.2 captures use synthetic data and illustrate controls retained in RC.2; the current response-arc behaviour is described above.*
 
 </details>

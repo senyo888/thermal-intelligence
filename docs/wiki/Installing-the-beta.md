@@ -1,14 +1,14 @@
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/develop/assets/presentation/wiki-installing-the-beta.png" alt="Thermal Intelligence Wiki — Historical beta installation" width="100%">
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-installing-the-beta.png" alt="Thermal Intelligence Wiki — Historical beta installation" width="100%">
 
 # Beta.4 installation record
 
-For the current candidate, see [RC.2 preparation](https://github.com/senyo888/thermal-intelligence/wiki/Installing-the-release-candidate). This page preserves the exact beta.4 artifact and its historical validation. The [beta.7 guide](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/beta-7.md) records the later untagged beta package.
+For the current candidate, see [RC.2 prerelease](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/rc.md). This page preserves the exact beta.4 artifact and its historical validation. The [beta.7 guide](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/beta-7.md) records the later untagged beta package.
 
-Version **0.1.0-beta.4**, source commit `ea1268ac7a8dc5aa7f54723870808bf24a92cdc0`. This is a frontend module for controlled testing, with no TI backend required. Manual installation and rollback have been tested; see [compatibility](https://github.com/senyo888/thermal-intelligence/blob/main/docs/compatibility.md) for version coverage and remaining limits.
+Version **0.1.0-beta.4**, source commit `ea1268ac7a8dc5aa7f54723870808bf24a92cdc0`. This is a frontend module for controlled testing, with no TI backend required. Manual installation and rollback have been tested; see [compatibility](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/compatibility.md) for version coverage and remaining limits.
 
 ## Get the exact package
 
-Use the [reviewed source commit](https://github.com/senyo888/thermal-intelligence/tree/ea1268ac7a8dc5aa7f54723870808bf24a92cdc0) on `senyo888-patch-1`. The [compiled module](https://raw.githubusercontent.com/senyo888/thermal-intelligence/ea1268ac7a8dc5aa7f54723870808bf24a92cdc0/dist/thermal-intelligence.js) is **176,381 bytes**, SHA-256:
+Use the [reviewed source commit](https://github.com/senyo888/thermal-intelligence/tree/ea1268ac7a8dc5aa7f54723870808bf24a92cdc0). It was published through `senyo888-patch-1`; use the exact commit rather than the current branch tip. The [compiled module](https://raw.githubusercontent.com/senyo888/thermal-intelligence/ea1268ac7a8dc5aa7f54723870808bf24a92cdc0/dist/thermal-intelligence.js) is **176,381 bytes**, SHA-256:
 
 ```text
 3d58fcddbeaf72b9f9927e67b04269f78d6e69d0b09460cfd06b12b1ed575a2c
@@ -32,7 +32,7 @@ Choose an unused output directory. The package contains `thermal-intelligence.js
 4. Reload the frontend or open a fresh browser session. In Add Card, select **Thermal Intelligence Thermostat · Beta** and choose a test thermostat in the visual editor.
 5. Check current readings, source details, readiness and available controls before making an intentional thermostat change.
 
-The beta type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`. No legacy alias is registered. Separate technical names preserve coexistence. The beta includes an explicit administrator [lock dialog](https://github.com/senyo888/thermal-intelligence/blob/main/docs/lock-control.md) in the card layout; ordinary accounts retain the read-only indicator. The beta retains the [response arc](https://github.com/senyo888/thermal-intelligence/blob/main/docs/card-configuration.md#temperature-response-arc) through optional, read-only VT evidence mappings. Schedules, holds, cutoff and recovery controls are outside this standalone beta.
+The beta type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`. No legacy alias is registered. Separate technical names preserve coexistence. The beta includes an explicit administrator [lock dialog](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/lock-control.md) in the card layout; ordinary accounts retain the read-only indicator. The beta retains the [response arc](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/card-configuration.md#temperature-response-arc) through optional, read-only VT evidence mappings. Schedules, holds, cutoff and recovery controls are outside this standalone beta.
 
 When updating an existing beta, retain its versioned file and change only its beta resource URL to the new file. Do not add a second registration or overwrite the legacy TI resource. Saved schema-1 card configurations need no migration. Reload into a fresh browser document after changing the resource.
 
@@ -52,6 +52,6 @@ VT may explicitly report no Off reason or Mode reason. Those two null values now
 
 The exact bundle passed 135 unit tests, 81 browser tests and 5 packaging tests, with reproducible build and secret/privacy checks. Manual update, rollback to beta.3 and reapplication were exercised on HA 2026.10.0 with VT 10.5.1. Passive frontend checks also covered HA 2026.10.4 with VT 10.5.1.
 
-Physical heating, native phone/tablet use, a minimum version range and the HACS lifecycle remain unverified. Response-arc positive cases and lock-code error paths have synthetic coverage only. Read [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/main/docs/compatibility.md) and [VT lock limits](https://github.com/senyo888/thermal-intelligence/blob/main/docs/lock-control.md) before testing those features.
+Physical heating, native phone/tablet use, a minimum version range and the HACS lifecycle remain unverified. Response-arc positive cases and lock-code error paths have synthetic coverage only. Read [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/compatibility.md) and [VT lock limits](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/lock-control.md) before testing those features.
 
-This is an untagged beta, not a stable release. The package remains on `senyo888-patch-1`; HACS support is planned separately.
+This is an untagged beta, not a stable release. The historical package remains available at the recorded commit. Installer support was outside that beta trial.

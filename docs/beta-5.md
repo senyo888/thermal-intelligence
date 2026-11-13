@@ -1,6 +1,6 @@
 # Beta.5 disabled-lock candidate
 
-Version **0.1.0-beta.5** is an untagged frontend candidate on `senyo888-patch-1`. It fixes VT locking reported disabled while an older locked flag remains. The published `v0.1.0-rc.1` and its assets are unchanged. No new controller or backend is required.
+Version **0.1.0-beta.5** was published as an untagged frontend candidate through `senyo888-patch-1`. It fixes VT locking reported disabled while an older locked flag remains. The published `v0.1.0-rc.1` and its assets are unchanged. No new controller or backend is required.
 
 ## Behavior
 
