@@ -75,6 +75,6 @@ This keeps occasional settings close without putting every control on the everyd
   </tr>
 </table>
 
-*These beta.2 captures use synthetic data and illustrate controls retained in RC.1; the current response-arc behaviour is described above.*
+*These beta.2 captures use synthetic data and illustrate controls retained in RC.2; the current response-arc behaviour is described above.*
 
 </details>

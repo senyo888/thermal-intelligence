@@ -1,11 +1,11 @@
 name: Configuration help
-description: Ask about beta installation or card configuration.
+description: Ask about installation or card configuration.
 title: "[Help] "
 body:
   - type: markdown
     attributes:
       value: |
-        TI is available as a manual-install beta. Describe the guide and exact version you are using.
+        TI v0.1.0-rc.2 is a prerelease available through Marketplace or manual installation. Describe the guide and exact version you are using.
         Share only a minimal redacted configuration, never tokens, private URLs or a full HA backup.
   - type: textarea
     id: goal
@@ -17,7 +17,7 @@ body:
     id: setup
     attributes:
       label: Versions and setup
-      description: TI commit, HA/provider versions, install method, resource loading and browser/Companion. Mark anything not applicable.
+      description: TI version or commit, HA/provider versions, Marketplace (formerly HACS) or manual installation, resource loading and browser/Companion. Mark anything not applicable.
     validations:
       required: true
   - type: textarea
