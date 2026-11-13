@@ -1,6 +1,6 @@
 # Contributing to Thermal Intelligence
 
-Open feature and fix pull requests against `develop`; beta packages use `senyo888-patch-1`. `main` carries documentation, the website and a separately reviewed frozen distribution snapshot. RC.2 is published from `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`; RC.3 candidate source `253d7ac8d001443290c000bd1725f5e87004d94a` is adopted in `develop`. Main promotion and tagged publication are separate steps. There is no stable release yet.
+Open feature and fix pull requests against `develop`; beta packages use `senyo888-patch-1`. `main` carries documentation, the website and a separately reviewed frozen distribution snapshot. RC.2 is published from `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`. The original RC.3 candidate `253d7ac8d001443290c000bd1725f5e87004d94a` was adopted in `develop`; corrected source `256e59d262ae759469e3d605cc61c1378ee5156b` is proposed for main promotion and is not yet adopted in `develop`. Main promotion and tagged publication are separate steps. There is no stable release yet.
 
 Read [Architecture](ARCHITECTURE.md) and [AGENTS.md](AGENTS.md). Keep changes focused and describe the problem, resulting behaviour and checks actually run. Update configuration, compatibility, migration and release notes when affected.
 
