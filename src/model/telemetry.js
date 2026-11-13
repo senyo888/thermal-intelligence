@@ -149,7 +149,7 @@ export function buildSourceTelemetry(hass, config, climate, now, connected) {
       activityLabel: preset ? 'Preset selected' : row.kind === 'humidity' ? row.status === 'available' ? row.bandStatus.label : row.status.charAt(0).toUpperCase() + row.status.slice(1) : '', topic: row.topic || (row.kind === 'humidity' ? 'humidity' : 'entity'), preset,
     };
   }).filter(Boolean);
-  const trend = trendPresentation(trendSource, climate);
+  const trend = trendPresentation(trendSource, climate, connected);
   const output = outputPresentation(valve, climate, connected);
   const arc = buildResponseArc({ hass, config, climate, trendSource, valve, now, connected });
   return { telemetry, humidity, features: featureRows, headerTelemetry, presetReadings, trend, output, arc };
@@ -179,12 +179,12 @@ function buildPresetReadings(features, config, climate, connected) {
   }));
 }
 
-function trendPresentation(row, climate) {
+function trendPresentation(row, climate, connected) {
   const value = row?.value ?? null, unit = row?.unit ?? null;
   const fahrenheit = typeof unit === 'string' && unit.startsWith('°F');
   const hourly = typeof unit === 'string' && unit.endsWith('/min') ? value * 60 : value;
   const validRate = Number.isFinite(hourly);
-  const available = row?.status === 'available' && validRate && climate.ready && climate.current !== null;
+  const available = row?.status === 'available' && validRate && connected && climate.available && Number.isFinite(climate.current);
   const stable = fahrenheit ? 0.09 : 0.05, rapid = fahrenheit ? 4.5 : 2.5;
   const label = !available ? 'Trend unavailable' : Math.abs(hourly) <= stable ? 'Stable' : hourly > 0 ? 'Rising' : 'Falling';
   const color = !available ? '#8795a8' : hourly === 0 ? '#c4d4e7' : Math.abs(hourly) <= stable ? '#62e3b0' : hourly > rapid ? '#ff5252' : hourly > 0 ? '#ff962e' : hourly < -rapid ? '#4169ff' : '#32bfff';

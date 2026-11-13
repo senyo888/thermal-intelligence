@@ -94,6 +94,20 @@ export function quantize(value, min, max, step) {
   return Number(result.toFixed(digits));
 }
 
+/** First or last min-anchored grid point inside this endpoint's allowed interval. */
+export function targetBoundary(model, key, end) {
+  if (!model?.canSet || !model.keys?.includes(key)) throw new Error('Temperature control is unavailable.');
+  const { min, max, step } = model;
+  const lower = model.ranged && key === 'target_temp_high' ? model.targets.target_temp_low : min;
+  const upper = model.ranged && key === 'target_temp_low' ? model.targets.target_temp_high : max;
+  const first = Math.ceil((lower - min) / step - 1e-9);
+  const last = Math.floor((upper - min) / step + 1e-9);
+  if (first > last) throw new Error('No valid temperature step within this range.');
+  const value = quantize(min + (end ? last : first) * step, min, max, step);
+  if (value < lower || value > upper) throw new Error('No valid temperature step within this range.');
+  return value;
+}
+
 /** Return temperature parameters only. The dispatcher owns the captured entity ID. */
 export function targetPayload(model, key, proposedValue) {
   if (!model?.canSet || !model.keys?.includes(key)) throw new Error(model?.reason || 'Temperature control is unavailable.');

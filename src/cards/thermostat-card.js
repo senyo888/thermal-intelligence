@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { normalizeConfig, snapshotDialogConfig, CARD_TYPE, EDITOR_TAG } from '../model/config.js';
-import { buildModel, targetPayload, quantize } from '../model/climate.js';
+import { buildModel, targetPayload, targetBoundary, quantize } from '../model/climate.js';
 import { CommandCoordinator } from '../commands/coordinator.js';
 import { styles, mappedControlStyles } from './styles.js';
 import { renderCard } from './source-view.js';
@@ -97,25 +97,32 @@ export class ThermalIntelligenceCard extends HTMLElement {
     if (!hass || !entity) { this._registryStatus = 'idle'; return; }
     this._syncIdentityContext();
     const key = `${entity}|${this._configRevision}`;
-    if (this._registryKey === key) return;
+    if (this._registryKey !== key) {
+      this._registryKey = key; this._registryAttempts = 0; this._registryRetryAt = 0; this._registryStatus = 'idle';
+    }
+    if (this._registryStatus === 'verified' || this._registryStatus === 'loading') return;
     if (this._knownVT.has(entity)) this._identity = { entity_id: entity, platform: 'versatile_thermostat' };
     if (hass.connected !== true) { this._registryStatus = 'unavailable'; return; }
-    this._registryKey = key;
     const cached = hass.entities?.[entity];
-    if (cached?.entity_id === entity && typeof cached.platform === 'string') {
+    if (cached?.entity_id === entity && typeof cached.platform === 'string' && cached.platform.trim()) {
       this._acceptIdentity(cached); return;
     }
     if (typeof hass.callWS !== 'function') { this._registryStatus = 'unavailable'; return; }
+    // Only later hass updates trigger retries. A valid cache may recover even
+    // after the three-attempt budget; never poll or replay a thermostat command.
+    if (this._registryAttempts >= 3 || Date.now() < this._registryRetryAt) return;
+    this._registryAttempts++;
     const session = this._session();
     const token = ++this._identityToken; this._registryStatus = 'loading';
     try {
       const entry = await hass.callWS({ type: 'config/entity_registry/get', entity_id: entity });
       if (token !== this._identityToken || !this._sameSession(session, this._session()) || this.config.entity !== entity) return;
-      if (entry?.entity_id !== entity || typeof entry.platform !== 'string') throw new Error('Invalid identity');
+      if (entry?.entity_id !== entity || typeof entry.platform !== 'string' || !entry.platform.trim()) throw new Error('Invalid identity');
       this._acceptIdentity(entry);
     } catch {
       if (token !== this._identityToken || !this._sameSession(session, this._session())) return;
       this._registryStatus = 'unavailable';
+      this._registryRetryAt = Date.now() + 1000 * 2 ** (this._registryAttempts - 1);
     }
     this._updateContext(); this._scheduleRender();
   }
@@ -124,6 +131,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     if (entry.platform === 'versatile_thermostat') this._knownVT.add(entry.entity_id);
     else this._knownVT.delete(entry.entity_id);
     this._registryStatus = 'verified';
+    this._registryAttempts = 0; this._registryRetryAt = 0;
   }
   model() { return buildModel(this._hass ?? {}, this.config, this._identity); }
   _guard(model = this.model()) {
@@ -284,8 +292,10 @@ export class ThermalIntelligenceCard extends HTMLElement {
       if (this._drag || (event.repeat && !this._draftContext)) return;
       if (!this._draftContext) { this._activeTarget = key; this._startDraft(current); }
       if (!this._draftStillValid(current)) { this._cancelDraft(); this._scheduleRender(); return; }
-      const next = event.key === 'Home' ? current.min : event.key === 'End' ? current.max : value+amounts[event.key];
-      try { this._draft = targetPayload(current,key,next)[key]; this._paintDraft(this._draft); this._activity(); }
+      try {
+        const next = ['Home','End'].includes(event.key) ? targetBoundary(current,key,event.key === 'End') : value+amounts[event.key];
+        this._draft = targetPayload(current,key,next)[key]; this._paintDraft(this._draft); this._activity();
+      }
       catch { this._cancelDraft(); this._scheduleRender(); }
     };
     marker.onkeyup = event => {

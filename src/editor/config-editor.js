@@ -669,14 +669,17 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
       type: 'number', min: 0, max: 100, step: legacy ? 'any' : 1,
       onChange: (value) => {
         const current = this._draft.humidity_bands === undefined ? { ...HUMIDITY_DEFAULTS } : this._draft.humidity_bands;
-        this._change(['humidity_bands'], { ...current, [key]: value }, { open: 'advanced' });
+        this._change(['humidity_bands'], { ...current, [key]: value }, { field: `humidity_bands.${key}`, open: 'advanced' });
       },
     }));
     stack.append(element('p', 'hint', legacy ? 'Legacy two-bound format is preserved explicitly. Reset to source defaults to use the original five display bands. These are local display guides, not HI targets or control thresholds.' : 'Original five-band humidity display guides default to 30, 40, 60 and 70%. All four ordered integer boundaries must be valid. These are local display guides, not HI targets or control thresholds.'));
     stack.append(bandGrid);
     stack.append(this._button('Reset humidity guides to source defaults', 'clear-humidity-bands', () => {
       const preserved = { ...(this._draft.humidity_bands ?? {}) };
-      for (const key of [...HUMIDITY_KEYS, 'low', 'high']) delete preserved[key];
+      for (const key of [...HUMIDITY_KEYS, 'low', 'high']) {
+        delete preserved[key];
+        this._buffers.delete(`humidity_bands.${key}`);
+      }
       this._change(['humidity_bands'], Object.keys(preserved).length ? { ...preserved, ...HUMIDITY_DEFAULTS } : undefined, { open: 'advanced', rerender: true, focus: 'humidity_bands.dry_below' });
     }, { disabled: this._draft.humidity_bands === undefined }));
     section.append(stack);
