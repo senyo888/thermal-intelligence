@@ -9,7 +9,8 @@ RC.3 is an unpublished candidate for the standalone thermostat card. It corrects
 - A long heading remains within the card beside a read-only lock indicator when header telemetry is empty, including phone, tablet and desktop layouts.
 - The general humidity dialog follows its configured humidity source; individual header readings retain their own sources. Resetting humidity guides clears their edited fields while preserving unrelated and unknown configuration.
 - Failed provider identity reads can recover through matching cache evidence or at most two later, delayed reads. Session isolation and provider restrictions remain enforced; recovery sends no commands.
-- Home and End respect the selected range endpoint's valid step bounds. The unchanged sibling and complete request still pass the existing final validation.
+- Range drags and repeated keyboard adjustments stop at the selected endpoint's valid step bounds, preserving the draft when it reaches its sibling. Home and End use the same bounds. The unchanged sibling and complete request still pass the existing final validation.
+- If clipboard access is denied, the manual humidity copy field follows the current draft, including edits made while clipboard access was pending. Invalid boundaries clear and disable that field until corrected. Draft editing never saves configuration or sends a command.
 - Valid measured trend remains visible under user locking or unavailable control readiness. Connection, climate and sensor validity still govern observation availability; command permissions are unchanged.
 
 The synthetic fixture also discards observations from a scenario replaced by reset, and the registry regression completes both pending reads before testing stale-session rejection. These test corrections do not change runtime services.
@@ -41,9 +42,11 @@ The output directory must not exist. Packaging reads committed blobs and emits o
 
 ## Validation limits
 
-Regression coverage includes the climate/lock match-then-contrary ordering boundary, disabled direct and typed valve mappings, read-only heading geometry at 390/768/1440 pixels, fixture resets, bounded registry recovery and stale replies, humidity source/reset behavior, range Home/End and locked trend observations. The corrected candidate passed 171 unit tests, 118 Chromium browser tests, 13 package tests, eight distribution tests and fourteen foundation regressions. Foundation/link, public-data and whitespace checks passed. These are source and synthetic browser results, not installation acceptance.
+Regression coverage includes the climate/lock match-then-contrary ordering boundary, disabled direct and typed valve mappings, read-only heading geometry at 390/768/1440 pixels, fixture resets, bounded registry recovery and stale replies, humidity source/reset and manual-copy behavior, range keyboard/drag boundaries and locked trend observations. The corrected candidate passed 171 unit tests, 125 Chromium browser tests, 13 package tests, eight distribution tests and fourteen foundation regressions. These are source and synthetic browser results, not installation acceptance.
 
 An earlier RC.3 build rendered in a bounded passive Lab trial, but independent observation lost freshness during browser work. It was rolled back to RC.2. The failed coverage and that build's partial results do not establish acceptance of the corrected candidate.
+
+The later candidate `256e59d262ae759469e3d605cc61c1378ee5156b` passed bounded passive Lab checks on 13 November and remains selected there through a manual resource overlay. That dated result covers its own bytes; it does not cover the subsequent range-boundary and manual-copy corrections described here. The latest corrected package requires fresh Lab acceptance. Marketplace still records RC.2.
 
 RC.2's Marketplace installation, bounded controls and maintainer-observed heating are historical RC.2 results. RC.3 still needs its own named-release installation and bounded acceptance. Physical mobile/Companion coverage, wider provider qualification, installer update/removal/recovery, backup restore rehearsal and a formal soak remain separate gaps. Service acknowledgement, provider observation, valve position and physical heating are distinct evidence.
 
