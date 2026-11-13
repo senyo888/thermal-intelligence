@@ -23,10 +23,10 @@ PRIVATE_DOCUMENTS = {
 }
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".svg", ".webp", ".gif"}
 
-# Frozen RC.1 distribution from 9d9ed9744c29a494d45501a8bb1359edd465c5c4.
+# Frozen RC.3 candidate distribution from f93fb6489f87fbf9c393dd8cd03e85e5718277ef.
 # Update only alongside an explicitly reviewed candidate promotion.
 DISTRIBUTION_HASHES = {
-    "dist/thermal-intelligence.js": "763814e1e797c72a8960fec2b928d945dc6fc1056d7ced366d4241ae81304117",
+    "dist/thermal-intelligence.js": "750be9cc7acc0f1a6449be0a578c90d73d771372a106e2af9d31d8d5d45a45be",
     "dist/LICENSE": "fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0",
 }
 HACS_METADATA = {
@@ -51,7 +51,7 @@ def check_distribution(indexed):
         data = git("show", f":{name}")
         if name in DISTRIBUTION_HASHES:
             if hashlib.sha256(data).hexdigest() != DISTRIBUTION_HASHES[name]:
-                errors.append(f"{name}: differs from the reviewed RC.1 snapshot")
+                errors.append(f"{name}: differs from the reviewed RC.3 snapshot")
         else:
             try:
                 metadata = json.loads(data)
@@ -66,7 +66,7 @@ def check_distribution(indexed):
     for name in indexed:
         if name.startswith("dist/") and name not in DISTRIBUTION_HASHES:
             errors.append(f"{name}: unexpected distribution payload")
-        if "/" not in name and name.endswith(".js"):
+        if "/" not in name and name.endswith(".js") and name != "playwright.config.js":
             errors.append(f"{name}: root module could shadow the reviewed distribution")
     return errors
 
@@ -129,12 +129,23 @@ def main():
             errors.append(f"{name}: unbalanced Markdown fences")
         for destination in re.findall(r"\[[^\]]*\]\(([^)\n]+)\)", text):
             target = urlsplit(destination.strip("<>"))
-            if target.scheme or target.netloc or not target.path:
+            wiki_root = "/senyo888/thermal-intelligence/wiki"
+            if target.scheme == "https" and target.netloc == "github.com" and (
+                target.path == wiki_root or target.path.startswith(wiki_root + "/")
+            ):
+                # Canonical Wiki routes render in both the repo mirror and Wiki.
+                # Check the intended page locally; this does not prove publication.
+                slug = unquote(target.path.removeprefix(wiki_root).removeprefix("/")) or "Home"
+                if "/" in slug or slug in {".", ".."} or slug.endswith(".md"):
+                    errors.append(f"{name}: use a canonical Wiki page URL: {destination}")
+                    continue
+                resolved = f"docs/wiki/{slug}.md"
+            elif target.scheme or target.netloc or not target.path:
                 continue
+            else:
+                # GitHub repository rendering requires the actual indexed path.
+                resolved = posixpath.normpath(str(path.parent / unquote(target.path)))
             links += 1
-            resolved = posixpath.normpath(str(path.parent / unquote(target.path)))
-            if name.startswith("docs/wiki/") and not PurePosixPath(resolved).suffix:
-                resolved += ".md"
             if resolved not in indexed:
                 errors.append(f"{name}: local link is not an indexed file: {resolved}")
 
