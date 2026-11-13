@@ -60,11 +60,13 @@ The earlier local preview's `theme` option is no longer the appearance control. 
 
 Identity lookup is tied to the active connection, socket and user session. A session change invalidates the previous lookup; reconnecting retries identity checks without replaying commands. Remembered VT restrictions stay scoped to their connection, preventing an unavailable lookup from silently relaxing a known provider's readiness requirements.
 
+In the unpublished RC.3 candidate, a failed lookup can recover from matching frontend registry metadata. Otherwise, later HA updates allow at most two additional reads after one-second and two-second cooldowns within the same entity/configuration/session. There is no background retry loop. Exhausted or malformed evidence remains unavailable until valid metadata or a new context arrives; recovery never sends a thermostat command.
+
 VT requires literal boolean `is_ready: true`. Unknown readiness, initialization in progress, applicable user locking, an unavailable climate entity or a disconnected session disables dependent controls. The model does not relax these restrictions to make a control appear usable.
 
 Temperature units come from HA's configured display unit (`°C` or `°F`). Limits, targets and advertised step come from the climate entity. If no step is advertised, `step` supplies a fallback; if neither exists, the display increment is `0.5°C` or `1°F`. A malformed advertised step does not silently fall back. The details view identifies the step's source.
 
-The card quantizes target edits to the valid step grid within the provider limits. A range edit preserves the other endpoint and cannot cross it. Unknown units or invalid temperature data disable temperature editing; independently valid mode or preset controls can remain available. No configuration option invents a temperature range, preset, fan mode or swing capability.
+The card quantizes target edits to the valid step grid within the provider limits. A range edit preserves the other endpoint and cannot cross it. In RC.3, Home and End choose the first and last feasible step for the selected endpoint. If a provider reports an off-grid sibling, the draft still respects it, but the final request remains blocked unless the complete payload satisfies the existing step validation. Unknown units or invalid temperature data disable temperature editing; independently valid mode or preset controls can remain available. No configuration option invents a temperature range, preset, fan mode or swing capability.
 
 Frost is selectable only if the provider advertises its exact preset value. For example, `preset_labels: {frost: Frost}` changes that value's display label; it neither creates Frost support nor maps an unrelated preset to a different service value. Preset `none` and a coincident target temperature do not establish manual ownership or the absence of a schedule.
 
@@ -101,7 +103,7 @@ features:
     icon: mdi:sofa
 ```
 
-Measured temperature trend retains the existing TI labels and colours. Values within `±0.05°C/hour` or `±0.09°F/hour` display **Stable**; positive values display **Rising**, negative values **Falling**. The original stronger trend colours apply beyond `±2.5°C/hour` or `±4.5°F/hour`. Per-minute readings use the equivalent hourly rate for this display classification and retain their reported unit. This describes measured temperature change only; it is not HI Stability or proof of heating response. The trend surface is unavailable when its source, current temperature or thermostat readiness is unavailable.
+Measured temperature trend retains the existing TI labels and colours. Values within `±0.05°C/hour` or `±0.09°F/hour` display **Stable**; positive values display **Rising**, negative values **Falling**. The original stronger trend colours apply beyond `±2.5°C/hour` or `±4.5°F/hour`. Per-minute readings use the equivalent hourly rate for this display classification and retain their reported unit. This describes measured temperature change only; it is not HI Stability or proof of heating response. In RC.3, the trend surface requires a connected session, an available climate entity, finite current temperature and a valid available trend source. User locks and unknown control readiness do not hide valid observations and still block dependent commands. Published RC.2 also requires thermostat readiness for this trend surface.
 
 **TRV** stands for **thermostatic radiator valve**. An explicitly mapped valve source retains **TRV Open/Closed** and its reported percentage. An open valve does not establish boiler firing or heat delivery. Without a valve mapping, the output summary uses the selected climate entity's reported activity; known VT heating remains **Heat requested**.
 

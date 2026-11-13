@@ -5,9 +5,12 @@
 - Preserve submillisecond ordering when climate or VT lock reports contradict an earlier match before acknowledgement.
 - Show thermostat-reported activity when a valve mapping is explicitly disabled.
 - Keep long headings within read-only-lock layouts without header telemetry.
+- Keep general humidity details aligned with their mapped source and reset edited boundaries without clearing unrelated configuration.
+- Recover from failed registry reads with a bounded retry budget and matching cached evidence, preserving session and provider restrictions.
+- Respect range Home/End bounds and keep valid measured trend visible while controls remain locked.
 - Isolate delayed synthetic observations across fixture resets and complete both stale registry reads in the rejection regression.
 
-Configuration schemas and trial registrations are unchanged. See the [candidate record](docs/rc-3.md); no RC.3 installation or live acceptance is claimed here.
+Configuration schemas and trial registrations are unchanged. See the [candidate record](docs/rc-3.md); the corrected module passed bounded passive manual Lab acceptance on 13 November. Named-release Marketplace acceptance remains separate; an earlier build was rolled back after observation lost freshness.
 
 There is no stable release yet. Future release candidates are prepared through `develop`; beta work uses `senyo888-patch-1`.
 
