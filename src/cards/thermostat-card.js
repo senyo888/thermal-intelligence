@@ -242,6 +242,10 @@ export class ThermalIntelligenceCard extends HTMLElement {
     });
     this.shadowRoot.querySelector('.dial > svg')?.classList.add('adjusting');
   }
+  _boundedDraft(model, key, proposed) {
+    const lower = targetBoundary(model, key, false), upper = targetBoundary(model, key, true);
+    return targetPayload(model, key, Math.max(lower, Math.min(upper, proposed)))[key];
+  }
   _bindMarker(marker, model) {
     if (!model.canSet || !this._guard(model).allowed || this._coordinator.busy) return;
     const key = marker.dataset.marker;
@@ -267,7 +271,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
       drag.offset = Math.max(0,Math.min(270,drag.offset+(angle-drag.lastAngle+540)%360-180)); drag.lastAngle = angle;
       const current = this.model();
       try {
-        this._draft = targetPayload(current,key,current.min+drag.offset/270*(current.max-current.min))[key];
+        this._draft = this._boundedDraft(current,key,current.min+drag.offset/270*(current.max-current.min));
         this._paintDraft(this._draft); return true;
       } catch { this._cancelDraft('The temperature draft is no longer valid.'); this._scheduleRender(); return false; }
     };
@@ -294,7 +298,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
       if (!this._draftStillValid(current)) { this._cancelDraft(); this._scheduleRender(); return; }
       try {
         const next = ['Home','End'].includes(event.key) ? targetBoundary(current,key,event.key === 'End') : value+amounts[event.key];
-        this._draft = targetPayload(current,key,next)[key]; this._paintDraft(this._draft); this._activity();
+        this._draft = this._boundedDraft(current,key,next); this._paintDraft(this._draft); this._activity();
       }
       catch { this._cancelDraft(); this._scheduleRender(); }
     };
@@ -427,9 +431,12 @@ export class ThermalIntelligenceCard extends HTMLElement {
       const text=JSON.stringify(this._displayDraft,null,2);
       try{await navigator.clipboard.writeText(text);if(statusNode)statusNode.textContent='Configuration copied. Paste it into this card’s Home Assistant configuration editor, then save.';}
       catch{
+        if(root!==this._dialogHost?.shadowRoot||root.querySelector('dialog')?.dataset.view!=='humidity')return;
         let output=root.querySelector('[data-humidity-export]');
         if(!output){output=document.createElement('textarea');output.dataset.humidityExport='';output.readOnly=true;output.setAttribute('aria-label','Draft humidity configuration');output.style.cssText='width:100%;min-height:150px;color:inherit;background:#0b1420';root.querySelector('.body').append(output);}
-        output.value=text;output.focus();output.select();if(statusNode)statusNode.textContent='Select and copy the configuration shown below, then save it in this card’s Home Assistant editor.';
+        this._syncHumidityExport();
+        if(!output.disabled){output.focus();output.select();}
+        if(statusNode)statusNode.textContent=output.disabled?'Correct the humidity boundaries before copying.':'Select and copy the configuration shown below, then save it in this card’s Home Assistant editor.';
       }
     });
     for (const id of openSections) root.querySelector(`#${CSS.escape(id)}`)?.setAttribute('open','');
@@ -563,6 +570,11 @@ export class ThermalIntelligenceCard extends HTMLElement {
       intent.message = 'The lock request could not be completed. Check the current state before trying again.';
     } finally { code = undefined; this._renderLockDialog(); this._scheduleRender(); }
   }
+  _syncHumidityExport() {
+    const output=this._dialogHost?.shadowRoot.querySelector('[data-humidity-export]');if(!output)return;
+    const valid=this._displayExportComplete&&!!humidityBands(this._displayDraft);
+    output.value=valid?JSON.stringify(this._displayDraft,null,2):'';output.disabled=!valid;
+  }
   _paintHumidityDraft(html) {
     const root=this._dialogHost?.shadowRoot;if(!root)return;
     const template=document.createElement('template');template.innerHTML=html;const next=template.content;
@@ -580,6 +592,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
       for(const attribute of ['aria-invalid','aria-valuetext'])if(replacement.hasAttribute(attribute))input.setAttribute(attribute,replacement.getAttribute(attribute));
     }
     const copy=root.querySelector('[data-copy-humidity]'), newCopy=next.querySelector('[data-copy-humidity]');if(copy&&newCopy)copy.disabled=!this._displayExportComplete||newCopy.disabled;
+    this._syncHumidityExport();
     for(const button of root.querySelectorAll('[data-dialog-info]'))button.onclick=()=>this._moreInfo(button.dataset.dialogInfo);
   }
   _scheduleFreshness() {

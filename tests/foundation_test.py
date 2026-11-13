@@ -25,11 +25,11 @@ class FoundationTargetTests(unittest.TestCase):
         """Bind main pins to the separately reviewed immutable candidate record."""
         data = (ROOT / "tests/fixtures/rc-3/manifest.json").read_bytes()
         self.assertEqual(hashlib.sha256(data).hexdigest(),
-            "ba98a8146d6655a45a150611c6cd7d64d6ab07bd946a4c7ef668f1bdf2dadede")
+            "99f0023b96ac479e3462666b196854c41210db41a7a15029645880fb6324f283")
         manifest = json.loads(data)
         self.assertEqual(manifest["version"], "0.1.0-rc.3")
-        self.assertEqual(manifest["source_commit"], "256e59d262ae759469e3d605cc61c1378ee5156b")
-        self.assertEqual(manifest["source_tree"], "6cfd7048eeaacbcad6de84eae33b4ad761d065db")
+        self.assertEqual(manifest["source_commit"], "f93fb6489f87fbf9c393dd8cd03e85e5718277ef")
+        self.assertEqual(manifest["source_tree"], "0758e5e9acc724c123a9b2e4ec38018255219ac9")
         self.assertEqual(foundation.DISTRIBUTION_HASHES,
             {f'dist/{item["path"]}': item["sha256"] for item in manifest["files"]})
 
