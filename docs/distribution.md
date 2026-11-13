@@ -1,6 +1,6 @@
 # Distribution
 
-[RC.2](rc.md) is the current published prerelease. Its original source is `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`. [RC.3](rc-3.md) is an unpublished candidate adopted through `develop`; its source promotion and versioned publication are separate steps. [RC.1](rc-1.md) and [beta.7](beta-7.md) remain dated historical packages. Use [Marketplace](marketplace.md) for Home Assistant 2026.11 and later, or [HACS](hacs.md) on older installations.
+[RC.2](rc.md) is the current published prerelease. Its original source is `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`. The original RC.3 candidate `253d7ac8d001443290c000bd1725f5e87004d94a` was adopted through `develop`. The linked [RC.3 guide](rc-3.md) describes corrected source `256e59d262ae759469e3d605cc61c1378ee5156b`, which has not yet been adopted in `develop` or `main`. Source promotion and versioned publication are separate steps. [RC.1](rc-1.md) and [beta.7](beta-7.md) remain dated historical packages. Use [Marketplace](marketplace.md) for Home Assistant 2026.11 and later, or [HACS](hacs.md) on older installations.
 
 | Branch | Contents |
 | --- | --- |
