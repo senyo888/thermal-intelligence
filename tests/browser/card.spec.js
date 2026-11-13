@@ -33,6 +33,22 @@ async function pointAtTarget(page,value,min=7,max=30) {
 }
 const editor = page => page.locator('thermal-intelligence-beta-card-editor');
 
+test('delayed fixture observations cannot change a replacement scenario', async({page})=>{
+  await page.clock.install();
+  await page.evaluate(()=>{
+    fixture.reset('standard');
+    fixture.hass.callService('climate','set_temperature',{entity_id:'climate.fixture_thermostat',temperature:21.5});
+    fixture.reset('fahrenheit');
+  });
+  await page.clock.runFor(100);
+  expect(await page.evaluate(()=>fixture.hass.states['climate.fixture_thermostat'].attributes.temperature)).toBe(70);
+  expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+  await page.evaluate(()=>fixture.hass.callService('climate','set_temperature',{entity_id:'climate.fixture_thermostat',temperature:71}));
+  await page.clock.runFor(100);
+  expect(await page.evaluate(()=>fixture.hass.states['climate.fixture_thermostat'].attributes.temperature)).toBe(71);
+  expect(await page.evaluate(()=>fixture.calls.length)).toBe(1);
+});
+
 test('inert mapping getters cannot block ordinary dialog snapshots or run on open', async({page},info)=>{
   await page.evaluate(()=>{
     window.mappingGetterReads=0;

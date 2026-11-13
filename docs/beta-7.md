@@ -10,7 +10,7 @@ No new settings, controller or backend are required. Existing schema-1 and schem
 - [Download the exact module](https://raw.githubusercontent.com/senyo888/thermal-intelligence/9196b9e77b9403b4dde953f136fc84aca9a6331a/dist/thermal-intelligence.js): **195,985 bytes**.
 - SHA256: `3349ffd936bfb4e1cff4e91d8ac9894a712bfac07d62cbdab15f612b4731a614`.
 
-This is an untagged beta on `senyo888-patch-1`. It does not change the RC.1 tag or release assets. The [beta.6 package](beta-6.md) remains available at its recorded commit.
+This untagged beta was published through `senyo888-patch-1`. It does not change the RC.1 tag or release assets. The [beta.6 package](beta-6.md) remains available at its recorded commit.
 
 From a source checkout containing the exact commit, create a package in an unused directory:
 

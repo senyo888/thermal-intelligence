@@ -517,3 +517,20 @@ test('retiring successful presentation notifies once without rewriting the resul
     assert.equal(f.calls.length, 1);
   }
 });
+
+test('submillisecond contrary climate reports supersede a match before acknowledgement', async () => {
+  for (const field of ['last_updated', 'last_changed']) {
+    const f = setup();
+    const result = f.request();
+    const observation = (temperature, fraction) => state(temperature, 0, {
+      last_updated: undefined, [field]: `2026-01-01T00:00:01.${fraction}Z`,
+    });
+    f.coordinator.observe(observation(21, '001100'));
+    f.coordinator.observe(observation(19, '001900'));
+    f.transport.resolve(); await tick();
+    assert.equal(f.coordinator.status.phase, 'accepted');
+    f.coordinator.observe(observation(21, '001901'));
+    assert.equal((await result).phase, 'observed');
+    assert.equal(f.calls.length, 1);
+  }
+});

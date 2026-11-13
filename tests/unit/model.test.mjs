@@ -440,7 +440,7 @@ test('direct mappings take precedence over declared typed telemetry without gues
   const direct = buildModel(h, { ...config, telemetry, humidity_entity: 'sensor.missing', valve_position_entity: 'sensor.missing' }, identity);
   assert.equal(direct.humidity.status, 'unavailable'); assert.equal(direct.output.percentage, null); assert.equal(direct.output.text, 'TRV unavailable'); assert.equal(direct.canSet, true);
   const blank = buildModel(h, { ...config, telemetry, valve_position_entity: '' }, identity);
-  assert.equal(blank.output.status, 'disabled'); assert.equal(blank.output.percentage, null);
+  assert.equal(blank.output.kind, 'thermostat'); assert.equal(blank.output.action, h.states[entity].attributes.hvac_action);
 });
 
 test('source trend presentation preserves original hourly colours and labels across supported units', () => {
@@ -653,4 +653,18 @@ test('humidity header uses original guide colour and label while degraded eviden
   const stale = buildModel(h, { ...c, telemetry: [{ kind: 'humidity', entity: 'sensor.humidity', max_age_seconds: 1 }] }, identity, { now: Date.parse('2026-10-25T11:00:00Z') });
   assert.equal(stale.humidity.band, 'unknown'); assert.equal(stale.headerTelemetry[0].activityLabel, 'Stale');
   const legacy = buildModel(h, { ...c, humidity_bands: { low: 35, high: 65 } }, identity); assert.equal(legacy.humidity.guideMode, 'legacy'); assert.equal(legacy.humidity.band, 'within');
+});
+
+test('disabled valve mappings retain thermostat activity and never substitute another valve', () => {
+  const h = fixture({hvac_action:'heating'});
+  h.states['sensor.valve'] = {state:'12.5',attributes:{unit_of_measurement:'%'}};
+  for (const mapping of [
+    {valve_position_entity:'',telemetry:[{kind:'valve',entity:'sensor.valve'}]},
+    {telemetry:[{kind:'valve',entity:''}]},
+  ]) {
+    const m = buildModel(h,{...config,...mapping},identity);
+    assert.equal(m.output.kind,'thermostat');
+    assert.equal(m.output.text,'Heating (reported)');
+    assert.equal(m.canSet,true);
+  }
 });

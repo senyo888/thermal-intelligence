@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/develop/assets/presentation/wiki-vt-lock-control.png" alt="Thermal Intelligence Wiki — VT lock control" width="100%">
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-vt-lock-control.png" alt="Thermal Intelligence Wiki — VT lock control" width="100%">
 
 # VT lock control
 
@@ -37,4 +37,4 @@ TI keeps the entered code out of saved card configuration, copied settings, requ
 
 The inspected **VT 10.5.1** implementation includes the attempted code in an invalid-code exception. TI suppresses that error text but does not repair upstream logging behavior. [VT lock implementation](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/feature_lock_manager.py), [native service definitions](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/services.yaml).
 
-Administrator-only interaction is a TI interface restriction. Home Assistant and VT remain responsible for backend permissions and code validation. See the [command contract](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/command-contract.md) and [historical beta evidence](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/beta.md) for implementation and validation boundaries.
+Administrator-only interaction is a TI interface restriction. Home Assistant and VT remain responsible for backend permissions and code validation. See the [command contract](https://github.com/senyo888/thermal-intelligence/blob/main/docs/command-contract.md) and [historical beta evidence](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta.md) for implementation and validation boundaries.

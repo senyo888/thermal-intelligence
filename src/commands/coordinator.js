@@ -83,9 +83,7 @@ function lockSettings(facts) {
 
 function timestamp(state) {
   const raw = state?.last_updated ?? state?.last_changed;
-  if (typeof raw !== "string") return null;
-  const value = Date.parse(raw);
-  return Number.isFinite(value) ? value : null;
+  return switchTimestamp({ last_updated: raw });
 }
 
 function matches(state, service, values, kind) {

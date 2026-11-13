@@ -178,7 +178,7 @@ test('optional row supports one, two or three displayed controls without changin
 });
 
 test('registry proof subscribes before reads, invalidates current-session changes and never trusts old session replies', async () => {
-  const callbacks=[],unsubscribed=[],reads=[];let held;
+  const callbacks=[],unsubscribed=[],reads=[],held=[];
   const h={connected:true,user:{id:'user'},connection:{socket:{},async subscribeEvents(fn,type){assert.equal(type,'entity_registry_updated');callbacks.push(fn);return()=>unsubscribed.push(true);}},callWS(msg){reads.push(msg);return Promise.resolve({entity_id:msg.entity_id,platform:'honeywell',id:msg.entity_id});}};
   const r=new MappedRegistry(()=>{});r.sync(h,config(),true);assert.equal(reads.length,0);await tick();assert.equal(r.proof.status,'verified');assert.equal(reads.length,2);
   const verified=r.proof;
@@ -189,8 +189,9 @@ test('registry proof subscribes before reads, invalidates current-session change
   }
   callbacks[0]();assert.equal(r.proof.status,'loading');await tick();assert.equal(r.proof.status,'verified');
   h.entities={[target]:{entity_id:target,platform:'template'}};r.sync(h,config(),true);assert.equal(r.proof.status,'loading');await tick();assert.equal(r.proof.status,'unavailable');
-  h.entities=undefined;h.callWS=msg=>new Promise(resolve=>{held=()=>resolve({entity_id:msg.entity_id,platform:'honeywell'});});callbacks[0]();
-  h.connected=false;r.sync(h,config(),true);held();await tick();assert.notEqual(r.proof.status,'verified');assert.equal(unsubscribed.length,1);
+  h.entities=undefined;h.callWS=msg=>new Promise(resolve=>{held.push(()=>resolve({entity_id:msg.entity_id,platform:'honeywell'}));});callbacks[0]();
+  assert.equal(held.length,2);
+  h.connected=false;r.sync(h,config(),true);for(const resolve of held)resolve();await tick();assert.notEqual(r.proof.status,'verified');assert.equal(unsubscribed.length,1);
   r.stop();
 });
 

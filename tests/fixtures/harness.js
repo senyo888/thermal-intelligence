@@ -10,8 +10,9 @@ let sequence = 0;
 const timestamp = () => new Date(Date.now() + ++sequence).toISOString();
 const state = (id, value, attributes) => ({ entity_id:id, state:value, attributes, last_changed:timestamp(), last_updated:timestamp() });
 const fixture = window.fixture = {
-  calls: [], registryCalls: [], cards: [], events: [], registryFailure:false, behavior:'observe', pending:[],
+  calls: [], registryCalls: [], cards: [], events: [], registryFailure:false, behavior:'observe', pending:[], generation:0,
   makeHass(scenario = 'standard') {
+    const generation = this.generation;
     const fahrenheit = scenario === 'fahrenheit';
     const attributes = {
       friendly_name:'Example thermostat', supported_features:17, hvac_modes:['off','heat'], hvac_action:'idle',
@@ -42,7 +43,7 @@ const fixture = window.fixture = {
         fixture.calls.push(call); fixture.audit();
         if (fixture.behavior==='pending') return new Promise((resolve,reject)=>fixture.pending.push({resolve,reject,call}));
         if (fixture.behavior==='reject') return Promise.reject(new Error('Synthetic service rejection'));
-        if (fixture.behavior==='observe') setTimeout(()=>fixture.apply(call),30);
+        if (fixture.behavior==='observe') setTimeout(()=>{if(generation===fixture.generation)fixture.apply(call);},30);
         return Promise.resolve();
       },
     };
@@ -60,6 +61,7 @@ const fixture = window.fixture = {
   configure(config,index=0) { this.cards[index].setConfig(config); if(index===0){this.config=structuredClone(config);document.querySelector('#configuration').textContent=JSON.stringify(config,null,2);} },
   addCard(config=this.config) { const card=document.createElement('thermal-intelligence-beta-card'); card.setConfig(config);card.hass=this.hass;this.cards.push(card);document.querySelector('#cards').append(card);return card; },
   reset(scenario='standard',overrides={}) {
+    ++this.generation;
     for(const card of this.cards)card.remove();this.cards=[];this.calls=[];this.events=[];this.registryCalls=[];this.pending=[];this.registryFailure=false;this.behavior='observe';
     this.hass=this.makeHass(scenario);
     this.config={type:TYPE,entity:scenario==='empty'?'':ENTITY,adapter:'auto',background:'blue',preset_labels:{frost:'Frost'},telemetry:[{kind:'humidity',entity:'sensor.fixture_humidity'},{kind:'valve',entity:'sensor.fixture_valve'}],...overrides};

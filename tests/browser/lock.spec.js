@@ -212,3 +212,22 @@ test('reported relock removes historical unlock success from the open action dia
   await expect(action(page)).toBeDisabled();
   expect((await calls(page)).length).toBe(1);
 });
+
+test('read-only lock and empty telemetry header fit at phone tablet and desktop widths',async({page},info)=>{
+  await setup(page,{admin:false});
+  await page.evaluate(()=>fixture.configure({...fixture.config,name:'A long synthetic thermostat title for header layout',telemetry:[],features:[]}));
+  for (const width of [390,768,1440]) {
+    await page.setViewportSize({width,height:1000});
+    const heading=card(page).locator('.heading.no-telemetry');
+    await expect(heading.locator('.lock-indicator:not(.lock-action)')).toBeVisible();
+    const bounds=await heading.evaluate(node=>{
+      const title=node.querySelector('strong').getBoundingClientRect();
+      const lock=node.querySelector('.lock-indicator').getBoundingClientRect();
+      const outer=node.getBoundingClientRect();
+      return {fit:lock.right<=outer.right+1,space:lock.left-title.right,scroll:node.scrollWidth<=node.clientWidth+1};
+    });
+    expect(bounds.fit).toBe(true);expect(bounds.scroll).toBe(true);expect(bounds.space).toBeGreaterThanOrEqual(5);
+    await page.screenshot({path:info.outputPath(`readonly-lock-${width}.png`),fullPage:true});
+  }
+  expect(await calls(page)).toEqual([]);
+});

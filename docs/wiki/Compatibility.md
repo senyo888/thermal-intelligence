@@ -1,8 +1,12 @@
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/develop/assets/presentation/wiki-compatibility.png" alt="Thermal Intelligence Wiki — Compatibility" width="100%">
-
 # Compatibility
 
-Current preparation: **0.1.0-rc.2**, integrating the reviewed beta.5–beta.7 changes and a correction to stale request-status presentation. See the [RC.2 guide](https://github.com/senyo888/thermal-intelligence/wiki/Installing-the-release-candidate). RC.1 remains the published prerelease; beta.7 remains an untagged beta. The historical observations below apply only to their named builds and scenarios. A minimum supported Home Assistant version and broader support range have not yet been established.
+Current published prerelease: **0.1.0-rc.2**. The [dated validation record](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc2-validation.md) covers the exact released package, Marketplace Lab installation and two-card trial on HA 2026.11.1 with VT 10.6.4 plus local provider extensions. Both cards passed bounded controls and followed a natural 25-minute house-policy Boost return, with 16m38s of subsequent observation. The maintainer confirmed physical heating.
+
+One external output adapter was unavailable for about 10m16s before automatic recovery. This is not an uninterrupted controller-health pass or a formal soak. Broad provider/device support, physical mobile/Companion acceptance, installer lifecycle coverage and restore rehearsal remain incomplete. A minimum supported HA version has not been established.
+
+## Historical beta.4 and RC.1 baseline
+
+The following table and results describe their original builds and observation periods. Later RC.2 evidence above does not retroactively validate them.
 
 | Environment or feature | Coverage |
 | --- | --- |
@@ -10,11 +14,11 @@ Current preparation: **0.1.0-rc.2**, integrating the reviewed beta.5–beta.7 ch
 | Home Assistant 2026.10.4 · VT 10.5.1 | Passive frontend trial alongside existing TI cards; beta.4 readings, health LED and provider details checked |
 | Installation and rollback | Manual resource installation, removal/reinstallation, update, rollback and reapplication exercised in the test environment |
 | VT lock without a code | Deliberate native Lock/Unlock and provider automatic relocking checked on an inert fixture |
-| VT lock code/error paths | Synthetic tests only; see [provider logging limitation](https://github.com/senyo888/thermal-intelligence/blob/develop/docs/lock-control.md#code-handling-and-provider-limits) |
+| VT lock code/error paths | Synthetic tests only; see [provider logging limitation](https://github.com/senyo888/thermal-intelligence/blob/main/docs/lock-control.md#code-handling-and-provider-limits) |
 | VT response arc | Synthetic positive, restricted, mismatching, stale and expired evidence; real HA checks cover unmapped configurations |
 | Phone, tablet and desktop widths | Responsive Chromium fixtures, keyboard and reduced-motion checks; physical devices and Companion apps remain unverified |
 | HACS | Installation, updates and catalogue inclusion are unverified |
-| Home Assistant Marketplace | HA 2026.11.0b1 source reviewed; metadata and offline package checks prepared. Installation, migration, update and recovery remain unverified; see [Distribution](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/distribution.md) |
+| Home Assistant Marketplace | HA 2026.11.0b1 source reviewed; metadata and offline package checks prepared. Installation, migration, update and recovery remain unverified; see [Distribution](https://github.com/senyo888/thermal-intelligence/blob/main/docs/distribution.md) |
 | Other climate integrations | Provisional; require integration-specific checks |
 | Physical heating response | Unverified; activity and valve readings do not prove heat delivery |
 
@@ -30,7 +34,7 @@ Include your TI, Home Assistant, provider and browser/Companion versions, instal
 
 ## Beta.5 disabled-lock correction
 
-The correction covers VT reporting `is_lock_configured: false` with a residual true locked flag, plus unknown configuration and removal while a lock dialog is open. Synthetic source and built-module checks are recorded in the [beta.5 guide](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/beta-5.md). No beta.5 installation, physical control or HACS lifecycle acceptance is claimed.
+The correction covers VT reporting `is_lock_configured: false` with a residual true locked flag, plus unknown configuration and removal while a lock dialog is open. Synthetic source and built-module checks are recorded in the [beta.5 guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta-5.md). No beta.5 installation, physical control or HACS lifecycle acceptance is claimed.
 
 ## Optional switch development coverage
 
@@ -44,7 +48,7 @@ The optional switch test found that HA frontend metadata used an own `device_id:
 
 ## Beta.7 Lab acceptance — 6 November 2026
 
-The [exact beta.7 module](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/beta-7.md#exact-package) was manually installed on HA **2026.11.0** with VT **10.6.3**. A registered generic thermostat and a dedicated built-in Command Line switch both exposed the absent device-ID shapes above; registry proof was verified for both. The switch ran only inert commands and reported state optimistically, with no physical device attached.
+The [exact beta.7 module](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta-7.md#exact-package) was manually installed on HA **2026.11.0** with VT **10.6.3**. A registered generic thermostat and a dedicated built-in Command Line switch both exposed the absent device-ID shapes above; registry proof was verified for both. The switch ran only inert commands and reported state optimistically, with no physical device attached.
 
 | Check | Recorded result |
 | --- | --- |
@@ -63,4 +67,4 @@ The test establishes the real-HA registry, frontend and service path for this in
 
 ## RC.2 acceptance boundary
 
-RC.2 needs its own candidate checks, named-release installer selection and installation acceptance. Historical beta.7 inert-switch checks do not establish physical-device response, whole-home compatibility or an RC.2 soak. Marketplace support in Home Assistant 2026.11 changes the installation route; it does not turn source review into a tested installation.
+Named-release Marketplace selection, passive installation checks, bounded controls and maintainer-observed heating now have [dated RC.2 evidence](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc2-validation.md). Earlier beta.7 inert-switch tests remain specific to beta.7. Default catalogue admission, wider physical-device support, a formal RC.2 soak and complete update/removal/recovery acceptance are not established.

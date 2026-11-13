@@ -13,7 +13,7 @@ Use the installer that owns the existing trial. On Home Assistant 2026.11 and la
 ### Update a manually installed trial card
 
 1. Retain the previous bundle, resource URL and saved card configuration.
-2. Use the [candidate package record](rc.md) and verify its digest. RC.2 is not yet published; do not substitute a branch download for an unavailable named release.
+2. Use the [candidate package record](rc.md) and verify its digest. Select the published `v0.1.0-rc.2` release; do not substitute a branch download.
 3. Save it under a new versioned filename and change only the beta resource URL. Do not register a second copy.
 4. Open a fresh browser document, reopen the visual editor and check the thermostat, provider details and source mappings.
 

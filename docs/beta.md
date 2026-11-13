@@ -2,13 +2,13 @@
 
 This page preserves the exact beta.4 artifact and its historical validation. [Beta.5](beta-5.md) followed beta.4; the latest untagged beta package is [beta.7](beta-7.md).
 
-For the candidate prepared through `develop`, see [RC.2 preparation](rc.md). The [published RC.1 record](rc-1.md) remains separate.
+For the current published prerelease, see [RC.2](rc.md). The [published RC.1 record](rc-1.md) remains separate.
 
 Version **0.1.0-beta.4**, source commit `ea1268ac7a8dc5aa7f54723870808bf24a92cdc0`. This is a frontend module for controlled testing, with no TI backend required. Manual installation and rollback have been tested; see [compatibility](compatibility.md) for version coverage and remaining limits.
 
 ## Get the exact package
 
-Use the [reviewed source commit](https://github.com/senyo888/thermal-intelligence/tree/ea1268ac7a8dc5aa7f54723870808bf24a92cdc0) on `senyo888-patch-1`. The [compiled module](https://raw.githubusercontent.com/senyo888/thermal-intelligence/ea1268ac7a8dc5aa7f54723870808bf24a92cdc0/dist/thermal-intelligence.js) is **176,381 bytes**, SHA-256:
+Use the [reviewed source commit](https://github.com/senyo888/thermal-intelligence/tree/ea1268ac7a8dc5aa7f54723870808bf24a92cdc0). It was published through `senyo888-patch-1`; use the exact commit rather than the current branch tip. The [compiled module](https://raw.githubusercontent.com/senyo888/thermal-intelligence/ea1268ac7a8dc5aa7f54723870808bf24a92cdc0/dist/thermal-intelligence.js) is **176,381 bytes**, SHA-256:
 
 ```text
 3d58fcddbeaf72b9f9927e67b04269f78d6e69d0b09460cfd06b12b1ed575a2c
@@ -54,4 +54,4 @@ The exact bundle passed 135 unit tests, 81 browser tests and 5 packaging tests, 
 
 Physical heating, native phone/tablet use, a minimum version range and the HACS lifecycle remain unverified. Response-arc positive cases and lock-code error paths have synthetic coverage only. Read [Compatibility](compatibility.md) and [VT lock limits](lock-control.md) before testing those features.
 
-This is an untagged beta, not a stable release. The package remains on `senyo888-patch-1`; HACS support is planned separately.
+This is an untagged beta, not a stable release. The historical package remains available at the recorded commit. Installer support was outside that beta trial.
