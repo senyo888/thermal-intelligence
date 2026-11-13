@@ -6,7 +6,7 @@ One external output adapter was unavailable for about 10m16s before automatic re
 
 ## RC.3 preparation
 
-[RC.3](rc-3.md) corrects three defects confirmed after the RC.2 trial: submillisecond command-result ordering, disabled-valve activity fallback and read-only lock-header layout. Its synthetic checks are separate from all RC.2 installation and physical-heating observations. No RC.3 installation, Marketplace update, physical-client acceptance or soak has been performed.
+[RC.3](rc-3.md) corrects request ordering, disabled-valve activity fallback, lock-header layout, humidity source/reset behavior, bounded registry recovery, range keyboard bounds and trend visibility under control restrictions. Its synthetic checks are separate from all RC.2 installation and physical-heating observations. An earlier RC.3 build was briefly staged for passive Lab checks, then rolled back to RC.2 after independent observation lost freshness. That incomplete trial does not validate this corrected candidate. Marketplace RC.3 selection, physical-client acceptance and a formal soak remain unverified.
 
 ## Historical beta.4 and RC.1 baseline
 

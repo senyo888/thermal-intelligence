@@ -74,7 +74,7 @@ function overview({ model, config, statusMessage }) {
 
 function telemetry({ model, config, rowKey, statusMessage }) {
   const rows = model.headerTelemetry ?? [];
-  let row = rows.find(item => item.key === rowKey) ?? rows.find(item => item.topic === rowKey) ?? (rowKey === 'humidity' ? model.humidity : null);
+  let row = rowKey === 'humidity' ? model.humidity : rows.find(item => item.key === rowKey) ?? rows.find(item => item.topic === rowKey);
   if(rowKey==='follow' && !row && model.provider?.kind==='vtherm') {
     const value=model.connected&&model.available?model.attrs?.vtherm_over_climate?.follow_underlying_temp_change:null;
     row={label:'Follow underlying temperature',status:typeof value==='boolean'?'available':'unknown',value:value===true?'On':value===false?'Off':'Unavailable',source:{entity:config.entity,attribute:'vtherm_over_climate.follow_underlying_temp_change'},detail:'This is the provider-reported follow setting. Selecting its icon does not change thermostat configuration.'};

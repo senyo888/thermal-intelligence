@@ -7,8 +7,11 @@ There is no stable release yet. Future release candidates are prepared through `
 - Preserve submillisecond ordering for climate and VT lock reports. A newer contrary report received before acknowledgement prevents an obsolete **Observed** result.
 - Show the thermostat's reported activity when a valve mapping is explicitly disabled, while retaining genuine unavailable or invalid valve states.
 - Keep long titles within the card beside a read-only lock indicator when header telemetry is empty.
+- Keep general humidity details aligned with their mapped source, and reset edited humidity boundaries without clearing unrelated configuration.
+- Allow bounded recovery after a failed provider identity lookup, without replaying commands or relaxing provider restrictions.
+- Respect range endpoint bounds for Home/End, and retain valid measured trend while controls are locked.
 - Prevent delayed synthetic observations from crossing fixture resets, and complete both pending registry reads in the stale-session regression.
-- Retain card types, configuration schemas, command targets and permission checks. This candidate is not published or installed; see the [RC.3 record](docs/rc-3.md).
+- Retain card types, configuration schemas, command targets and permission checks. This corrected candidate is not published and still needs its own Lab acceptance; see the [RC.3 record](docs/rc-3.md).
 
 ## 0.1.0-rc.2 — 9 November 2026
 
