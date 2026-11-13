@@ -1,6 +1,6 @@
 # Contributing to Thermal Intelligence
 
-Open source pull requests against `develop`, which carries the release candidate. The retained beta is on `senyo888-patch-1`; an issue may specify that branch when a change needs the beta source. `main` contains public documentation and the website, with content promotion reviewed separately. There is no stable release yet.
+Open feature and fix pull requests against `develop`; beta packages use `senyo888-patch-1`. `main` carries documentation, the website and a separately reviewed frozen distribution snapshot. RC.2 is published from `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`. The original RC.3 candidate `253d7ac8d001443290c000bd1725f5e87004d94a` was adopted in `develop`; corrected source `f93fb6489f87fbf9c393dd8cd03e85e5718277ef` is proposed for main promotion and is not yet adopted in `develop`. Main promotion and tagged publication are separate steps. There is no stable release yet.
 
 Read [Architecture](ARCHITECTURE.md) and [AGENTS.md](AGENTS.md). Keep changes focused and describe the problem, resulting behaviour and checks actually run. Update configuration, compatibility, migration and release notes when affected.
 
@@ -21,7 +21,7 @@ scripts/security/scan_secrets.sh tracked
 scripts/security/scan_secrets.sh full-history
 ```
 
-The secret checks require Gitleaks. Keep detailed reports private. On a source branch, also run the relevant unit/browser tests and build/package checks documented in its `package.json` ([release-candidate source](https://github.com/senyo888/thermal-intelligence/tree/develop)). A successful source or browser test is not proof of physical heating or HACS installation.
+The secret checks require Gitleaks. Keep detailed reports private. For RC.2 source work, use a checkout of `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805` and run its relevant unit/browser tests and build/package checks documented in `package.json`. Future candidate source work uses `develop`. A successful source or browser test is not proof of physical heating or installer acceptance.
 
 The [issue forms](https://github.com/senyo888/thermal-intelligence/issues/new/choose) cover bugs, setup help, feature suggestions and gallery submissions. Use [private vulnerability reporting](https://github.com/senyo888/thermal-intelligence/security/advisories/new) for security issues.
 
@@ -30,3 +30,9 @@ Senyo reviews project scope and merges. Code contributions must be compatible wi
 ## Website and Wiki
 
 The static website lives in `site/`; build it with `python3 scripts/build_site.py` from a checkout without an existing `_site/` directory. GitHub Pages publishes only that selected output on `main`. Wiki page sources live in `docs/wiki/` and are published to the separate GitHub Wiki repository. Keep their version, installation, compatibility and image notes aligned with the repository guides.
+
+## Dependency updates
+
+Dependabot version-update pull requests target `develop` for npm development tools and GitHub Actions. Review major upgrades separately. Regenerate the checked-in bundle when a build-tool update changes its output; do not merge a dependency update with a stale bundle or failing checks.
+
+Dependabot configuration is read from the default branch. Security-update pull requests use the default branch, so assess and reproduce fixes in `develop` before release promotion. No update is automatically merged or installed. VT, Home Assistant and externally pinned tooling need a separate compatibility review; see [dependency monitoring](docs/dependency-monitoring.md).

@@ -1,6 +1,6 @@
 # Thermal Intelligence architecture contract
 
-The standalone frontend is prepared as a release candidate on `develop`; the last beta remains on `senyo888-patch-1`. It presents Home Assistant/provider state and sends commands only after explicit user interaction. The optional backend and additional cards remain planned.
+The standalone frontend is published as RC.2. This contract describes the [released RC.2 source](https://github.com/senyo888/thermal-intelligence/tree/6d0833f20e9e071d94d2f09f00c1a4d4a34f1805); `main` carries documentation and a separately promoted frozen snapshot. The [RC.3 candidate](docs/rc-3.md) preserves this architecture while correcting request-result ordering and two presentation defects; it is not yet a published release. Candidates are prepared through `develop`, with beta work on `senyo888-patch-1`. The card presents Home Assistant/provider state and sends commands only after explicit user interaction. A future TI backend is a separate component and is not required by this card.
 
 ## Ownership and layers
 
@@ -29,7 +29,7 @@ Raw window, presence and motion inputs remain distinct from the feature states a
 
 Rendering, setup and reconnects read state. A command starts with explicit user intent and a captured target, then passes capability and readiness checks before calling the supported Home Assistant service. Displaying a sensor gives it no control authority.
 
-Regulation and house policy stay with the configured provider/backend, independently of the card. The planned TI backend sits outside this RC.1 frontend boundary; its future contracts must define deterministic decisions, ownership, persistence and failure behaviour.
+Regulation and house policy stay with the configured provider/backend, independently of the card. The planned TI backend sits outside this standalone frontend boundary; its future contracts must define deterministic decisions, ownership, persistence and failure behaviour.
 
 ## Evidence model
 
@@ -63,6 +63,6 @@ HI remains the authority for its seasonal humidity targets, Stability, selected 
 
 ## Code and documentation
 
-The [release-candidate source on `develop`](https://github.com/senyo888/thermal-intelligence/tree/develop) separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. Synthetic fixtures and unit/browser tests live under `tests/`. The reproducible module is `dist/thermal-intelligence.js`.
+The released RC.2 source separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. In that release checkout, synthetic fixtures and unit/browser tests live under `tests/`, and the reproducible module is `dist/thermal-intelligence.js`.
 
 The README introduces the product; the Wiki provides practical guidance; repository documents define configuration, compatibility and technical contracts. The website presents the same supported features and prerelease limits. See [distribution](docs/distribution.md) and [command contracts](docs/command-contract.md).
