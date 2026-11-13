@@ -47,6 +47,8 @@ To reproduce the published assets, replace `REVIEWED_COMMIT` with `6d0833f20e9e0
 
 ## Validation and limits
 
+The [13 November limitations](rc2-validation.md#confirmed-limitations--13-november-2026) record a command-result ordering defect, disabled-valve presentation error and read-only lock header overflow in the published runtime. Proposed follow-up fixes are not part of RC.2. In particular, a matching report followed by a contradictory report within the same millisecond before acknowledgement can leave a misleading **Observed** result; consult current provider state independently.
+
 [Post-publication checks](rc2-validation.md) record the 9 November Marketplace installation and 12 November bounded two-card controls, natural Boost expiry, longer observation and maintainer-confirmed physical heating. They also retain a recovered external controller incident. No formal RC.2 soak or broad physical-client acceptance is claimed.
 
 Local candidate checks passed 166 unit tests, 102 Chromium browser tests, 13 packaging tests, eight distribution tests and fourteen foundation regression tests. These checks cover synthetic behavior and packaging, not a live installation. Candidate results must be bound to the reviewed commit and package. Historical beta checks do not count as RC.2 installation, physical-device acceptance or soak completion. Service acceptance, reported setting, native-device output and room warming remain separate evidence. See [Compatibility](compatibility.md).
