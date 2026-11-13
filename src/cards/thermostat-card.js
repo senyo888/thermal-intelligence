@@ -104,7 +104,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     if (this._knownVT.has(entity)) this._identity = { entity_id: entity, platform: 'versatile_thermostat' };
     if (hass.connected !== true) { this._registryStatus = 'unavailable'; return; }
     const cached = hass.entities?.[entity];
-    if (cached?.entity_id === entity && typeof cached.platform === 'string') {
+    if (cached?.entity_id === entity && typeof cached.platform === 'string' && cached.platform.trim()) {
       this._acceptIdentity(cached); return;
     }
     if (typeof hass.callWS !== 'function') { this._registryStatus = 'unavailable'; return; }
@@ -117,7 +117,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     try {
       const entry = await hass.callWS({ type: 'config/entity_registry/get', entity_id: entity });
       if (token !== this._identityToken || !this._sameSession(session, this._session()) || this.config.entity !== entity) return;
-      if (entry?.entity_id !== entity || typeof entry.platform !== 'string') throw new Error('Invalid identity');
+      if (entry?.entity_id !== entity || typeof entry.platform !== 'string' || !entry.platform.trim()) throw new Error('Invalid identity');
       this._acceptIdentity(entry);
     } catch {
       if (token !== this._identityToken || !this._sameSession(session, this._session())) return;

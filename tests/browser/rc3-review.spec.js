@@ -101,6 +101,25 @@ test('same-session network retry succeeds and missing registry API can recover',
   await expect.poll(() => status(page)).toBe('verified'); expect(await calls(page)).toEqual([]);
 });
 
+test('blank registry platforms remain unverified and can recover within the same session', async ({ page }) => {
+  await page.clock.install();
+  await page.evaluate(() => {
+    fixture.registryCalls = [];
+    fixture.hass.entities = { [fixture.config.entity]: { entity_id: fixture.config.entity, platform: '   ' } };
+    fixture.hass.callWS = async message => { fixture.registryCalls.push(message); return { entity_id: message.entity_id, platform: '' }; };
+    fixture.hass.connection.socket = {}; fixture.refresh();
+  });
+  await expect.poll(() => status(page)).toBe('unavailable');
+  expect(await page.evaluate(() => fixture.cards[0].model().canSet)).toBe(false);
+  await page.evaluate(() => { fixture.hass.entities[fixture.config.entity].platform = 'generic_thermostat'; fixture.refresh(); });
+  await expect.poll(() => status(page)).toBe('verified'); expect(await registryCount(page)).toBe(1);
+  await page.evaluate(() => { delete fixture.hass.entities; fixture.hass.connection.socket = {}; fixture.refresh(); });
+  await expect.poll(() => status(page)).toBe('unavailable');
+  await page.evaluate(() => { fixture.hass.callWS = async message => { fixture.registryCalls.push(message); return { entity_id: message.entity_id, platform: 'generic_thermostat' }; }; });
+  await page.clock.runFor(1000); await page.evaluate(() => fixture.refresh());
+  await expect.poll(() => status(page)).toBe('verified'); expect(await calls(page)).toEqual([]);
+});
+
 test('stale retry results cannot replace a newer session or erase known VT restrictions', async ({ page }) => {
   await reset(page, 'vt');
   await page.evaluate(() => {

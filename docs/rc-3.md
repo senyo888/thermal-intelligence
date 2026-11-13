@@ -41,7 +41,7 @@ The output directory must not exist. Packaging reads committed blobs and emits o
 
 ## Validation limits
 
-Regression coverage includes the climate/lock match-then-contrary ordering boundary, disabled direct and typed valve mappings, read-only heading geometry at 390/768/1440 pixels, fixture resets, bounded registry recovery and stale replies, humidity source/reset behavior, range Home/End and locked trend observations. The corrected candidate passed 171 unit tests, 117 Chromium browser tests, 13 package tests, eight distribution tests and fourteen foundation regressions. Foundation/link, public-data and whitespace checks passed. These are source and synthetic browser results, not installation acceptance.
+Regression coverage includes the climate/lock match-then-contrary ordering boundary, disabled direct and typed valve mappings, read-only heading geometry at 390/768/1440 pixels, fixture resets, bounded registry recovery and stale replies, humidity source/reset behavior, range Home/End and locked trend observations. The corrected candidate passed 171 unit tests, 118 Chromium browser tests, 13 package tests, eight distribution tests and fourteen foundation regressions. Foundation/link, public-data and whitespace checks passed. These are source and synthetic browser results, not installation acceptance.
 
 An earlier RC.3 build rendered in a bounded passive Lab trial, but independent observation lost freshness during browser work. It was rolled back to RC.2. The failed coverage and that build's partial results do not establish acceptance of the corrected candidate.
 
