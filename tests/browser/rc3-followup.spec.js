@@ -47,8 +47,8 @@ for (const legacy of [false, true]) test(`manual humidity export follows ${legac
   await reset(page, 'standard', { humidity_bands: { ...bands, future: { kept: true } }, future_option: { kept: true } });
   await page.evaluate(() => {
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async () => { throw Error('Clipboard denied'); } } });
-    fixture.cards[0]._openDialog('humidity');
   });
+  await card(page).locator('[data-telemetry-topic="humidity"]').first().click();
   const dialog = card(page).getByRole('dialog'), output = dialog.locator('[data-humidity-export]');
   const key = legacy ? 'low' : 'dry_below';
   const input = dialog.locator(`input[type="number"][data-humidity-boundary="${key}"]`);
@@ -68,13 +68,29 @@ for (const legacy of [false, true]) test(`manual humidity export follows ${legac
 test('a delayed clipboard rejection exposes the current humidity draft', async ({ page }) => {
   await page.evaluate(() => {
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: () => new Promise((resolve, reject) => { window.rejectClipboard = reject; }) } });
-    fixture.cards[0]._openDialog('humidity');
   });
+  await card(page).locator('[data-telemetry-topic="humidity"]').first().click();
   const dialog = card(page).getByRole('dialog');
   await dialog.getByRole('button', { name: 'Copy configuration' }).click();
   await dialog.locator('input[type="number"][data-humidity-boundary="dry_below"]').fill('31');
   await page.evaluate(() => window.rejectClipboard(Error('Clipboard denied')));
   const output = dialog.locator('[data-humidity-export]'); await expect(output).toBeVisible();
   expect(JSON.parse(await output.inputValue()).humidity_bands.dry_below).toBe(31);
+  expect(await calls(page)).toEqual([]);
+});
+
+for (const reopenHumidity of [false, true]) test(`late clipboard failure does not affect a ${reopenHumidity ? 'reopened humidity' : 'different'} dialog`, async ({ page }) => {
+  await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: () => new Promise((resolve, reject) => { window.rejectClipboard = reject; }) } }));
+  await card(page).locator('[data-telemetry-topic="humidity"]').first().click();
+  await card(page).getByRole('dialog').getByRole('button', { name: 'Copy configuration' }).click();
+  await page.keyboard.press('Escape');
+  if (reopenHumidity) await card(page).locator('[data-telemetry-topic="humidity"]').first().click();
+  else await card(page).locator('[data-status-overview]').first().click();
+  const dialog = card(page).getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  const before = await dialog.innerHTML();
+  await page.evaluate(async () => { window.rejectClipboard(Error('Clipboard denied')); await new Promise(resolve => setTimeout(resolve, 0)); });
+  await expect(dialog.locator('[data-humidity-export]')).toHaveCount(0);
+  expect(await dialog.innerHTML()).toBe(before);
   expect(await calls(page)).toEqual([]);
 });

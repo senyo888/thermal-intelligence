@@ -431,7 +431,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
       const text=JSON.stringify(this._displayDraft,null,2);
       try{await navigator.clipboard.writeText(text);if(statusNode)statusNode.textContent='Configuration copied. Paste it into this card’s Home Assistant configuration editor, then save.';}
       catch{
-        if(root!==this._dialogHost?.shadowRoot||this._dialogSpec?.kind!=='humidity')return;
+        if(root!==this._dialogHost?.shadowRoot||root.querySelector('dialog')?.dataset.view!=='humidity')return;
         let output=root.querySelector('[data-humidity-export]');
         if(!output){output=document.createElement('textarea');output.dataset.humidityExport='';output.readOnly=true;output.setAttribute('aria-label','Draft humidity configuration');output.style.cssText='width:100%;min-height:150px;color:inherit;background:#0b1420';root.querySelector('.body').append(output);}
         this._syncHumidityExport();
