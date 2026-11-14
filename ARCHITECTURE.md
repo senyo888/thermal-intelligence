@@ -1,6 +1,6 @@
 # Thermal Intelligence architecture contract
 
-The standalone frontend is published as RC.2. This contract describes the [released RC.2 source](https://github.com/senyo888/thermal-intelligence/tree/6d0833f20e9e071d94d2f09f00c1a4d4a34f1805); `main` carries documentation and a separately promoted frozen snapshot. The [RC.3 candidate](docs/rc-3.md) preserves this architecture while correcting request-result ordering and two presentation defects; it is not yet a published release. Candidates are prepared through `develop`, with beta work on `senyo888-patch-1`. The card presents Home Assistant/provider state and sends commands only after explicit user interaction. A future TI backend is a separate component and is not required by this card.
+The standalone frontend is published as [RC.3](docs/rc-3.md) from [source `f93fb64`](https://github.com/senyo888/thermal-intelligence/tree/f93fb6489f87fbf9c393dd8cd03e85e5718277ef). `main` carries documentation and a separately promoted frozen snapshot. Candidates are prepared through `develop`, with beta work on `senyo888-patch-1`. The card presents Home Assistant/provider state and sends commands only after explicit user interaction. A future TI backend is a separate component and is not required by this card.
 
 ## Ownership and layers
 
@@ -63,6 +63,6 @@ HI remains the authority for its seasonal humidity targets, Stability, selected 
 
 ## Code and documentation
 
-The released RC.2 source separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. In that release checkout, synthetic fixtures and unit/browser tests live under `tests/`, and the reproducible module is `dist/thermal-intelligence.js`.
+The released RC.3 source separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. In that release checkout, synthetic fixtures and unit/browser tests live under `tests/`, and the reproducible module is `dist/thermal-intelligence.js`.
 
 The README introduces the product; the Wiki provides practical guidance; repository documents define configuration, compatibility and technical contracts. The website presents the same supported features and prerelease limits. See [distribution](docs/distribution.md) and [command contracts](docs/command-contract.md).

@@ -2,7 +2,7 @@
 
 This page preserves the exact beta.4 artifact and its historical validation. [Beta.5](beta-5.md) followed beta.4; the latest untagged beta package is [beta.7](beta-7.md).
 
-For the current published prerelease, see [RC.2](rc.md). The [published RC.1 record](rc-1.md) remains separate.
+For the current published prerelease, see [RC.3](rc-3.md). The [published RC.1 record](rc-1.md) remains separate.
 
 Version **0.1.0-beta.4**, source commit `ea1268ac7a8dc5aa7f54723870808bf24a92cdc0`. This is a frontend module for controlled testing, with no TI backend required. Manual installation and rollback have been tested; see [compatibility](compatibility.md) for version coverage and remaining limits.
 

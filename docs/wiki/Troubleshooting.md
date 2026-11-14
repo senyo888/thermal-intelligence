@@ -1,5 +1,3 @@
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-troubleshooting.png" alt="Thermal Intelligence Wiki — Troubleshooting" width="100%">
-
 # Troubleshooting and support
 
 ## The card is missing from Add Card
@@ -20,7 +18,7 @@ They describe different observations: temperature response, temperature slope an
 
 ## Update or rollback
 
-Use the exact module and resource procedure in [RC.2 package record](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc.md) and [migration guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md). Retain the previous file and configuration. A frontend rollback cannot undo a provider command.
+Use the exact module and resource procedure in [RC.3 package record](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md) and [migration guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md). Retain the previous file and configuration. A frontend rollback cannot undo a provider command.
 
 ## Report a problem
 

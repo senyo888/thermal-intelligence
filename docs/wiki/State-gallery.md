@@ -1,5 +1,3 @@
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-state-gallery.png" alt="Thermal Intelligence Wiki — State gallery" width="100%">
-
 # Thermal Intelligence in different states
 
 These examples show how one card presents different combinations of temperature, trend and thermostat observations. The outer arc, fine slope ring and status chip carry separate information; they do not need to share one colour.
@@ -16,7 +14,7 @@ These examples show how one card presents different combinations of temperature,
   </tr>
 </table>
 
-Both captures show an orange arc and a rising trend. The chips report different facts: a thermostat heat request on the left, and a reported thermostatic radiator valve (TRV) opening on the right. Neither screenshot alone proves accepted output or physical heat transfer. In RC.2, orange requires the configured [response evidence](https://github.com/senyo888/thermal-intelligence/blob/main/docs/provider-contracts.md#temperature-response-evidence).
+Both captures show an orange arc and a rising trend. The chips report different facts: a thermostat heat request on the left, and a reported thermostatic radiator valve (TRV) opening on the right. Neither screenshot alone proves accepted output or physical heat transfer. In RC.3, orange requires the configured [response evidence](https://github.com/senyo888/thermal-intelligence/blob/main/docs/provider-contracts.md#temperature-response-evidence).
 
 ## A closed valve with different temperature trends
 

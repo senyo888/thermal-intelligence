@@ -14,7 +14,7 @@ These examples show how one card presents different combinations of temperature,
   </tr>
 </table>
 
-Both captures show an orange arc and a rising trend. The chips report different facts: a thermostat heat request on the left, and a reported thermostatic radiator valve (TRV) opening on the right. Neither screenshot alone proves accepted output or physical heat transfer. In RC.2, orange requires the configured [response evidence](provider-contracts.md#temperature-response-evidence).
+Both captures show an orange arc and a rising trend. The chips report different facts: a thermostat heat request on the left, and a reported thermostatic radiator valve (TRV) opening on the right. Neither screenshot alone proves accepted output or physical heat transfer. In RC.3, orange requires the configured [response evidence](provider-contracts.md#temperature-response-evidence).
 
 ## A closed valve with different temperature trends
 

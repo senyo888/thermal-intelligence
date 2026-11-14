@@ -1,8 +1,10 @@
 # Release candidate 0.1.0-rc.2
 
+This is the historical RC.2 release record. For the current prerelease and installation instructions, use [RC.3](rc-3.md).
+
 RC.2 is a published prerelease of the standalone thermostat card. It brings the beta.5–beta.7 changes: explicitly disabled VT locking no longer blocks ordinary controls, and eligible standard thermostats can expose one deliberately enrolled switch with confirmation before On or Off. It also retires completed request notices after context loss or a contrary provider report. No TI controller is required.
 
-[Release v0.1.0-rc.2](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.2) was published on 9 November 2026 from `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`. The corrected [RC.3 candidate](rc-3.md) is being prepared separately; promotion of a source snapshot to `main` does not change this published release. Documentation updates do not change either released tag or its assets. [RC.1](rc-1.md) and the [beta.7 record](beta-7.md) retain their historical identities.
+[Release v0.1.0-rc.2](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.2) was published on 9 November 2026 from `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`. [RC.3](rc-3.md) was published separately on 14 November 2026; this RC.2 package remains unchanged. Documentation updates do not change either released tag or its assets. [RC.1](rc-1.md) and the [beta.7 record](beta-7.md) retain their historical identities.
 
 ## Installation route
 
@@ -55,6 +57,6 @@ The card sends no requests during setup, rendering, editor cancellation or recon
 
 Schedules, persistent holds and automatic recovery remain outside this standalone frontend. Any future TI backend would be a separately installed component.
 
-## RC.3 corrections in preparation
+## Corrections released in RC.3
 
-RC.2 retains three confirmed issues: submillisecond report ordering can preserve an obsolete Observed result, an explicitly disabled valve mapping can hide thermostat activity, and a long read-only-lock heading can overflow. The [RC.3 candidate](rc-3.md) corrects these with regression tests. These corrections do not change this RC.2 release or its historical acceptance.
+RC.2 retains three confirmed issues: submillisecond report ordering can preserve an obsolete Observed result, an explicitly disabled valve mapping can hide thermostat activity, and a long read-only-lock heading can overflow. The [RC.3 release](rc-3.md) corrects these with regression tests. These corrections do not change this RC.2 release or its historical acceptance.

@@ -1,14 +1,12 @@
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-home.png" alt="Thermal Intelligence Wiki — Wiki home" width="100%">
-
 # Thermal Intelligence Wiki
 
 **Temperature, control and context in one Home Assistant card.**
 
-This manual describes RC.2 prerelease. Use a standard Home Assistant climate entity or Versatile Thermostat, then add humidity, trend, valve and provider details to suit each room.
+This manual describes RC.3 prerelease. Use a standard Home Assistant climate entity or Versatile Thermostat, then add humidity, trend, valve and provider details to suit each room.
 
 ## Start here
 
-1. Read the [RC.2 candidate status](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc.md) and [Marketplace installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md).
+1. Read the [RC.3 candidate status](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md) and [Marketplace installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md).
 2. [Configure your card](https://github.com/senyo888/thermal-intelligence/wiki/Configuration) with Home Assistant’s visual editor.
 3. [Read the card](https://github.com/senyo888/thermal-intelligence/wiki/Reading-the-card): arc, slope ring, status chip, LED and top-row readings.
 4. [Explore the state gallery](https://github.com/senyo888/thermal-intelligence/wiki/State-gallery) and [check compatibility](https://github.com/senyo888/thermal-intelligence/wiki/Compatibility).
@@ -20,6 +18,6 @@ This manual describes RC.2 prerelease. Use a standard Home Assistant climate ent
 - [Marketplace](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md) covers Home Assistant 2026.11 and later; [HACS](https://github.com/senyo888/thermal-intelligence/blob/main/docs/hacs.md) covers older installations.
 - [Troubleshooting](https://github.com/senyo888/thermal-intelligence/wiki/Troubleshooting) helps with resource loading, observations and rollback.
 
-Current published prerelease: **0.1.0-rc.2**. The [compatibility record](https://github.com/senyo888/thermal-intelligence/wiki/Compatibility) separates dated RC.2 installation/control evidence, a recovered controller incident and remaining acceptance work.
+Current published prerelease: **0.1.0-rc.3**. The [compatibility record](https://github.com/senyo888/thermal-intelligence/wiki/Compatibility) separates current RC.3 passive checks from historical RC.2 installation/control evidence and remaining acceptance work.
 
 [Website](https://senyo888.github.io/thermal-intelligence/) · [Repository](https://github.com/senyo888/thermal-intelligence) · [Changelog](https://github.com/senyo888/thermal-intelligence/blob/main/CHANGELOG.md)

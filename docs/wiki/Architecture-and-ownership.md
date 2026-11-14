@@ -1,5 +1,3 @@
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-architecture-and-ownership.png" alt="Thermal Intelligence Wiki — Thermal Intelligence in your home" width="100%">
-
 # Thermal Intelligence in your home
 
 Thermal Intelligence brings together a selected thermostat and the additional observations you choose. Thermostats and TRVs sit alongside independent room sensors, outdoor data and other integrations in the wider system.

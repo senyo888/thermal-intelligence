@@ -1,6 +1,6 @@
 # Distribution
 
-[RC.2](rc.md) is the current published prerelease. Its original source is `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`. The original RC.3 candidate `253d7ac8d001443290c000bd1725f5e87004d94a` was adopted through `develop`. The linked [RC.3 guide](rc-3.md) describes corrected source `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`, which has not yet been adopted in `develop`. Source promotion and versioned publication are separate steps. [RC.1](rc-1.md) and [beta.7](beta-7.md) remain dated historical packages. Use [Marketplace](marketplace.md) for Home Assistant 2026.11 and later, or [HACS](hacs.md) on older installations.
+[RC.3](rc-3.md) is the current published prerelease, from source `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`. Its exact package is preserved by the `v0.1.0-rc.3` tag; `main` carries the promoted snapshot and current documentation. Verify a branch revision before use rather than assuming it matches the released tag. [RC.2](rc.md), [RC.1](rc-1.md) and [beta.7](beta-7.md) retain their dated historical records. Use [Marketplace](marketplace.md) for Home Assistant 2026.11 and later, or [HACS](hacs.md) on older installations.
 
 | Branch | Contents |
 | --- | --- |
@@ -14,7 +14,7 @@ The package contains the JavaScript module, software licence and a manifest iden
 
 RC.2 passed a bounded manual-to-Marketplace custom-repository installation and passive Lab checks on 9 November. The [validation record](rc2-validation.md) distinguishes that result from incomplete two-version update, removal, recovery and catalogue acceptance. Historical beta.7 manual-installation evidence remains scoped to beta.7.
 
-The root [`hacs.json`](../hacs.json) names `thermal-intelligence.js`, uses the `dist/` layout and hides the default branch as a download choice. The [published RC.2](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.2) has its own versioned tag, Dashboard metadata and three release assets. Beta.7 is an untagged branch candidate; its metadata does not make it a named GitHub release or establish installer acceptance.
+The root [`hacs.json`](../hacs.json) names `thermal-intelligence.js`, uses the `dist/` layout and hides the default branch as a download choice. The [published RC.3](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.3) has its own versioned tag, Dashboard metadata and three release assets. Beta.7 is an untagged branch candidate; its metadata does not make it a named GitHub release or establish installer acceptance.
 
 The build writes `thermal-intelligence.js` and a copy of the software `LICENSE` to `dist/`. The distribution check rejects any extra files, including leftovers from earlier builds. There are no runtime dependencies to fetch. No minimum Home Assistant or HACS version is declared until the supported range is established. The manifest does not use integration-only ZIP or persistent-directory options. See the official [Dashboard requirements](https://www.hacs.xyz/docs/publish/plugin/) and [manifest guidance](https://www.hacs.xyz/docs/publish/start/).
 
@@ -46,10 +46,10 @@ The distribution check rejects wrong filenames, root modules that would shadow `
 | Check | Status |
 | --- | --- |
 | Repository description, topics, README images and software licence | Present |
-| Dashboard metadata, bounded install directory and repeatable candidate assets | RC.2 offline validation and exact installed/served hashes verified |
-| Published release containing the metadata and module | RC.2 and RC.1 published; beta.7 has no named release |
+| Dashboard metadata, bounded install directory and repeatable candidate assets | RC.3 reproducible assets and public download hashes verified; exact module manually checked in Lab |
+| Published release containing the metadata and module | RC.3, RC.2 and RC.1 published; beta.7 has no named release |
 | Upstream HACS validation with no ignored checks | RC.1 passed all 8 applicable checks on 3 November 2026; no beta.7 installer acceptance implied |
-| HACS and Marketplace install, update, removal, migration and recovery | RC.2 Marketplace manual-to-installer Lab installation passed; broader lifecycle and older HACS acceptance remain incomplete |
+| HACS and Marketplace install, update, removal, migration and recovery | RC.3 named-release Marketplace acceptance remains incomplete; historical RC.2 manual-to-installer Lab installation passed |
 | Default catalogue inclusion | Not submitted or claimed |
 
 The intended versioned route uses a reviewed GitHub release with the standalone JS asset, software licence and package manifest. A manual ZIP or a bare tag is not that route. Keep internal reports, prompts and raw evidence out of release assets. Catalogue submission has [additional requirements](https://www.hacs.xyz/docs/publish/include/), including upstream validation and a published release; preparing the files does not complete those steps.
@@ -66,10 +66,10 @@ The resource-manager source above is from HA 2026.11.0; source review alone does
 
 Add the module once as a **JavaScript module** resource. After updating its versioned URL, open a fresh browser document before checking the card and editor. A custom element already registered in an open page cannot be replaced in place.
 
-RC.2 retains `custom:thermal-intelligence-beta-card`, with the picker name **Thermal Intelligence Thermostat · RC**. Beta and RC packages share their trial registrations; load only one of those modules in a document. Keep existing legacy TI resources and card types in place. See [upgrade and rollback](migration.md).
+RC.3 retains `custom:thermal-intelligence-beta-card`, with the picker name **Thermal Intelligence Thermostat · RC**. Beta and RC packages share their trial registrations; load only one of those modules in a document. Keep existing legacy TI resources and card types in place. See [upgrade and rollback](migration.md).
 
 `scripts/package_beta.py` packages both explicit `-beta.N` and `-rc.N` versions from an immutable commit. Its manifest records the version, channel, delivery branch, exact commit/tree and file hashes. It rejects stable versions and mismatched bundles. The script name is retained for existing beta tooling.
 
 ## Default-branch discovery and release selection
 
-The default branch carries its separately reviewed module and licence for repository discovery, with a strict hash check. Select the named RC.2 release for RC.2 installation; the branch discovery payload is not its installed version. Both Marketplace and HACS read `hacs.json`; branch inspection or matching bytes alone do not prove named-release selection. Capture the selected version and installer origin as well as the served bytes. Reproduce published assets from their original release commit; a later promotion commit would change manifest provenance and is not a replacement release.
+The default branch carries its separately reviewed module and licence for repository discovery, with a strict hash check. Select the named RC.3 release for RC.3 installation; the branch discovery payload is not its installed version. Both Marketplace and HACS read `hacs.json`; branch inspection or matching bytes alone do not prove named-release selection. Capture the selected version and installer origin as well as the served bytes. Reproduce published assets from their original release commit; a later promotion commit would change manifest provenance and is not a replacement release.

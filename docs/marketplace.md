@@ -2,9 +2,15 @@
 
 Thermal Intelligence is a standalone **Dashboard** card. It uses your existing climate entities; no TI controller or backend integration is required. On Home Assistant 2026.11 and later, Marketplace is the installation route. For earlier Home Assistant versions, use the [HACS guide](hacs.md).
 
-[RC.2 is published](rc.md) and passed a bounded custom-repository Lab installation on 9 November 2026. See the [dated validation record](rc2-validation.md) for its exact scope. Update, removal and recovery coverage remain incomplete. TI is not claimed to be in the default catalogue; add its repository link.
+[RC.3 is published](rc-3.md). Its exact module passed passive manual Lab checks; named-release Marketplace acceptance is still incomplete. The earlier [RC.2 installation](rc2-validation.md) passed on 9 November 2026 and does not validate an RC.3 update. Update, removal and recovery coverage remain incomplete. TI is not claimed to be in the default catalogue; add its repository link.
 
-In Home Assistant 2026.11.1, TI uses the Marketplace [Dashboard category icon](https://github.com/home-assistant/frontend/blob/e32bc0696ebefde323f5b791269ad0c57f3f99d9/src/panels/marketplace/tools/repository-icon.ts); custom listing images are supported for integrations. TI's repository description uses its README artwork. [Relative image links](https://github.com/home-assistant/frontend/blob/e32bc0696ebefde323f5b791269ad0c57f3f99d9/src/panels/marketplace/tools/markdown.ts) resolve against the installed version, available version or default branch, in that order. An installed RC.2 therefore retains its versioned README and images after later documentation changes on `main`.
+In Home Assistant 2026.11.1, TI uses the Marketplace [Dashboard category icon](https://github.com/home-assistant/frontend/blob/e32bc0696ebefde323f5b791269ad0c57f3f99d9/src/panels/marketplace/tools/repository-icon.ts); custom listing images are supported for integrations. TI's repository description uses its README artwork. [Relative image links](https://github.com/home-assistant/frontend/blob/e32bc0696ebefde323f5b791269ad0c57f3f99d9/src/panels/marketplace/tools/markdown.ts) resolve against the installed version, available version or default branch, in that order. An installed version retains its versioned README and images after later documentation changes on `main`. The RC.3 tag preserves its pre-publication README; use the [current installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md) and [RC.3 release notes](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.3) for the intended version and final validation record.
+
+## Download counts
+
+Marketplace reads the download count of the matching release asset for its selected version. For TI, that asset is `thermal-intelligence.js`; no extra badge or repository setting enables the native count. This is an asset-download count, not a count of unique users or installations, and verification downloads also contribute.
+
+The reviewed frontend shows a dash in the wide list view, omits the count in narrow layouts, and omits the detail count when its stored value is zero. **Refresh information** can update repository metadata without installing a release; a missing count after refresh does not prove that nobody has downloaded TI. See the [Marketplace count lookup](https://github.com/home-assistant/core/blob/74cf5a49c63ed8d4d87717844bf14f79c28c9cea/homeassistant/components/marketplace/repositories/base.py#L1617) and [display rule](https://github.com/home-assistant/frontend/blob/e32bc0696ebefde323f5b791269ad0c57f3f99d9/src/panels/marketplace/dashboards/ha-marketplace-dashboard.ts#L624).
 
 ## Before installation
 
@@ -20,7 +26,7 @@ For a manual-to-Marketplace transition, retain the old module and its saved reso
 
 1. Open **Settings → Marketplace → Add from link**. Connect GitHub through Home Assistant if requested, then add `https://github.com/senyo888/thermal-intelligence`. If a type is requested, select **Dashboard**.
 2. Open Thermal Intelligence, then its three-dot menu → **Install another version**. For a first prerelease installation, choose the exact published tag here; there is no installed-repository Pre-release switch yet.
-3. Explicitly select **v0.1.0-rc.2**. Verify that tag in the confirmation dialog and stop if it is absent. Do not substitute another release, a branch or “latest”. [RC.1](rc-1.md) remains a separate older prerelease with its original assets.
+3. Explicitly select **v0.1.0-rc.3**. Verify that tag in the confirmation dialog and stop if it is absent. Do not substitute another release, a branch or “latest”. [RC.1](rc-1.md) remains a separate older prerelease with its original assets.
 4. Review the installation dialog and confirm. Storage-mode resources are registered automatically. For YAML-managed resources, use the installer URL; do not add a duplicate.
 5. Finish the resource transition above, then open a fresh browser document. If Home Assistant says that `www` did not exist at startup and needs a restart, stop and plan that separately.
 
