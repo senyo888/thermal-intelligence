@@ -42,7 +42,7 @@ Use this route only if an installer does not already own the trial resource.
 3. Add `/local/thermal-intelligence-trial/thermal-intelligence-rc3-750be9cc7acc.js` once as a **JavaScript module** resource. For an update, change only the existing trial URL. Keep legacy resources unchanged and do not load a second beta/RC module.
 4. Open a fresh browser document and verify the version, selected thermostat, readings, editor open/cancel and passive reconnect before deliberate controls. A frontend resource update does not need a Core restart; if Home Assistant requires one because `www` did not exist at startup, plan it separately.
 
-For a manual update rollback, restore the previous trial URL and matching saved configuration without overwriting newer dashboard edits. For a first-install rollback, remove only the trial cards and registration you added. Retain the files. A frontend rollback does not restore installer metadata or undo device commands.
+For a manual update rollback, restore the previous trial URL and matching saved configuration without overwriting newer dashboard edits. Open a fresh browser document and verify that the expected previous version is loaded before using controls; restoring the URL cannot replace a custom element already registered in an open document. For a first-install rollback, remove only the trial cards and registration you added. Retain the files. A frontend rollback does not restore installer metadata or undo device commands.
 
 ## Reproduce the release
 

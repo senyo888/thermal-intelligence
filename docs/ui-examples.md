@@ -2,7 +2,7 @@
 
 These examples show how one card presents different combinations of temperature, trend and thermostat observations. The outer arc, fine slope ring and status chip carry separate information; they do not need to share one colour.
 
-**About these images:** These anonymised installation examples have unrecorded source builds. Some schedule, ownership and cutoff indicators belong to the wider TI system and are outside the standalone release candidate. See [Image notes](image-notes.md) for editing context and [the RC guide](rc.md) for the current package.
+**About these images:** These anonymised installation examples have unrecorded source builds. Some schedule, ownership and cutoff indicators belong to the wider TI system and are outside the standalone release candidate. See [Image notes](image-notes.md) for editing context and [the RC.3 guide](rc-3.md) for the current package.
 
 ## A heat request and a reported valve opening
 
