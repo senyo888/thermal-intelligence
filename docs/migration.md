@@ -1,6 +1,6 @@
 # Update and rollback
 
-RC.2 retains existing **schema-1** and **schema-2** configurations. Explicit enrollment of the optional switch control, introduced in beta.6, uses **schema 2**; keep the original configuration for rollback. The trial card type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`.
+RC.3 retains existing **schema-1** and **schema-2** configurations. Explicit enrollment of the optional switch control, introduced in beta.6, uses **schema 2**; keep the original configuration for rollback. The trial card type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`.
 
 ## Keep existing TI alongside the trial card
 
@@ -13,7 +13,7 @@ Use the installer that owns the existing trial. On Home Assistant 2026.11 and la
 ### Update a manually installed trial card
 
 1. Retain the previous bundle, resource URL and saved card configuration.
-2. Use the [candidate package record](rc.md) and verify its digest. Select the published `v0.1.0-rc.2` release; do not substitute a branch download.
+2. Use the [release package record](rc-3.md) and verify its digest. Select the published `v0.1.0-rc.3` release; do not substitute a branch download.
 3. Save it under a new versioned filename and change only the beta resource URL. Do not register a second copy.
 4. Open a fresh browser document, reopen the visual editor and check the thermostat, provider details and source mappings.
 
@@ -29,6 +29,7 @@ For a first installation, remove only the added trial cards/view and its resourc
 
 | Update | Configuration and rollback behaviour |
 | --- | --- |
+| RC.2 → RC.3 | No schema or card-type change. Keep the saved configuration and previous module; returning to RC.2 restores its known request-status and presentation defects. |
 | RC.1 → RC.2 | Schema 1 remains supported. Optional switch enrollment uses schema 2; returning to RC.1 requires the original schema-1 configuration and module. |
 | beta.7 → RC.2 | Existing schema 1 and 2 settings remain supported. RC picker/version identity and current request-status presentation change. |
 | beta.6 → beta.7 | No new settings or schema changes. Corrects a false registry mismatch for absent device IDs. Returning to beta.6 can restore the block. |
@@ -44,11 +45,11 @@ For early development configurations, `background` selects `blue`, `plum` or `bl
 
 ## Beta.6 optional switch configuration
 
-The optional switch control is available from beta.6 and retained in RC.2; it is absent from beta.5 and RC.1. Existing schema-1 cards stay unchanged. Explicit enrollment uses schema 2; older modules reject that schema. Retain the original schema-1 card configuration before enabling it. To roll back, restore both the original configuration and its matching module/resource, then open a fresh browser document. Removing the optional row does not send Off or undo external effects. See [optional switch setup and limits](optional-switch-control.md).
+The optional switch control is available from beta.6 and retained in RC.3; it is absent from beta.5 and RC.1. Existing schema-1 cards stay unchanged. Explicit enrollment uses schema 2; older modules reject that schema. Retain the original schema-1 card configuration before enabling it. To roll back, restore both the original configuration and its matching module/resource, then open a fresh browser document. Removing the optional row does not send Off or undo external effects. See [optional switch setup and limits](optional-switch-control.md).
 
-## RC.1 coexistence
+## Trial and legacy coexistence
 
-All betas and the published RC.1 use the same trial card and editor registrations. Load only one trial module in a browser document; changing the trial resource requires a fresh document. Keep the separate legacy TI resources and cards unchanged. Untagged beta updates do not change the RC.1 tag or its release assets.
+All betas and published release candidates use the same trial card and editor registrations. Load only one trial module in a browser document; changing the trial resource requires a fresh document. Keep the separate legacy TI resources and cards unchanged. Untagged beta updates do not change the RC.1 tag or its release assets.
 
 ## Installer-managed recovery
 

@@ -1,5 +1,3 @@
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-configuration.png" alt="Thermal Intelligence Wiki — Configure your card" width="100%">
-
 # Configure your card
 
 After installing the selected RC module, then choose **Add Card → Thermal Intelligence Thermostat · RC**. Select your thermostat and use the visual editor for ordinary setup.
@@ -29,8 +27,8 @@ Actual beta.2 captures with synthetic data, illustrating controls retained in la
 
 </details>
 
-Saved schema-1 configurations remain valid in RC.2. Unknown fields survive editor round trips; preserving a field does not make an unsupported option operational. [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md).
+Saved schema-1 configurations remain valid in RC.3. Unknown fields survive editor round trips; preserving a field does not make an unsupported option operational. [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md).
 
 ## Optional switch control
 
-Available from beta.6 and retained in beta.7 and RC.2, the card offers one explicitly enabled switch beside Mode/Fan for a registered standard thermostat. Its visual editor requires enrollment and runtime confirmation in both directions. It needs no TI controller. Released RC.1 and beta.5 do not include it. See the [optional-control guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/optional-switch-control.md) for the exact schema, Honeywell Off behavior, restrictions and configuration-plus-module rollback.
+Available from beta.6 and retained in beta.7 and RC.3, the card offers one explicitly enabled switch beside Mode/Fan for a registered standard thermostat. Its visual editor requires enrollment and runtime confirmation in both directions. It needs no TI controller. Released RC.1 and beta.5 do not include it. See the [optional-control guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/optional-switch-control.md) for the exact schema, Honeywell Off behavior, restrictions and configuration-plus-module rollback.

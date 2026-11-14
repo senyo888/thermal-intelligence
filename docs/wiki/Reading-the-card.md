@@ -1,5 +1,3 @@
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-reading-the-card.png" alt="Thermal Intelligence Wiki — Reading the card" width="100%">
-
 # Reading the card
 
 ## Every detail has a purpose
@@ -75,6 +73,6 @@ This keeps occasional settings close without putting every control on the everyd
   </tr>
 </table>
 
-*These beta.2 captures use synthetic data and illustrate controls retained in RC.2; the current response-arc behaviour is described above.*
+*These beta.2 captures use synthetic data and illustrate controls retained in RC.3; the current response-arc behaviour is described above.*
 
 </details>

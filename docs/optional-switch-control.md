@@ -1,6 +1,6 @@
 # Optional switch control
 
-From beta.6, the card offers one optional switch beside the thermostat's Mode and Fan choices. It uses an existing Home Assistant switch and needs no TI controller, integration or add-on. It is not included in released RC.1 or beta.5. Beta.7 corrected a false registry mismatch for device-less entities. RC.2 retains this feature and its eligibility rules.
+From beta.6, the card offers one optional switch beside the thermostat's Mode and Fan choices. It uses an existing Home Assistant switch and needs no TI controller, integration or add-on. It is not included in released RC.1 or beta.5. Beta.7 corrected a false registry mismatch for device-less entities. RC.3 retains this feature and its eligibility rules.
 
 ## Set up the control
 

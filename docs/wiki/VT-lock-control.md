@@ -1,5 +1,3 @@
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-vt-lock-control.png" alt="Thermal Intelligence Wiki — VT lock control" width="100%">
-
 # VT lock control
 
 The compact icon beside the thermostat name shows the lock state reported by **Versatile Thermostat (VT)**. A confirmed Home Assistant administrator can tap it to open a small control dialog when the card has verified the thermostat and its lock capabilities. Other accounts retain the read-only indicator.

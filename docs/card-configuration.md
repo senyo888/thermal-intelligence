@@ -2,7 +2,7 @@
 
 The health LED distinguishes connection/readiness and incomplete provider observations from heating activity. VT's explicitly null **Off reason** and **Mode reason** mean **None reported**, not a telemetry failure. Missing fields and genuine unknown or unavailable values remain visible in the overview and may keep the LED amber; disconnected or unavailable thermostats remain red. An amber provider-detail warning does not itself change command permissions: the existing readiness and capability guards remain authoritative.
 
-This guide describes the published **0.1.0-rc.2 prerelease**. Existing schema-1 cards remain supported; explicitly enabling an optional switch uses schema 2. Published RC.1 and beta.5 do not include this feature. See [Compatibility](compatibility.md) for tested Home Assistant and provider versions.
+This guide describes the published **0.1.0-rc.3 prerelease**. Existing schema-1 cards remain supported; explicitly enabling an optional switch uses schema 2. Published RC.1 and beta.5 do not include this feature. See [Compatibility](compatibility.md) for tested Home Assistant and provider versions.
 
 The card presents a selected climate entity, its advertised controls and explicit optional observations. It does not need a TI backend, create schedules or take ownership of an existing controller. See the [provider contracts](provider-contracts.md) for capability and evidence rules, and the [command contract](command-contract.md) for request tracking and uncertainty.
 
@@ -60,7 +60,7 @@ The earlier local preview's `theme` option is no longer the appearance control. 
 
 Identity lookup is tied to the active connection, socket and user session. A session change invalidates the previous lookup; reconnecting retries identity checks without replaying commands. Remembered VT restrictions stay scoped to their connection, preventing an unavailable lookup from silently relaxing a known provider's readiness requirements.
 
-In the unpublished RC.3 candidate, a failed lookup can recover from matching frontend registry metadata. Otherwise, later HA updates allow at most two additional reads after one-second and two-second cooldowns within the same entity/configuration/session. There is no background retry loop. Exhausted or malformed evidence remains unavailable until valid metadata or a new context arrives; recovery never sends a thermostat command.
+In RC.3, a failed lookup can recover from matching frontend registry metadata. Otherwise, later HA updates allow at most two additional reads after one-second and two-second cooldowns within the same entity/configuration/session. There is no background retry loop. Exhausted or malformed evidence remains unavailable until valid metadata or a new context arrives; recovery never sends a thermostat command.
 
 VT requires literal boolean `is_ready: true`. Unknown readiness, initialization in progress, applicable user locking, an unavailable climate entity or a disconnected session disables dependent controls. The model does not relax these restrictions to make a control appear usable.
 
@@ -270,7 +270,7 @@ See [Compatibility](compatibility.md) for authenticated Home Assistant checks an
 
 ## Run the synthetic preview
 
-Use Node.js 22 or newer. From the root of a clean checkout of released RC.2 commit `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`:
+Use Node.js 22 or newer. From the root of a clean checkout of released RC.3 commit `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`:
 
 ```sh
 npm ci
