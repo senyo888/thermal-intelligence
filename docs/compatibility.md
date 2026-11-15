@@ -38,6 +38,25 @@ Corrected module SHA256 `66b247fe500a959c79dcb2c288174c4250ca27b15ac64e2dec49fbc
 
 The corrected observation lasted about 4 minutes 26 seconds with no recorded frontend errors or observation gaps. This manual overlay trial establishes the inert switch's frontend and service path. It does not establish physical response, real Honeywell behavior, provider-wide health, installer lifecycle or formal soak acceptance. The broader beta.8 display and thermostat checks above retain their original module identity.
 
+### Range and error-path checks — 15 November 2026
+
+Module SHA256 `66b247fe500a959c79dcb2c288174c4250ca27b15ac64e2dec49fbc0702f4235` was tested on a dedicated Template climate with local helper readback and no physical outputs, on HA 2026.11.0.
+
+| Path | Observed result |
+| --- | --- |
+| Range controls | Buttons sent both endpoints; keyboard Home/End respected limits and the other endpoint. Unchanged boundary presses sent nothing. |
+| Fan and swing | Advertised fan modes and both swing directions reached the selected settings and returned to their starting values. |
+| Service rejection | Negative acknowledgement produced failure, including when matching state arrived before the rejection. |
+| Missing or delayed readback | Acknowledgement without a state change became uncertain. A delayed response kept controls busy until transport settled and did not upgrade the timed-out request to success. |
+| Invalid or unavailable state | Crossed ranges and unavailable entities disabled affected controls; recovery sent no commands. |
+| Interrupted input and connection | A concurrent target change cancelled a held-key draft without dispatch. Closing the frontend connection during an in-flight request caused no replay; HA reconstructed the card and resynchronised current state. The new instance does not retain the old request's history. |
+
+The first pass recorded 23 deliberate climate requests: 20 positive acknowledgements, two intentional rejections and one acknowledgement lost during the deliberate frontend disconnect. Independent server observation recorded all 23 service events and the delayed state change after disconnect. Fixture setup calls were counted separately.
+
+The held-key test exposed duplicate accessible status text. [Source `5851fcf`](https://github.com/senyo888/thermal-intelligence/commit/5851fcf71bc2f0f3ccba1e112644bf6847c83a05) corrects only that rendering. The corrected module, SHA256 `b6d1a2a9c6c0639a255e14ac7a25b56bb3cf55de6a7a5a22339a3eb8bcb145bd`, passed a focused Lab retest of cancellation, pending/uncertain feedback and a fresh Off action. Each captured status had one accessible status region; the cancelled draft sent nothing. All three deliberate retest requests had positive acknowledgements and independent service events. Actual screen-reader speech was not tested.
+
+The inert fixture finished Off with its original range, fan and swing settings. Existing thermostat settings, provider configuration and dashboard content were preserved. These are bounded manual overlay checks, not provider-wide permissions, physical-device response, installer lifecycle, backup restore or formal soak acceptance. Earlier checks retain their original module identities.
+
 ## Historical RC.2 validation
 
 The [dated RC.2 record](rc2-validation.md) covers its exact package, Marketplace Lab installation and two-card trial on HA 2026.11.1 with VT 10.6.4 plus local provider extensions. Both cards passed bounded controls and followed a natural 25-minute house-policy Boost return, with 16m38s of subsequent observation. The maintainer confirmed physical heating for that RC.2 trial.
