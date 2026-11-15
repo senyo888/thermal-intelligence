@@ -4,6 +4,7 @@
 
 - Make button activation, provider-selected presets and pending or uncertain requests easier to distinguish.
 - Lead display setup through Home Assistant’s card editor, preserving advanced draft/export in the runtime dialogs.
+- Open and select the advanced configuration text when clipboard access is unavailable.
 - Add humidity sliders, exact fields and a live display preview to the editor; keep the saved guide distinct from runtime drafts.
 - Search optional switches by name or entity ID without changing selection or enrollment.
 - Preview reading icons, values and source status; offer explicitly adopted VT source suggestions with identity revalidation.

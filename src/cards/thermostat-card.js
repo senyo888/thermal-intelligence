@@ -419,7 +419,12 @@ export class ThermalIntelligenceCard extends HTMLElement {
         if(!this._displayExportComplete)return;
         const statusNode=root.querySelector('[data-dialog-status]');
         try {await navigator.clipboard.writeText(JSON.stringify(this._settingsDraft||this._displayDraft,null,2));if(statusNode)statusNode.textContent='Configuration copied. Paste it into this card’s Home Assistant configuration editor, then save.';}
-        catch {output?.focus();output?.select();if(statusNode)statusNode.textContent='Select and copy the configuration below. Save it in this card’s Home Assistant configuration editor.';}
+        catch {
+          if(root!==this._dialogHost?.shadowRoot||root.querySelector('[data-settings-export]')!==output)return;
+          for(let section=output?.closest('details');section;section=section.parentElement?.closest('details'))section.open=true;
+          output?.focus();output?.select();
+          if(statusNode)statusNode.textContent='Select and copy the configuration shown. Save it in this card’s Home Assistant configuration editor.';
+        }
       });
     }
     for(const input of root.querySelectorAll('[data-humidity-boundary]'))input.oninput=()=>{
