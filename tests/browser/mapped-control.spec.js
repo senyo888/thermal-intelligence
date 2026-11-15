@@ -150,6 +150,30 @@ test('meaningful state, session, registry and config changes invalidate confirma
   await expect(submit(page)).toBeEnabled();await submit(page).click();await expect(dialog(page).locator('[data-mapped-message]')).toContainText('reported after');expect((await calls(page)).length).toBe(1);
 });
 
+test('a recovered switch explains the invalid confirmation and requires a fresh action', async({page}) => {
+  await setup(page);await button(page).click();
+  await page.evaluate(()=>{fixture.hass.states['switch.fixture_aux'].state='unavailable';fixture.refresh();});
+  await expect(submit(page)).toBeDisabled();await expect(dialog(page)).toContainText('unknown, unavailable or invalid');
+  await page.evaluate(()=>fixture.applySwitch(false));
+  await expect(dialog(page).locator('[data-mapped-current]')).toHaveText('Switch reports: off');
+  await expect(dialog(page).locator('[data-mapped-message]')).toHaveText('This confirmation is no longer valid. Close and reopen the switch control.');
+  await expect(submit(page)).toBeDisabled();await page.evaluate(()=>fixture.cards[0]._submitMapped());expect(await calls(page)).toEqual([]);
+  await dialog(page).locator('[data-mapped-close]').click();await button(page).click();await expect(submit(page)).toBeEnabled();
+  await submit(page).click();await expect(dialog(page)).toContainText('Requested switch state reported');
+  expect(await calls(page)).toEqual([{domain:'switch',service:'turn_on',payload:{entity_id:'switch.fixture_aux'}}]);
+});
+
+test('recovery does not replace a submitted request outcome or replay it', async({page}) => {
+  await setup(page);await page.clock.install();await page.evaluate(()=>fixture.behavior='pending');await button(page).click();await submit(page).click();
+  await page.evaluate(()=>{fixture.hass.states['switch.fixture_aux'].state='unavailable';fixture.refresh();});
+  await page.clock.fastForward(11000);await page.evaluate(()=>fixture.applySwitch(false));
+  await expect(dialog(page)).toContainText('Switch reports: off');
+  await expect(dialog(page).locator('[data-mapped-message]')).toHaveText('Switch control is no longer available. Check its current state.');
+  await expect(card(page)).toContainText('uncertain');await expect(submit(page)).toBeDisabled();
+  await page.evaluate(()=>{fixture.pending[0].resolve();fixture.cards[0]._submitMapped();});
+  await expect(submit(page)).toBeDisabled();expect((await calls(page)).length).toBe(1);
+});
+
 test('unknown or unsupported optional rows do not disable ordinary climate controls', async({page}) => {
   for(const platform of ['group','template']){await setup(page,{platform});await expect(button(page)).toBeDisabled();await expect(card(page).locator('[data-choice="hvac_mode"]')).toBeEnabled();}
   await setup(page,{vt:true});await expect(button(page)).toBeDisabled();await expect(card(page).locator('[data-mapped-reason]')).toContainText('not supported for VT');

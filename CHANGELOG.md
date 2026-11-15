@@ -7,6 +7,7 @@
 - Open and select the advanced configuration text when clipboard access is unavailable.
 - Add humidity sliders, exact fields and a live display preview to the editor; keep the saved guide distinct from runtime drafts.
 - Search optional switches by name or entity ID without changing selection or enrollment.
+- Update an invalid switch confirmation's explanation when the switch recovers, while still requiring a fresh confirmation.
 - Preview reading icons, values and source status; offer explicitly adopted VT source suggestions with identity revalidation.
 - Add typed temperature observations and a guided outdoor sensor/weather mapping with live unit validation.
 

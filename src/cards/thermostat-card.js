@@ -482,7 +482,10 @@ export class ThermalIntelligenceCard extends HTMLElement {
     }
     root.querySelector('[data-mapped-current]').textContent = `Switch reports: ${this._hass?.connected === true ? capability.reported : 'unavailable'}`;
     const status = this._coordinator.presentationStatus;
-    root.querySelector('[data-mapped-message]').textContent = intent.message || (intent.submitted
+    const invalidConfirmation = intent.invalid && !intent.submitted
+      ? capability.allowed ? 'This confirmation is no longer valid. Close and reopen the switch control.' : capability.reason
+      : '';
+    root.querySelector('[data-mapped-message]').textContent = invalidConfirmation || intent.message || (intent.submitted
       ? status.domain === 'switch' && status.target === intent.target ? status.message : 'Check the current reported state before another action.'
       : 'No command has been sent.');
     root.querySelector('[data-mapped-close]').textContent = intent.submitted ? 'Close' : 'Cancel';

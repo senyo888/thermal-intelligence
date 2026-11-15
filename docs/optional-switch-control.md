@@ -31,7 +31,7 @@ Only one item is supported. `version`, `enabled`, `kind` and `entity` must have 
 
 ## Use and reported results
 
-The button shows the switch's reported state. Select it to review the exact target and requested direction, then confirm **Turn on** or **Turn off**. Both directions require confirmation. Changed state, identity, configuration or connection invalidates an open confirmation; close it and review a new action. There is no automatic retry, generic toggle, alternate target or compensating thermostat command.
+The button shows the switch's reported state. Select it to review the exact target and requested direction, then confirm **Turn on** or **Turn off**. Both directions require confirmation. Changed state, identity, configuration or connection invalidates an open confirmation; close it and review a new action. If an unavailable switch recovers, the original confirmation stays disabled and explains that a fresh confirmation is required. There is no automatic retry, generic toggle, alternate target or compensating thermostat command.
 
 The card sends only `switch.turn_on` or `switch.turn_off` with one entity ID. Home Assistant remains responsible for authorization. Reading the switch or seeing its registry entry does not grant permission to control it; backend refusals produce a generic failure message. This is not an emergency-stop path, a global lock or a guarantee against other automations and users changing the system.
 
