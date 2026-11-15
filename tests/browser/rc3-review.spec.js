@@ -50,7 +50,7 @@ test('generic humidity follows its explicit source while keyed headers retain th
 
 for (const legacy of [false, true]) test(`humidity reset clears ${legacy ? 'legacy' : 'canonical'} boundary edits without clearing unrelated drafts`, async ({ page }) => {
   await reset(page, 'standard', { humidity_bands: { ...(legacy ? { low: 35, high: 65 } : { dry_below: 30, good_min: 40, good_max: 60, wet_above: 70 }), future: { kept: true } } });
-  await editor(page).locator('[data-section="advanced"] summary').click();
+  await editor(page).locator('[data-section="humidity"] > summary').click();
   const key = legacy ? 'low' : 'dry_below';
   await field(page, `humidity_bands.${key}`).fill('25'); await field(page, `humidity_bands.${key}`).press('Tab');
   await page.evaluate(() => { fixture.editor._buffers.set('name', 'Unrelated draft'); });

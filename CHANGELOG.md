@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.0-beta.8 — Unreleased
+
+- Make button activation, provider-selected presets and pending or uncertain requests easier to distinguish.
+- Lead display setup through Home Assistant’s card editor, preserving advanced draft/export in the runtime dialogs.
+- Add humidity sliders, exact fields and a live display preview to the editor; keep the saved guide distinct from runtime drafts.
+- Search optional switches by name or entity ID without changing selection or enrollment.
+- Preview reading icons, values and source status; offer explicitly adopted VT source suggestions with identity revalidation.
+- Add typed temperature observations and a guided outdoor sensor/weather mapping with live unit validation.
+
+Existing schemas, control guards, per-card settings and unknown configuration fields remain supported. Older modules cannot read the new `temperature` kind: retain compatible configuration and its module together for rollback. This candidate has synthetic coverage only; it is not a release or installation recommendation.
+
 ## 0.1.0-rc.3 — 14 November 2026
 
 - Preserve submillisecond ordering when climate or VT lock reports contradict an earlier match before acknowledgement.

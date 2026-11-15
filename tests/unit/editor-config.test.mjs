@@ -114,7 +114,7 @@ test('editor emits a complete isolated configuration only after a valid intentio
 
 test('the rendered add-source action retains edits committed since it was rendered', () => {
   const previousDocument = globalThis.document;
-  const node = () => ({ dataset: {}, children: [], append(...children) { this.children.push(...children); } });
+  const node = () => ({ dataset: {}, children: [], setAttribute() {}, addEventListener() {}, append(...children) { this.children.push(...children); } });
   globalThis.document = { createElement: node };
   try {
     const actions = new Map();
@@ -160,7 +160,7 @@ test('source background and feature edits preserve independent mappings and unkn
 
 test('rendered source mapping and feature controls expose every restored public field', () => {
   const previousDocument = globalThis.document;
-  const node = () => ({ dataset: {}, children: [], append(...children) { this.children.push(...children); } });
+  const node = () => ({ dataset: {}, children: [], setAttribute() {}, addEventListener() {}, append(...children) { this.children.push(...children); } });
   globalThis.document = { createElement: node };
   try {
     const fields = [], actions = new Map(), events = [];
@@ -187,7 +187,7 @@ test('rendered source mapping and feature controls expose every restored public 
 
 test('preset association dropdown exposes advertised and saved values and unsets without losing fields', () => {
   const previousDocument = globalThis.document;
-  const node = () => ({ dataset: {}, children: [], append(...children) { this.children.push(...children); } });
+  const node = () => ({ dataset: {}, children: [], setAttribute() {}, addEventListener() {}, append(...children) { this.children.push(...children); } });
   globalThis.document = { createElement: node };
   try {
     const fields = [], events = [];
@@ -213,7 +213,7 @@ test('preset association dropdown exposes advertised and saved values and unsets
 
 test('humidity editor exposes source defaults or legacy fields and resets without losing unknown keys', () => {
   const previousDocument = globalThis.document;
-  const node = () => ({ dataset: {}, children: [], append(...children) { this.children.push(...children); } });
+  const node = () => ({ dataset: {}, children: [], setAttribute() {}, addEventListener() {}, append(...children) { this.children.push(...children); } });
   globalThis.document = { createElement: node };
   try {
     const fields = [], actions = new Map(), events = [];
@@ -224,13 +224,13 @@ test('humidity editor exposes source defaults or legacy fields and resets withou
       _button(label, action, callback) { actions.set(action, callback); return node(); },
       dispatchEvent(event) { events.push(event); },
     });
-    editor._advanced();
+    editor._humidityDisplay();
     for (const [key, expected] of [['dry_below', 30], ['good_min', 40], ['good_max', 60], ['wet_above', 70]]) assert.equal(fields.find((field) => field.key === `humidity_bands.${key}`).value, expected);
     assert.equal(events.length, 0); assert.equal(editor._draft.humidity_bands, undefined);
     fields.find((field) => field.key === 'humidity_bands.dry_below').options.onChange(25);
     assert.deepEqual(events.at(-1).detail.config.humidity_bands, { dry_below: 25, good_min: 40, good_max: 60, wet_above: 70 });
     editor._draft.humidity_bands = { low: 35.5, high: 65.5, future: { retained: true } };
-    fields.length = 0; editor._advanced();
+    fields.length = 0; editor._humidityDisplay();
     assert.deepEqual(fields.filter((field) => field.key.startsWith('humidity_bands.')).map((field) => field.key), ['humidity_bands.low', 'humidity_bands.high']);
     fields.find((field) => field.key === 'humidity_bands.low').options.onChange(36.5);
     assert.deepEqual(events.at(-1).detail.config.humidity_bands, { low: 36.5, high: 65.5, future: { retained: true } });

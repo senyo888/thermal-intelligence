@@ -49,6 +49,7 @@ for (const legacy of [false, true]) test(`manual humidity export follows ${legac
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async () => { throw Error('Clipboard denied'); } } });
   });
   await card(page).locator('[data-telemetry-topic="humidity"]').first().click();
+  await card(page).getByRole('dialog').locator('#humidity-advanced > summary').click();
   const dialog = card(page).getByRole('dialog'), output = dialog.locator('[data-humidity-export]');
   const key = legacy ? 'low' : 'dry_below';
   const input = dialog.locator(`input[type="number"][data-humidity-boundary="${key}"]`);
@@ -71,6 +72,7 @@ test('a delayed clipboard rejection exposes the current humidity draft', async (
   });
   await card(page).locator('[data-telemetry-topic="humidity"]').first().click();
   const dialog = card(page).getByRole('dialog');
+  await dialog.locator('#humidity-advanced > summary').click();
   await dialog.getByRole('button', { name: 'Copy configuration' }).click();
   await dialog.locator('input[type="number"][data-humidity-boundary="dry_below"]').fill('31');
   await page.evaluate(() => window.rejectClipboard(Error('Clipboard denied')));
@@ -82,6 +84,7 @@ test('a delayed clipboard rejection exposes the current humidity draft', async (
 for (const reopenHumidity of [false, true]) test(`late clipboard failure does not affect a ${reopenHumidity ? 'reopened humidity' : 'different'} dialog`, async ({ page }) => {
   await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: () => new Promise((resolve, reject) => { window.rejectClipboard = reject; }) } }));
   await card(page).locator('[data-telemetry-topic="humidity"]').first().click();
+  await card(page).getByRole('dialog').locator('#humidity-advanced > summary').click();
   await card(page).getByRole('dialog').getByRole('button', { name: 'Copy configuration' }).click();
   await page.keyboard.press('Escape');
   if (reopenHumidity) await card(page).locator('[data-telemetry-topic="humidity"]').first().click();

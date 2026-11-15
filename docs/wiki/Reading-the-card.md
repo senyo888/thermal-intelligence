@@ -1,5 +1,7 @@
 # Reading the card
 
+**Unreleased beta.8 preview:** display setup moves into Home Assistant’s card editor, with humidity sliders, reading/icon previews, outdoor temperature and searchable switch selection. Runtime **Readings and display** keeps **Advanced draft and export** available. Press feedback acknowledges interaction; selected presets still follow provider state. These changes are candidate-only, with no installation acceptance.
+
 ## Every detail has a purpose
 
 The everyday view stays simple: the room temperature, your target, a clear status and controls within reach. Behind that simplicity, the dial, colour, icons and small indicators each have a purpose. Tap for context, expand for controls, then return to the quiet overview.

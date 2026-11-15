@@ -1,5 +1,9 @@
 # Configure your card
 
+Picker labels follow the module channel: **Thermal Intelligence Thermostat · Beta** for the unreleased beta.8 candidate; **Thermal Intelligence Thermostat · RC** for published RC.3.
+
+**Unreleased beta.8 preview:** display setup moves into Home Assistant’s card editor, with humidity sliders, reading/icon previews, outdoor temperature and searchable switch selection. Runtime **Readings and display** keeps **Advanced draft and export** available. Press feedback acknowledges interaction; selected presets still follow provider state. These changes are candidate-only, with no installation acceptance.
+
 After installing the selected RC module, then choose **Add Card → Thermal Intelligence Thermostat · RC**. Select your thermostat and use the visual editor for ordinary setup.
 
 - **Provider:** use verified registry identity or choose the provider explicitly. VT readiness and restrictions remain visible.

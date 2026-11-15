@@ -165,6 +165,7 @@ test('four humidity sliders keep an editable local draft through passive updates
   await card(page).locator('.header-telemetry [data-telemetry-topic="humidity"]').click();
   const dialog = card(page).getByRole('dialog');
   await expect(dialog).toHaveAttribute('data-view', 'humidity');
+  await dialog.locator('#humidity-advanced > summary').click();
   await expect(dialog.locator('input[type="range"]')).toHaveCount(4);
   await expect(dialog.locator('input[type="number"]')).toHaveCount(4);
   for (const [key, value] of [['dry_below', 30], ['good_min', 40], ['good_max', 60], ['wet_above', 70]]) {

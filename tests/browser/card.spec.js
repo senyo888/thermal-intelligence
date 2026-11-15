@@ -65,6 +65,7 @@ test('inert mapping getters cannot block ordinary dialog snapshots or run on ope
       await expect(card(page).locator('[data-export-unavailable]')).toBeVisible();
       await expect(card(page).locator('[data-copy-settings],[data-copy-humidity]')).toBeDisabled();
       if(kind==='settings'){
+        await card(page).getByRole('dialog').locator('#advanced-export > summary').click();
         const embedded=card(page).locator('[data-dialog-editor]');
         await embedded.getByLabel('Card name',{exact:true}).fill('Draft name');
         await embedded.getByLabel('Card name',{exact:true}).press('Tab');
@@ -465,16 +466,18 @@ test('visual editor preserves unknown fields and changes only its card',async({p
   await field(page,'show_activity').uncheck();await field(page,'show_details').uncheck();
   await expect(card(page)).toContainText('Review thermostat');
   await expect(page.locator('thermal-intelligence-beta-card').nth(1)).not.toContainText('Review thermostat');
-  await editor(page).locator('[data-section="telemetry"] summary').click();
+  await editor(page).locator('[data-section="sources"] > summary').click();
+  await editor(page).locator('[data-section="telemetry"] > summary').click();
   await edit(page,'telemetry.0.label','Room humidity');await editor(page).locator('[data-action="add-telemetry"]').click();
   await edit(page,'telemetry.1.entity','sensor.fixture_valve');await field(page,'telemetry.1.kind').selectOption('valve');
   await edit(page,'telemetry.1.attribute','position');await edit(page,'telemetry.1.unit','%');await edit(page,'telemetry.1.max_age_seconds','60');
   await editor(page).locator('[data-action="move-telemetry-up"][data-row="1"]').click();
-  await editor(page).locator('[data-section="advanced"] summary').click();
+  await editor(page).locator('[data-section="humidity"] > summary').click();
   const count=await page.evaluate(()=>fixture.events.length);await edit(page,'humidity_bands.dry_below','40');
   expect(await page.evaluate(()=>fixture.events.length)).toBe(count);
   await edit(page,'humidity_bands.dry_below','30');await edit(page,'humidity_bands.good_min','42');
-  await edit(page,'humidity_bands.good_max','62');await edit(page,'humidity_bands.wet_above','72');await edit(page,'step','0.25');
+  await edit(page,'humidity_bands.good_max','62');await edit(page,'humidity_bands.wet_above','72');
+  await editor(page).locator('[data-section="advanced"] > summary').click();await edit(page,'step','0.25');
   const saved=await page.evaluate(()=>fixture.config);
   expect(saved.background).toBe('plum');expect(saved.theme).toBe('dark');expect(saved.future).toEqual({enabled:true});expect(saved.telemetry[1].future).toBe('retained');expect(saved.humidity_bands).toEqual({dry_below:30,good_min:42,good_max:62,wet_above:72});expect(saved.step).toBe(.25);
   await page.evaluate(()=>{fixture.editor.setConfig(fixture.config);fixture.cards[0].setConfig(fixture.config);fixture.refresh();});
@@ -482,7 +485,8 @@ test('visual editor preserves unknown fields and changes only its card',async({p
 });
 
 test('typing then clicking an editor action commits without losing the click',async({page})=>{
-  await editor(page).locator('[data-section="telemetry"] summary').click();
+  await editor(page).locator('[data-section="sources"] > summary').click();
+  await editor(page).locator('[data-section="telemetry"] > summary').click();
   await field(page,'telemetry.0.label').fill('Typed label');
   await editor(page).locator('[data-action="add-telemetry"]').click();
   expect(await page.evaluate(()=>fixture.config.telemetry.length)).toBe(3);
@@ -497,6 +501,7 @@ test('source settings dialog retains a local draft without changing dashboard co
   const before=await page.evaluate(()=>({dashboard:structuredClone(fixture.config),card:structuredClone(fixture.cards[0].config)}));
   await expand(page);await card(page).locator('[data-icon-settings]').click();
   const dialog=card(page).getByRole('dialog');await expect(dialog).toHaveAttribute('data-view','settings');
+  await dialog.locator('#advanced-export > summary').click();
   await expect(dialog.locator('.scope')).toContainText('does not save dashboard configuration');
   const nested=dialog.locator('[data-dialog-editor]'),name=nested.locator('[data-field="name"]');
   await name.fill('Unsaved source settings');await name.press('Tab');

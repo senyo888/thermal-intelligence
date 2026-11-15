@@ -2,26 +2,28 @@
 
 The health LED distinguishes connection/readiness and incomplete provider observations from heating activity. VT's explicitly null **Off reason** and **Mode reason** mean **None reported**, not a telemetry failure. Missing fields and genuine unknown or unavailable values remain visible in the overview and may keep the LED amber; disconnected or unavailable thermostats remain red. An amber provider-detail warning does not itself change command permissions: the existing readiness and capability guards remain authoritative.
 
-This guide describes the published **0.1.0-rc.3 prerelease**. Existing schema-1 cards remain supported; explicitly enabling an optional switch uses schema 2. Published RC.1 and beta.5 do not include this feature. See [Compatibility](compatibility.md) for tested Home Assistant and provider versions.
+This branch’s guide describes the **unreleased 0.1.0-beta.8 candidate**. The current published prerelease remains RC.3. Existing schema-1 cards remain supported; explicitly enabling an optional switch uses schema 2. Published RC.1 and beta.5 do not include this feature. See [Compatibility](compatibility.md) for tested Home Assistant and provider versions.
 
 The card presents a selected climate entity, its advertised controls and explicit optional observations. It does not need a TI backend, create schedules or take ownership of an existing controller. See the [provider contracts](provider-contracts.md) for capability and evidence rules, and the [command contract](command-contract.md) for request tracking and uncertainty.
 
 ## Visual configuration
 
-Ordinary configuration is available through the visual editor:
+Open the dashboard menu, choose **Edit dashboard**, then **Edit** on this card. **Save** keeps the accepted configuration; **Cancel** keeps the previously saved settings.
 
-1. In **Thermostat**, select a climate entity and provider mode. Set the card name and **Background**: **Midnight Blue**, **Plum** or **Black**. Activity and details visibility remain independent settings.
-2. In **Temperature trend, humidity and valve sources**, map the existing card surfaces to explicit sensors. None is required for temperature control.
-3. In **Custom telemetry & features**, add named header extras using an entity, optional attribute, label, unit and icon. Optionally associate a temperature source with an exact advertised preset using **Preset association**; **Unassociated** clears that link. Rows can be reordered or removed; a blank source is a disabled setup row.
-4. In **Optional telemetry**, add typed sources, exact entities and optional attribute paths, labels, units or maximum ages. This schema remains supported alongside the original `features` mappings.
-5. In **Preset display labels**, change the labels for advertised presets or add an exact provider-value mapping. Reset removes a label override. Saved mappings for currently unadvertised values remain editable.
-6. In **Advanced display settings**, set a fallback temperature step or the original four humidity display boundaries. Saved legacy low/high guides remain two explicitly labelled fields. **Reset humidity guides to source defaults** restores the original five-band presentation, retaining unknown nested configuration.
+1. In **Thermostat**, select a climate entity and provider mode. Set the name, background and activity/detail visibility.
+2. In **Readings and icons**, map trend, humidity and valve sensors. Preview each header icon, value, status and source. **Custom telemetry & features** and **Optional telemetry** retain their full fields, ordering and preset associations.
+3. **Outside temperature** adds an explicitly selected temperature sensor or weather entity. It leaves the indoor dial unchanged. **Find VT sources** lists verified suggestions; each needs a deliberate **Use this source** action.
+4. In **Humidity display**, adjust the four sliders or exact percentages, inspect the gradient and current reading, or reset the guides. Legacy low/high guides remain two labelled fields; reset preserves unknown nested preferences.
+5. In **Optional switch control**, search by friendly name or entity ID, select the exact switch, and enroll it separately. Searching alone changes no configuration.
+6. **Preset display labels**, **Temperature response** and **Advanced display settings** retain preset labels, response mappings and the fallback temperature step.
+
+The runtime **Readings and display** panel explains this route and shows current readings. Its collapsed **Advanced draft and export** retains the full local editor and copy/export tools. The humidity panel shows the saved guide and history, with its original draft controls under the same disclosure. These runtime drafts do not save dashboard configuration. Closing them discards unsaved edits; copy a valid draft into Home Assistant’s card editor to keep it.
 
 Fields validate before emitting an accepted configuration. An incomplete or invalid draft shows an error and leaves the card on its last accepted configuration. The no-climate scenario remains a usable setup state. Configuration belongs to each card instance; editing one card does not update other copies.
 
 Rejected edits to an enrolled switch label or icon restore the displayed saved value and explain the rejection before another field can be saved. Accepted optional-control data is copied at `setConfig`; later mutation of the caller's mapping does not change the active card until another explicit configuration update.
 
-Dialog drafts copy configuration data without evaluating JavaScript getters or serialization hooks. Unknown plain data stays intact. If a configuration contains values that cannot be copied safely, dialogs keep working, the accepted configuration stays unchanged, and Settings/humidity export is disabled with an explanation. Edit that card in Home Assistant rather than exporting a partial configuration.
+Dialog drafts copy configuration data without evaluating JavaScript getters or serialization hooks. Unknown plain data stays intact. If a configuration contains values that cannot be copied safely, dialogs keep working, the accepted configuration stays unchanged, and display/humidity export is disabled with an explanation. Edit that card in Home Assistant rather than exporting a partial configuration.
 
 The YAML below describes the same configuration contract. The preview shows the normalized configuration as JSON; it does not include a YAML importer. Type and schema version are managed by the card and editor rather than exposed as ordinary display settings.
 
@@ -145,17 +147,19 @@ Without `response_arc`, the existing display-unit comparison is retained: blue b
 
 | Field | Required / default | Meaning |
 | --- | --- | --- |
-| `kind` | Required | `humidity`, `trend`, `valve`, `energy`, `power`, `window`, `motion`, `presence`, `power_management`, `follow` or `custom`. |
+| `kind` | Required | `temperature`, `humidity`, `trend`, `valve`, `energy`, `power`, `window`, `motion`, `presence`, `power_management`, `follow` or `custom`. |
 | `entity` | Required | Exact HA entity ID, or `""` for a disabled row. Any entity domain can supply an observation. |
 | `attribute` | Optional; entity state | Dot-separated attribute path, such as `diagnostics.temperature_slope`. Only own properties are read. |
-| `label` | Optional; kind label | Display label. Defaults are Humidity, Temperature trend, Valve, Energy, Power or Telemetry. |
+| `label` | Optional; kind label | Display label. Defaults are Temperature, Humidity, Temperature trend, Valve, Energy, Power or Telemetry. |
 | `unit` | Optional; reported state unit | Explicit unit for a value that has no state-unit metadata, particularly an attribute. It never requests a conversion. |
+| `unit_attribute` | Optional; temperature rows only | Own-property path to the live unit of a temperature attribute, such as weather’s `temperature_unit`. Requires `attribute`; missing or incompatible units are invalid. |
 | `max_age_seconds` | Optional; no age limit | Finite positive number. Compares the entity's `last_updated` with observation time. Choose it from the source's reporting behavior. |
 
-The entity's `unit_of_measurement` describes its state. It is not automatically applied to a nested attribute, so typed numeric attribute observations need an explicit unit. If both an entity-state unit and a configured unit exist, they must match. `__proto__`, `constructor` and `prototype` are prohibited attribute-path components.
+The entity's `unit_of_measurement` describes its state. It is not automatically applied to a nested attribute, so typed numeric attribute observations need an explicit unit, or a live `unit_attribute` for temperature. If both an entity-state unit and a configured unit exist, they must match. `__proto__`, `constructor` and `prototype` are prohibited attribute-path components.
 
 | Kind | Valid data | Default label |
 | --- | --- | --- |
+| `temperature` | Finite numeric temperature with `°C` or `°F`; a sensor state must report its actual unit | Temperature |
 | `humidity` | Finite percentage from 0 to 100; unit `%` | Humidity |
 | `trend` | Finite signed value; `°C/h`, `°F/h`, `°C/hour`, `°C/hr`, `degC/h`, `°F/hour`, `°F/hr`, `°C/min` or `°F/min` | Temperature trend |
 | `valve` | Finite percentage from 0 to 100; unit `%` | Valve |
@@ -191,6 +195,25 @@ A missing entity or expected attribute is unavailable. Provider `unknown` values
 Each source degrades independently. Missing humidity does not disable temperature control. A reported valve percentage is not proof of heat delivery, and a trend is not a prediction. These observations do not create a new controller or writer.
 
 Each displayed row identifies its configured entity and optional attribute path alongside its status. This attribution remains distinct from the row's display label and from any local humidity-band classification.
+
+## Outdoor temperature and verified source suggestions
+
+The outside helper lists temperature sensors and weather entities; you decide which source measures outdoors. A weather mapping uses its scalar temperature and live unit, not its condition string:
+
+```yaml
+telemetry:
+  - kind: temperature
+    entity: weather.example
+    attribute: temperature
+    unit_attribute: temperature_unit
+    label: Outside
+```
+
+Only finite numeric values and `°C`/`°F` units are accepted. Unit changes are followed without conversion; a conflicting explicit unit, lost metadata, boolean or nonnumeric value is invalid. This observation never supplies a target, control permission or indoor dial reading. Rollback to RC.3 or earlier requires the previous compatible configuration as well as its module.
+
+**Find VT sources** reads the entity registry when selected. A slope suggestion requires one enabled VT temperature-slope sensor associated with the selected thermostat’s config entry and device; names alone are not evidence. Humidity and accepted feature states need explicit provider declarations. Existing mappings, including explicitly disabled direct sources, stay unchanged. Each adoption rereads the registry and rejects changed identity, session, configuration or unavailable data. Disabled sensors stay disabled; configure them in Home Assistant if desired. No suggestion is selected automatically.
+
+The editor withholds provider-dependent accepted feature interpretation until its identity has been checked. Independent raw sensors retain their own status. An HA entity-update timestamp is not a physical sample timestamp; no freshness interval is invented for slowly changing slope values.
 
 ## Complete synthetic example
 

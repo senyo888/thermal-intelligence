@@ -68,18 +68,18 @@ function overview({ model, config, statusMessage }) {
   ];
   if (model.details?.length) sections.push({ id: 'provider-details', title: 'Provider details', rows: model.details.map(row => ({ label: row.label, value: `${row.value ?? row.status ?? 'Unavailable'}${row.unit ? ` ${row.unit}` : ''}${row.detail ? ` · ${row.detail}` : ''}` })) });
   const groups = `<div class="groups">${sections.map(section => `<details id="section-${section.id}"><summary>${esc(section.title)}<span aria-hidden="true">⌄</span></summary>${plainRows(section.rows)}${section.note ? `<p class="note">${esc(section.note)}</p>` : ''}</details>`).join('')}</div>`;
-  const footer = `<button data-dialog-settings>Card settings</button>${nativeButton(config.entity, 'Thermostat details')}<p>Thermostat details open in Home Assistant.</p>`;
+  const footer = `<button data-dialog-settings>Readings and display</button>${nativeButton(config.entity, 'Thermostat details')}<p>Thermostat details open in Home Assistant.</p>`;
   return { title, html: standardShell({ view: 'overview', title, eyebrow: 'Thermal intelligence · overview', content: (level === 'green' ? summary + healthPanel : healthPanel + summary) + groups, footer, tone }) };
 }
 
-function telemetry({ model, config, rowKey, statusMessage }) {
+function telemetry({ model, config, savedConfig, rowKey, statusMessage }) {
   const rows = model.headerTelemetry ?? [];
   let row = rowKey === 'humidity' ? model.humidity : rows.find(item => item.key === rowKey) ?? rows.find(item => item.topic === rowKey);
   if(rowKey==='follow' && !row && model.provider?.kind==='vtherm') {
     const value=model.connected&&model.available?model.attrs?.vtherm_over_climate?.follow_underlying_temp_change:null;
     row={label:'Follow underlying temperature',status:typeof value==='boolean'?'available':'unknown',value:value===true?'On':value===false?'Off':'Unavailable',source:{entity:config.entity,attribute:'vtherm_over_climate.follow_underlying_temp_change'},detail:'This is the provider-reported follow setting. Selecting its icon does not change thermostat configuration.'};
   }
-  if (rowKey === 'humidity' || row?.kind === 'humidity' || row?.topic === 'humidity') return humidity({ model, config, row, statusMessage });
+  if (rowKey === 'humidity' || row?.kind === 'humidity' || row?.topic === 'humidity') return humidity({ model, config, savedConfig, row, statusMessage });
   const title = row?.label || (rowKey === 'follow' ? 'Follow underlying target' : 'Telemetry');
   const semantic = STATE_TELEMETRY[row?.kind];
   const reading = row?.status === 'available' ? row.value ?? fmt(row.rawValue) : row?.status === 'disabled' ? 'Not configured' : row?.status || 'Unavailable';
@@ -89,7 +89,7 @@ function telemetry({ model, config, rowKey, statusMessage }) {
     { label: 'Source', value: sourceText(row?.source), entity: row?.source?.entity },
     ...semantic ? [] : [{ label: 'Unit', value: row?.unit || 'Not reported' }],
   ];
-  const content = `<section aria-label="${esc(title)}">${plainRows(values)}<p class="note">${esc(row?.detail || 'No matching configured source is available. No source is inferred from an entity name.')}</p><div class="topic-links">${nativeButton(row?.source?.entity)}<button data-dialog-settings>Card display settings</button></div>${message(statusMessage)}</section>`;
+  const content = `<section aria-label="${esc(title)}">${plainRows(values)}<p class="note">${esc(row?.detail || 'No matching configured source is available. No source is inferred from an entity name.')}</p><div class="topic-links">${nativeButton(row?.source?.entity)}<button data-dialog-settings>Readings and display</button></div>${message(statusMessage)}</section>`;
   return { title, html: standardShell({ view: 'telemetry', title, eyebrow: config.name || model.name || 'Thermostat', content }) };
 }
 
@@ -112,19 +112,29 @@ function presets({ model, config, allowed, busy, preview, statusMessage }) {
   let max = Math.ceil(Math.max(chartUnit === '°F' ? 90 : 30, ...values) / 5) * 5;
   if (!Number.isFinite(min) || !Number.isFinite(max) || !Number.isFinite(max - min) || max <= min) { min = 0; max = chartUnit === '°F' ? 90 : 30; }
   const span = max - min, zero = -min / span * 100;
-  const chart = `<section class="preset-chart" aria-label="Preset temperature comparison">${!model.connected ? '<p class="chart-notice">Connection lost. Current preset temperatures are unavailable.</p>' : ''}<div class="chart-rows">${rows.map(row => `<div class="chart-row" data-selected="${row.selected}"><div class="chart-label"><strong>${esc(row.label)}</strong><span>${row.selected ? 'Preset selected' : ''}</span></div><div class="bar-track" aria-hidden="true" style="--zero:${zero}%">${row.value === null || row.value < min || row.value > max ? '' : `<span class="bar bar-${['frost','eco','comfort','boost'].includes(row.key) ? row.key : 'eco'}" style="left:${Math.min(zero, (row.value - min) / span * 100)}%;width:${Math.abs(row.value) / span * 100}%"></span>`}</div><button data-dialog-info="${esc(entityId(row.entity))}" aria-label="${esc(row.label)}: ${esc(row.value === null ? 'Unavailable' : `${fmt(row.value)} ${chartUnit}`)}. Open thermostat settings" ${entityId(row.entity) ? '' : 'disabled'}>${esc(row.value === null ? 'Unavailable' : `${fmt(row.value)} ${chartUnit}`)}</button></div>`).join('')}</div>${rows.length ? `<div class="chart-scale"><span>Scale ${esc(`${min} ${chartUnit}`)}</span><span>${esc(`${max} ${chartUnit}`)}</span></div>` : '<p>No presets are advertised by this thermostat.</p>'}<p class="chart-hint">Tap a temperature to edit its preset.</p>${message(statusMessage)}</section>`;
+  const chart = `<section class="preset-chart" aria-label="Preset temperature comparison">${!model.connected ? '<p class="chart-notice">Connection lost. Current preset temperatures are unavailable.</p>' : ''}<div class="chart-rows">${rows.map(row => `<div class="chart-row" data-selected="${row.selected}"><div class="chart-label"><strong>${esc(row.label)}</strong><span>${row.selected ? 'Preset selected' : ''}</span></div><div class="bar-track" aria-hidden="true" style="--zero:${zero}%">${row.value === null || row.value < min || row.value > max ? '' : `<span class="bar bar-${['frost','eco','comfort','boost'].includes(row.key) ? row.key : 'eco'}" style="left:${Math.min(zero, (row.value - min) / span * 100)}%;width:${Math.abs(row.value) / span * 100}%"></span>`}</div><button data-dialog-info="${esc(entityId(row.entity))}" aria-label="${esc(row.label)}: ${esc(row.value === null ? 'Unavailable' : `${fmt(row.value)} ${chartUnit}`)}. Open thermostat settings" ${entityId(row.entity) ? '' : 'disabled'}>${esc(row.value === null ? 'Unavailable' : `${fmt(row.value)} ${chartUnit}`)}</button></div>`).join('')}</div>${rows.length ? `<div class="chart-scale"><span>Scale ${esc(`${min} ${chartUnit}`)}</span><span>${esc(`${max} ${chartUnit}`)}</span></div>` : '<p>No presets are advertised by this thermostat.</p>'}<p class="chart-hint">Open a temperature’s source to review its thermostat settings.</p>${message(statusMessage)}</section>`;
   return { title, html: standardShell({ view: 'presets', title, eyebrow: 'Preset temperatures', content: chart }) };
 }
 
+export function headerPreview(model) {
+  return (model.headerTelemetry ?? []).map(row => `<span><ha-icon icon="${esc(row.icon || 'mdi:information-outline')}" aria-hidden="true"></ha-icon><span>${esc(row.label)} · ${esc(row.value ?? 'Unavailable')}</span></span>`).join('') || '<small>No configured header readings.</small>';
+}
+
 function settings({ model, config, statusMessage }) {
-  const title = `${config.name || model.name || 'Thermostat'} · Card settings`;
-  const preview = (model.headerTelemetry ?? []).map(row => `<span><ha-icon icon="${esc(row.icon || 'mdi:information-outline')}" aria-hidden="true"></ha-icon>${esc(row.value ?? 'Unavailable')}</span>`).join('') || '<small>No configured header readings.</small>';
-  return { title, html: `<dialog data-view="settings" aria-labelledby="ti-dialog-title"><header><div><small>Thermal intelligence · display</small><h2 id="ti-dialog-title">${esc(title)}</h2></div><button data-close data-dialog-close aria-label="Close card settings" autofocus>×</button></header><div class="body"><p>Choose the readings beside the card name and the display settings for this card.</p><div class="preview" aria-label="Current header preview">${preview}</div><div class="options"><${EDITOR_TAG} data-dialog-editor></${EDITOR_TAG}></div><details><summary>Configuration to copy</summary><textarea data-settings-export readonly aria-label="Draft card configuration" spellcheck="false" style="width:100%;min-height:180px;color:inherit;background:#0b1420;border:1px solid #34465c;padding:10px;border-radius:8px"></textarea></details><p class="scope">Draft only. This dialog does not save dashboard configuration. Copy the configuration below into this card’s Home Assistant editor, or make the same changes directly in its visual editor, then save.</p><p class="status" data-dialog-status role="status">${esc(statusMessage || '')}</p></div><footer><button data-dialog-close>Close draft</button><button data-copy-settings>Copy configuration</button></footer></dialog>` };
+  const title = 'Readings and display';
+  return { title, html: `<dialog data-view="settings" aria-labelledby="ti-dialog-title">
+    <header><div><small>${esc(config.name || model.name || 'Thermostat')} · this card</small><h2 id="ti-dialog-title">${title}</h2></div><button data-close data-dialog-close aria-label="Close card settings" autofocus>×</button></header>
+    <div class="body"><h3>Edit this card in Home Assistant</h3><p>Open the dashboard menu, choose <strong>Edit dashboard</strong>, then <strong>Edit</strong> on this card. Configure readings, icons and humidity display there, then choose <strong>Save</strong>. <strong>Cancel</strong> keeps your saved settings.</p>
+    <p>Thermostat configuration stays in the thermostat’s own settings.</p><h3>Current top-row readings</h3><div class="preview" aria-label="Current header preview">${headerPreview(model)}</div>
+    <details id="advanced-export"><summary>Advanced draft and export</summary><p>Use this optional workspace to prepare a configuration copy. It cannot save your dashboard.</p><div class="options"><${EDITOR_TAG} data-dialog-editor></${EDITOR_TAG}></div>
+    <details><summary>Configuration to copy</summary><textarea data-settings-export readonly aria-label="Draft card configuration" spellcheck="false" style="width:100%;min-height:180px;color:inherit;background:#0b1420;border:1px solid #34465c;padding:10px;border-radius:8px"></textarea></details>
+    <p class="scope">This draft does not save dashboard configuration. Copy it into this card’s Home Assistant editor, then save. Keep the original configuration for rollback.</p><button data-copy-settings>Copy configuration</button></details>
+    <p class="status" data-dialog-status role="status">${esc(statusMessage || '')}</p></div><footer><button data-dialog-close>Close</button></footer></dialog>` };
 }
 
 /** Pure dialog rendering. The host attaches the editor and owns every user action. */
-export function renderDialog({ kind = 'overview', model = {}, config = {}, rowKey, settingsDraft, statusMessage = '', allowed = false, busy = false, preview = false } = {}) {
-  const options = { model, config: kind === 'settings' && settingsDraft ? settingsDraft : config, rowKey, statusMessage, allowed, busy, preview };
+export function renderDialog({ kind = 'overview', model = {}, config = {}, rowKey, settingsDraft, savedConfig, statusMessage = '', allowed = false, busy = false, preview = false } = {}) {
+  const options = { model, config: kind === 'settings' && settingsDraft ? settingsDraft : config, rowKey, savedConfig, statusMessage, allowed, busy, preview };
   const result = kind === 'telemetry' || kind === 'humidity' ? telemetry({ ...options, rowKey: kind === 'humidity' ? 'humidity' : rowKey })
     : kind === 'presets' ? presets(options) : kind === 'settings' ? settings(options) : overview(options);
   const styles=result.html.startsWith('<dialog data-view="humidity"')?humidityDialogStyles:kind==='settings'?settingsDialogStyles:overviewDialogStyles;

@@ -6,9 +6,9 @@ import { humidityBands, humidityBand, legacyHumidityBands } from './humidity.js'
 import { STATE_TELEMETRY, stateTelemetryValue } from './state-telemetry.js';
 import { buildResponseArc } from './response-arc.js';
 
-const LABELS = { humidity: 'Humidity', trend: 'Temperature trend', valve: 'Valve', energy: 'Energy', power: 'Power', custom: 'Telemetry' };
+const LABELS = { temperature: 'Temperature', humidity: 'Humidity', trend: 'Temperature trend', valve: 'Valve', energy: 'Energy', power: 'Power', custom: 'Telemetry' };
 const UNITS = {
-  humidity: ['%'], valve: ['%'],
+  temperature: ['°C', '°F'], humidity: ['%'], valve: ['%'],
   trend: ['°C/h', '°F/h', '°C/hour', '°C/hr', 'degC/h', '°F/hour', '°F/hr', '°C/min', '°F/min'],
   power: ['W', 'kW', 'MW'], energy: ['Wh', 'kWh', 'MWh', 'J', 'kJ', 'MJ', 'GJ'],
 };
@@ -66,7 +66,14 @@ export function buildTelemetry(hass, config, now, connected = true, climate = {}
     if (resolved.value === 'unavailable') return result('unavailable', 'Configured value is unavailable.');
     if (resolved.value === null || resolved.value === undefined || resolved.value === 'unknown') return result('unknown', 'Configured value is unknown.');
     // A sensor's unit describes its state, never every arbitrary nested attribute.
-    const sourceUnit = !entry.attribute && Object.hasOwn(attrs, 'unit_of_measurement') && typeof attrs.unit_of_measurement === 'string' ? attrs.unit_of_measurement : null;
+    let sourceUnit = !entry.attribute && Object.hasOwn(attrs, 'unit_of_measurement') && typeof attrs.unit_of_measurement === 'string' ? attrs.unit_of_measurement : null;
+    if (entry.kind === 'temperature' && entry.unit_attribute !== undefined) {
+      const reportedUnit = readOwnPath(attrs, entry.unit_attribute);
+      row.source.unitAttribute = entry.unit_attribute;
+      if (!reportedUnit.found || !UNITS.temperature.includes(reportedUnit.value)) return result('invalid', 'The configured temperature unit attribute is missing or invalid.');
+      sourceUnit = reportedUnit.value;
+    }
+    if (entry.kind === 'temperature' && !entry.attribute && !UNITS.temperature.includes(sourceUnit)) return result('invalid', 'A temperature sensor must report °C or °F.');
     if (sourceUnit && entry.unit && sourceUnit !== entry.unit) return result('invalid', `Source unit ${sourceUnit} does not match configured unit ${entry.unit}; no conversion was applied.`);
     row.unit = sourceUnit || entry.unit || null;
     if (!semantic && entry.kind !== 'custom' && (!row.unit || !UNITS[entry.kind].includes(row.unit))) return result('invalid', 'A compatible unit is required; no unit is inferred.');
@@ -103,7 +110,7 @@ export function buildTelemetry(hass, config, now, connected = true, climate = {}
   });
 }
 
-const ICONS = { humidity: 'mdi:water-percent', trend: 'mdi:trending-up', valve: 'mdi:pipe-valve', energy: 'mdi:lightning-bolt', power: 'mdi:flash', custom: 'mdi:information-outline' };
+const ICONS = { temperature: 'mdi:thermometer', humidity: 'mdi:water-percent', trend: 'mdi:trending-up', valve: 'mdi:pipe-valve', energy: 'mdi:lightning-bolt', power: 'mdi:flash', custom: 'mdi:information-outline' };
 const PRESET_ICONS = { frost: 'mdi:snowflake', eco: 'mdi:leaf', comfort: 'mdi:sofa', boost: 'mdi:fire' };
 const validIcon = (value) => typeof value === 'string' && /^[a-z0-9_-]+:[a-z0-9_-]+$/i.test(value);
 const display = (value) => typeof value === 'boolean' ? value ? 'On' : 'Off' : typeof value === 'number' ? String(Number(value.toPrecision(12))) : String(value ?? '');

@@ -1,6 +1,6 @@
 # Contributing to Thermal Intelligence
 
-Open feature and fix pull requests against `develop`; beta packages use `senyo888-patch-1`. `main` carries documentation, the website and a separately reviewed frozen distribution snapshot. RC.2 is published from `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`. The original RC.3 candidate `253d7ac8d001443290c000bd1725f5e87004d94a` was adopted in `develop`; corrected source `f93fb6489f87fbf9c393dd8cd03e85e5718277ef` is proposed for main promotion and is not yet adopted in `develop`. Main promotion and tagged publication are separate steps. There is no stable release yet.
+Changes start on `senyo888-patch-1`, then enter `develop` by pull request for release-candidate preparation. Promotion from `develop` to `main` is separate. `main` carries public documentation, the website and the separately promoted frozen distribution snapshot. RC.3 is published from `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`; the beta.8 usability work is an unreleased candidate. There is no stable release yet. Senyo retains merges; local preparation does not authorize publication or installation.
 
 Read [Architecture](ARCHITECTURE.md) and [AGENTS.md](AGENTS.md). Keep changes focused and describe the problem, resulting behaviour and checks actually run. Update configuration, compatibility, migration and release notes when affected.
 
@@ -21,7 +21,7 @@ scripts/security/scan_secrets.sh tracked
 scripts/security/scan_secrets.sh full-history
 ```
 
-The secret checks require Gitleaks. Keep detailed reports private. For RC.2 source work, use a checkout of `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805` and run its relevant unit/browser tests and build/package checks documented in `package.json`. Future candidate source work uses `develop`. A successful source or browser test is not proof of physical heating or installer acceptance.
+The secret checks require Gitleaks. Keep detailed reports private. For candidate source work, run the relevant unit/browser tests and build/package checks documented in `package.json` and the Project checks workflow. Carry a tested beta into `develop` for RC preparation. A successful source or browser test is not proof of physical heating or installer acceptance.
 
 The [issue forms](https://github.com/senyo888/thermal-intelligence/issues/new/choose) cover bugs, setup help, feature suggestions and gallery submissions. Use [private vulnerability reporting](https://github.com/senyo888/thermal-intelligence/security/advisories/new) for security issues.
 

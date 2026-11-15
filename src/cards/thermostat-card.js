@@ -4,20 +4,21 @@ import { buildModel, targetPayload, targetBoundary, quantize } from '../model/cl
 import { CommandCoordinator } from '../commands/coordinator.js';
 import { styles, mappedControlStyles } from './styles.js';
 import { renderCard } from './source-view.js';
-import { renderDialog, dialogStyles } from './dialogs.js';
+import { renderDialog, dialogStyles, headerPreview } from './dialogs.js';
 import { humidityBands, moveHumidityBoundary } from '../model/humidity.js';
 import { lockCapability } from '../providers/lock-control.js';
 import { lockDialog, lockScope, lockRelock } from './lock-dialog.js';
 import { mappedCapability } from '../model/mapped-control.js';
 import { MappedRegistry } from '../providers/mapped-registry.js';
 import { mappedDialog } from './mapped-dialog.js';
+import { bindActivationFeedback, feedbackStyles } from './interaction-feedback.js';
 
 const format = value => Number.isFinite(value) ? new Intl.NumberFormat(undefined, { maximumSignificantDigits: 12 }).format(value) : '—';
 const previewHosts = new Set(['hui-card-preview', 'hui-dialog-edit-card', 'hui-dialog-create-card', 'hui-card-element-editor']);
 
 export class ThermalIntelligenceCard extends HTMLElement {
   constructor() {
-    super(); this.attachShadow({ mode: 'open' });
+    super(); this.attachShadow({ mode: 'open' }); bindActivationFeedback(this.shadowRoot);
     this._view = document.createElement('div'); this.shadowRoot.append(this._view);
     this._animationOffset = Date.now() % 4000;
     this.config = normalizeConfig({}); this._preview = false; this._editMode = false;
@@ -366,6 +367,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     if (kind === 'lock') this._lockIntent = { entity:this.config.entity, revision:this._configRevision, session:this._session(), signature:capability.signature, locked:!capability.locked, codeRequired:capability.codeRequired, submitted:false, invalid:false, message:'' };
     if (kind === 'mapped') this._mappedIntent = { entity:this.config.entity, target:mapped.entity, item:mapped.item, revision:this._configRevision, session:this._session(), signature:mapped.signature, identityKey:mapped.identityKey, on:mapped.reported === 'off', submitted:false, invalid:false, message:'' };
     this._dialogHost = document.createElement('div'); this._dialogHost.attachShadow({mode:'open'});
+    bindActivationFeedback(this._dialogHost.shadowRoot);
     this._dialogHost.style.cssText='--primary-text-color:#eff5ff;--secondary-text-color:#a9b8cb;--card-background-color:#0d1622;--input-fill-color:#152234;--secondary-background-color:#152234;--divider-color:#34465c;--primary-color:#8ac9f1;color-scheme:dark';
     this.shadowRoot.append(this._dialogHost); this._renderDialog(true);
   }
@@ -376,6 +378,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     // Keep the actual editor node and its draft while telemetry changes.
     if (!show && this._dialogSpec.kind === 'settings') {
       const editor = this._dialogHost.shadowRoot.querySelector('[data-dialog-editor]'); if (editor) editor.hass = this._hass;
+      const preview = this._dialogHost.shadowRoot.querySelector('.preview'); if (preview) preview.innerHTML = headerPreview(this.model());
       return;
     }
     const root = this._dialogHost.shadowRoot, model = this.model();
@@ -386,12 +389,12 @@ export class ThermalIntelligenceCard extends HTMLElement {
     const actionValue = actionAttribute ? active.getAttribute(actionAttribute) : null;
     const openSections = [...root.querySelectorAll('details[open][id]')].map(node=>node.id);
     const scroll = root.querySelector('.content,.body')?.scrollTop || 0;
-    const result = renderDialog({...this._dialogSpec,model,config:this._displayDraft||this.config,allowed:this._guard(model).allowed,busy:this._coordinator.busy,preview:this._isPreview(),statusMessage:this._statusMessage(model)});
+    const result = renderDialog({...this._dialogSpec,model,config:this._displayDraft||this.config,savedConfig:this.config,allowed:this._guard(model).allowed,busy:this._coordinator.busy,preview:this._isPreview(),statusMessage:this._statusMessage(model)});
     const old = root.querySelector('dialog'), wasOpen = old?.open;
     if (!show && old?.dataset.view==='humidity' && active?.hasAttribute('data-humidity-boundary')) {this._paintHumidityDraft(result.html);return;}
     if (!show && result.html === this._dialogMarkup) return;
     this._dialogMarkup = result.html;
-    old?.close(); root.innerHTML = `<style>${result.styles||dialogStyles}</style>${result.html}`;
+    old?.close(); root.innerHTML = `<style>${result.styles||dialogStyles}${feedbackStyles}</style>${result.html}`;
     const dialog = root.querySelector('dialog');
     dialog.addEventListener('cancel', event=>{event.preventDefault();this._closeDialog();});
     for (const button of root.querySelectorAll('[data-dialog-close]')) button.onclick=()=>this._closeDialog();
@@ -406,7 +409,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
       root.querySelector('.body,.content')?.prepend(notice);
     }
     if (editor) {
-      editor.setConfig(this._displayDraft); editor.hass = this._hass;
+      editor.exportOnly=true; editor.setConfig(this._displayDraft); editor.hass = this._hass;
       editor.addEventListener('config-changed',event=>{
         event.stopPropagation(); this._settingsDraft=event.detail.config;
         const output=root.querySelector('[data-settings-export]');if(output)output.value=this._displayExportComplete?JSON.stringify(this._settingsDraft,null,2):'';
@@ -423,7 +426,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
       const key=input.dataset.humidityBoundary, current=humidityBands(this._displayDraft)||this._displayDraft.humidity_bands||{};
       const number=input.value.trim()===''?NaN:Number(input.value);
       this._displayDraft={...this._displayDraft,humidity_bands:input.type==='range'?moveHumidityBoundary(current,key,number):{...current,[key]:number}};
-      const update=renderDialog({...this._dialogSpec,model:this.model(),config:this._displayDraft});this._paintHumidityDraft(update.html);
+      const update=renderDialog({...this._dialogSpec,model:this.model(),config:this._displayDraft,savedConfig:this.config});this._paintHumidityDraft(update.html);
     };
     root.querySelector('[data-copy-humidity]')?.addEventListener('click',async()=>{
       if(!this._displayExportComplete||!humidityBands(this._displayDraft))return;
@@ -467,7 +470,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     if (!intent || !root) return;
     const capability = this._mappedCapability(); this._checkMappedIntent(capability);
     if (!root.querySelector('[data-mapped-dialog]')) {
-      root.innerHTML = mappedDialog(intent.item, intent.on);
+      root.innerHTML = `<style>${feedbackStyles}</style>` + mappedDialog(intent.item, intent.on);
       root.querySelector('dialog').addEventListener('cancel', event => { event.preventDefault(); this._closeDialog(); });
       root.querySelector('[data-mapped-close]').onclick = () => this._closeDialog();
       root.querySelector('[data-mapped-submit]').onclick = () => this._submitMapped();
@@ -519,7 +522,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     const capability = this._lockCapability(); this._checkLockIntent(capability);
     if (!root.querySelector('[data-lock-dialog]')) {
       const name = this.config.name || this._hass?.states?.[intent.entity]?.attributes?.friendly_name || intent.entity;
-      root.innerHTML = lockDialog({ name, locked:intent.locked, codeRequired:intent.codeRequired });
+      root.innerHTML = `<style>${feedbackStyles}</style>` + lockDialog({ name, locked:intent.locked, codeRequired:intent.codeRequired });
       root.querySelector('dialog').addEventListener('cancel', event=>{event.preventDefault();this._closeDialog();});
       for (const button of root.querySelectorAll('[data-lock-close]')) button.onclick=()=>this._closeDialog();
       root.querySelector('form').onsubmit=event=>{event.preventDefault();this._submitLock();};
@@ -580,7 +583,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     const template=document.createElement('template');template.innerHTML=html;const next=template.content;
     const status=next.querySelector('dialog')?.getAttribute('data-reading-status');if(status)root.querySelector('dialog')?.setAttribute('data-reading-status',status);
     // Update the source preview without replacing focused fields or a captured slider.
-    for(const selector of ['.track','.preview','.reading','[data-dialog-status]']) {
+    for(const selector of ['.track','.preview','.reading','.saved-guide','[data-dialog-status]']) {
       const current=root.querySelector(selector), replacement=next.querySelector(selector);
       if(current&&replacement){current.innerHTML=replacement.innerHTML;const style=replacement.getAttribute('style');if(style!==null)current.setAttribute('style',style);}
     }
@@ -622,7 +625,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     const statusMessage = this._statusMessage(model);
     // Unrelated HA updates must not replace an open native select or its focus.
     // Readiness, capabilities and command status still participate in this markup.
-    const html = `<style>${styles}${mappedControlStyles}</style>` + renderCard({ config:this.config,model,open:this._open,allowed:this._guard(model).allowed,lockAllowed:this._lockCapability().allowed,optionalControl:this._mappedCapability(model),busy:this._coordinator.busy,
+    const html = `<style>${styles}${mappedControlStyles}${feedbackStyles}</style>` + renderCard({ config:this.config,model,open:this._open,allowed:this._guard(model).allowed,lockAllowed:this._lockCapability().allowed,optionalControl:this._mappedCapability(model),busy:this._coordinator.busy,requestPhase:this._coordinator.presentationStatus.phase,
       draftValues:this._draftContext?{...model.targets,[this._targetKey(model)]:this._draft}:null,statusMessage,preview:this._isPreview(),animationOffset:this._animationOffset });
     if (html === this._viewHTML) {
       this._renderDialog(); this._scheduleFreshness(); return;

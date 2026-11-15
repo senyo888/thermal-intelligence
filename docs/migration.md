@@ -1,6 +1,14 @@
 # Update and rollback
 
+Picker labels follow the module channel: **Thermal Intelligence Thermostat · Beta** for the unreleased beta.8 candidate; **Thermal Intelligence Thermostat · RC** for published RC.3.
+
 RC.3 retains existing **schema-1** and **schema-2** configurations. Explicit enrollment of the optional switch control, introduced in beta.6, uses **schema 2**; keep the original configuration for rollback. The trial card type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`.
+
+## Unreleased beta.8 candidate
+
+Existing schema-1 and schema-2 configurations remain supported. The new `temperature` telemetry kind and its optional `unit_attribute` require the beta.8 candidate module; RC.3 and earlier reject that kind. Retain the earlier configuration and module together before adding temperature rows. Returning to the older module requires restoring compatible configuration too; preserve unrelated newer dashboard edits deliberately.
+
+Humidity editor sliders, search and source suggestions do not change schema or enroll controls. Runtime advanced export remains available and does not save the dashboard. Candidate validation is synthetic; this note does not authorize an upgrade or establish installer support. Beta.8 is a development-channel identity, not a higher semantic version than RC.3 and not an automatic installer update from it.
 
 ## Keep existing TI alongside the trial card
 

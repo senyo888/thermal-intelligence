@@ -5,12 +5,16 @@ Thermal Intelligence is created and maintained by **Senyo (senyo888)**. Lead pub
 ## Engineering
 
 - Read [Architecture](ARCHITECTURE.md), [Configuration](docs/card-configuration.md) and [Compatibility](docs/compatibility.md). Verify the checkout, branch and working tree before editing; preserve concurrent work.
-- Keep beta packages on `senyo888-patch-1` and prepare candidates through `develop`. `main` carries public documentation, the website and a separately reviewed frozen discovery snapshot. RC.3 is published from `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`, promoted through PR #15. Do not infer that every branch contains the same revision. Promotion, versioned release publication and installation retain their separate approval boundaries.
+- Keep beta packages on `senyo888-patch-1`. Prepare release candidates through `develop`, which contains candidate source, tests and reproducible packages. `main` carries public documentation, the website and the separately promoted frozen runtime snapshot. Dependency-monitoring configuration does not promote a runtime package.
 - Preserve the established card layout, dial, typography, icon alignment, dialogs and staggered LED animation. Compare UI changes at phone, tablet and desktop widths using synthetic fixtures.
 - Keep mode, preset, ownership, reported activity and physical response distinct. UI follows provider evidence. Preserve unknown, unavailable, stale and invalid states; unknown readiness never permits fallback controls.
 - Commands require explicit user intent and a captured target. Setup, rendering, editor saves and reconnects must never send thermostat commands or replay earlier requests.
 - Preserve unknown configuration fields and independent per-card settings. Do not silently remove functionality.
 - Make small, explainable changes; update the relevant documentation and run checks appropriate to the change. Keep implementation, tests, publication and deployment claims separate.
+
+## Contribution order
+
+Commit and push changes to `senyo888-patch-1` first, then open a pull request into `develop`. Prepare and validate release candidates through `develop`. Promotion to `main`, formal releases and installation upgrades require their separate approvals. Preserve beta and RC runtime identities when carrying shared tooling or documentation between branches.
 
 ## Public and private material
 

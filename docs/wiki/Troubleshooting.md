@@ -1,5 +1,7 @@
 # Troubleshooting and support
 
+Picker labels follow the module channel: **Thermal Intelligence Thermostat · Beta** for the unreleased beta.8 candidate; **Thermal Intelligence Thermostat · RC** for published RC.3.
+
 ## The card is missing from Add Card
 
 Check that the verified module for the intended release candidate is registered once as a **JavaScript module** resource. Open a fresh browser document after changing its URL. The picker entry is **Thermal Intelligence Thermostat · RC**. Keep legacy TI resources separate.

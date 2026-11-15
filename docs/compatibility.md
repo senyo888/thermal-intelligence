@@ -6,6 +6,12 @@ On 13 November 2026, the exact released module passed passive manual Lab checks 
 
 The Lab used a manual overlay while Marketplace retained RC.2. RC.3 named-release Marketplace acceptance, physical clients, wider providers, installer update/removal/recovery and backup restore rehearsal remain incomplete. Explicitly empty YAML valve sources, range controls and delayed clipboard/stale-registry cases retain synthetic or historical coverage. A minimum supported HA version has not been established.
 
+## Unreleased beta.8 usability candidate
+
+The candidate adds visible press feedback, a clearer HA editor route, humidity editor controls, searchable switch selection, verified source suggestions and typed temperature observations. Validation uses local synthetic fixtures at phone, tablet and desktop widths, including reduced motion and command-recording checks. It has no real-HA Save/Cancel, physical-client, installer or heating acceptance. Published RC.3 evidence above does not apply to these new bytes.
+
+Switch search uses a labelled search input and native select. No undocumented HA picker API or new minimum HA version is assumed. Source suggestions require registry access; failure leaves manual mapping available. Slope suggestions use the VT registry role, config entry and device association and require a compatible live numeric observation. Temperature telemetry requires the new module; restore compatible configuration and module together on rollback.
+
 ## Historical RC.2 validation
 
 The [dated RC.2 record](rc2-validation.md) covers its exact package, Marketplace Lab installation and two-card trial on HA 2026.11.1 with VT 10.6.4 plus local provider extensions. Both cards passed bounded controls and followed a natural 25-minute house-policy Boost return, with 16m38s of subsequent observation. The maintainer confirmed physical heating for that RC.2 trial.
