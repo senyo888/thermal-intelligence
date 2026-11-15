@@ -1,8 +1,16 @@
 # Update and rollback
 
-Picker labels follow the module channel: **Thermal Intelligence Thermostat · Beta** for the unreleased beta.8 candidate; **Thermal Intelligence Thermostat · RC** for published RC.3.
+Picker labels follow the module channel: **Thermal Intelligence Thermostat · Beta** for the unreleased beta.8 candidate; **Thermal Intelligence Thermostat · RC** for published RC.3 and the unreleased RC.4 candidate.
 
 RC.3 retains existing **schema-1** and **schema-2** configurations. Explicit enrollment of the optional switch control, introduced in beta.6, uses **schema 2**; keep the original configuration for rollback. The trial card type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`.
+
+## Unreleased RC.4 candidate
+
+[RC.4](rc-4.md) carries the beta.8 usability changes and the reviewed request-tooltip correction. It retains the trial card/editor names and schema-1/schema-2 support. It is prepared on the beta branch for future develop reconciliation; no named RC.4 release or installer update is available.
+
+The `temperature` kind and optional `unit_attribute` are supported by beta.8 and RC.4, but rejected by RC.3 and earlier. Before adopting them, retain the older module and compatible saved configuration together. A return to the older module requires restoring that configuration without discarding unrelated dashboard edits. Advanced export remains available and does not save the dashboard.
+
+RC.4 has its own synthetic and package checks. The beta.8 Lab observations below retain their exact module identities and do not establish RC.4 installation or live acceptance.
 
 ## Unreleased beta.8 candidate
 

@@ -6,6 +6,10 @@ On 13 November 2026, the exact released module passed passive manual Lab checks 
 
 The Lab used a manual overlay while Marketplace retained RC.2. RC.3 named-release Marketplace acceptance, physical clients, wider providers, installer update/removal/recovery and backup restore rehearsal remain incomplete. Explicitly empty YAML valve sources, range controls and delayed clipboard/stale-registry cases retain synthetic or historical coverage. A minimum supported HA version has not been established.
 
+## Unreleased RC.4 candidate
+
+[RC.4](rc-4.md) consolidates beta.8 usability improvements and the final request-tooltip correction. Its module SHA256 is `c5c88f6f662095f1bd0a11254bea1401c2ff8b15a13da500d894fdbb664130ae`. It passed 178 unit, 164 synthetic browser, 14 foundation, 13 package and eight Marketplace distribution tests, including phone/tablet/desktop layouts and preserved advanced export. It remains prepared on the beta branch for future develop reconciliation, without a named release or installation. The dated beta.8 Lab evidence below does not validate RC.4 bytes.
+
 ## Unreleased beta.8 usability candidate
 
 The candidate adds visible press feedback, a clearer HA editor route, humidity editor controls, searchable switch selection, verified source suggestions and typed temperature observations. Synthetic fixtures cover phone, tablet and desktop widths, reduced motion and command recording.

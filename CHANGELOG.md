@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0-rc.4 — Unreleased
+
+- Carry beta.8’s clearer button feedback, Home Assistant editor guidance, humidity controls, source previews/suggestions and typed temperature observations into an RC candidate.
+- Preserve advanced draft/export and its clipboard fallback, optional-switch search/recovery, unknown configuration fields and existing control guards.
+- Keep uncertain request tooltips consistent while a transport is still settling and after a late acknowledgement.
+- Retain develop’s reviewed Pages tooling and align telemetry and migration guidance with current behavior.
+
+Prepared on `senyo888-patch-1` for future reconciliation into `develop`; RC.3 remains the published prerelease. [RC.4 package checks and limits](docs/rc-4.md) are separate from beta.8’s bounded Lab results. Temperature mappings require compatible module/configuration rollback together.
+
 ## 0.1.0-beta.8 — Unreleased
 
 - Make button activation, provider-selected presets and pending or uncertain requests easier to distinguish.
