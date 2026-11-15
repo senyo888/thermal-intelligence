@@ -16,6 +16,20 @@ The manual overlay remains separate from the installed Marketplace package. Phys
 
 Switch search uses a labelled search input and native select. No undocumented HA picker API or new minimum HA version is assumed. Source suggestions require registry access; failure leaves manual mapping available. Slope suggestions use the VT registry role, config entry and device association and require a compatible live numeric observation. Temperature telemetry requires the new module; restore compatible configuration and module together on rollback.
 
+### Inert control checks — 15 November 2026
+
+The same beta.8 module also passed control checks on a Generic Thermostat and a switch-based VT, whose outputs were verified to lead only to software helpers. The corrected observation recorded 22 deliberate requests, each with a positive service acknowledgement, an independent service event and a matching reported setting.
+
+| Control | Observed result |
+| --- | --- |
+| Temperature buttons | Increment and decrement reached the requested target on both providers. |
+| Generic dial | Keyboard and pointer adjustments committed correctly and were restored. |
+| Presets and HVAC mode | Both providers accepted preset changes and Heat/Off; original modes, presets and targets were restored. |
+| VT locking | Dialog cancellation sent nothing. Explicit unlock/lock succeeded; automatic relocking invalidated an old action without sending a redundant request. Locked controls stayed disabled. |
+| Reconnect and preservation | A fresh document loaded six cards without replaying commands. Saved dashboards, resources, protected configuration and output-helper states were preserved or restored. |
+
+An initial test recorder missed acknowledgements delivered in batched WebSocket frames. Its decoder was corrected and the affected control paths were repeated; no card-runtime defect was found. The available Lab switches were template or VT entities, which are ineligible for optional switch enrollment, so that control retains synthetic and dated beta.7 coverage. Range, fan/swing, interrupted-draft and forced transport-failure cases were not exercised in this live test. These are bounded fixture results, not physical heating, installer or soak acceptance.
+
 ## Historical RC.2 validation
 
 The [dated RC.2 record](rc2-validation.md) covers its exact package, Marketplace Lab installation and two-card trial on HA 2026.11.1 with VT 10.6.4 plus local provider extensions. Both cards passed bounded controls and followed a natural 25-minute house-policy Boost return, with 16m38s of subsequent observation. The maintainer confirmed physical heating for that RC.2 trial.
