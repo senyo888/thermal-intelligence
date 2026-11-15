@@ -3,6 +3,7 @@
 ## 0.1.0-beta.8 — Unreleased
 
 - Make button activation, provider-selected presets and pending or uncertain requests easier to distinguish.
+- Expose one accessible request-status message, including when a temperature draft is cancelled.
 - Lead display setup through Home Assistant’s card editor, preserving advanced draft/export in the runtime dialogs.
 - Open and select the advanced configuration text when clipboard access is unavailable.
 - Add humidity sliders, exact fields and a live display preview to the editor; keep the saved guide distinct from runtime drafts.

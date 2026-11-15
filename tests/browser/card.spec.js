@@ -293,7 +293,8 @@ test('keyboard draft commits once on release and cancels on concurrent state cha
   await expect(increase(page)).toBeEnabled();await dial.focus();await page.keyboard.down('ArrowUp');
   await page.evaluate(()=>{fixture.hass.states['climate.fixture_thermostat'].attributes.temperature=25;fixture.refresh();});
   await page.keyboard.up('ArrowUp');expect((await calls(page)).length).toBe(1);
-  await expect(card(page)).toContainText('draft was cancelled');
+  await expect(card(page).getByRole('status')).toHaveCount(1);
+  await expect(card(page).getByRole('status')).toHaveText('Thermostat context changed. The draft was cancelled.');
 });
 
 for(const change of ['user','socket','connection','unit','mode']) test(`keyboard draft cancels when ${change} changes`,async({page})=>{
@@ -453,7 +454,11 @@ test('failed registry lookup on a new session cannot reuse standard evidence',as
 });
 
 test('pending target change and reconnect never retarget or replay',async({page})=>{
+  await expect(card(page).getByRole('status')).toHaveCount(1);
+  await expect(card(page).getByRole('status')).toHaveText('Target reported by thermostat.');
   await page.evaluate(()=>fixture.behavior='pending');await increase(page).click();
+  await expect(card(page).getByRole('status')).toHaveCount(1);
+  await expect(card(page).getByRole('status')).toHaveText('Requesting the selected setting…');
   await page.evaluate(()=>{fixture.configure({...fixture.config,entity:'climate.fixture_secondary'});fixture.hass.connected=false;fixture.refresh();fixture.hass.connected=true;fixture.refresh();fixture.pending[0].resolve();});
   await expect(card(page).locator('[data-request-status]')).toContainText('uncertain');
   expect((await calls(page)).length).toBe(1);expect((await calls(page))[0].payload.entity_id).toBe('climate.fixture_thermostat');
@@ -573,7 +578,8 @@ test('real browser timer expiry and rejection preserve uncertainty without repla
   await page.clock.install();await page.evaluate(()=>fixture.behavior='accept');await increase(page).click();
   await expect(card(page).locator('[data-request-status]')).toContainText('accepted');
   await page.clock.fastForward(10001);
-  await expect(card(page).locator('[data-request-status]')).toContainText('not observed before timeout');
+  await expect(card(page).getByRole('status')).toHaveCount(1);
+  await expect(card(page).getByRole('status')).toContainText('not observed before timeout');
   await page.evaluate(()=>{fixture.hass.connected=false;fixture.refresh();fixture.hass.connected=true;fixture.refresh();});
   expect((await calls(page)).length).toBe(1);
   await page.evaluate(()=>fixture.behavior='reject');await increase(page).click();
