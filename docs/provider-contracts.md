@@ -74,16 +74,22 @@ An explicitly disabled climate regulation flag yields **disabled** for its mode/
 
 ## Optional telemetry
 
-Telemetry is an explicit per-card list. Its supported configuration is `{kind, entity, attribute?, label?, unit?, max_age_seconds?}`. Kinds are `humidity`, `trend`, `valve`, `energy`, `power` and `custom`. An empty entity represents a disabled row. There is no automatic entity search, private default, or inference from similarly named entities.
+Telemetry is an explicit per-card list. Its supported configuration is `{kind, entity, attribute?, label?, unit?, unit_attribute?, max_age_seconds?}`. Kinds are `temperature`, `humidity`, `trend`, `valve`, `energy`, `power`, `window`, `motion`, `presence`, `power_management`, `follow` and `custom`. An empty entity represents a disabled row. Editor search and provider-backed suggestions require explicit selection; they do not automatically bind a source or infer one from similarly named entities. The `temperature` kind and `unit_attribute` were introduced in beta.8 and are not supported by RC.3 or earlier modules.
 
-`attribute` is a dot-separated own-property path. Prototype properties and the keys `__proto__`, `constructor` and `prototype` are rejected. With no attribute, the source is the entity state and its declared `unit_of_measurement`. An attribute requires its own explicit unit for typed numeric telemetry: the parent entity's unit does not necessarily describe a nested value. A configured unit conflicting with a state sensor's unit is invalid; the card does not reinterpret or convert it.
+`attribute` is a dot-separated own-property path. Prototype properties and the keys `__proto__`, `constructor` and `prototype` are rejected. With no attribute, the source is the entity state and its declared `unit_of_measurement`. An attribute requires its own explicit unit for typed numeric telemetry: the parent entity's unit does not necessarily describe a nested value. Temperature attributes may instead use `unit_attribute`, an own-property path to the live unit, such as weather's `temperature_unit`; it requires `attribute` and rejects missing or incompatible units. A configured unit conflicting with the reported state or live attribute unit is invalid; the card does not reinterpret or convert it.
 
 | Kind | Accepted units / value |
 | --- | --- |
+| Temperature | `°C`, `°F`; finite value. Sensor states require a reported unit; attributes require an explicit or live unit. |
 | Humidity or valve percentage | `%`, finite value from 0 to 100 |
 | Temperature trend | `°C/h`, `°F/h`, `°C/hour`, `°C/hr`, `degC/h`, `°F/hour`, `°F/hr`, `°C/min`, `°F/min`; finite signed value |
 | Power | `W`, `kW`, `MW`; finite value |
 | Energy | `Wh`, `kWh`, `MWh`, `J`, `kJ`, `MJ`, `GJ`; finite value |
+| Window | `on`/`off`, `open`/`closed`, or boolean; no unit |
+| Motion | `on`/`off`, `detected`/`clear`, or boolean; no unit |
+| Presence | `on`/`off`, `home`/`away`/`not_home`, or boolean; no unit |
+| Power management | `on`/`off`, `limiting`/`normal`, or boolean; no unit |
+| Follow underlying target | `on`/`off` or boolean; no unit |
 | Custom | Finite numeric value, reported text or boolean; optional declared unit |
 
 Every row carries status, source, value, unit and an explanatory detail. Missing entities or expected attributes are **unavailable**; provider `unknown` values stay **unknown**; invalid numbers and incompatible units are **invalid**. No arbitrary age threshold applies. Only an explicit `max_age_seconds` compares the entity's `last_updated` against the observation time. Old values become **stale**; missing or future timestamps leave freshness **unknown**. `last_updated` describes the HA entity update, not an independently verified physical sample time. A disconnected session makes configured telemetry unavailable for refresh.

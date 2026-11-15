@@ -574,6 +574,21 @@ test('provider text is escaped and fine numeric increments stay visible',async({
   await increase(page).click();expect((await calls(page))[0].payload.temperature).toBeCloseTo(21.002,6);
 });
 
+test('unsettled timeout keeps controls guarded and overview uncertainty after late acknowledgement',async({page})=>{
+  await page.clock.install();await page.evaluate(()=>fixture.behavior='pending');await increase(page).click();
+  const health=card(page).getByRole('button',{name:'Thermostat overview',exact:true});
+  await expect(health).toHaveAttribute('title','A control request is pending.');
+  await page.clock.fastForward(10001);
+  await expect(card(page).getByRole('status')).toHaveCount(1);
+  await expect(card(page).getByRole('status')).toHaveAttribute('data-phase','uncertain');
+  await expect(health).toHaveAttribute('title','The previous request outcome is uncertain. Open for details.');
+  await expect(increase(page)).toBeDisabled();
+  await page.evaluate(()=>fixture.pending[0].resolve());
+  await expect(increase(page)).toBeEnabled();
+  await expect(health).toHaveAttribute('title','The previous request outcome is uncertain. Open for details.');
+  expect((await calls(page)).length).toBe(1);
+});
+
 test('real browser timer expiry and rejection preserve uncertainty without replay',async({page})=>{
   await page.clock.install();await page.evaluate(()=>fixture.behavior='accept');await increase(page).click();
   await expect(card(page).locator('[data-request-status]')).toContainText('accepted');

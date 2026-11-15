@@ -8,7 +8,7 @@ RC.3 retains existing **schema-1** and **schema-2** configurations. Explicit enr
 
 Existing schema-1 and schema-2 configurations remain supported. The new `temperature` telemetry kind and its optional `unit_attribute` require the beta.8 candidate module; RC.3 and earlier reject that kind. Retain the earlier configuration and module together before adding temperature rows. Returning to the older module requires restoring compatible configuration too; preserve unrelated newer dashboard edits deliberately.
 
-Humidity editor sliders, search and source suggestions do not change schema or enroll controls. Runtime advanced export remains available and does not save the dashboard. Candidate validation is synthetic; this note does not authorize an upgrade or establish installer support. Beta.8 is a development-channel identity, not a higher semantic version than RC.3 and not an automatic installer update from it.
+Humidity editor sliders, search and source suggestions do not change schema or enroll controls. Runtime advanced export remains available and does not save the dashboard. Synthetic checks and bounded manual Lab checks cover the identified beta.8 modules; see [coverage and exact module limits](compatibility.md#unreleased-beta8-usability-candidate). Those results do not establish acceptance of different bytes, installer lifecycle, physical response or a formal soak. Beta.8 is a development-channel identity, not a higher semantic version than RC.3 and not an automatic installer update from it.
 
 ## Keep existing TI alongside the trial card
 
