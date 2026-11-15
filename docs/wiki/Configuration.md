@@ -2,7 +2,7 @@
 
 Picker labels follow the module channel: **Thermal Intelligence Thermostat · Beta** for the unreleased beta.8 candidate; **Thermal Intelligence Thermostat · RC** for published RC.3 and the unreleased RC.4 candidate.
 
-**Unreleased RC.4 preview:** carrying beta.8’s usability changes, display setup moves into Home Assistant’s card editor, with humidity sliders, reading/icon previews, outdoor temperature and searchable switch selection. Runtime **Readings and display** keeps **Advanced draft and export** available. Press feedback acknowledges interaction; selected presets still follow provider state. RC.4 has no installation acceptance; RC.3 remains the published prerelease. See the [unreleased candidate record](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/rc-4.md).
+**Unreleased RC.4 preview:** carrying beta.8’s usability changes, display setup moves into Home Assistant’s card editor, with humidity sliders, reading/icon previews, outdoor temperature and searchable switch selection. Runtime **Readings and display** keeps **Advanced draft and export** available. Press feedback acknowledges interaction; selected presets still follow provider state. RC.4 passed bounded manual Lab checks on inert fixtures; installer and physical-device acceptance remain unverified. RC.3 remains the published prerelease. See the [unreleased candidate record](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/rc-4.md).
 
 After installing the selected RC module, then choose **Add Card → Thermal Intelligence Thermostat · RC**. Select your thermostat and use the visual editor for ordinary setup.
 

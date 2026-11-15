@@ -2,7 +2,7 @@
 
 Picker labels follow the module channel: **Thermal Intelligence Thermostat · Beta** for the unreleased beta.8 candidate; **Thermal Intelligence Thermostat · RC** for published RC.3 and the unreleased RC.4 candidate.
 
-RC.4 remains unreleased on the beta branch and has no installation acceptance. RC.3 remains the published prerelease.
+RC.4 remains unreleased on the beta branch. It passed bounded manual Lab checks on inert fixtures; installer and physical-device acceptance remain unverified. RC.3 remains the published prerelease.
 
 ## The card is missing from Add Card
 
