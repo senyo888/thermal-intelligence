@@ -28,7 +28,15 @@ The same beta.8 module also passed control checks on a Generic Thermostat and a 
 | VT locking | Dialog cancellation sent nothing. Explicit unlock/lock succeeded; automatic relocking invalidated an old action without sending a redundant request. Locked controls stayed disabled. |
 | Reconnect and preservation | A fresh document loaded six cards without replaying commands. Saved dashboards, resources, protected configuration and output-helper states were preserved or restored. |
 
-An initial test recorder missed acknowledgements delivered in batched WebSocket frames. Its decoder was corrected and the affected control paths were repeated; no card-runtime defect was found. The available Lab switches were template or VT entities, which are ineligible for optional switch enrollment, so that control retains synthetic and dated beta.7 coverage. Range, fan/swing, interrupted-draft and forced transport-failure cases were not exercised in this live test. These are bounded fixture results, not physical heating, installer or soak acceptance.
+An initial test recorder missed acknowledgements delivered in batched WebSocket frames. Its decoder was corrected and the affected control paths were repeated; no card-runtime defect was found. At that stage, the available Lab switches were template or VT entities, which are ineligible for optional switch enrollment. The subsequent optional-switch checks are recorded below. Range, fan/swing, interrupted-draft and forced transport-failure cases were not exercised in this live test. These are bounded fixture results, not physical heating, installer or soak acceptance.
+
+### Optional switch checks — 15 November 2026
+
+A registered Command Line switch with local file readback and no physical output was enrolled through the visual editor beside an inert Generic Thermostat on HA 2026.11.0. Initial checks found that an invalid confirmation retained an unavailable-state explanation after the switch recovered. The correction updates that explanation while keeping the confirmation disabled.
+
+Corrected module SHA256 `66b247fe500a959c79dcb2c288174c4250ca27b15ac64e2dec49fbc0702f4235`, built from [source `5278a26`](https://github.com/senyo888/thermal-intelligence/commit/5278a26e4e04085fe171a71b21a620d732b4cd07), passed the repeated recovery check, fresh confirmed On/Off, cancellation and a fresh frontend connection. The observed sequence was Pending → Accepted → Observed. Two deliberate requests each had a positive acknowledgement, an independent service event and matching software readback. Recovery and reconnect sent no commands; the fixture finished Off. Existing dashboard content, unrelated resources and thermostat settings were preserved.
+
+The corrected observation lasted about 4 minutes 26 seconds with no recorded frontend errors or observation gaps. This manual overlay trial establishes the inert switch's frontend and service path. It does not establish physical response, real Honeywell behavior, provider-wide health, installer lifecycle or formal soak acceptance. The broader beta.8 display and thermostat checks above retain their original module identity.
 
 ## Historical RC.2 validation
 
