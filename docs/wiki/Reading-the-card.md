@@ -1,6 +1,6 @@
 # Reading the card
 
-**Unreleased beta.8 preview:** display setup moves into Home Assistant’s card editor, with humidity sliders, reading/icon previews, outdoor temperature and searchable switch selection. Runtime **Readings and display** keeps **Advanced draft and export** available. Press feedback acknowledges interaction; selected presets still follow provider state. These changes are candidate-only, with no installation acceptance.
+**Unreleased RC.4 preview:** carrying beta.8’s usability changes, display setup moves into Home Assistant’s card editor, with humidity sliders, reading/icon previews, outdoor temperature and searchable switch selection. Runtime **Readings and display** keeps **Advanced draft and export** available. Press feedback acknowledges interaction; selected presets still follow provider state. RC.4 has no installation acceptance; RC.3 remains the published prerelease. See the [unreleased candidate record](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/rc-4.md).
 
 ## Every detail has a purpose
 
