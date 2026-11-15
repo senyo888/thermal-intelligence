@@ -10,7 +10,7 @@
 - Preview reading icons, values and source status; offer explicitly adopted VT source suggestions with identity revalidation.
 - Add typed temperature observations and a guided outdoor sensor/weather mapping with live unit validation.
 
-Existing schemas, control guards, per-card settings and unknown configuration fields remain supported. Older modules cannot read the new `temperature` kind: retain compatible configuration and its module together for rollback. This candidate has synthetic coverage only; it is not a release or installation recommendation.
+Existing schemas, control guards, per-card settings and unknown configuration fields remain supported. Older modules cannot read the new `temperature` kind: retain compatible configuration and its module together for rollback. Synthetic checks and bounded passive Lab checks passed; see [coverage and limits](docs/compatibility.md#unreleased-beta8-usability-candidate). This is an unreleased beta, not an installation recommendation.
 
 ## 0.1.0-rc.3 — 14 November 2026
 

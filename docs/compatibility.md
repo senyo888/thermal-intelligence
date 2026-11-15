@@ -8,7 +8,11 @@ The Lab used a manual overlay while Marketplace retained RC.2. RC.3 named-releas
 
 ## Unreleased beta.8 usability candidate
 
-The candidate adds visible press feedback, a clearer HA editor route, humidity editor controls, searchable switch selection, verified source suggestions and typed temperature observations. Validation uses local synthetic fixtures at phone, tablet and desktop widths, including reduced motion and command-recording checks. It has no real-HA Save/Cancel, physical-client, installer or heating acceptance. Published RC.3 evidence above does not apply to these new bytes.
+The candidate adds visible press feedback, a clearer HA editor route, humidity editor controls, searchable switch selection, verified source suggestions and typed temperature observations. Synthetic fixtures cover phone, tablet and desktop widths, reduced motion and command recording.
+
+On 15 November 2026, module SHA256 `84e380283e159a93ca98ce51d53867d9ba34ef901cb50313bc7dca883e7fc936` passed bounded passive checks on HA 2026.11.0: six inert cards, visible button activation, manual export, humidity preview/reset, switch search, weather temperature preview, explicit VT source adoption into a draft, and Home Assistant Save/Cancel. A temporary card-name change persisted across a fresh frontend connection and was restored exactly. Independent observation recorded no service calls, frontend errors or observation gaps. An earlier build exposed a collapsed clipboard fallback; it was rolled back, corrected and retested.
+
+The manual overlay remains separate from the installed Marketplace package. Physical phone/tablet and Companion acceptance, wider providers, installer lifecycle, physical heating, backup restore rehearsal and formal soak remain unverified for beta.8. Published RC.3 evidence above does not apply to these bytes.
 
 Switch search uses a labelled search input and native select. No undocumented HA picker API or new minimum HA version is assumed. Source suggestions require registry access; failure leaves manual mapping available. Slope suggestions use the VT registry role, config entry and device association and require a compatible live numeric observation. Temperature telemetry requires the new module; restore compatible configuration and module together on rollback.
 
