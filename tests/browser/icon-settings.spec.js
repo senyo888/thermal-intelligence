@@ -32,7 +32,6 @@ async function open(page) {
   const expand=card(page).locator('[data-expand]');if(await expand.getAttribute('aria-expanded')!=='true')await expand.click();
   await card(page).getByRole('button',{name:'Top row icon settings',exact:true}).click();
   await expect(dialog(page)).toHaveAttribute('data-view','icons');
-  await expect(dialog(page).getByText('Loading saved card…',{exact:true})).toHaveCount(0);
 }
 test.beforeEach(async({page})=>{page.errors=[];page.on('pageerror',error=>page.errors.push(error.message));});
 test.afterEach(async({page})=>expect(page.errors).toEqual([]));
@@ -47,27 +46,19 @@ test('dedicated VT catalogue previews drafts; Cancel preserves storage and contr
   expect(await page.evaluate(()=>savedDashboard)).toEqual(before);expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
   await open(page);await expect(dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true})).not.toBeChecked();
 });
-test('Save icons persists exact card, display-only visibility and order; independent copy survives',async({page})=>{
-  await setup(page);const other=await page.evaluate(()=>structuredClone(savedDashboard.views[0].cards[1]));await open(page);
-  const primary=dialog(page).getByRole('group',{name:'Primary icons'});
+test('runtime copy retains display-only draft and unknown fields without changing either card',async({page})=>{
+  await setup(page);const before=await page.evaluate(()=>structuredClone(savedDashboard));
+  await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async text=>{window.copiedIcons=text;}}}));
+  await open(page);const primary=dialog(page).getByRole('group',{name:'Primary icons'});
   await primary.getByRole('checkbox',{name:'Show Valve',exact:true}).uncheck();
   await dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true}).check();
   await dialog(page).getByRole('button',{name:'Reorder Estimated energy',exact:true}).focus();await page.keyboard.press('ArrowUp');
   await expect(dialog(page).getByRole('button',{name:'Reorder Estimated energy',exact:true})).toBeFocused();
-  await dialog(page).getByRole('button',{name:'Save icons',exact:true}).click();
-  await expect(dialog(page)).toContainText('Icons saved for this card.');
-  await expect(dialog(page).getByRole('button',{name:'Done',exact:true})).toBeFocused();
-  expect(await page.evaluate(()=>dashboardCalls.filter(call=>call.type.endsWith('/save')).length)).toBe(1);
-  expect(await page.evaluate(()=>savedDashboard.views[0].cards[1])).toEqual(other);
-  expect(await page.evaluate(()=>savedDashboard.views[0].cards[0].future)).toEqual({keep:['unchanged']});
-  expect(await page.evaluate(()=>savedDashboard.views[0].cards[0].header_icons.future)).toBe('preserve');
-  expect(await page.evaluate(()=>fixture.cards[0].model().output.text)).toContain('TRV Closed');
-  await dialog(page).getByRole('button',{name:'Done',exact:true}).click();
-  await expect(card(page).locator('[data-header-telemetry]')).toContainText('≈ 2.5 kWh');
-  await page.evaluate(()=>fixture.cards[0].setConfig(structuredClone(savedDashboard.views[0].cards[0])));await open(page);
-  await expect(dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true})).toBeChecked();
-  await expect(dialog(page).getByRole('group',{name:'Primary icons'}).getByRole('checkbox',{name:'Show Valve',exact:true})).not.toBeChecked();
-  expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+  await dialog(page).getByRole('button',{name:'Copy configuration',exact:true}).click();
+  await expect(dialog(page)).toContainText('Configuration copied');
+  const copied=await page.evaluate(()=>JSON.parse(copiedIcons));expect(copied.vt_telemetry).toEqual(['energy']);expect(copied.future).toEqual({keep:['unchanged']});expect(copied.header_icons.future).toBe('preserve');
+  expect(await page.evaluate(()=>savedDashboard)).toEqual(before);expect(await page.evaluate(()=>dashboardCalls)).toEqual([]);expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+  await expect(card(page).locator('[data-header-telemetry]')).not.toContainText('2.5 kWh');
 });
 test('boundary arrow moves retain focus in the popup and HA editor; hidden readings keep expanded details',async({page})=>{
   await setup(page);await open(page);
@@ -75,7 +66,7 @@ test('boundary arrow moves retain focus in the popup and HA editor; hidden readi
   await dialog(page).getByRole('group',{name:'Primary icons'}).getByRole('checkbox',{name:'Show Valve',exact:true}).uncheck();
   await dialog(page).getByRole('button',{name:'Move Estimated energy up',exact:true}).click();
   await expect(dialog(page).getByRole('button',{name:'Reorder Estimated energy',exact:true})).toBeFocused();
-  await dialog(page).getByRole('button',{name:'Save icons',exact:true}).click();await expect(dialog(page)).toContainText('Icons saved');await dialog(page).getByRole('button',{name:'Done',exact:true}).click();
+  await page.evaluate(()=>{const c=fixture.cards[0],draft=structuredClone(c._iconSettings.draft);c.setConfig(draft);});
   await expect(card(page).locator('[data-focus^="info-"]').filter({hasText:'Valve'})).toBeVisible();
   await page.evaluate(()=>{fixture.editor.setConfig({...fixture.cards[0].config,adapter:'vtherm'});});
   const editor=page.locator('#editor thermal-intelligence-beta-card-editor');
@@ -96,31 +87,32 @@ test('drag ordering and live updates retain selected draft, control identity and
   const order=await group.locator('[data-icon-row]').evaluateAll(nodes=>nodes.map(node=>node.dataset.iconRow));expect(order.indexOf('vt:power')).toBeLessThan(order.indexOf('vt:energy'));
   expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
 });
-test('ambiguous card and dashboard conflict keep honest editor/export fallback with no write',async({page})=>{
-  await setup(page,{duplicate:true});await open(page);await expect(dialog(page)).toContainText('More than one saved card matches');
-  await dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true}).check();await expect(dialog(page).getByRole('button',{name:'Save icons',exact:true})).toBeDisabled();
-  await dialog(page).getByRole('button',{name:'Advanced configuration and export',exact:true}).click();
-  await expect(dialog(page).locator('[data-settings-export]')).toHaveValue(/"energy"/);
-  await page.keyboard.press('Escape');
-  await page.evaluate(()=>{savedDashboard.views[0].cards[1].name='Different';});await open(page);
-  await dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true}).check();await page.evaluate(()=>{savedDashboard.unknown.concurrent='keep';});
-  await dialog(page).getByRole('button',{name:'Save icons',exact:true}).click();await expect(dialog(page)).toContainText('dashboard changed');
-  expect(await page.evaluate(()=>dashboardCalls.filter(call=>call.type.endsWith('/save')).length)).toBe(0);expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+for(const mode of ['duplicate','stale'])test(`${mode} saved copies cannot turn runtime drafts into dashboard writes`,async({page})=>{
+  await setup(page,{duplicate:true});
+  if(mode==='stale')await page.evaluate(()=>{savedDashboard.views[0].cards[0].name='Changed elsewhere';});
+  const before=await page.evaluate(()=>structuredClone(savedDashboard));
+  await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{throw Error('Denied');}}}));
+  await open(page);await dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true}).check();
+  await dialog(page).getByRole('button',{name:'Copy configuration',exact:true}).click();
+  await expect(dialog(page).getByLabel('Draft icon configuration')).toHaveValue(/"energy"/);
+  await expect(dialog(page).getByLabel('Draft icon configuration')).toBeFocused();
+  expect(await page.evaluate(()=>savedDashboard)).toEqual(before);expect(await page.evaluate(()=>dashboardCalls)).toEqual([]);expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
 });
-test('late save after card reselection cannot apply returned config or replay',async({page})=>{
-  await setup(page);await open(page);await dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true}).check();
-  await page.evaluate(()=>window.saveMode='deferred');await dialog(page).getByRole('button',{name:'Save icons',exact:true}).click();await expect.poll(()=>page.evaluate(()=>typeof finishSave)).toBe('function');
-  await page.evaluate(()=>{fixture.cards[0].setConfig({...fixture.config,entity:'climate.fixture_secondary'});finishSave();});
+test('late clipboard failure cannot reopen or change a reselected card',async({page})=>{
+  await setup(page);await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:()=>new Promise((resolve,reject)=>{window.rejectIconCopy=reject;})}}));
+  await open(page);await dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true}).check();
+  await dialog(page).getByRole('button',{name:'Copy configuration',exact:true}).click();
+  await page.evaluate(()=>{fixture.cards[0].setConfig({...fixture.config,entity:'climate.fixture_secondary'});rejectIconCopy(Error('Denied'));});
   await expect(dialog(page)).toHaveCount(0);expect(await page.evaluate(()=>fixture.cards[0].config.entity)).toBe('climate.fixture_secondary');
-  expect(await page.evaluate(()=>fixture.cards[0].config.vt_telemetry)).toBeUndefined();expect(await page.evaluate(()=>dashboardCalls.filter(call=>call.type.endsWith('/save')).length)).toBe(1);expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+  expect(await page.evaluate(()=>fixture.cards[0].config.vt_telemetry)).toBeUndefined();expect(await page.evaluate(()=>dashboardCalls)).toEqual([]);expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
 });
-test('add reading is draft-only until verified save; VT details and device link send no commands',async({page})=>{
+test('add reading remains a draft; accepted editor configuration exposes VT details without commands',async({page})=>{
   await setup(page);await open(page);await dialog(page).getByText('Add reading',{exact:true}).click();
   await dialog(page).getByLabel('Entity',{exact:true}).fill('sensor.fixture_valve');await dialog(page).getByLabel('Label (optional)',{exact:true}).fill('Reported valve');
   await dialog(page).getByRole('button',{name:'Add to draft',exact:true}).click();await expect(dialog(page).getByLabel('Draft top row preview')).toContainText('Reported valve');
   expect(await page.evaluate(()=>savedDashboard.views[0].cards[0].features)).toBeUndefined();
-  await dialog(page).getByRole('checkbox',{name:'Show Automatic window detection',exact:true}).check();await dialog(page).getByRole('button',{name:'Save icons',exact:true}).click();
-  await expect(dialog(page)).toContainText('Icons saved');await dialog(page).getByRole('button',{name:'Done',exact:true}).click();
+  await dialog(page).getByRole('checkbox',{name:'Show Automatic window detection',exact:true}).check();
+  await page.evaluate(()=>{const c=fixture.cards[0],draft=structuredClone(c._iconSettings.draft);c.setConfig(draft);});
   await card(page).locator('[data-telemetry-key="vt:window_auto"]').click();await expect(dialog(page)).toContainText('Open delay');await expect(dialog(page)).toContainText('30 s');
   await page.keyboard.press('Escape');await open(page);
   await page.evaluate(()=>fixture.cards[0].addEventListener('hass-more-info',event=>{window.moreInfoEntity=event.detail.entityId;}));
@@ -134,13 +126,33 @@ for(const width of [390,768,1440])test(`dedicated icon page fits ${width}px`,asy
   await page.screenshot({path:info.outputPath(`icon-settings-${width}.png`),fullPage:true});
 });
 
-test('context is rechecked between verified save resolution and applying its result',async({page})=>{
-  await setup(page);await open(page);
-  await dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true}).check();
-  await page.evaluate(()=>{const session=fixture.cards[0]._iconSettings.session,save=session.save.bind(session);session.save=async draft=>{const result=await save(draft);fixture.hass.connection.socket={};return result;};});
-  await dialog(page).getByRole('button',{name:'Save icons',exact:true}).click();
-  await expect(dialog(page)).toContainText('Icons were saved, but the card context changed');
-  expect(await page.evaluate(()=>fixture.cards[0].config.vt_telemetry)).toBeUndefined();
-  expect(await page.evaluate(()=>savedDashboard.views[0].cards[0].vt_telemetry)).toEqual(['energy']);
-  expect(await page.evaluate(()=>dashboardCalls.filter(call=>call.type.endsWith('/save')).length)).toBe(1);expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+test('HA editor emits icon choices through the native card editing contract',async({page})=>{
+  await setup(page);await page.evaluate(()=>fixture.editor.setConfig({...fixture.config,adapter:'vtherm'}));const editor=page.locator('#editor thermal-intelligence-beta-card-editor');
+  await editor.locator('[data-section="sources"] > summary').click();await editor.locator('[data-section="header-icons"] > summary').click();
+  await editor.getByRole('checkbox',{name:'Show Estimated energy',exact:true}).check();
+  await expect(card(page).locator('[data-header-telemetry]')).toContainText('≈ 2.5 kWh');
+  expect(await page.evaluate(()=>fixture.events.at(-1).vt_telemetry)).toEqual(['energy']);
+  expect(await page.evaluate(()=>fixture.events.at(-1).future)).toEqual({keep:['unchanged']});
+  expect(await page.evaluate(()=>dashboardCalls)).toEqual([]);expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+});
+for(const mode of ['absent','delayed'])test(`icon export preserves the latest draft with ${mode} clipboard`,async({page})=>{
+  await setup(page);await page.evaluate(mode=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:mode==='absent'?undefined:{writeText:()=>new Promise((resolve,reject)=>{window.rejectIconCopy=reject;})}}),mode);
+  await open(page);await dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true}).check();await dialog(page).getByRole('button',{name:'Copy configuration',exact:true}).click();
+  if(mode==='delayed'){await dialog(page).getByRole('checkbox',{name:'Show Estimated mean power',exact:true}).check();await page.evaluate(()=>rejectIconCopy(Error('Denied')));}
+  const output=dialog(page).getByLabel('Draft icon configuration');await expect(output).toBeVisible();await expect(output).toBeFocused();
+  const draft=JSON.parse(await output.inputValue());expect(draft.vt_telemetry).toContain('energy');if(mode==='delayed')expect(draft.vt_telemetry).toContain('power');
+  expect(await output.evaluate(node=>node.selectionStart===0&&node.selectionEnd===node.value.length)).toBe(true);
+  expect(await page.evaluate(()=>dashboardCalls)).toEqual([]);expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+});
+
+test('delayed clipboard success identifies an earlier draft and later edits retire copy confirmation',async({page})=>{
+  await setup(page);await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:text=>new Promise(resolve=>{window.copiedIcons=text;window.resolveIconCopy=resolve;})}}));
+  await open(page);await dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true}).check();
+  await dialog(page).getByRole('button',{name:'Copy configuration',exact:true}).click();
+  await dialog(page).getByRole('checkbox',{name:'Show Estimated mean power',exact:true}).check();await page.evaluate(()=>resolveIconCopy());
+  await expect(dialog(page)).toContainText('Earlier draft copied');expect(await page.evaluate(()=>JSON.parse(copiedIcons).vt_telemetry)).toEqual(['energy']);
+  await dialog(page).getByRole('button',{name:'Copy configuration',exact:true}).click();await page.evaluate(()=>resolveIconCopy());
+  await expect(dialog(page)).toContainText('Configuration copied. Nothing has been saved yet.');await expect(dialog(page).getByRole('button',{name:'Copy configuration',exact:true})).toBeFocused();expect(await page.evaluate(()=>JSON.parse(copiedIcons).vt_telemetry)).toEqual(['energy','power']);
+  await dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true}).uncheck();await expect(dialog(page).locator('[data-icon-status]')).toBeHidden();
+  expect(await page.evaluate(()=>dashboardCalls)).toEqual([]);expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
 });

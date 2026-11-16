@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeConfig, CARD_TYPE } from '../../src/model/config.js';
+import { normalizeConfig } from '../../src/model/config.js';
 import { buildModel } from '../../src/model/climate.js';
 import { setHeaderVisible, moveHeaderIcon } from '../../src/model/header-icons.js';
-import { IconSettingsSession } from '../../src/model/icon-settings-session.js';
 import { VT_READINGS } from '../../src/model/vt-catalog.js';
 
 const entity='climate.example',now=Date.parse('2026-11-16T12:00:00Z');
@@ -62,51 +61,6 @@ test('display hiding/order retains mappings, preset readings, dial sources and i
   const after=buildModel(f.hass,next,null,{now});
   assert.deepEqual(after.presetReadings,before.presetReadings);assert.deepEqual(after.trend,before.trend);assert.deepEqual(after.output,before.output);assert.deepEqual(next.telemetry,f.config.telemetry);assert.deepEqual(next.features,f.config.features);
   assert(!after.headerTelemetry.some(row=>row.key===rows[0].key));assert(after.headerOptions.some(row=>row.key===rows[0].key));
-});
-
-function storage({duplicate=false,timeout=25}={}) {
-  const raw={type:CARD_TYPE,entity,adapter:'vtherm',future:{kept:[1]},header_icons:{future:'kept'}};
-  const second={...structuredClone(raw),name:'Independent'};
-  let dashboard={future:{untouched:true},views:[{cards:[raw,duplicate?structuredClone(raw):second]}]};
-  const calls=[],hass={connected:true,connection:{socket:{}},user:{id:'admin',is_admin:true},panels:{example:{component_name:'lovelace',url_path:'example',config:{mode:'storage'}}},async callWS(message){calls.push(structuredClone(message));if(message.type==='lovelace/config/save'){dashboard=structuredClone(message.config);return null;}return structuredClone(dashboard);}};
-  const context={hass,config:normalizeConfig(raw),pathname:'/example/0',attached:true,preview:false,commandBusy:false};
-  const session=new IconSettingsSession(()=>context,{timeout});
-  return {raw,second,context,hass,calls,session,get dashboard(){return dashboard;},set dashboard(value){dashboard=value;}};
-}
-test('direct save changes one exact card and preserves raw defaults, other cards and unknown fields',async()=>{
-  const f=storage();await f.session.load();
-  const draft={...f.context.config,vt_telemetry:['energy'],header_icons:{...f.context.config.header_icons,hidden:['direct:humidity']}};
-  const result=await f.session.save(draft);
-  assert.equal(result.changed,true);assert.equal(f.calls.filter(call=>call.type==='lovelace/config/save').length,1);
-  assert.deepEqual(f.dashboard.views[0].cards[1],f.second);assert.deepEqual(f.dashboard.views[0].cards[0],{...f.raw,vt_telemetry:['energy'],header_icons:{future:'kept',hidden:['direct:humidity']}});
-  assert.deepEqual(f.dashboard.future,{untouched:true});
-});
-test('ambiguous copies, preview, non-admin, command in flight, unsafe snapshot and session changes refuse save',async()=>{
-  await assert.rejects(storage({duplicate:true}).session.load(),/More than one/);
-  for(const mutate of [f=>f.context.preview=true,f=>f.hass.user.is_admin=false,f=>f.context.commandBusy=true,f=>{Object.defineProperty(f.context.config,'future',{enumerable:true,get(){throw Error('Must not evaluate');}});}]) {
-    const f=storage();mutate(f);await assert.rejects(f.session.load());assert.equal(f.calls.length,0);
-  }
-  const f=storage();await f.session.load();f.hass.connection.socket={};await assert.rejects(f.session.save({...f.context.config,vt_telemetry:['energy']}),/changed/);assert.equal(f.calls.filter(call=>call.type.endsWith('/save')).length,0);
-});
-test('known layout stacks are eligible; unknown wrappers and matching template copies cannot target another card',async()=>{
-  const f=storage();f.dashboard.views[0].cards=[{type:'vertical-stack',cards:[f.raw]}];await f.session.load();
-  const g=storage();g.dashboard.views[0].cards=[{type:'custom:unknown-wrapper',card:g.raw}];await assert.rejects(g.session.load(),/wrapper is not supported/);
-  const h=storage();h.dashboard.views[0].cards.push({type:'custom:unknown-wrapper',card:structuredClone(h.raw)});await assert.rejects(h.session.load(),/More than one/);
-  const i=storage();i.dashboard.templates={copy:structuredClone(i.raw)};await assert.rejects(i.session.load(),/More than one/);
-});
-test('dashboard conflicts and non-display changes never dispatch; failure never replays',async()=>{
-  const f=storage();await f.session.load();f.dashboard.future.new='concurrent';await assert.rejects(f.session.save({...f.context.config,vt_telemetry:['energy']}),/dashboard changed/);assert.equal(f.calls.filter(call=>call.type.endsWith('/save')).length,0);
-  const g=storage();await g.session.load();await assert.rejects(g.session.save({...g.context.config,entity:'climate.other'}),/Other draft settings/);assert.equal(g.calls.filter(call=>call.type.endsWith('/save')).length,0);
-  const h=storage();await h.session.load();const original=h.hass.callWS;h.hass.callWS=message=>{if(message.type.endsWith('/save')){h.calls.push(message);return Promise.reject(Error('Rejected'));}return original(message);};
-  await assert.rejects(h.session.save({...h.context.config,vt_telemetry:['energy']}),/Save unconfirmed/);
-  await assert.rejects(h.session.save({...h.context.config,vt_telemetry:['energy']}),/Reopen/);assert.equal(h.calls.filter(call=>call.type.endsWith('/save')).length,1);
-});
-test('unresolved write holds dashboard latch beyond UI timeout and cannot replay',async()=>{
-  const f=storage({timeout:5});await f.session.load();const original=f.hass.callWS;let resolve;
-  f.hass.callWS=message=>{if(message.type.endsWith('/save')){f.calls.push(message);return new Promise(done=>{resolve=done;});}return original(message);};
-  await assert.rejects(f.session.save({...f.context.config,vt_telemetry:['energy']}),/unconfirmed/);
-  const other=new IconSettingsSession(()=>f.context,{timeout:5});await other.load();await assert.rejects(other.save({...f.context.config,vt_telemetry:['power']}),/unresolved/);
-  assert.equal(f.calls.filter(call=>call.type.endsWith('/save')).length,1);resolve();
 });
 
 test('numeric unit paths coexist with inert custom metadata and negative temperature details',()=>{

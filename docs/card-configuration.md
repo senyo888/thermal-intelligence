@@ -17,7 +17,7 @@ Open the dashboard menu, choose **Edit dashboard**, then **Edit** on this card. 
 5. In **Optional switch control**, search by friendly name or entity ID, select the exact switch, and enroll it separately. Searching alone changes no configuration.
 6. **Preset display labels**, **Temperature response** and **Advanced display settings** retain preset labels, response mappings and the fallback temperature step.
 
-The runtime **Top row icon settings** page provides the same icon selection and ordering controls, a draft preview, and **Save icons** for one eligible saved card. The **Readings and display** panel explains the general editor route and shows current readings. Its collapsed **Advanced draft and export** retains the full local editor and copy/export tools. The humidity panel shows the saved guide and history, with its original draft controls under the same disclosure. Advanced display/export and humidity drafts do not save dashboard configuration. Closing them discards unsaved edits; copy a valid draft into Home Assistant’s card editor to keep it.
+The runtime **Top row icon settings** page provides the same icon selection and ordering controls, a draft preview, and **Copy configuration**. The **Readings and display** panel explains the general editor route and shows current readings. Its collapsed **Advanced draft and export** retains the full local editor and copy/export tools. The humidity panel shows the saved guide and history, with its original draft controls under the same disclosure. Runtime icon, advanced display/export and humidity drafts do not save dashboard configuration. Closing them discards unsaved edits; copy a valid draft into Home Assistant’s card editor to keep it.
 
 Fields validate before emitting an accepted configuration. An incomplete or invalid draft shows an error and leaves the card on its last accepted configuration. The no-climate scenario remains a usable setup state. Configuration belongs to each card instance; editing one card does not update other copies.
 
@@ -35,9 +35,9 @@ Hiding or moving an icon changes only the header. It preserves sensor mappings, 
 
 **Add reading** appends a custom reported entity value to the draft. **Advanced configuration and export** carries the draft into the full editor for typed sources and other settings. Export alone does not save anything.
 
-**Save icons** requires a connected administrator, a storage dashboard and exactly one saved card matching the current configuration. It saves only that card, preserving other cards and unknown fields. A dashboard change, session change, active command or unsupported wrapper prevents direct saving. Identical copies are ambiguous; use Home Assistant’s card editor for those. Cancel discards the draft. After a save, the card verifies the stored dashboard before reporting success. An unconfirmed save is not retried automatically.
+Save icon choices through **Edit dashboard → Edit this card → Readings and icons → Top row icon settings**, then choose Home Assistant’s **Save**. Home Assistant owns the selected card and persistence.
 
-Home Assistant saves a complete dashboard and offers no atomic revision comparison. The card rereads before saving and checks afterwards, but concurrent edits in another browser can still race with the save. Avoid simultaneous dashboard editing. The ordinary HA editor and advanced export remain available when direct save is unavailable.
+The runtime page is a draft workspace. **Copy configuration** copies the complete draft for this card’s configuration editor; if clipboard access is unavailable, the text opens selected for manual copying. Copying does not save or update the live card. Cancel discards the draft. The runtime page never looks up or rewrites dashboard storage, so matching, stale or template-generated copies cannot redirect a save to another card. Advanced export remains available.
 
 ### Optional VT readings
 

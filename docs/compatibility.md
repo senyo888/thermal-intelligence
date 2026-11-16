@@ -8,7 +8,7 @@ The Lab used a manual overlay while Marketplace retained RC.2. RC.3 named-releas
 
 ## Unreleased RC.4 candidate
 
-The latest working revision adds a dedicated top-row icon page, an expanded VT reading catalogue and guarded single-card storage saves. Direct saving requires connected administrator access and a uniquely matched card in a storage dashboard; YAML dashboards, ambiguous copies and unsupported wrappers retain HA editor/export. Module SHA256 `6644a8561e120f748c18530bda3e8ea0d28cd1208e0916aef4b682db22047cd1` passed 189 unit and 182 synthetic browser tests, including responsive layouts and display-save failure boundaries. These are simulated HA persistence checks; this revision has not been installed on HA Lab or Stable.
+The latest working revision adds a dedicated top-row icon page and an expanded VT reading catalogue. The runtime page supports preview and export; Home Assistant’s selected-card editor owns saving. No runtime dashboard writes are made. Final module identity and synthetic validation are recorded in [RC.4](rc-4.md#vt-icon-settings-follow-up--16-november-2026). This revision has not been installed on HA Lab or Stable.
 
 The preceding 16 November revision uses quiet button feedback: routine actions leave no banner, issue notices expire after ten seconds, and unresolved issues remain on the LED and in the overview. Module SHA256 `718e6f5f076c9471bbc6a634fa3dd515255a02c1db7365d3d982d65a6cdc3cff` passed 178 unit and 171 synthetic browser tests. These bytes have not been loaded on HA Lab or Stable; the live results below remain tied to the earlier module.
 
