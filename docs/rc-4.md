@@ -20,7 +20,13 @@ The card type remains `custom:thermal-intelligence-beta-card`, with editor `ther
 
 The `temperature` telemetry kind and `unit_attribute` require beta.8 or RC.4. RC.3 and earlier reject this kind. Keep a compatible saved configuration with its original module before adding temperature rows; rollback must restore both while preserving unrelated dashboard edits. See [configuration](card-configuration.md) and [update and rollback](migration.md).
 
-## Candidate module
+## Quiet feedback follow-up — 16 November 2026
+
+The working candidate keeps button activation feedback and removes routine request banners from below the card. Issue notices disappear after ten seconds; unresolved request issues retain an amber LED and overview details, with red reserved for disconnected or unavailable thermostats. Accessible status, command guards and advanced export remain intact.
+
+This revision is 220371 bytes, SHA-256 `718e6f5f076c9471bbc6a634fa3dd515255a02c1db7365d3d982d65a6cdc3cff`. It passed 178 unit and 171 synthetic browser tests, including notice expiry, repeated failures, independent cards, unchanged selectors after expiry, and phone/tablet/desktop layouts. It has not been loaded on HA Lab or Stable. The earlier live results below apply only to the earlier module.
+
+## Earlier Lab-tested module — 15 November 2026
 
 | File | Bytes | SHA-256 |
 | --- | ---: | --- |
@@ -48,7 +54,7 @@ Output directories must not exist. Browser checks require the pinned Playwright 
 
 ## Validation limits
 
-The candidate passed 178 unit tests, 164 synthetic Chromium browser tests, 14 foundation regressions, 13 package tests and eight Marketplace distribution tests. Checks include phone, tablet and desktop layouts, reduced motion, advanced export and failed clipboard paths, configuration preservation, explicit source adoption, typed temperature units, optional controls and request uncertainty. Repeated builds and both package routes are reproducible; public-file, link and redacted secret checks passed.
+The earlier module in the table passed 178 unit tests, 164 synthetic Chromium browser tests, 14 foundation regressions, 13 package tests and eight Marketplace distribution tests. Checks include phone, tablet and desktop layouts, reduced motion, advanced export and failed clipboard paths, configuration preservation, explicit source adoption, typed temperature units, optional controls and request uncertainty. Repeated builds and both package routes are reproducible; public-file, link and redacted secret checks passed.
 
 On 15 November 2026, the exact module above passed a manual Lab trial on HA 2026.11.0 with VT 10.6.4. Served bytes and fresh card/editor registrations matched RC.4. Six inert cards rendered correctly; editor Save/Cancel, weather preview, humidity reset and advanced manual export passed without control requests. Saved dashboard configurations were restored exactly.
 

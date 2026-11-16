@@ -189,7 +189,8 @@ test('button press is visible; provider selection and uncertain transport remain
   const comfort=card(page).locator('[data-preset="comfort"]');
   await comfort.focus();await comfort.press('Enter');
   await expect(comfort).toHaveAttribute('aria-pressed','false');
-  await expect(card(page).locator('[data-request-status]')).toContainText('Requesting');
+  await expect(card(page).getByRole('status')).toContainText('Requesting');
+  await expect(card(page).locator('[data-request-status]')).toBeHidden();
   await expect(card(page).locator('.targets')).toHaveAttribute('aria-busy','true');
   await page.evaluate(()=>{fixture.cards[0]._coordinator.cancel('Outcome uncertain.');fixture.cards[0].render();});
   await expect(card(page).locator('.targets')).toHaveAttribute('aria-busy','false');

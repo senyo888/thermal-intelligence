@@ -128,11 +128,13 @@ test('intentional target command retains target and distinguishes observation',a
   await page.evaluate(()=>fixture.behavior='accept');
   await increase(page).click();
   expect(await calls(page)).toEqual([{domain:'climate',service:'set_temperature',payload:{temperature:21.5,entity_id:'climate.fixture_thermostat'}}]);
-  await expect(card(page).locator('[data-request-status]')).toContainText('accepted');
+  await expect(card(page).getByRole('status')).toContainText('accepted');
+  await expect(card(page).locator('[data-request-status]')).toBeHidden();
   await expect(increase(page)).toBeDisabled();
   await page.evaluate(()=>fixture.apply(fixture.calls[0]));
-  await expect(card(page).locator('[data-request-status]')).toContainText('observed');
-  await expect(card(page).locator('[data-request-status]')).toContainText('does not establish physical heating');
+  await expect(card(page).getByRole('status')).toContainText('observed');
+  await expect(card(page).locator('[data-request-status]')).toBeHidden();
+  await expect(card(page).getByRole('status')).toContainText('does not establish physical heating');
   await expect(increase(page)).toBeEnabled();
 });
 
@@ -591,7 +593,8 @@ test('unsettled timeout keeps controls guarded and overview uncertainty after la
 
 test('real browser timer expiry and rejection preserve uncertainty without replay',async({page})=>{
   await page.clock.install();await page.evaluate(()=>fixture.behavior='accept');await increase(page).click();
-  await expect(card(page).locator('[data-request-status]')).toContainText('accepted');
+  await expect(card(page).getByRole('status')).toContainText('accepted');
+  await expect(card(page).locator('[data-request-status]')).toBeHidden();
   await page.clock.fastForward(10001);
   await expect(card(page).getByRole('status')).toHaveCount(1);
   await expect(card(page).getByRole('status')).toContainText('not observed before timeout');
@@ -623,7 +626,8 @@ for(const width of [390,820,1440]) test(`responsive layout and keyboard at ${wid
 
 test('current degradation replaces completed success consistently on card and overview', async ({page}) => {
   await increase(page).click();
-  await expect(card(page).locator('[data-request-status]')).toContainText('Setting observed');
+  await expect(card(page).getByRole('status')).toContainText('Setting observed');
+  await expect(card(page).locator('[data-request-status]')).toBeHidden();
   const details = await overview(page);
   await expect(details.locator('[data-dialog-status]').first()).toContainText('Setting observed');
   await page.evaluate(() => { fixture.hass.connected=false; fixture.refresh(); });
@@ -633,5 +637,94 @@ test('current degradation replaces completed success consistently on card and ov
   await page.evaluate(() => { fixture.hass.connected=true; fixture.refresh(); });
   await expect(card(page).locator('[data-request-status]')).toHaveText('');
   await expect(details.locator('[data-dialog-status]')).toHaveCount(0);
+  expect((await calls(page)).length).toBe(1);
+});
+
+test('failed notice expires after ten seconds without clearing the LED or repeating on updates', async ({page}) => {
+  await page.clock.install(); await page.evaluate(() => fixture.behavior='reject'); await increase(page).click();
+  const notice=card(page).locator('[data-request-status]'), health=card(page).locator('[data-device]');
+  await expect(notice).toBeVisible(); await expect(notice).toContainText('effect is unknown');
+  await expect(health).toHaveAttribute('data-health','amber');
+  await page.clock.runFor(5000); await page.evaluate(() => fixture.refresh());
+  await page.clock.runFor(4900); await expect(notice).toBeVisible();
+  await increase(page).focus(); await page.clock.runFor(100);
+  await expect(notice).toBeHidden(); await expect(increase(page)).toBeFocused();
+  await page.evaluate(() => fixture.refresh()); await page.clock.runFor(20000);
+  await expect(notice).toBeHidden(); await expect(health).toHaveAttribute('data-health','amber');
+  await expect(health).toHaveAttribute('title','The previous request failed. Open for details.');
+  const details=await overview(page); await expect(details.locator('[data-dialog-status]').first()).toContainText('effect is unknown');
+  expect((await calls(page)).length).toBe(1);
+});
+
+test('new identical failures have independent notice windows and a successful request clears the warning', async ({page}) => {
+  await page.clock.install(); await page.evaluate(() => fixture.behavior='reject'); await increase(page).click();
+  const notice=card(page).locator('[data-request-status]');
+  await page.clock.runFor(10000); await expect(notice).toBeHidden();
+  await increase(page).click(); await expect(notice).toBeVisible();
+  await page.clock.runFor(9900); await expect(notice).toBeVisible();
+  await page.clock.runFor(100); await expect(notice).toBeHidden();
+  await page.evaluate(() => fixture.behavior='observe'); await increase(page).click(); await page.clock.runFor(100);
+  await expect(card(page).getByRole('status')).toContainText('observed');
+  await expect(notice).toBeHidden(); await expect(card(page).locator('[data-device]')).toHaveAttribute('data-health','green');
+  expect((await calls(page)).length).toBe(3);
+});
+
+test('notice expiry cannot release unresolved transport, replay it or revive after reattachment', async ({page}) => {
+  await page.clock.install(); await page.evaluate(() => fixture.behavior='pending'); await increase(page).click();
+  const notice=card(page).locator('[data-request-status]'), health=card(page).locator('[data-device]');
+  await expect(notice).toBeHidden(); await page.clock.runFor(10000); await expect(notice).toBeVisible();
+  await page.clock.runFor(10000); await expect(notice).toBeHidden(); await expect(increase(page)).toBeDisabled();
+  await expect(health).toHaveAttribute('data-health','amber');
+  await page.evaluate(() => fixture.pending[0].resolve()); await expect(increase(page)).toBeEnabled();
+  await expect(notice).toBeHidden(); await expect(health).toHaveAttribute('data-health','amber');
+  await page.evaluate(() => { const c=fixture.cards[0], parent=c.parentElement; c.remove(); parent.append(c); });
+  await expect(notice).toBeHidden(); await page.clock.runFor(20000); await expect(notice).toBeHidden();
+  expect((await calls(page)).length).toBe(1);
+});
+
+test('unavailable notice expires while red LED and disabled controls remain, with recovery quiet', async ({page}) => {
+  await page.clock.install(); await page.evaluate(() => { fixture.hass.connected=false; fixture.refresh(); });
+  const notice=card(page).locator('[data-request-status]'), health=card(page).locator('[data-device]');
+  await expect(notice).toContainText('disconnected'); await expect(health).toHaveAttribute('data-health','red');
+  await page.clock.runFor(10000); await expect(notice).toBeHidden(); await expect(increase(page)).toBeDisabled();
+  await page.evaluate(() => fixture.refresh()); await expect(notice).toBeHidden(); await expect(health).toHaveAttribute('data-health','red');
+  await page.evaluate(() => { fixture.hass.connected=true; fixture.refresh(); });
+  await expect(increase(page)).toBeEnabled(); await expect(notice).toBeHidden();
+  expect(await calls(page)).toEqual([]);
+});
+
+test('each card owns its own notice window', async ({page}) => {
+  await page.clock.install(); await page.evaluate(() => { fixture.addCard({...fixture.config,entity:'climate.fixture_secondary'}); fixture.behavior='reject'; });
+  const second=page.locator('thermal-intelligence-beta-card').nth(1);
+  await increase(page).click(); await page.clock.runFor(5000);
+  await second.locator('[data-adjust="temperature"][data-delta="1"]').click();
+  await page.clock.runFor(5000);
+  await expect(card(page).locator('[data-request-status]')).toBeHidden();
+  await expect(second.locator('[data-request-status]')).toBeVisible();
+  await page.clock.runFor(5000); await expect(second.locator('[data-request-status]')).toBeHidden();
+  await expect(card(page).locator('[data-device]')).toHaveAttribute('data-health','amber');
+  await expect(second.locator('[data-device]')).toHaveAttribute('data-health','amber');
+  expect((await calls(page)).map(call=>call.payload.entity_id)).toEqual(['climate.fixture_thermostat','climate.fixture_secondary']);
+});
+
+test('repeated identical invalid range actions each show a full notice without dispatch', async ({page}) => {
+  await page.clock.install(); await reset(page,'range');
+  await page.evaluate(() => { Object.assign(fixture.hass.states[fixture.config.entity].attributes,{target_temp_low:21,target_temp_high:21}); fixture.refresh(); });
+  const plus=increase(page,'target_temp_low'), notice=card(page).locator('[data-request-status]');
+  await plus.click(); await expect(notice).toBeVisible(); const message=await notice.textContent(); expect(message).not.toBe('');
+  await page.clock.runFor(5000); await plus.click(); await expect(notice).toHaveText(message); await expect(notice).toBeVisible();
+  await page.clock.runFor(9900); await expect(notice).toBeVisible();
+  await page.clock.runFor(100); await expect(notice).toBeHidden();
+  await plus.click(); await expect(notice).toBeVisible(); await expect(notice).toHaveText(message);
+  expect(await calls(page)).toEqual([]);
+});
+
+test('notice expiry and subsequent telemetry refresh preserve the focused native selector', async ({page}) => {
+  await page.clock.install(); await page.evaluate(() => fixture.behavior='reject'); await increase(page).click(); await expand(page);
+  const choice=card(page).locator('[data-choice="hvac_mode"]'); await choice.focus();
+  await choice.evaluate(node => { window.noticeFocusedChoice=node; });
+  await page.clock.runFor(10000); await page.evaluate(() => fixture.refresh());
+  await expect(card(page).locator('[data-request-status]')).toBeHidden();
+  await expect(choice).toBeFocused(); expect(await choice.evaluate(node=>node===window.noticeFocusedChoice)).toBe(true);
   expect((await calls(page)).length).toBe(1);
 });

@@ -56,7 +56,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
   set editMode(value) { this._editMode = value === true; this._cancelDraft(); this._updateContext(); this._scheduleRender(); }
   get editMode() { return this._editMode; }
   connectedCallback() { this._refreshIdentity(); this._updateContext(); this._scheduleRender(); }
-  disconnectedCallback() { this._closeDialog(); this._mappedRegistry.stop(); clearTimeout(this._collapseTimer); clearTimeout(this._freshnessTimer); this._identityToken++; this._registryKey = null; this._cancelDraft(); this._coordinator.cancel('Card detached. Any remote outcome remains unverified.'); }
+  disconnectedCallback() { this._closeDialog(); this._mappedRegistry.stop(); clearTimeout(this._collapseTimer); clearTimeout(this._freshnessTimer); this._identityToken++; this._registryKey = null; this._cancelDraft(); this._coordinator.cancel('Card detached. Any remote outcome remains unverified.'); this._cardNotice(this.model()); this._expireNotice(); }
   _isPreview() {
     if (this._preview || this._editMode || this.config.preview === true) return true;
     let node = this;
@@ -169,13 +169,13 @@ export class ThermalIntelligenceCard extends HTMLElement {
       if (Object.entries(payload).every(([name, target]) => model.targets[name] === target)) return Promise.resolve();
       return this._request('set_temperature', payload);
     }
-    catch (error) { this._draftMessage = error.message; this._scheduleRender(); return Promise.resolve(); }
+    catch (error) { this._draftMessage = error.message; this._draftNoticeKey = {}; this._scheduleRender(); return Promise.resolve(); }
   }
   _targetKey(model) { return model.keys.includes(this._activeTarget) ? this._activeTarget : model.keys[0]; }
   _signature(model) { return JSON.stringify([this.config.entity, this._configRevision, this._isPreview(), this._targetKey(model), model.ready, model.canSet, model.unit, model.min, model.max, model.step, model.keys, model.targets, model.choices.find(row=>row.key==='hvac_mode')?.value, model.provider]); }
   _startDraft(model = this.model()) { this._draftContext = { session:this._session(), signature:this._signature(model) }; }
   _draftStillValid(model = this.model()) { return !!this._draftContext && this._sameSession(this._draftContext.session, this._session()) && this._draftContext.signature === this._signature(model) && this._guard(model).allowed && !this._coordinator.busy; }
-  _cancelDraft(message = '') { this._drag = null; this._draft = null; this._draftContext = null; if (message) this._draftMessage = message; }
+  _cancelDraft(message = '') { this._drag = null; this._draft = null; this._draftContext = null; if (message) { this._draftMessage = message; this._draftNoticeKey = {}; } }
   _scheduleRender() {
     if (this._renderQueued) return;
     this._renderQueued = true;
@@ -626,19 +626,46 @@ export class ThermalIntelligenceCard extends HTMLElement {
     }
     return this._draftMessage || (status.phase !== 'idle' ? status.message : current);
   }
+  _expireNotice() {
+    clearTimeout(this._noticeTimer); this._noticeTimer = null; this._noticeMessage = '';
+    this._paintNotice();
+  }
+  _paintNotice() {
+    // Expiry must not replace controls, interrupt a draft or move keyboard focus.
+    const notice = this._view.querySelector('[data-request-status]');
+    if (notice) { notice.hidden = !this._noticeMessage; notice.textContent = this._noticeMessage || ''; }
+  }
+  _cardNotice(model) {
+    const status = this._coordinator.presentationStatus;
+    const reason = this._registryStatus === 'loading' || model.ready || model.readiness.status === 'locked' ? '' : model.reason || '';
+    const draft = this._draftMessage ? this._draftNoticeKey : null;
+    const request = ['failed', 'uncertain'].includes(status.phase) ? status : null;
+    const keys = [reason, draft, request];
+    if (!this._noticeKeys || keys.some((key, index) => key !== this._noticeKeys[index])) {
+      this._expireNotice(); this._noticeKeys = keys;
+      if (this.isConnected && (reason || draft || request)) {
+        this._noticeMessage = this._statusMessage(model);
+        this._noticeTimer = setTimeout(() => this._expireNotice(), 10000);
+      }
+    }
+    return this._noticeMessage || '';
+  }
   render() {
     const model = this.model();
     const focused = this.shadowRoot.activeElement?.getAttribute('data-focus');
     const headerScroll = this.shadowRoot.querySelector('[data-header-telemetry]')?.scrollLeft || 0;
     const statusMessage = this._statusMessage(model);
+    this._cardNotice(model);
     // Unrelated HA updates must not replace an open native select or its focus.
     // Readiness, capabilities and command status still participate in this markup.
     const html = `<style>${styles}${mappedControlStyles}${feedbackStyles}</style>` + renderCard({ config:this.config,model,open:this._open,allowed:this._guard(model).allowed,lockAllowed:this._lockCapability().allowed,optionalControl:this._mappedCapability(model),busy:this._coordinator.busy,requestPhase:this._coordinator.presentationStatus.phase,
       draftValues:this._draftContext?{...model.targets,[this._targetKey(model)]:this._draft}:null,statusMessage,preview:this._isPreview(),animationOffset:this._animationOffset });
     if (html === this._viewHTML) {
+      this._paintNotice();
       this._renderDialog(); this._scheduleFreshness(); return;
     }
     this._view.innerHTML = html; this._viewHTML = html;
+    this._paintNotice();
     this.shadowRoot.querySelector('[data-expand]')?.addEventListener('click',()=>{this._open=!this._open;this._activity();this.render();});
     for (const button of this.shadowRoot.querySelectorAll('[data-details]')) button.onclick=()=>this._moreInfo();
     for (const button of this.shadowRoot.querySelectorAll('[data-info]')) button.onclick=()=>this._moreInfo(button.dataset.info);

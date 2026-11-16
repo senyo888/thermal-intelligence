@@ -79,6 +79,12 @@ This path requires acknowledgement plus a valid mapped `last_updated` baseline i
 
 ## Completed-result presentation
 
-The stored terminal result describes one captured request. A success notice is removed after a selected-entity, configuration, session, readiness or preview change, detachment, or a contrary provider report. Returning to the previous context does not revive it. Current degradation takes precedence on the card and general dialogs. Failed or uncertain outcomes remain visible; presentation does not release an unresolved transport, alter its evidence or send a new request.
+The stored terminal result describes one captured request. Successful actions do not leave a visible banner under the card. Press feedback, selected controls and pending target captions remain distinct from the provider's reported state. The full request status is available in the thermostat overview and one accessible live region.
 
-Retiring successful presentation notifies consumers with the current presentation status while preserving the stored result. Newer matching reports advance its ordering timestamp; delayed older contradictions cannot remove it. Equal-time contradictions or unknown/unavailable observations still retire the notice. Mapped switch no-op results use the same timestamp precision as later reports.
+Failed or uncertain requests, cancelled drafts and current availability problems can show a brief notice below the card. It disappears after ten seconds without clearing the underlying issue. Routine state updates do not extend that window; a new request failure receives its own window, even when the wording is unchanged. Each card owns its notice timer. Expiry does not interrupt a draft, move focus, release an unresolved transport, change command evidence or send another request.
+
+Failed and uncertain request outcomes retain an amber LED and an explanation in the overview after the notice disappears. Disconnection or an unavailable thermostat retains red precedence. A later successful request can replace the earlier request outcome; dismissing a notice cannot claim recovery.
+
+Successful detail presentation is removed after a selected-entity, configuration, session, readiness or preview change, detachment, or a contrary provider report. Returning to the previous context does not revive it. Current degradation takes precedence on the card and general dialogs.
+
+Retiring successful presentation notifies consumers with the current presentation status while preserving the stored result. Newer matching reports advance its ordering timestamp; delayed older contradictions cannot remove it. Equal-time contradictions or unknown/unavailable observations still retire successful presentation. Mapped switch no-op results use the same timestamp precision as later reports.
