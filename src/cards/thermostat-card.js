@@ -12,6 +12,7 @@ import { mappedCapability } from '../model/mapped-control.js';
 import { MappedRegistry } from '../providers/mapped-registry.js';
 import { mappedDialog } from './mapped-dialog.js';
 import { bindActivationFeedback, feedbackStyles } from './interaction-feedback.js';
+import { IconSettingsDialog } from './icon-settings-dialog.js';
 
 const format = value => Number.isFinite(value) ? new Intl.NumberFormat(undefined, { maximumSignificantDigits: 12 }).format(value) : '—';
 const previewHosts = new Set(['hui-card-preview', 'hui-dialog-edit-card', 'hui-dialog-create-card', 'hui-card-element-editor']);
@@ -349,30 +350,34 @@ export class ThermalIntelligenceCard extends HTMLElement {
     button.onkeydown=event=>{if(event.key==='Enter'&&event.shiftKey){event.preventDefault();clear();this._deviceSettings();}};
   }
   _closeDialog() {
+    this._iconSettings?.close();this._iconSettings=null;
     this._mappedIntent = null;
     this._clearLockCode(); this._lockIntent = null;
     const host = this._dialogHost,returnFocus=this._dialogReturnFocus; this._dialogHost = null; this._dialogSpec = null; this._dialogMarkup = null; this._settingsDraft = null; this._displayDraft = null;this._displayExportComplete = false;this._dialogReturnFocus=null;
     host?.shadowRoot.querySelector('dialog')?.close(); host?.remove(); this._activity();
     if(host&&returnFocus)this.shadowRoot.querySelector(`[data-focus="${CSS.escape(returnFocus)}"]`)?.focus({preventScroll:true});
   }
-  _openDialog(kind='overview',rowKey) {
+  _openDialog(kind='overview',rowKey,draftOverride) {
     const capability = kind === 'lock' ? this._lockCapability() : null;
     const mapped = kind === 'mapped' ? this._mappedCapability() : null;
     if (kind === 'mapped' && (!mapped.allowed || this._coordinator.busy)) return;
     if (kind === 'lock' && (!capability.allowed || this._coordinator.busy)) return;
     const returnFocus=this._dialogReturnFocus||this.shadowRoot.activeElement?.getAttribute('data-focus');
     this._closeDialog(); this._cancelDraft(); this._dialogSpec = {kind,rowKey};
-    const draft = snapshotDialogConfig(this.config);
+    const draft = snapshotDialogConfig(draftOverride||this.config);
     this._displayDraft = draft.config; this._displayExportComplete = draft.complete; this._dialogReturnFocus=returnFocus;
     if (kind === 'lock') this._lockIntent = { entity:this.config.entity, revision:this._configRevision, session:this._session(), signature:capability.signature, locked:!capability.locked, codeRequired:capability.codeRequired, submitted:false, invalid:false, message:'' };
     if (kind === 'mapped') this._mappedIntent = { entity:this.config.entity, target:mapped.entity, item:mapped.item, revision:this._configRevision, session:this._session(), signature:mapped.signature, identityKey:mapped.identityKey, on:mapped.reported === 'off', submitted:false, invalid:false, message:'' };
     this._dialogHost = document.createElement('div'); this._dialogHost.attachShadow({mode:'open'});
     bindActivationFeedback(this._dialogHost.shadowRoot);
     this._dialogHost.style.cssText='--primary-text-color:#eff5ff;--secondary-text-color:#a9b8cb;--card-background-color:#0d1622;--input-fill-color:#152234;--secondary-background-color:#152234;--divider-color:#34465c;--primary-color:#8ac9f1;color-scheme:dark';
-    this.shadowRoot.append(this._dialogHost); this._renderDialog(true);
+    this.shadowRoot.append(this._dialogHost);
+    if(kind==='icons'){this._iconSettings=new IconSettingsDialog(this,this._dialogHost.shadowRoot);this._iconSettings.open();this._scheduleFreshness();return;}
+    this._renderDialog(true);
   }
   _renderDialog(show=false) {
     if (!this._dialogHost || !this._dialogSpec) return;
+    if (this._dialogSpec.kind === 'icons') {this._iconSettings?.update();return;}
     if (this._dialogSpec.kind === 'lock') { this._renderLockDialog(show); return; }
     if (this._dialogSpec.kind === 'mapped') { this._renderMappedDialog(show); return; }
     // Keep the actual editor node and its draft while telemetry changes.
@@ -401,6 +406,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     for (const button of root.querySelectorAll('[data-dialog-info]')) button.onclick=()=>this._moreInfo(button.dataset.dialogInfo);
     for (const button of root.querySelectorAll('[data-dialog-preset]')) button.onclick=()=>this._request('set_preset_mode',{preset_mode:button.dataset.dialogPreset});
     for (const button of root.querySelectorAll('[data-dialog-settings]')) button.onclick=()=>this._openDialog('settings');
+    for (const button of root.querySelectorAll('[data-vt-settings]')) button.onclick=()=>this._deviceSettings();
     const editor = root.querySelector('[data-dialog-editor]');
     if (!this._displayExportComplete && root.querySelector('[data-copy-settings],[data-copy-humidity]')) {
       for (const button of root.querySelectorAll('[data-copy-settings],[data-copy-humidity]')) button.disabled = true;
@@ -613,6 +619,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
       const stamp = Date.parse(this._hass?.states?.[row.entity]?.last_updated);
       return stamp > now ? stamp + 1 : stamp + row.max_age_seconds * 1000 + 1;
     }).filter(deadline=>Number.isFinite(deadline) && deadline > now);
+    if(this.config.vt_telemetry?.includes('temperature_seen')||this._dialogSpec?.kind==='icons')deadlines.push(now+30000);
     const arcExpiry = this.model().arc?.expiresAt;
     if (Number.isFinite(arcExpiry) && arcExpiry + 1 > now) deadlines.push(arcExpiry + 1);
     if(this.isConnected && deadlines.length) this._freshnessTimer = setTimeout(()=>this._scheduleRender(), Math.min(30000, Math.max(1, Math.min(...deadlines)-now)));
@@ -674,7 +681,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     this.shadowRoot.querySelector('[data-mapped-control]')?.addEventListener('click', () => this._openDialog('mapped'));
     for (const button of this.shadowRoot.querySelectorAll('[data-status-overview]')) button.onclick=()=>this._openDialog('overview');
     for (const button of this.shadowRoot.querySelectorAll('[data-presets]')) button.onclick=()=>this._openDialog('presets');
-    for (const button of this.shadowRoot.querySelectorAll('[data-icon-settings]')) button.onclick=()=>this._openDialog('settings');
+    for (const button of this.shadowRoot.querySelectorAll('[data-icon-settings]')) button.onclick=()=>this._openDialog('icons');
     for (const button of this.shadowRoot.querySelectorAll('[data-telemetry-topic]')) button.onclick=()=>this._openDialog('telemetry',button.dataset.telemetryKey||button.dataset.telemetryTopic);
     for (const button of this.shadowRoot.querySelectorAll('[data-adjust]')) button.onclick=()=>{const current=this.model(),key=button.dataset.adjust;this._temperature(current.targets[key]+Number(button.dataset.delta)*current.step,key);this._activity();};
     for (const button of this.shadowRoot.querySelectorAll('[data-preset]')) button.onclick=()=>{this._request('set_preset_mode',{preset_mode:button.dataset.preset});this._activity();};

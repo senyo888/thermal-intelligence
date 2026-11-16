@@ -65,7 +65,7 @@ test('inert mapping getters cannot block ordinary dialog snapshots or run on ope
       await expect(card(page).locator('[data-export-unavailable]')).toBeVisible();
       await expect(card(page).locator('[data-copy-settings],[data-copy-humidity]')).toBeDisabled();
       if(kind==='settings'){
-        await card(page).getByRole('dialog').locator('#advanced-export > summary').click();
+        if(await card(page).getByRole('dialog').locator('#advanced-export').getAttribute('open')===null)await card(page).getByRole('dialog').locator('#advanced-export > summary').click();
         const embedded=card(page).locator('[data-dialog-editor]');
         await embedded.getByLabel('Card name',{exact:true}).fill('Draft name');
         await embedded.getByLabel('Card name',{exact:true}).press('Tab');
@@ -506,9 +506,9 @@ test('typing then clicking an editor action commits without losing the click',as
 
 test('source settings dialog retains a local draft without changing dashboard configuration',async({page})=>{
   const before=await page.evaluate(()=>({dashboard:structuredClone(fixture.config),card:structuredClone(fixture.cards[0].config)}));
-  await expand(page);await card(page).locator('[data-icon-settings]').click();
+  await expand(page);await card(page).locator('[data-icon-settings]').click();await card(page).getByRole('button',{name:'Advanced configuration and export',exact:true}).click();
   const dialog=card(page).getByRole('dialog');await expect(dialog).toHaveAttribute('data-view','settings');
-  await dialog.locator('#advanced-export > summary').click();
+  if(await dialog.locator('#advanced-export').getAttribute('open')===null)await dialog.locator('#advanced-export > summary').click();
   await expect(dialog.locator('.scope')).toContainText('does not save dashboard configuration');
   const nested=dialog.locator('[data-dialog-editor]'),name=nested.locator('[data-field="name"]');
   await name.fill('Unsaved source settings');await name.press('Tab');
@@ -519,7 +519,7 @@ test('source settings dialog retains a local draft without changing dashboard co
   expect(await page.evaluate(()=>({dashboard:fixture.config,card:fixture.cards[0].config}))).toEqual(before);
   expect(await calls(page)).toEqual([]);
   await dialog.locator('[data-dialog-close]').first().click();
-  await card(page).locator('[data-icon-settings]').click();
+  await card(page).locator('[data-icon-settings]').click();await card(page).getByRole('button',{name:'Advanced configuration and export',exact:true}).click();
   await expect(card(page).getByRole('dialog').locator('[data-dialog-editor] [data-field="name"]')).toHaveValue(before.dashboard.name||'');
   expect(await calls(page)).toEqual([]);
 });

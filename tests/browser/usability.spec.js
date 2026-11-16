@@ -129,11 +129,11 @@ test('late registry replies cannot populate another thermostat or replay after r
   expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
 });
 test('runtime settings favour HA editing and keep export explicit and isolated',async({page})=>{
-  await card(page).locator('[data-expand]').click();await card(page).locator('[data-icon-settings]').click();
+  await card(page).locator('[data-expand]').click();await card(page).locator('[data-icon-settings]').click();await card(page).getByRole('button',{name:'Advanced configuration and export',exact:true}).click();
   const dialog=card(page).getByRole('dialog');
   await expect(dialog).toContainText('Edit this card in Home Assistant');
-  await expect(dialog.locator('#advanced-export')).not.toHaveAttribute('open');
-  await dialog.locator('#advanced-export > summary').click();
+  await expect(dialog.locator('#advanced-export')).toHaveAttribute('open');
+  if(await dialog.locator('#advanced-export').getAttribute('open')===null)await dialog.locator('#advanced-export > summary').click();
   await dialog.getByLabel('Card name',{exact:true}).fill('Export draft');
   await dialog.getByLabel('Card name',{exact:true}).press('Tab');
   expect(await page.evaluate(()=>fixture.config.name)).toBeUndefined();
@@ -144,9 +144,9 @@ test('runtime settings favour HA editing and keep export explicit and isolated',
 for(const clipboard of ['absent','rejected','delayed'])test(`settings export reveals and selects the latest draft with ${clipboard} clipboard`,async({page})=>{
   await page.evaluate(mode=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:mode==='absent'?undefined:{writeText:mode==='delayed'?()=>new Promise((resolve,reject)=>{window.rejectClipboard=reject;}):async()=>{throw Error('Clipboard denied');}}}),clipboard);
   const saved=await page.evaluate(()=>structuredClone(fixture.config));
-  await card(page).locator('[data-expand]').click();await card(page).locator('[data-icon-settings]').click();
+  await card(page).locator('[data-expand]').click();await card(page).locator('[data-icon-settings]').click();await card(page).getByRole('button',{name:'Advanced configuration and export',exact:true}).click();
   const dialog=card(page).getByRole('dialog'),output=dialog.locator('[data-settings-export]');
-  await dialog.locator('#advanced-export > summary').click();
+  if(await dialog.locator('#advanced-export').getAttribute('open')===null)await dialog.locator('#advanced-export > summary').click();
   await dialog.getByLabel('Card name',{exact:true}).fill('Manual export draft');
   await dialog.getByLabel('Card name',{exact:true}).press('Tab');
   await expect(output).not.toBeVisible();
@@ -166,11 +166,11 @@ for(const clipboard of ['absent','rejected','delayed'])test(`settings export rev
 });
 for(const reopen of [false,true])test(`late settings copy failure leaves ${reopen?'reopened settings':'another dialog'} unchanged`,async({page})=>{
   await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:()=>new Promise((resolve,reject)=>{window.rejectClipboard=reject;})}}));
-  await card(page).locator('[data-expand]').click();await card(page).locator('[data-icon-settings]').click();
-  await card(page).getByRole('dialog').locator('#advanced-export > summary').click();
+  await card(page).locator('[data-expand]').click();await card(page).locator('[data-icon-settings]').click();await card(page).getByRole('button',{name:'Advanced configuration and export',exact:true}).click();
+  if(await card(page).getByRole('dialog').locator('#advanced-export').getAttribute('open')===null)await card(page).getByRole('dialog').locator('#advanced-export > summary').click();
   await card(page).getByRole('dialog').getByRole('button',{name:'Copy configuration',exact:true}).click();
   await page.keyboard.press('Escape');
-  if(reopen)await card(page).locator('[data-icon-settings]').click();
+  if(reopen){await card(page).locator('[data-icon-settings]').click();await card(page).getByRole('button',{name:'Advanced configuration and export',exact:true}).click();}
   else await card(page).locator('[data-telemetry-topic="humidity"]').first().click();
   const dialog=card(page).getByRole('dialog'),before=await dialog.innerHTML();
   await page.evaluate(async()=>{window.rejectClipboard(Error('Clipboard denied'));await new Promise(resolve=>setTimeout(resolve,0));});

@@ -8,7 +8,9 @@ The Lab used a manual overlay while Marketplace retained RC.2. RC.3 named-releas
 
 ## Unreleased RC.4 candidate
 
-The 16 November working revision uses quiet button feedback: routine actions leave no banner, issue notices expire after ten seconds, and unresolved issues remain on the LED and in the overview. Module SHA256 `718e6f5f076c9471bbc6a634fa3dd515255a02c1db7365d3d982d65a6cdc3cff` passed 178 unit and 171 synthetic browser tests. These bytes have not been loaded on HA Lab or Stable; the live results below remain tied to the earlier module.
+The latest working revision adds a dedicated top-row icon page, an expanded VT reading catalogue and guarded single-card storage saves. Direct saving requires connected administrator access and a uniquely matched card in a storage dashboard; YAML dashboards, ambiguous copies and unsupported wrappers retain HA editor/export. Module SHA256 `6644a8561e120f748c18530bda3e8ea0d28cd1208e0916aef4b682db22047cd1` passed 189 unit and 182 synthetic browser tests, including responsive layouts and display-save failure boundaries. These are simulated HA persistence checks; this revision has not been installed on HA Lab or Stable.
+
+The preceding 16 November revision uses quiet button feedback: routine actions leave no banner, issue notices expire after ten seconds, and unresolved issues remain on the LED and in the overview. Module SHA256 `718e6f5f076c9471bbc6a634fa3dd515255a02c1db7365d3d982d65a6cdc3cff` passed 178 unit and 171 synthetic browser tests. These bytes have not been loaded on HA Lab or Stable; the live results below remain tied to the earlier module.
 
 The earlier [RC.4](rc-4.md) module consolidates beta.8 usability improvements and the request-tooltip correction. Its SHA256 is `c5c88f6f662095f1bd0a11254bea1401c2ff8b15a13da500d894fdbb664130ae`. It passed 178 unit, 164 synthetic browser, 14 foundation, 13 package and eight Marketplace distribution tests, including phone/tablet/desktop layouts and preserved advanced export. It remains on the beta branch for future develop reconciliation, without a named release.
 

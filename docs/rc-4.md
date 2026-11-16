@@ -5,9 +5,10 @@ RC.4 is prepared on `senyo888-patch-1` for future reconciliation into `develop`.
 ## Changes from RC.3
 
 - Buttons show brief activation feedback. Provider-selected presets retain their own selection indicator, and pending, accepted, observed and uncertain request outcomes remain distinct.
-- Display settings lead to Home Assistant's card editor and Save/Cancel flow. Advanced runtime drafts and export remain available; when clipboard access fails, the latest export text opens and is selected for manual copying.
+- A dedicated **Top row icon settings** page provides selection, ordering, preview, Cancel and guarded **Save icons** for the current card. The HA editor exposes the same controls. Advanced runtime drafts and export remain available; when clipboard access fails, the latest export text opens and is selected for manual copying.
 - Humidity setup combines sliders, exact values and a live display preview. Runtime humidity drafts remain separate from the saved guide.
 - Optional-switch selection is searchable. Recovery updates an invalid confirmation's explanation but still requires a fresh confirmation before any request.
+- VT icon choices include separate manual/automatic windows, Motion, Presence, Follow, power limiting, humidity, temperature-report age and attributed energy/power readings. Provider observations remain read-only; a visible link opens Home Assistant’s native VT settings.
 - Reading previews retain source and observation status. VT suggestions require explicit adoption and renewed identity checks; selecting a source never enables a feature or sends a command.
 - Typed temperature readings support sensor units and live weather temperature units without conversion. The outside reading does not replace the dial's indoor temperature.
 - Request presentation exposes one accessible status message. An uncertain request keeps an uncertain overview tooltip while its transport is unsettled and after late acknowledgement, without relaxing the command guard.
@@ -20,11 +21,15 @@ The card type remains `custom:thermal-intelligence-beta-card`, with editor `ther
 
 The `temperature` telemetry kind and `unit_attribute` require beta.8 or RC.4. RC.3 and earlier reject this kind. Keep a compatible saved configuration with its original module before adding temperature rows; rollback must restore both while preserving unrelated dashboard edits. See [configuration](card-configuration.md) and [update and rollback](migration.md).
 
+## VT icon-settings follow-up — 16 November 2026
+
+The working candidate restores the dedicated icon page and completes its portable VT observation catalogue. Display ordering and hiding preserve underlying sensor mappings and controls. Save checks exact-card identity, dashboard changes and readback; ambiguous copies retain the editor/export route. VT configuration remains in Home Assistant’s native provider settings. This revision is 249327 bytes, SHA-256 `6644a8561e120f748c18530bda3e8ea0d28cd1208e0916aef4b682db22047cd1`. It passed 189 unit and 182 synthetic browser tests, 14 foundation, 13 package and eight distribution checks. The new coverage includes exact-card persistence, ambiguous/unsupported targets, conflicts, late results, no replay, source freshness, rename preservation, keyboard/drag ordering and responsive presentation. It has not been installed on HA Lab or Stable; earlier runtime acceptance does not apply to its changed bytes.
+
 ## Quiet feedback follow-up — 16 November 2026
 
 The working candidate keeps button activation feedback and removes routine request banners from below the card. Issue notices disappear after ten seconds; unresolved request issues retain an amber LED and overview details, with red reserved for disconnected or unavailable thermostats. Accessible status, command guards and advanced export remain intact.
 
-This revision is 220371 bytes, SHA-256 `718e6f5f076c9471bbc6a634fa3dd515255a02c1db7365d3d982d65a6cdc3cff`. It passed 178 unit and 171 synthetic browser tests, including notice expiry, repeated failures, independent cards, unchanged selectors after expiry, and phone/tablet/desktop layouts. It has not been loaded on HA Lab or Stable. The earlier live results below apply only to the earlier module.
+That quiet-feedback revision is 220371 bytes, SHA-256 `718e6f5f076c9471bbc6a634fa3dd515255a02c1db7365d3d982d65a6cdc3cff`. It passed 178 unit and 171 synthetic browser tests, including notice expiry, repeated failures, independent cards, unchanged selectors after expiry, and phone/tablet/desktop layouts. It has not been loaded on HA Lab or Stable. The earlier live results below apply only to the earlier module.
 
 ## Earlier Lab-tested module — 15 November 2026
 

@@ -11,13 +11,13 @@ The card presents a selected climate entity, its advertised controls and explici
 Open the dashboard menu, choose **Edit dashboard**, then **Edit** on this card. **Save** keeps the accepted configuration; **Cancel** keeps the previously saved settings.
 
 1. In **Thermostat**, select a climate entity and provider mode. Set the name, background and activity/detail visibility.
-2. In **Readings and icons**, map trend, humidity and valve sensors. Preview each header icon, value, status and source. **Custom telemetry & features** and **Optional telemetry** retain their full fields, ordering and preset associations.
+2. In **Readings and icons**, use **Top row icon settings** to select and order visible readings, and map trend, humidity and valve sensors. Preview each header icon, value, status and source. **Custom telemetry & features** and **Optional telemetry** retain their full fields, ordering and preset associations.
 3. **Outside temperature** adds an explicitly selected temperature sensor or weather entity. It leaves the indoor dial unchanged. **Find VT sources** lists verified suggestions; each needs a deliberate **Use this source** action.
 4. In **Humidity display**, adjust the four sliders or exact percentages, inspect the gradient and current reading, or reset the guides. Legacy low/high guides remain two labelled fields; reset preserves unknown nested preferences.
 5. In **Optional switch control**, search by friendly name or entity ID, select the exact switch, and enroll it separately. Searching alone changes no configuration.
 6. **Preset display labels**, **Temperature response** and **Advanced display settings** retain preset labels, response mappings and the fallback temperature step.
 
-The runtime **Readings and display** panel explains this route and shows current readings. Its collapsed **Advanced draft and export** retains the full local editor and copy/export tools. The humidity panel shows the saved guide and history, with its original draft controls under the same disclosure. These runtime drafts do not save dashboard configuration. Closing them discards unsaved edits; copy a valid draft into Home Assistant’s card editor to keep it.
+The runtime **Top row icon settings** page provides the same icon selection and ordering controls, a draft preview, and **Save icons** for one eligible saved card. The **Readings and display** panel explains the general editor route and shows current readings. Its collapsed **Advanced draft and export** retains the full local editor and copy/export tools. The humidity panel shows the saved guide and history, with its original draft controls under the same disclosure. Advanced display/export and humidity drafts do not save dashboard configuration. Closing them discards unsaved edits; copy a valid draft into Home Assistant’s card editor to keep it.
 
 Fields validate before emitting an accepted configuration. An incomplete or invalid draft shows an error and leaves the card on its last accepted configuration. The no-climate scenario remains a usable setup state. Configuration belongs to each card instance; editing one card does not update other copies.
 
@@ -26,6 +26,36 @@ Rejected edits to an enrolled switch label or icon restore the displayed saved v
 Dialog drafts copy configuration data without evaluating JavaScript getters or serialization hooks. Unknown plain data stays intact. If a configuration contains values that cannot be copied safely, dialogs keep working, the accepted configuration stays unchanged, and display/humidity export is disabled with an explanation. Edit that card in Home Assistant rather than exporting a partial configuration.
 
 The YAML below describes the same configuration contract. The preview shows the normalized configuration as JSON; it does not include a YAML importer. Type and schema version are managed by the card and editor rather than exposed as ordinary display settings.
+
+## Top row icon settings
+
+Expand **Controls & features**, then choose **Top row icon settings**. Primary icons are existing mapped readings; VT readings are optional observations from the selected provider. Check a reading to include it, then drag its handle, use its arrow buttons, or focus the handle and press Up or Down. The two groups keep their order: Primary first, then VT. The preview reflects the draft. Preset icons still appear only when their exact preset is selected.
+
+Hiding or moving an icon changes only the header. It preserves sensor mappings, their priority, preset controls, expanded source details, the dial and response evidence. The lock indicator and health LED remain independent. Display keys follow source, type and preset identity, with separate occurrences for duplicate rows; source renaming does not reset visibility or order. Source replacement creates a different reading key.
+
+**Add reading** appends a custom reported entity value to the draft. **Advanced configuration and export** carries the draft into the full editor for typed sources and other settings. Export alone does not save anything.
+
+**Save icons** requires a connected administrator, a storage dashboard and exactly one saved card matching the current configuration. It saves only that card, preserving other cards and unknown fields. A dashboard change, session change, active command or unsupported wrapper prevents direct saving. Identical copies are ambiguous; use Home Assistant’s card editor for those. Cancel discards the draft. After a save, the card verifies the stored dashboard before reporting success. An unconfirmed save is not retried automatically.
+
+Home Assistant saves a complete dashboard and offers no atomic revision comparison. The card rereads before saving and checks afterwards, but concurrent edits in another browser can still race with the save. Avoid simultaneous dashboard editing. The ordinary HA editor and advanced export remain available when direct save is unavailable.
+
+### Optional VT readings
+
+| Selection key | Display |
+| --- | --- |
+| `temperature_seen` | Time since VT last received room-temperature evidence |
+| `energy` | Estimated accumulated energy; no billing period inferred |
+| `power` | Estimated mean power |
+| `device_power` | Configured device power, distinct from measured consumption |
+| `window`, `window_auto` | Separate physical-input and automatic window states |
+| `motion`, `presence` | Accepted Motion and Presence states, with their distinct meanings |
+| `power_management` | Provider-reported power limiting |
+| `follow` | Follow underlying target, read-only |
+| `humidity` | Explicit humidity mapping or provider-declared humidity source |
+
+All are opt-in and require VT identity or an explicitly selected VT adapter. Missing inputs, configuration flags and units remain unknown, unavailable or invalid. Explicitly disabled humidity and its configured freshness limit remain effective; a failed sensor never triggers a fallback. Energy/power use the provider’s live units and retain their estimated/configured labels. Temperature-report age uses VT’s receipt timestamp, not an unrelated thermostat update.
+
+Tapping a displayed VT icon opens its current observation and available provider details, including window delays/bypass/action, motion delays/presets or power limits. **Open VT device settings** exposes Home Assistant’s existing provider settings route; TI does not edit those settings. See the [source contract](provider-contracts.md#optional-vt-header-readings).
 
 ## Top-level options
 
@@ -46,6 +76,8 @@ The YAML below describes the same configuration contract. The preview shows the 
 | `valve_position_entity` | Optional TRV opening sensor (%) | Unset | Explicit `sensor.*` valve-position source; finite percentage from 0 to 100 with unit `%`. |
 | `features` | Custom telemetry & features | `[]` | Ordered portable named observations for the header and expanded features; fields below. |
 | `telemetry` | Optional telemetry | `[]` | Ordered list of explicit source rows; see fields and kinds below. |
+| `vt_telemetry` | VT readings | `[]` | Opt-in provider observations listed below; selecting one never enables a VT feature. |
+| `header_icons` | Top row icon settings | No overrides | Display-only `hidden` and `order` arrays of reading keys, maintained by the editor. Unknown nested fields remain intact. |
 | `humidity_bands` | Four humidity guide boundaries, or explicit legacy low/high | Original `30/40/60/70` guides | `{dry_below, good_min, good_max, wet_above}` requires ordered integers within 0–100. Existing `{low, high}` remains an explicit legacy format. Local display classification only; details below. |
 
 Names, labels, units and preset keys must be plain text without markup delimiters or control characters. Optional numbers use YAML numbers, not quoted numeric strings. Boolean options use `true` or `false`. Clear an optional setting by omitting it; `null` is not a substitute for a valid recognized value.
@@ -152,10 +184,10 @@ Without `response_arc`, the existing display-unit comparison is retained: blue b
 | `attribute` | Optional; entity state | Dot-separated attribute path, such as `diagnostics.temperature_slope`. Only own properties are read. |
 | `label` | Optional; kind label | Display label. Defaults are Temperature, Humidity, Temperature trend, Valve, Energy, Power or Telemetry. |
 | `unit` | Optional; reported state unit | Explicit unit for a value that has no state-unit metadata, particularly an attribute. It never requests a conversion. |
-| `unit_attribute` | Optional; temperature rows only | Own-property path to the live unit of a temperature attribute, such as weather’s `temperature_unit`. Requires `attribute`; missing or incompatible units are invalid. |
+| `unit_attribute` | Optional; numeric telemetry kinds | Own-property path to a live measurement unit, such as weather’s `temperature_unit` or VT’s `power_manager.power_unit`. Requires `attribute`; missing or incompatible units are invalid. |
 | `max_age_seconds` | Optional; no age limit | Finite positive number. Compares the entity's `last_updated` with observation time. Choose it from the source's reporting behavior. |
 
-The entity's `unit_of_measurement` describes its state. It is not automatically applied to a nested attribute, so typed numeric attribute observations need an explicit unit, or a live `unit_attribute` for temperature. If both an entity-state unit and a configured unit exist, they must match. `__proto__`, `constructor` and `prototype` are prohibited attribute-path components.
+The entity's `unit_of_measurement` describes its state. It is not automatically applied to a nested attribute, so typed numeric attribute observations need an explicit unit, or a live `unit_attribute`. If both an entity-state unit and a configured unit exist, they must match. `__proto__`, `constructor` and `prototype` are prohibited attribute-path components.
 
 | Kind | Valid data | Default label |
 | --- | --- | --- |

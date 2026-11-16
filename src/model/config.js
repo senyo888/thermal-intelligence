@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { validHumidityBands, legacyHumidityBands } from './humidity.js';
+import { VT_READINGS } from './vt-catalog.js';
 
 export const CARD_TAG = 'thermal-intelligence-beta-card';
 export const EDITOR_TAG = 'thermal-intelligence-beta-card-editor';
@@ -157,10 +158,10 @@ export function normalizeConfig(raw) {
     if (!isRecord(entry) || !TELEMETRY_KINDS.includes(entry.kind)) throw new Error('Unsupported telemetry kind.');
     if (typeof entry.entity !== 'string' || (entry.entity !== '' && !ENTITY.test(entry.entity))) throw new Error('Telemetry entity must be an entity ID or empty.');
     const copy = { ...entry };
-    if (entry.kind === 'temperature' && entry.unit_attribute !== undefined) {
-      safeText(entry.unit_attribute, 'Temperature unit attribute');
-      if (!entry.attribute || entry.unit_attribute.split('.').some(part => !/^\w+$/.test(part) || FORBIDDEN_KEYS.has(part))) {
-        throw new Error('A temperature unit attribute requires a value attribute and a safe own-property path.');
+    if (['temperature','humidity','trend','valve','energy','power'].includes(entry.kind) && entry.unit_attribute !== undefined) {
+      safeText(entry.unit_attribute, 'Measurement unit attribute');
+      if (!['temperature','humidity','trend','valve','energy','power'].includes(entry.kind) || !entry.attribute || entry.unit_attribute.split('.').some(part => !/^\w+$/.test(part) || FORBIDDEN_KEYS.has(part))) {
+        throw new Error('A measurement unit attribute requires a numeric reading, a value attribute and a safe own-property path.');
       }
     }
     if (entry.attribute !== undefined) {
@@ -187,6 +188,19 @@ export function normalizeConfig(raw) {
     }
     return copy;
   });
+  if (raw.vt_telemetry !== undefined) {
+    if (!Array.isArray(raw.vt_telemetry) || new Set(raw.vt_telemetry).size !== raw.vt_telemetry.length || raw.vt_telemetry.some(key=>typeof key!=='string'||!Object.hasOwn(VT_READINGS,key))) throw new Error('Choose supported VT readings.');
+    result.vt_telemetry = [...raw.vt_telemetry];
+  }
+  if (raw.header_icons !== undefined) {
+    if (!isRecord(raw.header_icons)) throw new Error('header_icons must be an object.');
+    result.header_icons = {...raw.header_icons};
+    for (const key of ['hidden','order']) if (raw.header_icons[key] !== undefined) {
+      const values=raw.header_icons[key];
+      if (!Array.isArray(values)||values.length>256||new Set(values).size!==values.length||values.some(value=>typeof value!=='string'||!value.length||value.length>2048||/[\u0000-\u001f\u007f]/u.test(value))) throw new Error(`header_icons.${key} must contain unique reading keys.`);
+      result.header_icons[key]=[...values];
+    }
+  }
   if (raw.humidity_bands !== undefined) {
     if (!isRecord(raw.humidity_bands)) throw new Error('humidity_bands must be an object.');
     if (!validHumidityBands(raw.humidity_bands) && !legacyHumidityBands(raw.humidity_bands)) throw new Error('Humidity guides require ordered integer dry_below < good_min < good_max < wet_above within 0–100, or explicit legacy low < high bounds. Do not mix the formats.');

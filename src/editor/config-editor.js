@@ -6,6 +6,7 @@ import { STATE_TELEMETRY } from '../model/state-telemetry.js';
 import { mappedControl } from '../model/mapped-control.js';
 import { buildModel } from '../model/climate.js';
 import { sourceSuggestions } from './source-suggestions.js';
+import { IconOptions, iconOptionsStyles } from './icon-options.js';
 import { bindActivationFeedback, feedbackStyles } from '../cards/interaction-feedback.js';
 
 const UNSAFE_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
@@ -358,7 +359,7 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     const snapshot = this._capture();
     if (open) this._sections.set(open, true);
     const style = element('style');
-    style.textContent = STYLES + feedbackStyles;
+    style.textContent = STYLES + feedbackStyles + iconOptionsStyles;
     const form = element('form');
     form.addEventListener('submit', (event) => event.preventDefault());
     form.append(element('p', 'editor-route', this.exportOnly ? 'Advanced draft — changes here are not saved. Copy the configuration, then save it in Home Assistant’s Edit card.' : 'Configure this card, then choose Save in Home Assistant. Cancel keeps the saved configuration.'));
@@ -407,12 +408,26 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
 
     const readings = this._sourceMappings(states);
     readings.append(this._outsideTemperature(states), this._sourcePreviewPanel(), this._suggestionPanel());
-    readings.append(this._features(states), this._telemetry(states));
+    readings.append(this._iconDisplay(), this._features(states), this._telemetry(states));
     form.append(readings, this._humidityDisplay(), this._optionalSwitch(states), this._responseArc(states), this._presets(states), this._advanced());
     form.append(element('p', 'hint', 'Save the card in Home Assistant when you are finished. Unknown advanced options are preserved.'));
     this.shadowRoot.replaceChildren(style, form);
     this._refreshPreviews();
     this._restore(snapshot, focus);
+  }
+
+  _iconDisplay() {
+    const section=this._details('header-icons','Top row icon settings');
+    const host=element('div');section.append(host);
+    this._iconOptions=new IconOptions(host,next=>this._commit(next,{rerender:false}));
+    return section;
+  }
+
+  _previewIdentity() {
+    const context=this._displayProvider?.context;
+    if(context&&this._sameSuggestionContext({...context,signature:JSON.stringify(this._draft)}))return this._displayProvider.identity;
+    const cached=this._hass?.entities?.[this._draft.entity];
+    return cached?.entity_id===this._draft.entity?cached:undefined;
   }
 
   _sourceMappings(states) {
@@ -450,8 +465,9 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
 
   _refreshPreviews() {
     let model;
-    try { model = buildModel(this._hass ?? {}, this._draft, this._sameSuggestionContext(this._registryContext) ? this._registry?.find(row => row.entity_id === this._draft.entity) : undefined); }
+    try { model = buildModel(this._hass ?? {}, this._draft, this._previewIdentity()); }
     catch { /* Invalid drafts keep their fields without inventing a preview. */ }
+    this._iconOptions?.update(model,this._draft,!model);
     const container = this.shadowRoot.querySelector('[data-reading-preview]');
     if (container) {
       const rows = model?.headerTelemetry ?? [];
@@ -542,6 +558,7 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
       if (generation!==this._suggestionGeneration || !this._sameSuggestionContext(context)) return;
       if (!Array.isArray(registry)) throw new Error('Unavailable registry');
       this._registry=registry;this._registryContext=context;
+      this._displayProvider={context,identity:registry.find(row=>row.entity_id===this._draft.entity)};
       const suggestions=sourceSuggestions(this._hass,this._draft,registry);
       if (adopt) {
         const fresh=suggestions.find(item=>item.status==='available' && JSON.stringify(item.entry)===JSON.stringify(adopt.entry) && item.identity===adopt.identity);
@@ -701,7 +718,7 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
       grid.append(field(`Source ${index + 1} attribute`, 'attribute', { placeholder: 'Entity state', help: 'Optional nested attribute path, such as power_manager.current_power.' }));
       grid.append(field(`Source ${index + 1} label`, 'label', { placeholder: 'Use source name' }));
       grid.append(field(`Source ${index + 1} unit`, 'unit', { placeholder: 'Use reported unit', help: 'For an attribute with no unit metadata. Known telemetry kinds still validate units.' }));
-      if (row.kind === 'temperature') grid.append(field(`Source ${index + 1} unit attribute`, 'unit_attribute', { placeholder: 'For weather: temperature_unit', help: 'Read the live unit from this entity. A missing or conflicting unit makes the reading invalid.' }));
+      if (['temperature','humidity','trend','valve','energy','power'].includes(row.kind)) grid.append(field(`Source ${index + 1} unit attribute`, 'unit_attribute', { placeholder: 'For example: power_manager.power_unit', help: 'Read the live unit from this entity. A missing or conflicting unit makes the reading invalid.' }));
       grid.append(field(`Source ${index + 1} maximum age (seconds)`, 'max_age_seconds', { type: 'number', min: 0, placeholder: 'No age limit', help: 'Set only when the source has a known reporting interval. Old readings become stale.' }));
       panel.append(grid);
       const actions = element('div', 'actions');

@@ -68,12 +68,12 @@ function overview({ model, config, statusMessage }) {
   ];
   if (model.details?.length) sections.push({ id: 'provider-details', title: 'Provider details', rows: model.details.map(row => ({ label: row.label, value: `${row.value ?? row.status ?? 'Unavailable'}${row.unit ? ` ${row.unit}` : ''}${row.detail ? ` · ${row.detail}` : ''}` })) });
   const groups = `<div class="groups">${sections.map(section => `<details id="section-${section.id}"><summary>${esc(section.title)}<span aria-hidden="true">⌄</span></summary>${plainRows(section.rows)}${section.note ? `<p class="note">${esc(section.note)}</p>` : ''}</details>`).join('')}</div>`;
-  const footer = `<button data-dialog-settings>Readings and display</button>${nativeButton(config.entity, 'Thermostat details')}<p>Thermostat details open in Home Assistant.</p>`;
+  const footer = `<button data-dialog-settings>Readings and display</button>${nativeButton(config.entity, 'Thermostat details')}${model.provider?.kind==='vtherm'?'<button data-vt-settings>Open VT device settings</button>':''}<p>Thermostat details open in Home Assistant.</p>`;
   return { title, html: standardShell({ view: 'overview', title, eyebrow: 'Thermal intelligence · overview', content: (level === 'green' ? summary + healthPanel : healthPanel + summary) + groups, footer, tone }) };
 }
 
 function telemetry({ model, config, savedConfig, rowKey, statusMessage }) {
-  const rows = model.headerTelemetry ?? [];
+  const rows = model.headerOptions ?? model.headerTelemetry ?? [];
   let row = rowKey === 'humidity' ? model.humidity : rows.find(item => item.key === rowKey) ?? rows.find(item => item.topic === rowKey);
   if(rowKey==='follow' && !row && model.provider?.kind==='vtherm') {
     const value=model.connected&&model.available?model.attrs?.vtherm_over_climate?.follow_underlying_temp_change:null;
@@ -87,7 +87,8 @@ function telemetry({ model, config, savedConfig, rowKey, statusMessage }) {
     { label: semantic ? 'State' : 'Selected reading', value: reading },
     { label: 'Status', value: row?.status || 'Not configured' },
     { label: 'Source', value: sourceText(row?.source), entity: row?.source?.entity },
-    ...semantic ? [] : [{ label: 'Unit', value: row?.unit || 'Not reported' }],
+    ...semantic || row?.vtKey==='temperature_seen' ? [] : [{ label: 'Unit', value: row?.unit || 'Not reported' }],
+    ...(row?.detailRows??[]),
   ];
   const content = `<section aria-label="${esc(title)}">${plainRows(values)}<p class="note">${esc(row?.detail || 'No matching configured source is available. No source is inferred from an entity name.')}</p><div class="topic-links">${nativeButton(row?.source?.entity)}<button data-dialog-settings>Readings and display</button></div>${message(statusMessage)}</section>`;
   return { title, html: standardShell({ view: 'telemetry', title, eyebrow: config.name || model.name || 'Thermostat', content }) };

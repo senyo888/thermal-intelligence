@@ -36,9 +36,11 @@ export function sourceSuggestions(hass, config, registry) {
   if (attrs.is_humidity_configured === true && typeof humidity === 'string' && /^sensor\.[a-z0-9_]+$/.test(humidity)) {
     offer('humidity',{kind:'humidity',entity:humidity},'Humidity sensor explicitly reported by VT.');
   }
-  for (const kind of ['window','motion','presence']) {
+  for (const kind of ['window','motion','presence','power_management']) {
     const semantic = STATE_TELEMETRY[kind];
     if (attrs[semantic.flag] === true) offer(kind,{kind,entity:config.entity,attribute:semantic.path},'Accepted feature state reported by VT; separate from the raw input.');
   }
+  if (attrs.is_window_auto_configured === true) offer('window',{kind:'window',entity:config.entity,attribute:'window_manager.window_auto_state',label:'Automatic window detection'},'Automatic window state reported by VT; distinct from its physical window input.');
+  if (typeof readOwnPath(attrs,'vtherm_over_climate.follow_underlying_temp_change').value === 'boolean') offer('follow',{kind:'follow',entity:config.entity,attribute:STATE_TELEMETRY.follow.path},'VT-reported Follow setting; selecting this reading does not change it.');
   return rows;
 }

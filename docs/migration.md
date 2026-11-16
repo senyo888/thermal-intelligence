@@ -10,6 +10,8 @@ RC.3 retains existing **schema-1** and **schema-2** configurations. Explicit enr
 
 The `temperature` kind and optional `unit_attribute` are supported by beta.8 and RC.4, but rejected by RC.3 and earlier. Before adopting them, retain the older module and compatible saved configuration together. A return to the older module requires restoring that configuration without discarding unrelated dashboard edits. Advanced export remains available and does not save the dashboard.
 
+The later RC.4 working revision adds `vt_telemetry`, display-only `header_icons` and live `unit_attribute` for other numeric telemetry kinds. Earlier modules do not implement these displays or direct **Save icons**. Keep the prior module and compatible card configuration together for rollback. Direct icon saves affect only one uniquely matched card; they do not migrate or synchronize other room copies.
+
 RC.4 has its own synthetic, package and [bounded manual Lab checks](rc-4.md#validation-limits). The beta.8 observations below retain their exact module identities. RC.4 installer and physical-device acceptance remain unverified.
 
 ## Unreleased beta.8 candidate

@@ -88,3 +88,11 @@ Failed and uncertain request outcomes retain an amber LED and an explanation in 
 Successful detail presentation is removed after a selected-entity, configuration, session, readiness or preview change, detachment, or a contrary provider report. Returning to the previous context does not revive it. Current degradation takes precedence on the card and general dialogs.
 
 Retiring successful presentation notifies consumers with the current presentation status while preserving the stored result. Newer matching reports advance its ordering timestamp; delayed older contradictions cannot remove it. Equal-time contradictions or unknown/unavailable observations still retire successful presentation. Mapped switch no-op results use the same timestamp precision as later reports.
+
+## Display-only dashboard saves
+
+The RC.4 **Save icons** action is separate from thermostat commands. It captures the authenticated connection/socket/user, dashboard route and complete card configuration, then binds exactly one saved card in a supported rendered card tree. Matching copies in templates or unknown wrappers make the target ambiguous; an unsupported wrapper never gains save authority.
+
+Only icon visibility/order, opt-in VT readings and custom readings appended by that dialog may change. The saved card retains omitted defaults, existing mappings and unknown data. An active control request, preview, incomplete snapshot or changed context refuses the save. Setup, rendering and reconnect do not save.
+
+A local per-connection/dashboard writer latch, fresh dashboard comparisons, one dispatch and readback prevent local overlapping writes and automatic retries. A transport timeout retains the latch until the original operation settles. A detached/reselected card cannot apply a late result. HA’s supported `lovelace/config/save` requires admin access and replaces the whole dashboard; it has no revision/CAS field, so this is not an atomic merge with edits from other clients. An unconfirmed result requires inspection, not replay.
