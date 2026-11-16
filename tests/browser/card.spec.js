@@ -640,8 +640,15 @@ test('current degradation replaces completed success consistently on card and ov
   expect((await calls(page)).length).toBe(1);
 });
 
+async function pauseNoticeClock(page) {
+  const now=await page.evaluate(() => Date.now());
+  await page.clock.install({time:now});
+  // Pause real-time advancement so runner latency cannot consume the final 100 ms.
+  await page.clock.pauseAt(now+60000);
+}
+
 test('failed notice expires after ten seconds without clearing the LED or repeating on updates', async ({page}) => {
-  await page.clock.install(); await page.evaluate(() => fixture.behavior='reject'); await increase(page).click();
+  await pauseNoticeClock(page); await page.evaluate(() => fixture.behavior='reject'); await increase(page).click();
   const notice=card(page).locator('[data-request-status]'), health=card(page).locator('[data-device]');
   await expect(notice).toBeVisible(); await expect(notice).toContainText('effect is unknown');
   await expect(health).toHaveAttribute('data-health','amber');
@@ -657,7 +664,7 @@ test('failed notice expires after ten seconds without clearing the LED or repeat
 });
 
 test('new identical failures have independent notice windows and a successful request clears the warning', async ({page}) => {
-  await page.clock.install(); await page.evaluate(() => fixture.behavior='reject'); await increase(page).click();
+  await pauseNoticeClock(page); await page.evaluate(() => fixture.behavior='reject'); await increase(page).click();
   const notice=card(page).locator('[data-request-status]');
   await page.clock.runFor(10000); await expect(notice).toBeHidden();
   await increase(page).click(); await expect(notice).toBeVisible();
@@ -670,7 +677,7 @@ test('new identical failures have independent notice windows and a successful re
 });
 
 test('notice expiry cannot release unresolved transport, replay it or revive after reattachment', async ({page}) => {
-  await page.clock.install(); await page.evaluate(() => fixture.behavior='pending'); await increase(page).click();
+  await pauseNoticeClock(page); await page.evaluate(() => fixture.behavior='pending'); await increase(page).click();
   const notice=card(page).locator('[data-request-status]'), health=card(page).locator('[data-device]');
   await expect(notice).toBeHidden(); await page.clock.runFor(10000); await expect(notice).toBeVisible();
   await page.clock.runFor(10000); await expect(notice).toBeHidden(); await expect(increase(page)).toBeDisabled();
@@ -683,7 +690,7 @@ test('notice expiry cannot release unresolved transport, replay it or revive aft
 });
 
 test('unavailable notice expires while red LED and disabled controls remain, with recovery quiet', async ({page}) => {
-  await page.clock.install(); await page.evaluate(() => { fixture.hass.connected=false; fixture.refresh(); });
+  await pauseNoticeClock(page); await page.evaluate(() => { fixture.hass.connected=false; fixture.refresh(); });
   const notice=card(page).locator('[data-request-status]'), health=card(page).locator('[data-device]');
   await expect(notice).toContainText('disconnected'); await expect(health).toHaveAttribute('data-health','red');
   await page.clock.runFor(10000); await expect(notice).toBeHidden(); await expect(increase(page)).toBeDisabled();
@@ -694,7 +701,7 @@ test('unavailable notice expires while red LED and disabled controls remain, wit
 });
 
 test('each card owns its own notice window', async ({page}) => {
-  await page.clock.install(); await page.evaluate(() => { fixture.addCard({...fixture.config,entity:'climate.fixture_secondary'}); fixture.behavior='reject'; });
+  await pauseNoticeClock(page); await page.evaluate(() => { fixture.addCard({...fixture.config,entity:'climate.fixture_secondary'}); fixture.behavior='reject'; });
   const second=page.locator('thermal-intelligence-beta-card').nth(1);
   await increase(page).click(); await page.clock.runFor(5000);
   await second.locator('[data-adjust="temperature"][data-delta="1"]').click();
@@ -708,7 +715,7 @@ test('each card owns its own notice window', async ({page}) => {
 });
 
 test('repeated identical invalid range actions each show a full notice without dispatch', async ({page}) => {
-  await page.clock.install(); await reset(page,'range');
+  await pauseNoticeClock(page); await reset(page,'range');
   await page.evaluate(() => { Object.assign(fixture.hass.states[fixture.config.entity].attributes,{target_temp_low:21,target_temp_high:21}); fixture.refresh(); });
   const plus=increase(page,'target_temp_low'), notice=card(page).locator('[data-request-status]');
   await plus.click(); await expect(notice).toBeVisible(); const message=await notice.textContent(); expect(message).not.toBe('');
@@ -720,7 +727,7 @@ test('repeated identical invalid range actions each show a full notice without d
 });
 
 test('notice expiry and subsequent telemetry refresh preserve the focused native selector', async ({page}) => {
-  await page.clock.install(); await page.evaluate(() => fixture.behavior='reject'); await increase(page).click(); await expand(page);
+  await pauseNoticeClock(page); await page.evaluate(() => fixture.behavior='reject'); await increase(page).click(); await expand(page);
   const choice=card(page).locator('[data-choice="hvac_mode"]'); await choice.focus();
   await choice.evaluate(node => { window.noticeFocusedChoice=node; });
   await page.clock.runFor(10000); await page.evaluate(() => fixture.refresh());
