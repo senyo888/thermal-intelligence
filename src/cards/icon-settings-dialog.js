@@ -52,6 +52,7 @@ export class IconSettingsDialog {
     if(!this.owner._displayExportComplete||this.copying)return;
     // Export is explicit; no dashboard lookup, inferred target or write authority.
     const text=JSON.stringify(this.draft,null,2);
+    let fallback;
     this.copying=true;this.update();
     try {
       await navigator.clipboard.writeText(text);
@@ -61,9 +62,16 @@ export class IconSettingsDialog {
       if(!this.current())return;
       let output=this.root.querySelector('[data-icon-export]');
       if(!output){output=document.createElement('textarea');output.dataset.iconExport='';output.readOnly=true;output.setAttribute('aria-label','Draft icon configuration');output.style.cssText='width:100%;min-height:150px;color:inherit;background:#0b1420';this.root.querySelector('.body').append(output);}
-      output.value=JSON.stringify(this.draft,null,2);output.focus();output.select();
+      output.value=JSON.stringify(this.draft,null,2);fallback=output;
       this.message='Select and copy the configuration shown. Paste it into this card’s Home Assistant configuration editor, then save.';
-    } finally {this.copying=false;if(this.current())this.update();}
+    } finally {
+      this.copying=false;
+      if(this.current()){
+        this.update();
+        // Reveal the fallback after the status has settled the scrollable body height.
+        if(fallback){fallback.focus();fallback.select();fallback.scrollIntoView({block:'nearest'});}
+      }
+    }
   }
   close() {this.options.close();}
 }

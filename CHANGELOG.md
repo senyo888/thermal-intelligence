@@ -4,6 +4,7 @@
 
 - Carry beta.8’s clearer button feedback, Home Assistant editor guidance, humidity controls, source previews/suggestions and typed temperature observations into an RC candidate.
 - Preserve advanced draft/export and its clipboard fallback, optional-switch search/recovery, unknown configuration fields and existing control guards.
+- Reveal the selected manual-copy configuration after the icon dialog updates its layout.
 - Keep uncertain request tooltips consistent while a transport is still settling and after a late acknowledgement.
 - Retain develop’s reviewed Pages tooling and align telemetry and migration guidance with current behavior.
 

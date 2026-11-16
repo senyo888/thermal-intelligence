@@ -139,7 +139,7 @@ for(const mode of ['absent','delayed'])test(`icon export preserves the latest dr
   await setup(page);await page.evaluate(mode=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:mode==='absent'?undefined:{writeText:()=>new Promise((resolve,reject)=>{window.rejectIconCopy=reject;})}}),mode);
   await open(page);await dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true}).check();await dialog(page).getByRole('button',{name:'Copy configuration',exact:true}).click();
   if(mode==='delayed'){await dialog(page).getByRole('checkbox',{name:'Show Estimated mean power',exact:true}).check();await page.evaluate(()=>rejectIconCopy(Error('Denied')));}
-  const output=dialog(page).getByLabel('Draft icon configuration');await expect(output).toBeVisible();await expect(output).toBeFocused();
+  const output=dialog(page).getByLabel('Draft icon configuration');await expect(output).toBeVisible();await expect(output).toBeFocused();await expect(output).toBeInViewport({ratio:1});
   const draft=JSON.parse(await output.inputValue());expect(draft.vt_telemetry).toContain('energy');if(mode==='delayed')expect(draft.vt_telemetry).toContain('power');
   expect(await output.evaluate(node=>node.selectionStart===0&&node.selectionEnd===node.value.length)).toBe(true);
   expect(await page.evaluate(()=>dashboardCalls)).toEqual([]);expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
