@@ -1,3 +1,4 @@
+import { headerGlyphStyles } from './header-presentation.js';
 // SPDX-License-Identifier: GPL-3.0-only
 // Adapted from the Thermal Intelligence visual baseline.
 // Source geometry and finishing styles are preserved; provenance is recorded in docs/source-provenance.md.
@@ -44,7 +45,7 @@ const LOCK_INDICATOR = `
 .lock-indicator[data-lock-state=locked]{color:#efb86b}
 .lock-indicator[data-lock-state=unknown],.lock-indicator[data-lock-state=unavailable]{color:#8795a8}
 `;
-export const styles=STYLE+CARD_POLISH+LOCK_INDICATOR;
+export const styles=STYLE+CARD_POLISH+LOCK_INDICATOR+headerGlyphStyles;
 
 // Optional control shares the existing wrapping choice grid; other grids are unchanged.
 export const mappedControlStyles = `.mapped-choice{min-width:0;color:#a9b8cb;font-size:11px;overflow-wrap:anywhere}.mapped-choice button{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:44px;margin-top:5px}.mapped-choice ha-icon{width:18px;height:18px;--mdc-icon-size:18px;flex:none}.mapped-choice small{line-height:1.5}.control-choices>label{min-width:0;overflow-wrap:anywhere}`;
@@ -59,8 +60,5 @@ ha-card{container-type:inline-size}
 .utility-actions button{display:flex;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:44px;padding:6px 2px;font-size:10px;line-height:1.4;background:#ffffff04;border-color:#ffffff0f;border-radius:11px}
 .utility-actions ha-icon{--mdc-icon-size:15px;width:15px;height:15px;flex:none;color:#a9b8cb}
 .control-choices{padding:4px 0 14px}.presets{padding:10px 0 12px}.control-choices>label:first-child{grid-column:1/-1}
-.header-telemetry .source-badge{display:block;margin:0;font-size:8px;line-height:10px;letter-spacing:.3px;color:#a9b8cb}
-.provider-monogram{display:inline-grid;place-items:center;width:20px;height:20px;font-size:10px;letter-spacing:-.5px;border:1px solid #8abfda55;border-radius:6px;color:#8abfda;flex:none}
-.provider-monogram.policy-monogram{border-radius:50%;letter-spacing:0}
 @container (max-width:280px){.settings-pair button{flex-direction:column;text-align:center;gap:4px}.utility-actions button{flex-direction:column;gap:3px}}
 `;

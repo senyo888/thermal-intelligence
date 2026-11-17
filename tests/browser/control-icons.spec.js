@@ -20,23 +20,69 @@ test('provider preset indicator changes only with provider state and keeps House
     fixture.configure({...fixture.config,control_source:{entity:'sensor.example_owner',climate_attribute:'climate_entity',ready_attribute:'intent_ready'},house_preset:{entity:'sensor.example_policy'},schedule:{entity:'schedule.example'}});fixture.refresh();
   });
   const header=card(page).locator('[data-header-telemetry]');
-  await expect(header.locator('[data-telemetry-key="preset:comfort"]')).toContainText('VTComfort');
-  await expect(header.locator('[data-telemetry-key="control:house"]')).toContainText('HouseEco');
-  await expect(header.locator('[data-telemetry-key="control:ownership"]')).toContainText('Manual');
-  await expect(header.locator('[data-telemetry-key="control:schedule"]')).toContainText('Active');
+  const combined=header.locator('[data-telemetry-key="control:summary"]');
+  await expect(combined).toHaveAccessibleName('Control source: Manual; Thermostat preset: Comfort');
+  await expect(header.locator('[data-telemetry-key^="control:"]')).toHaveCount(1);
+  await expect(header.locator('[data-telemetry-key^="preset:"]')).toHaveCount(0);
+  await combined.click();await expect(dialog(page)).toContainText('House preset');await expect(dialog(page)).toContainText('Eco');await expect(dialog(page)).toContainText('Schedule');await page.keyboard.press('Escape');
   await page.evaluate(()=>{fixture.hass.states['sensor.example_owner'].attributes.intent_ready=false;fixture.hass.states[fixture.config.entity].attributes.preset_mode='none';fixture.refresh();});
-  await expect(header.locator('[data-telemetry-key^="preset:"]')).toHaveCount(0);await expect(header.locator('[data-telemetry-key="control:ownership"]')).toContainText('Unknown');
+  await expect(combined).toHaveAccessibleName('Control source: Unknown');await expect(combined.locator('.preset-mark')).toHaveCount(0);
   expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
 });
-test('manual hand requires observation and retires on contrary preset without revival',async({page})=>{
+test('manual hand requires observation and retires on contrary preset without revival',async({page},info)=>{
   await setup(page,'standard');await page.evaluate(()=>{fixture.behavior='pending';});
-  const hand=card(page).locator('[data-header-telemetry] [data-telemetry-key="control:manual_adjustment"]');
+  const hand=card(page).locator('[data-header-telemetry] [data-telemetry-key="control:summary"]').filter({has:page.locator('.action-mark')});
   await expect(hand).toHaveCount(0);await card(page).getByRole('button',{name:'Increase temperature',exact:true}).click();await expect(hand).toHaveCount(0);
   await page.evaluate(()=>fixture.pending[0].resolve());await expect(hand).toHaveCount(0);
-  await page.evaluate(()=>fixture.apply(fixture.calls[0]));await expect(hand).toBeVisible();await expect(hand).toContainText('Manual input');
+  await page.evaluate(()=>fixture.apply(fixture.calls[0]));await expect(hand).toBeVisible();await expect(hand).toHaveAccessibleName(/^Last confirmed card action: Manual adjustment; Control source: Unknown/);
+  await expect(hand.locator('.action-mark')).toHaveAttribute('data-fixture-icon-known','true');await hand.screenshot({path:info.outputPath('manual-last-action.png')});
   await page.evaluate(()=>{fixture.hass.states[fixture.config.entity].attributes.preset_mode='eco';fixture.refresh();});await expect(hand).toHaveCount(0);
   await page.evaluate(()=>{fixture.hass.states[fixture.config.entity].attributes.preset_mode='comfort';fixture.refresh();});await expect(hand).toHaveCount(0);
   expect(await page.evaluate(()=>fixture.calls.length)).toBe(1);
+});
+test('header states use icons, retain accessible details, and distinguish inactive from unknown',async({page})=>{
+  await setup(page);
+  await page.evaluate(()=>{
+    fixture.configure({...fixture.config,vt_telemetry:['external_temperature','auto_start_stop','window']});
+    Object.assign(fixture.hass.states[fixture.config.entity].attributes,{is_window_configured:true,window_manager:{window_state:'on'}});fixture.refresh();
+  });
+  const header=card(page).locator('[data-header-telemetry]');
+  await expect(header.locator('[data-telemetry-key="control:summary"]')).toHaveText('');
+  await expect(header.locator('[data-telemetry-key="control:summary"]')).toHaveAccessibleName('Control source: Unknown');
+  await expect(header.locator('[data-telemetry-key="control:provider"]')).toHaveCount(0);
+  await expect(header.locator('[data-telemetry-key="vt:auto_start_stop"]')).toHaveText('');
+  await expect(header.locator('[data-telemetry-key="vt:external_temperature"]')).toHaveText('-2 °C');
+  const windowIcon=header.locator('[data-telemetry-key="vt:window"]');
+  await expect(windowIcon).toHaveText('');await expect(windowIcon).toHaveAttribute('title','Window detection: Open');
+  await expect(windowIcon.locator('.header-glyph>ha-icon').first()).toHaveCSS('color','rgb(239, 184, 107)');
+  await windowIcon.click();await expect(dialog(page)).toContainText('Window detection');await expect(dialog(page)).toContainText('Open');await page.keyboard.press('Escape');
+  await page.evaluate(()=>{fixture.hass.states[fixture.config.entity].attributes.window_manager.window_state='off';fixture.refresh();});
+  await expect(windowIcon).toHaveAccessibleName('Window detection: Closed');await expect(windowIcon.locator('.header-glyph>ha-icon').first()).toHaveAttribute('icon','mdi:window-closed-variant');
+  await expect(windowIcon.locator('.header-glyph>ha-icon').first()).toHaveCSS('color','rgb(169, 184, 203)');await expect(windowIcon.locator('.state-mark')).toHaveCount(0);
+  await page.evaluate(()=>{fixture.hass.states[fixture.config.entity].attributes.window_manager.window_state='unknown';fixture.refresh();});
+  await expect(windowIcon).toHaveAccessibleName('Window detection: Unknown');await expect(windowIcon.locator('.state-mark')).toHaveCount(1);
+  await page.evaluate(()=>{fixture.hass.states[fixture.config.entity].attributes.window_manager.window_state='bad';fixture.refresh();});await expect(windowIcon).toHaveAccessibleName('Window detection: Invalid');await expect(windowIcon.locator('.state-mark')).toHaveAttribute('data-fixture-icon-known','true');
+  expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+});
+test('hybrid control slot follows explicit sources and its shared visibility setting',async({page},info)=>{
+  await setup(page);
+  await page.evaluate(()=>{
+    fixture.hass.states['sensor.owner']={state:'House',attributes:{}};fixture.hass.states['sensor.policy']={state:'Boost',attributes:{}};
+    fixture.configure({...fixture.config,control_source:{entity:'sensor.owner'},house_preset:{entity:'sensor.policy'}});fixture.refresh();
+  });
+  const summary=card(page).locator('[data-telemetry-key="control:summary"]');
+  await expect(summary).toHaveAccessibleName('Control source: House; House policy: Boost');await expect(summary.locator('.preset-mark')).toHaveAttribute('icon','mdi:fire');await expect(summary).toHaveText('');
+  await summary.click();await dialog(page).getByRole('button',{name:'Preset temperatures',exact:true}).click();await expect(dialog(page)).toHaveAttribute('data-view','presets');await page.keyboard.press('Escape');
+  for(const source of ['VT','Manual','Policy','Schedule']){
+    await page.evaluate(source=>{fixture.hass.states['sensor.owner'].state=source;fixture.refresh();},source);
+    await expect(summary).toHaveAccessibleName(`Control source: ${source}; Thermostat preset: Comfort`);await expect(summary.locator('.preset-mark')).toHaveAttribute('icon','mdi:sofa');
+    await summary.screenshot({path:info.outputPath(`hybrid-${source}.png`)});
+  }
+  await card(page).locator('[data-expand]').click();await card(page).getByRole('button',{name:'Top row icon settings',exact:true}).click();
+  await dialog(page).getByRole('checkbox',{name:'Show Combined control indicator',exact:true}).uncheck();
+  await expect(dialog(page).getByLabel('Draft top row preview').getByRole('img',{name:/Control source:/})).toHaveCount(0);
+  await page.evaluate(()=>fixture.cards[0].setConfig(fixture.cards[0]._iconSettings.draft));await expect(summary).toHaveCount(0);
+  expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
 });
 test('native auto start/stop navigation verifies registry identity and never calls a service',async({page})=>{
   await setup(page);await page.evaluate(()=>{
@@ -63,13 +109,14 @@ test('hidden readings remain reachable and disclosure focus survives new observa
   expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
 });
 test('circled P and optional ownership mappings survive native editor round trips without control writes',async({page})=>{
-  await setup(page,'standard');await expect(card(page).locator('.policy-monogram')).toHaveText('P');
+  await setup(page,'standard');
   const editor=page.locator('#editor thermal-intelligence-beta-card-editor');
   await editor.locator('[data-section="control-sources"] > summary').click();
   await editor.getByLabel('Control source entity',{exact:true}).fill('sensor.owner');await editor.getByLabel('Control source entity',{exact:true}).press('Tab');
   await editor.getByLabel('Control source thermostat attribute',{exact:true}).fill('climate_entity');await editor.getByLabel('Control source thermostat attribute',{exact:true}).press('Tab');
   await editor.getByLabel('Control source readiness attribute',{exact:true}).fill('intent_ready');await editor.getByLabel('Control source readiness attribute',{exact:true}).press('Tab');
   expect(await page.evaluate(()=>fixture.config.control_source)).toEqual({entity:'sensor.owner',climate_attribute:'climate_entity',ready_attribute:'intent_ready'});
+  await page.evaluate(()=>{fixture.hass.states['sensor.owner']={state:'Policy',attributes:{climate_entity:fixture.config.entity,intent_ready:true}};fixture.refresh();});await expect(card(page).locator('.policy-monogram')).toHaveText('P');
   await page.evaluate(()=>fixture.editor.setConfig(fixture.config));await expect(editor.getByLabel('Control source readiness attribute',{exact:true})).toHaveValue('intent_ready');
   const age=editor.getByLabel('Control source maximum age (seconds)',{exact:true});await age.fill('60');await age.press('Tab');
   expect(await page.evaluate(()=>fixture.config.control_source.max_age_seconds)).toBe(60);await age.fill('');await age.press('Tab');

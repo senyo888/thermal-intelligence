@@ -436,7 +436,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     const active = root.activeElement;
     const focus = active?.getAttribute('data-focus');
     const summaryId = active?.tagName === 'SUMMARY' ? active.parentElement.id : null;
-    const actionAttribute = ['data-dialog-close','data-dialog-info','data-dialog-preset','data-dialog-settings','data-reading-key','data-vt-auto-start-stop'].find(name=>active?.hasAttribute(name));
+    const actionAttribute = ['data-dialog-close','data-dialog-info','data-dialog-preset','data-dialog-settings','data-reading-key','data-vt-auto-start-stop','data-show-presets'].find(name=>active?.hasAttribute(name));
     const actionValue = actionAttribute ? active.getAttribute(actionAttribute) : null;
     const openSections = [...root.querySelectorAll('details[open][id]')].map(node=>node.id);
     const scroll = root.querySelector('.content,.body')?.scrollTop || 0;
@@ -452,6 +452,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     for (const button of root.querySelectorAll('[data-dialog-info]')) button.onclick=()=>this._moreInfo(button.dataset.dialogInfo);
     for (const button of root.querySelectorAll('[data-dialog-preset]')) button.onclick=()=>this._request('set_preset_mode',{preset_mode:button.dataset.dialogPreset});
     for (const button of root.querySelectorAll('[data-dialog-settings]')) button.onclick=()=>this._openDialog('settings');
+    root.querySelector('[data-show-presets]')?.addEventListener('click',()=>this._openDialog('presets'));
     for (const button of root.querySelectorAll('[data-vt-settings]')) button.onclick=()=>this._deviceSettings();
     for (const button of root.querySelectorAll('[data-reading-key]')) button.onclick=()=>this._openDialog('telemetry',button.dataset.readingKey);
     root.querySelector('[data-vt-auto-start-stop]')?.addEventListener('click',()=>this._openAutoStartStop());

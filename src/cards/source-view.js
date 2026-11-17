@@ -2,20 +2,14 @@
 // Adapted from the Thermal Intelligence visual baseline.
 // Source geometry and finishing styles are preserved; provenance is recorded in docs/source-provenance.md.
 
+import { compactHeader, headerPresentation } from './header-presentation.js';
+
 const esc = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
 const polar = (radius, angle) => [100 + radius * Math.cos(angle * Math.PI / 180), 100 + radius * Math.sin(angle * Math.PI / 180)];
 const fmt = value => Number.isFinite(value) ? new Intl.NumberFormat(undefined, { maximumSignificantDigits: 12 }).format(value) : '—';
 const colorValue = (value, fallback = '#94a3b8') => /^#[0-9a-f]{6}$/i.test(value ?? '') ? value : /^#[0-9a-f]{6}$/i.test(fallback) ? fallback : '#94a3b8';
 const number = value => typeof value === 'number' && Number.isFinite(value) ? value : typeof value === 'string' && /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(value.trim()) && Number.isFinite(Number(value)) ? Number(value) : null;
 const targetKeys = new Set(['temperature', 'target_temp_low', 'target_temp_high']);
-
-function telemetryColour(item) {
-  if (item.topic === 'window' && item.attribute && item.attribute !== 'window_manager.window_state' && item.attribute !== 'window_manager.window_auto_state') return item.activity === 'active' ? '#b9a1e6' : '#a9b8cb';
-  if (item.activity === 'unknown') return '#8795a8';
-  if (item.activity !== 'active') return '#a9b8cb';
-  return ({ eco: '#7dc39c', comfort: '#e3b778', boost: '#e78e76', frost: '#9bcbe9' }[item.preset]
-    || { window: '#efb86b', power_management: '#efb86b', motion: '#b9a1e6', presence: '#7dc39c', follow: '#73c9bd', energy: '#c6a2eb', humidity: '#73c9bd', temperature: '#8abfda' }[item.topic] || '#cad6e3');
-}
 
 /** Pure presentation. The host owns all events, command guards, dialogs and configuration persistence. */
 export function renderCard({ config = {}, model = {}, open = false, allowed = false, lockAllowed = false, optionalControl = null, busy = false, requestPhase = 'idle', draftValues = null, statusMessage = '', preview = false, expanderId = 'thermal-features', animationOffset = 0 } = {}) {
@@ -43,7 +37,7 @@ export function renderCard({ config = {}, model = {}, open = false, allowed = fa
   // The model owns the canonical response arc and its evidence boundary.
   // The renderer never infers warming from target, activity or valve position.
   const color = colorValue(m.arc?.color);
-  const telemetry = Array.isArray(m.headerTelemetry) ? m.headerTelemetry : [];
+  const telemetry = compactHeader(m);
   const ownership = null;
   const ownerIcon = '';
   const lock = m.lock;
@@ -51,10 +45,10 @@ export function renderCard({ config = {}, model = {}, open = false, allowed = fa
     ? `<button type="button" class="lock-indicator lock-action" data-lock-controls data-focus="lock-controls" data-lock-state="${esc(lock.status)}" aria-label="${esc(lock.label)}. Open lock controls" title="${esc(lock.label)} · Lock controls" aria-haspopup="dialog" ${busy ? 'disabled' : ''}><ha-icon icon="${esc(lock.icon)}" aria-hidden="true"></ha-icon></button>`
     : `<span class="lock-indicator" data-lock-state="${esc(lock.status)}" role="img" aria-label="${esc(lock.label)}" title="${esc(lock.label)}"><ha-icon icon="${esc(lock.icon)}" aria-hidden="true"></ha-icon></span>`;
   const headerItems = telemetry.map(item => {
-    const title = `${item.label ?? 'Telemetry'}: ${item.value ?? 'Unavailable'}${item.activityLabel ? ` · ${item.activityLabel}` : ''}`;
+    const presentation = headerPresentation(item), title = presentation.title;
     const action = ['frost', 'eco', 'comfort', 'boost'].includes(item.preset) ? 'data-presets aria-haspopup="dialog"'
       : item.topic ? `data-telemetry-topic="${esc(item.topic)}" aria-haspopup="dialog"` : `data-info="${esc(item.entity)}"`;
-    return `<button class="telemetry-item" style="--telemetry-colour:${colorValue(item.colour, telemetryColour(item))}" data-activity="${esc(item.activity ?? 'unknown')}" data-telemetry-key="${esc(item.key)}" ${action} data-focus="header-${esc(item.key)}" aria-label="${esc(title)}" title="${esc(title)}">${item.monogram?`<b class="provider-monogram ${item.monogram==='P'?'policy-monogram':''}" aria-hidden="true">${esc(item.monogram)}</b>`:`<ha-icon icon="${esc(item.icon || 'mdi:information-outline')}" aria-hidden="true"></ha-icon>`}<span aria-hidden="true">${item.badge?`<small class="source-badge">${esc(item.badge)}</small>`:''}${esc(item.value ?? 'Unavailable')}</span></button>`;
+    return `<button class="telemetry-item" style="--telemetry-colour:${presentation.colour}" data-activity="${esc(item.activity ?? 'unknown')}" data-telemetry-key="${esc(item.key)}" ${action} data-focus="header-${esc(item.key)}" aria-label="${esc(title)}" title="${esc(title)}">${presentation.content}</button>`;
   }).join('');
   const timetable = '';
   const pct = m.bounds && m.current !== null ? Math.max(0, Math.min(1, (m.current - m.min) / (m.max - m.min))) : 0;
