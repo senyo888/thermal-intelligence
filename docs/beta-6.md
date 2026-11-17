@@ -12,7 +12,7 @@ The switch may affect thermostat modes or trigger other automations. Honeywell e
 
 This untagged beta was published through `senyo888-patch-1`, not a GitHub release. RC.1 keeps its original tag and assets. The [beta.5 package](beta-5.md) remains available at its recorded commit.
 
-From a source checkout containing that commit, create a package in an unused directory:
+From a clean checkout of `cb8d285aa116a52c1da5ee7669ab2874592f2363`, create a package in an unused directory:
 
 ```sh
 python3 scripts/package_beta.py \

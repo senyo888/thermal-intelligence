@@ -1,8 +1,10 @@
 # Release candidate 0.1.0-rc.2
 
+This is the historical RC.2 release record. For the current prerelease and installation instructions, use [RC.3](rc-3.md).
+
 RC.2 is a published prerelease of the standalone thermostat card. It brings the beta.5–beta.7 changes: explicitly disabled VT locking no longer blocks ordinary controls, and eligible standard thermostats can expose one deliberately enrolled switch with confirmation before On or Off. It also retires completed request notices after context loss or a contrary provider report. No TI controller is required.
 
-[Release v0.1.0-rc.2](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.2) was published on 9 November 2026 from `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`. Publication is independent of main-branch promotion. Subsequent documentation and the [RC.3 candidate](rc-3.md) do not change the released tag or assets. [RC.1](rc-1.md) and the [beta.7 record](beta-7.md) retain their historical identities.
+[Release v0.1.0-rc.2](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.2) was published on 9 November 2026 from `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`. [RC.3](rc-3.md) was published separately on 14 November 2026; this RC.2 package remains unchanged. Documentation updates do not change either released tag or its assets. [RC.1](rc-1.md) and the [beta.7 record](beta-7.md) retain their historical identities.
 
 ## Installation route
 
@@ -47,8 +49,6 @@ To reproduce the published assets, replace `REVIEWED_COMMIT` with `6d0833f20e9e0
 
 ## Validation and limits
 
-The [13 November limitations](rc2-validation.md#confirmed-limitations--13-november-2026) record a command-result ordering defect, disabled-valve presentation error and read-only lock header overflow in the published runtime. The fixes are prepared in [RC.3](rc-3.md) and are not part of RC.2. In particular, a matching report followed by a contradictory report within the same millisecond before acknowledgement can leave a misleading **Observed** result; consult current provider state independently.
-
 [Post-publication checks](rc2-validation.md) record the 9 November Marketplace installation and 12 November bounded two-card controls, natural Boost expiry, longer observation and maintainer-confirmed physical heating. They also retain a recovered external controller incident. No formal RC.2 soak or broad physical-client acceptance is claimed.
 
 Local candidate checks passed 166 unit tests, 102 Chromium browser tests, 13 packaging tests, eight distribution tests and fourteen foundation regression tests. These checks cover synthetic behavior and packaging, not a live installation. Candidate results must be bound to the reviewed commit and package. Historical beta checks do not count as RC.2 installation, physical-device acceptance or soak completion. Service acceptance, reported setting, native-device output and room warming remain separate evidence. See [Compatibility](compatibility.md).
@@ -56,3 +56,7 @@ Local candidate checks passed 166 unit tests, 102 Chromium browser tests, 13 pac
 The card sends no requests during setup, rendering, editor cancellation or reconnect. A completed request’s stored result remains historical evidence; its success notice is removed when context or current provider evidence no longer supports displaying it. Failed and unresolved outcomes retain their uncertainty, and late replies cannot replay a request.
 
 Schedules, persistent holds and automatic recovery remain outside this standalone frontend. Any future TI backend would be a separately installed component.
+
+## Corrections released in RC.3
+
+RC.2 retains three confirmed issues: submillisecond report ordering can preserve an obsolete Observed result, an explicitly disabled valve mapping can hide thermostat activity, and a long read-only-lock heading can overflow. The [RC.3 release](rc-3.md) corrects these with regression tests. These corrections do not change this RC.2 release or its historical acceptance.

@@ -1,6 +1,8 @@
 # Provider and observation contracts
 
-The RC.2 adapters retain the Home Assistant 2026.10 climate contract and Versatile Thermostat (VT) 10.5.1 attributes. See [Compatibility](compatibility.md) for tested scenarios and limits. Unit tests use synthetic entities.
+The [published RC.3](rc-3.md) preserves RC.2 configuration and control boundaries while correcting request ordering, configuration editing and presentation. RC.2 acceptance remains dated evidence for RC.2; see the [RC.3 validation limits](rc-3.md#validation-limits) for the current release.
+
+The RC.3 adapters retain the Home Assistant 2026.10 climate contract and Versatile Thermostat (VT) 10.5.1 attributes. See [Compatibility](compatibility.md) for tested scenarios and limits. Unit tests use synthetic entities.
 
 ## Identity and control eligibility
 
@@ -70,18 +72,46 @@ Regulation observations use the exact `configuration.type` published by VT 10.5.
 
 An explicitly disabled climate regulation flag yields **disabled** for its mode/target rows; missing expected values are **unavailable**, unknown values stay **unknown**, and malformed numbers are **invalid**. The internal regulated target is separate from HA's serialized climate setpoint: it retains the provider-declared unit, without substituting HA's display unit or inventing a conversion. Regulation demand includes VT's reported safety and maximum-output adjustments. It is not measured power. Requested valve opening is not independently observed position or proof of heat delivery. No regulation mode, coefficient, valve command or underlying entity is changed or discovered by these details.
 
+## Optional VT header readings
+
+The RC.4 working candidate adds an opt-in display catalogue. It does not configure VT managers or dispatch provider services. Manual and automatic window detection remain separate; false configuration flags mean **Not configured**, and absent flags remain unknown. Exact manager mappings retain the configured raw-input availability checks described above.
+
+| Reading | Provider evidence |
+| --- | --- |
+| Temperature receipt age | `specific_states.last_temperature_datetime`; valid timestamp, independent of climate `last_updated` |
+| Estimated energy | `specific_states.total_energy` with live `power_manager.energy_unit` |
+| Estimated mean power | `power_manager.mean_cycle_power` with live `power_manager.power_unit` |
+| Configured device power | `power_manager.device_power` with live `power_manager.power_unit` |
+| Manual / automatic window | `window_manager.window_state` / `window_manager.window_auto_state`, with the corresponding configuration flag |
+| Motion / Presence | `motion_manager.motion_state` / `presence_manager.presence_state`, with configured input health |
+| Power management | `power_manager.overpowering_state` with `is_power_configured` |
+| Follow | `vtherm_over_climate.follow_underlying_temp_change`; unsupported for known non-climate VT types |
+| Humidity | Explicit direct mapping (including empty disable), otherwise existing typed mapping, then a provider-declared input or `current_humidity` |
+
+Energy and power estimates do not depend on the power-limiting configuration flag. Compatible live units are required; units are neither inferred nor converted. Negative consumption/power observations are invalid. Estimated values retain their attribution in the header and details. Configured device power is not a meter observation.
+
+Receipt age rejects invalid timestamps and timestamps more than one minute in the future. It advances with a passive display timer; other HA updates do not refresh the receipt time. The one-minute allowance accommodates clock skew, not a freshness guarantee.
+
+Topic panels show reported window bypass/action/open-close delays, motion/no-motion presets and delays, Presence input, and power current/limit/limited-temperature fields when available. Their source links open HA details. These observations do not establish that a protection action ran or that heat was delivered. Native VT configuration remains provider-owned; private controller recovery, ownership, holds, timetables and cutoff settings are outside this catalogue.
+
 ## Optional telemetry
 
-Telemetry is an explicit per-card list. Its supported configuration is `{kind, entity, attribute?, label?, unit?, max_age_seconds?}`. Kinds are `humidity`, `trend`, `valve`, `energy`, `power` and `custom`. An empty entity represents a disabled row. In RC.3, a disabled valve row leaves the thermostat's reported activity visible; it does not imply an unavailable TRV or fall through to another valve mapping. There is no automatic entity search, private default, or inference from similarly named entities.
+Telemetry is an explicit per-card list. Its supported configuration is `{kind, entity, attribute?, label?, unit?, unit_attribute?, max_age_seconds?}`. Kinds are `temperature`, `humidity`, `trend`, `valve`, `energy`, `power`, `window`, `motion`, `presence`, `power_management`, `follow` and `custom`. An empty entity represents a disabled row. Editor search and provider-backed suggestions require explicit selection; they do not automatically bind a source or infer one from similarly named entities. The `temperature` kind and its live unit attribute were introduced in beta.8 and are not supported by RC.3 or earlier modules. The RC.4 working revision also resolves live unit attributes for humidity, trend, valve, energy and power. On categorical/custom rows, a saved `unit_attribute` remains inert unknown metadata and is preserved.
 
-`attribute` is a dot-separated own-property path. Prototype properties and the keys `__proto__`, `constructor` and `prototype` are rejected. With no attribute, the source is the entity state and its declared `unit_of_measurement`. An attribute requires its own explicit unit for typed numeric telemetry: the parent entity's unit does not necessarily describe a nested value. A configured unit conflicting with a state sensor's unit is invalid; the card does not reinterpret or convert it.
+`attribute` is a dot-separated own-property path. Prototype properties and the keys `__proto__`, `constructor` and `prototype` are rejected. With no attribute, the source is the entity state and its declared `unit_of_measurement`. An attribute requires its own explicit unit for typed numeric telemetry: the parent entity's unit does not necessarily describe a nested value. Numeric telemetry attributes may instead use `unit_attribute`, an own-property path to the live unit, such as weather's `temperature_unit`; it requires `attribute` and rejects missing or incompatible units. A configured unit conflicting with the reported state or live attribute unit is invalid; the card does not reinterpret or convert it.
 
 | Kind | Accepted units / value |
 | --- | --- |
+| Temperature | `°C`, `°F`; finite value. Sensor states require a reported unit; attributes require an explicit or live unit. |
 | Humidity or valve percentage | `%`, finite value from 0 to 100 |
 | Temperature trend | `°C/h`, `°F/h`, `°C/hour`, `°C/hr`, `degC/h`, `°F/hour`, `°F/hr`, `°C/min`, `°F/min`; finite signed value |
 | Power | `W`, `kW`, `MW`; finite value |
 | Energy | `Wh`, `kWh`, `MWh`, `J`, `kJ`, `MJ`, `GJ`; finite value |
+| Window | `on`/`off`, `open`/`closed`, or boolean; no unit |
+| Motion | `on`/`off`, `detected`/`clear`, or boolean; no unit |
+| Presence | `on`/`off`, `home`/`away`/`not_home`, or boolean; no unit |
+| Power management | `on`/`off`, `limiting`/`normal`, or boolean; no unit |
+| Follow underlying target | `on`/`off` or boolean; no unit |
 | Custom | Finite numeric value, reported text or boolean; optional declared unit |
 
 Every row carries status, source, value, unit and an explanatory detail. Missing entities or expected attributes are **unavailable**; provider `unknown` values stay **unknown**; invalid numbers and incompatible units are **invalid**. No arbitrary age threshold applies. Only an explicit `max_age_seconds` compares the entity's `last_updated` against the observation time. Old values become **stale**; missing or future timestamps leave freshness **unknown**. `last_updated` describes the HA entity update, not an independently verified physical sample time. A disconnected session makes configured telemetry unavailable for refresh.
@@ -96,7 +126,7 @@ Optional `trend_entity`, `humidity_entity` and `valve_position_entity` map expli
 
 Unknown top-level keys, feature-row keys, telemetry-row keys and humidity-band keys survive normalization. Normalization does not mutate the input. Editor patches must retain these unknown keys instead of rebuilding a minimal config. Recognized invalid values produce a useful error rather than being replaced with control defaults.
 
-`buildModel(hass, config, identity, {now})` returns provider evidence, connection/availability/readiness, temperature capabilities, independent choices, activity, unknown ownership, VT detail rows and optional telemetry. It also exposes read-only `attrs`, `state` and `action`, plus attributed `headerTelemetry`, `humidity`, `trend`, `output` and `arc` objects for the original visual surfaces. `presetReadings` is keyed by exact preset and contains `{preset, label, status, value, unit, source, selected, reason}`. Reading availability and selection remain distinct. Humidity rows expose `guides`, `guideMode` (`canonical` or `legacy`), `band`, `bandStatus: {key, label, colour}` and source colour; the header includes the matching activity label. Output distinguishes reported TRV position from thermostat demand. `arc` contains `{color, reason, label, explanation, responding, delta, expiresAt}`. It distinguishes the canonical corroborated response from the unmapped target-comparison fallback; it never claims ownership or proven physical heat delivery. `now` defaults to `Date.now()` and is injectable for deterministic freshness tests. The model has no timers, network access or service writes. `quantize(value, min, max, step)` and `targetPayload(model, key, proposedValue)` expose the same temperature rules to the command coordinator.
+`buildModel(hass, config, identity, {now})` returns provider evidence, connection/availability/readiness, temperature capabilities, independent choices, activity, unknown ownership, VT detail rows and optional telemetry. It also exposes read-only `attrs`, `state` and `action`, plus attributed `headerOptions` (before display filtering), `headerTelemetry`, `vtReadings`, `humidity`, `trend`, `output` and `arc` objects for the original visual surfaces. `presetReadings` is keyed by exact preset and contains `{preset, label, status, value, unit, source, selected, reason}`. Reading availability and selection remain distinct. Humidity rows expose `guides`, `guideMode` (`canonical` or `legacy`), `band`, `bandStatus: {key, label, colour}` and source colour; the header includes the matching activity label. Output distinguishes reported TRV position from thermostat demand. `arc` contains `{color, reason, label, explanation, responding, delta, expiresAt}`. It distinguishes the canonical corroborated response from the unmapped target-comparison fallback; it never claims ownership or proven physical heat delivery. `now` defaults to `Date.now()` and is injectable for deterministic freshness tests. The model has no timers, network access or service writes. `quantize(value, min, max, step)` and `targetPayload(model, key, proposedValue)` expose the same temperature rules to the command coordinator.
 
 ### Temperature-response evidence
 
@@ -130,7 +160,7 @@ The source checks use pinned upstream versions:
 - VT regulation implementations: [climate](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/thermostat_climate.py), [proportional base](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/thermostat_prop.py), [switch](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/thermostat_switch.py), [valve](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/thermostat_valve.py) and [climate with valve regulation](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/thermostat_climate_valve.py).
 - VT feature managers: [window](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/feature_window_manager.py), [presence](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/feature_presence_manager.py), [motion](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/feature_motion_manager.py), [safety](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/feature_safety_manager.py), [power](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/feature_power_manager.py) and [lock](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/feature_lock_manager.py).
 
-Run the model suite with `node --test tests/unit/model.test.mjs` after installing the repository's declared Node environment. The synthetic suite checks configuration preservation, identity conflicts, VT readiness/locks, advertised capabilities and services, Celsius/Fahrenheit targets, ranges, non-finite values, quantization, activity wording, own-property observations, units and explicit freshness. Browser integration, authenticated Lab behavior, provider-version upgrades and physical devices require separate evidence; these unit tests do not establish them.
+From a clean checkout of released RC.3 commit `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`, run `node --test tests/unit/model.test.mjs` using its declared Node environment. The synthetic suite checks configuration preservation, identity conflicts, VT readiness/locks, advertised capabilities and services, Celsius/Fahrenheit targets, ranges, non-finite values, quantization, activity wording, own-property observations, units and explicit freshness. Browser integration, authenticated Lab behavior, provider-version upgrades and physical devices require separate evidence; these unit tests do not establish them.
 
 ## Disabled VT lock configuration in beta.5
 

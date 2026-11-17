@@ -65,6 +65,7 @@ test('inert mapping getters cannot block ordinary dialog snapshots or run on ope
       await expect(card(page).locator('[data-export-unavailable]')).toBeVisible();
       await expect(card(page).locator('[data-copy-settings],[data-copy-humidity]')).toBeDisabled();
       if(kind==='settings'){
+        if(await card(page).getByRole('dialog').locator('#advanced-export').getAttribute('open')===null)await card(page).getByRole('dialog').locator('#advanced-export > summary').click();
         const embedded=card(page).locator('[data-dialog-editor]');
         await embedded.getByLabel('Card name',{exact:true}).fill('Draft name');
         await embedded.getByLabel('Card name',{exact:true}).press('Tab');
@@ -127,11 +128,13 @@ test('intentional target command retains target and distinguishes observation',a
   await page.evaluate(()=>fixture.behavior='accept');
   await increase(page).click();
   expect(await calls(page)).toEqual([{domain:'climate',service:'set_temperature',payload:{temperature:21.5,entity_id:'climate.fixture_thermostat'}}]);
-  await expect(card(page).locator('[data-request-status]')).toContainText('accepted');
+  await expect(card(page).getByRole('status')).toContainText('accepted');
+  await expect(card(page).locator('[data-request-status]')).toBeHidden();
   await expect(increase(page)).toBeDisabled();
   await page.evaluate(()=>fixture.apply(fixture.calls[0]));
-  await expect(card(page).locator('[data-request-status]')).toContainText('observed');
-  await expect(card(page).locator('[data-request-status]')).toContainText('does not establish physical heating');
+  await expect(card(page).getByRole('status')).toContainText('observed');
+  await expect(card(page).locator('[data-request-status]')).toBeHidden();
+  await expect(card(page).getByRole('status')).toContainText('does not establish physical heating');
   await expect(increase(page)).toBeEnabled();
 });
 
@@ -292,7 +295,8 @@ test('keyboard draft commits once on release and cancels on concurrent state cha
   await expect(increase(page)).toBeEnabled();await dial.focus();await page.keyboard.down('ArrowUp');
   await page.evaluate(()=>{fixture.hass.states['climate.fixture_thermostat'].attributes.temperature=25;fixture.refresh();});
   await page.keyboard.up('ArrowUp');expect((await calls(page)).length).toBe(1);
-  await expect(card(page)).toContainText('draft was cancelled');
+  await expect(card(page).getByRole('status')).toHaveCount(1);
+  await expect(card(page).getByRole('status')).toHaveText('Thermostat context changed. The draft was cancelled.');
 });
 
 for(const change of ['user','socket','connection','unit','mode']) test(`keyboard draft cancels when ${change} changes`,async({page})=>{
@@ -452,7 +456,11 @@ test('failed registry lookup on a new session cannot reuse standard evidence',as
 });
 
 test('pending target change and reconnect never retarget or replay',async({page})=>{
+  await expect(card(page).getByRole('status')).toHaveCount(1);
+  await expect(card(page).getByRole('status')).toHaveText('Target reported by thermostat.');
   await page.evaluate(()=>fixture.behavior='pending');await increase(page).click();
+  await expect(card(page).getByRole('status')).toHaveCount(1);
+  await expect(card(page).getByRole('status')).toHaveText('Requesting the selected setting…');
   await page.evaluate(()=>{fixture.configure({...fixture.config,entity:'climate.fixture_secondary'});fixture.hass.connected=false;fixture.refresh();fixture.hass.connected=true;fixture.refresh();fixture.pending[0].resolve();});
   await expect(card(page).locator('[data-request-status]')).toContainText('uncertain');
   expect((await calls(page)).length).toBe(1);expect((await calls(page))[0].payload.entity_id).toBe('climate.fixture_thermostat');
@@ -465,16 +473,18 @@ test('visual editor preserves unknown fields and changes only its card',async({p
   await field(page,'show_activity').uncheck();await field(page,'show_details').uncheck();
   await expect(card(page)).toContainText('Review thermostat');
   await expect(page.locator('thermal-intelligence-beta-card').nth(1)).not.toContainText('Review thermostat');
-  await editor(page).locator('[data-section="telemetry"] summary').click();
+  await editor(page).locator('[data-section="sources"] > summary').click();
+  await editor(page).locator('[data-section="telemetry"] > summary').click();
   await edit(page,'telemetry.0.label','Room humidity');await editor(page).locator('[data-action="add-telemetry"]').click();
   await edit(page,'telemetry.1.entity','sensor.fixture_valve');await field(page,'telemetry.1.kind').selectOption('valve');
   await edit(page,'telemetry.1.attribute','position');await edit(page,'telemetry.1.unit','%');await edit(page,'telemetry.1.max_age_seconds','60');
   await editor(page).locator('[data-action="move-telemetry-up"][data-row="1"]').click();
-  await editor(page).locator('[data-section="advanced"] summary').click();
+  await editor(page).locator('[data-section="humidity"] > summary').click();
   const count=await page.evaluate(()=>fixture.events.length);await edit(page,'humidity_bands.dry_below','40');
   expect(await page.evaluate(()=>fixture.events.length)).toBe(count);
   await edit(page,'humidity_bands.dry_below','30');await edit(page,'humidity_bands.good_min','42');
-  await edit(page,'humidity_bands.good_max','62');await edit(page,'humidity_bands.wet_above','72');await edit(page,'step','0.25');
+  await edit(page,'humidity_bands.good_max','62');await edit(page,'humidity_bands.wet_above','72');
+  await editor(page).locator('[data-section="advanced"] > summary').click();await edit(page,'step','0.25');
   const saved=await page.evaluate(()=>fixture.config);
   expect(saved.background).toBe('plum');expect(saved.theme).toBe('dark');expect(saved.future).toEqual({enabled:true});expect(saved.telemetry[1].future).toBe('retained');expect(saved.humidity_bands).toEqual({dry_below:30,good_min:42,good_max:62,wet_above:72});expect(saved.step).toBe(.25);
   await page.evaluate(()=>{fixture.editor.setConfig(fixture.config);fixture.cards[0].setConfig(fixture.config);fixture.refresh();});
@@ -482,7 +492,8 @@ test('visual editor preserves unknown fields and changes only its card',async({p
 });
 
 test('typing then clicking an editor action commits without losing the click',async({page})=>{
-  await editor(page).locator('[data-section="telemetry"] summary').click();
+  await editor(page).locator('[data-section="sources"] > summary').click();
+  await editor(page).locator('[data-section="telemetry"] > summary').click();
   await field(page,'telemetry.0.label').fill('Typed label');
   await editor(page).locator('[data-action="add-telemetry"]').click();
   expect(await page.evaluate(()=>fixture.config.telemetry.length)).toBe(3);
@@ -495,8 +506,9 @@ test('typing then clicking an editor action commits without losing the click',as
 
 test('source settings dialog retains a local draft without changing dashboard configuration',async({page})=>{
   const before=await page.evaluate(()=>({dashboard:structuredClone(fixture.config),card:structuredClone(fixture.cards[0].config)}));
-  await expand(page);await card(page).locator('[data-icon-settings]').click();
+  await expand(page);await card(page).locator('[data-icon-settings]').click();await card(page).getByRole('button',{name:'Advanced configuration and export',exact:true}).click();
   const dialog=card(page).getByRole('dialog');await expect(dialog).toHaveAttribute('data-view','settings');
+  if(await dialog.locator('#advanced-export').getAttribute('open')===null)await dialog.locator('#advanced-export > summary').click();
   await expect(dialog.locator('.scope')).toContainText('does not save dashboard configuration');
   const nested=dialog.locator('[data-dialog-editor]'),name=nested.locator('[data-field="name"]');
   await name.fill('Unsaved source settings');await name.press('Tab');
@@ -507,7 +519,7 @@ test('source settings dialog retains a local draft without changing dashboard co
   expect(await page.evaluate(()=>({dashboard:fixture.config,card:fixture.cards[0].config}))).toEqual(before);
   expect(await calls(page)).toEqual([]);
   await dialog.locator('[data-dialog-close]').first().click();
-  await card(page).locator('[data-icon-settings]').click();
+  await card(page).locator('[data-icon-settings]').click();await card(page).getByRole('button',{name:'Advanced configuration and export',exact:true}).click();
   await expect(card(page).getByRole('dialog').locator('[data-dialog-editor] [data-field="name"]')).toHaveValue(before.dashboard.name||'');
   expect(await calls(page)).toEqual([]);
 });
@@ -564,11 +576,28 @@ test('provider text is escaped and fine numeric increments stay visible',async({
   await increase(page).click();expect((await calls(page))[0].payload.temperature).toBeCloseTo(21.002,6);
 });
 
+test('unsettled timeout keeps controls guarded and overview uncertainty after late acknowledgement',async({page})=>{
+  await page.clock.install();await page.evaluate(()=>fixture.behavior='pending');await increase(page).click();
+  const health=card(page).getByRole('button',{name:'Thermostat overview',exact:true});
+  await expect(health).toHaveAttribute('title','A control request is pending.');
+  await page.clock.fastForward(10001);
+  await expect(card(page).getByRole('status')).toHaveCount(1);
+  await expect(card(page).getByRole('status')).toHaveAttribute('data-phase','uncertain');
+  await expect(health).toHaveAttribute('title','The previous request outcome is uncertain. Open for details.');
+  await expect(increase(page)).toBeDisabled();
+  await page.evaluate(()=>fixture.pending[0].resolve());
+  await expect(increase(page)).toBeEnabled();
+  await expect(health).toHaveAttribute('title','The previous request outcome is uncertain. Open for details.');
+  expect((await calls(page)).length).toBe(1);
+});
+
 test('real browser timer expiry and rejection preserve uncertainty without replay',async({page})=>{
   await page.clock.install();await page.evaluate(()=>fixture.behavior='accept');await increase(page).click();
-  await expect(card(page).locator('[data-request-status]')).toContainText('accepted');
+  await expect(card(page).getByRole('status')).toContainText('accepted');
+  await expect(card(page).locator('[data-request-status]')).toBeHidden();
   await page.clock.fastForward(10001);
-  await expect(card(page).locator('[data-request-status]')).toContainText('not observed before timeout');
+  await expect(card(page).getByRole('status')).toHaveCount(1);
+  await expect(card(page).getByRole('status')).toContainText('not observed before timeout');
   await page.evaluate(()=>{fixture.hass.connected=false;fixture.refresh();fixture.hass.connected=true;fixture.refresh();});
   expect((await calls(page)).length).toBe(1);
   await page.evaluate(()=>fixture.behavior='reject');await increase(page).click();
@@ -597,7 +626,8 @@ for(const width of [390,820,1440]) test(`responsive layout and keyboard at ${wid
 
 test('current degradation replaces completed success consistently on card and overview', async ({page}) => {
   await increase(page).click();
-  await expect(card(page).locator('[data-request-status]')).toContainText('Setting observed');
+  await expect(card(page).getByRole('status')).toContainText('Setting observed');
+  await expect(card(page).locator('[data-request-status]')).toBeHidden();
   const details = await overview(page);
   await expect(details.locator('[data-dialog-status]').first()).toContainText('Setting observed');
   await page.evaluate(() => { fixture.hass.connected=false; fixture.refresh(); });
@@ -607,5 +637,101 @@ test('current degradation replaces completed success consistently on card and ov
   await page.evaluate(() => { fixture.hass.connected=true; fixture.refresh(); });
   await expect(card(page).locator('[data-request-status]')).toHaveText('');
   await expect(details.locator('[data-dialog-status]')).toHaveCount(0);
+  expect((await calls(page)).length).toBe(1);
+});
+
+async function pauseNoticeClock(page) {
+  const now=await page.evaluate(() => Date.now());
+  await page.clock.install({time:now});
+  // Pause real-time advancement so runner latency cannot consume the final 100 ms.
+  await page.clock.pauseAt(now+60000);
+}
+
+test('failed notice expires after ten seconds without clearing the LED or repeating on updates', async ({page}) => {
+  await pauseNoticeClock(page); await page.evaluate(() => fixture.behavior='reject'); await increase(page).click();
+  const notice=card(page).locator('[data-request-status]'), health=card(page).locator('[data-device]');
+  await expect(notice).toBeVisible(); await expect(notice).toContainText('effect is unknown');
+  await expect(health).toHaveAttribute('data-health','amber');
+  await page.clock.runFor(5000); await page.evaluate(() => fixture.refresh());
+  await page.clock.runFor(4900); await expect(notice).toBeVisible();
+  await increase(page).focus(); await page.clock.runFor(100);
+  await expect(notice).toBeHidden(); await expect(increase(page)).toBeFocused();
+  await page.evaluate(() => fixture.refresh()); await page.clock.runFor(20000);
+  await expect(notice).toBeHidden(); await expect(health).toHaveAttribute('data-health','amber');
+  await expect(health).toHaveAttribute('title','The previous request failed. Open for details.');
+  const details=await overview(page); await expect(details.locator('[data-dialog-status]').first()).toContainText('effect is unknown');
+  expect((await calls(page)).length).toBe(1);
+});
+
+test('new identical failures have independent notice windows and a successful request clears the warning', async ({page}) => {
+  await pauseNoticeClock(page); await page.evaluate(() => fixture.behavior='reject'); await increase(page).click();
+  const notice=card(page).locator('[data-request-status]');
+  await page.clock.runFor(10000); await expect(notice).toBeHidden();
+  await increase(page).click(); await expect(notice).toBeVisible();
+  await page.clock.runFor(9900); await expect(notice).toBeVisible();
+  await page.clock.runFor(100); await expect(notice).toBeHidden();
+  await page.evaluate(() => fixture.behavior='observe'); await increase(page).click(); await page.clock.runFor(100);
+  await expect(card(page).getByRole('status')).toContainText('observed');
+  await expect(notice).toBeHidden(); await expect(card(page).locator('[data-device]')).toHaveAttribute('data-health','green');
+  expect((await calls(page)).length).toBe(3);
+});
+
+test('notice expiry cannot release unresolved transport, replay it or revive after reattachment', async ({page}) => {
+  await pauseNoticeClock(page); await page.evaluate(() => fixture.behavior='pending'); await increase(page).click();
+  const notice=card(page).locator('[data-request-status]'), health=card(page).locator('[data-device]');
+  await expect(notice).toBeHidden(); await page.clock.runFor(10000); await expect(notice).toBeVisible();
+  await page.clock.runFor(10000); await expect(notice).toBeHidden(); await expect(increase(page)).toBeDisabled();
+  await expect(health).toHaveAttribute('data-health','amber');
+  await page.evaluate(() => fixture.pending[0].resolve()); await expect(increase(page)).toBeEnabled();
+  await expect(notice).toBeHidden(); await expect(health).toHaveAttribute('data-health','amber');
+  await page.evaluate(() => { const c=fixture.cards[0], parent=c.parentElement; c.remove(); parent.append(c); });
+  await expect(notice).toBeHidden(); await page.clock.runFor(20000); await expect(notice).toBeHidden();
+  expect((await calls(page)).length).toBe(1);
+});
+
+test('unavailable notice expires while red LED and disabled controls remain, with recovery quiet', async ({page}) => {
+  await pauseNoticeClock(page); await page.evaluate(() => { fixture.hass.connected=false; fixture.refresh(); });
+  const notice=card(page).locator('[data-request-status]'), health=card(page).locator('[data-device]');
+  await expect(notice).toContainText('disconnected'); await expect(health).toHaveAttribute('data-health','red');
+  await page.clock.runFor(10000); await expect(notice).toBeHidden(); await expect(increase(page)).toBeDisabled();
+  await page.evaluate(() => fixture.refresh()); await expect(notice).toBeHidden(); await expect(health).toHaveAttribute('data-health','red');
+  await page.evaluate(() => { fixture.hass.connected=true; fixture.refresh(); });
+  await expect(increase(page)).toBeEnabled(); await expect(notice).toBeHidden();
+  expect(await calls(page)).toEqual([]);
+});
+
+test('each card owns its own notice window', async ({page}) => {
+  await pauseNoticeClock(page); await page.evaluate(() => { fixture.addCard({...fixture.config,entity:'climate.fixture_secondary'}); fixture.behavior='reject'; });
+  const second=page.locator('thermal-intelligence-beta-card').nth(1);
+  await increase(page).click(); await page.clock.runFor(5000);
+  await second.locator('[data-adjust="temperature"][data-delta="1"]').click();
+  await page.clock.runFor(5000);
+  await expect(card(page).locator('[data-request-status]')).toBeHidden();
+  await expect(second.locator('[data-request-status]')).toBeVisible();
+  await page.clock.runFor(5000); await expect(second.locator('[data-request-status]')).toBeHidden();
+  await expect(card(page).locator('[data-device]')).toHaveAttribute('data-health','amber');
+  await expect(second.locator('[data-device]')).toHaveAttribute('data-health','amber');
+  expect((await calls(page)).map(call=>call.payload.entity_id)).toEqual(['climate.fixture_thermostat','climate.fixture_secondary']);
+});
+
+test('repeated identical invalid range actions each show a full notice without dispatch', async ({page}) => {
+  await pauseNoticeClock(page); await reset(page,'range');
+  await page.evaluate(() => { Object.assign(fixture.hass.states[fixture.config.entity].attributes,{target_temp_low:21,target_temp_high:21}); fixture.refresh(); });
+  const plus=increase(page,'target_temp_low'), notice=card(page).locator('[data-request-status]');
+  await plus.click(); await expect(notice).toBeVisible(); const message=await notice.textContent(); expect(message).not.toBe('');
+  await page.clock.runFor(5000); await plus.click(); await expect(notice).toHaveText(message); await expect(notice).toBeVisible();
+  await page.clock.runFor(9900); await expect(notice).toBeVisible();
+  await page.clock.runFor(100); await expect(notice).toBeHidden();
+  await plus.click(); await expect(notice).toBeVisible(); await expect(notice).toHaveText(message);
+  expect(await calls(page)).toEqual([]);
+});
+
+test('notice expiry and subsequent telemetry refresh preserve the focused native selector', async ({page}) => {
+  await pauseNoticeClock(page); await page.evaluate(() => fixture.behavior='reject'); await increase(page).click(); await expand(page);
+  const choice=card(page).locator('[data-choice="hvac_mode"]'); await choice.focus();
+  await choice.evaluate(node => { window.noticeFocusedChoice=node; });
+  await page.clock.runFor(10000); await page.evaluate(() => fixture.refresh());
+  await expect(card(page).locator('[data-request-status]')).toBeHidden();
+  await expect(choice).toBeFocused(); expect(await choice.evaluate(node=>node===window.noticeFocusedChoice)).toBe(true);
   expect((await calls(page)).length).toBe(1);
 });

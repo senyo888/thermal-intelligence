@@ -1,14 +1,43 @@
 # Changelog
 
+## 0.1.0-rc.4 — Unreleased
+
+- Carry beta.8’s clearer button feedback, Home Assistant editor guidance, humidity controls, source previews/suggestions and typed temperature observations into an RC candidate.
+- Preserve advanced draft/export and its clipboard fallback, optional-switch search/recovery, unknown configuration fields and existing control guards.
+- Reveal the selected manual-copy configuration after the icon dialog updates its layout.
+- Keep uncertain request tooltips consistent while a transport is still settling and after a late acknowledgement.
+- Retain develop’s reviewed Pages tooling and align telemetry and migration guidance with current behavior.
+
+Prepared on `senyo888-patch-1` for future reconciliation into `develop`; RC.3 remains the published prerelease. [RC.4 package checks and limits](docs/rc-4.md) are separate from beta.8’s bounded Lab results. Temperature mappings require compatible module/configuration rollback together.
+
+## 0.1.0-beta.8 — Unreleased
+
+- Make button activation, provider-selected presets and pending or uncertain requests easier to distinguish.
+- Expose one accessible request-status message, including when a temperature draft is cancelled.
+- Lead display setup through Home Assistant’s card editor, preserving advanced draft/export in the runtime dialogs.
+- Open and select the advanced configuration text when clipboard access is unavailable.
+- Add humidity sliders, exact fields and a live display preview to the editor; keep the saved guide distinct from runtime drafts.
+- Search optional switches by name or entity ID without changing selection or enrollment.
+- Update an invalid switch confirmation's explanation when the switch recovers, while still requiring a fresh confirmation.
+- Preview reading icons, values and source status; offer explicitly adopted VT source suggestions with identity revalidation.
+- Add typed temperature observations and a guided outdoor sensor/weather mapping with live unit validation.
+
+Existing schemas, control guards, per-card settings and unknown configuration fields remain supported. Older modules cannot read the new `temperature` kind: retain compatible configuration and its module together for rollback. Synthetic checks and bounded Lab display and control checks passed; see [coverage and limits](docs/compatibility.md#unreleased-beta8-usability-candidate). This is an unreleased beta, not an installation recommendation.
+
+## 0.1.0-rc.3 — 14 November 2026
+
+- Preserve submillisecond ordering when climate or VT lock reports contradict an earlier match before acknowledgement.
+- Show thermostat-reported activity when a valve mapping is explicitly disabled.
+- Keep long headings within read-only-lock layouts without header telemetry.
+- Keep general humidity details aligned with their mapped source and reset edited boundaries without clearing unrelated configuration.
+- Recover from failed registry reads with a bounded retry budget and matching cached evidence, preserving session and provider restrictions.
+- Respect range drag and keyboard bounds, including Home/End, and keep valid measured trend visible while controls remain locked.
+- Keep the manual humidity copy field aligned with current edits and validation, including delayed clipboard failures.
+- Isolate delayed synthetic observations across fixture resets and complete both stale registry reads in the rejection regression.
+
+Configuration schemas and trial registrations are unchanged. See the [release record](docs/rc-3.md); the corrected module passed bounded passive manual Lab acceptance on 13 November. Named-release Marketplace acceptance remains separate; an earlier build was rolled back after observation lost freshness.
+
 There is no stable release yet. Future release candidates are prepared through `develop`; beta work uses `senyo888-patch-1`.
-
-## 0.1.0-rc.3 — in preparation
-
-- Preserve submillisecond ordering for climate and VT lock reports. A newer contrary report received before acknowledgement prevents an obsolete **Observed** result.
-- Show the thermostat's reported activity when a valve mapping is explicitly disabled, while retaining genuine unavailable or invalid valve states.
-- Keep long titles within the card beside a read-only lock indicator when header telemetry is empty.
-- Prevent delayed synthetic observations from crossing fixture resets, and complete both pending registry reads in the stale-session regression.
-- Retain card types, configuration schemas, command targets and permission checks. This candidate is not published or installed; see the [RC.3 record](docs/rc-3.md).
 
 ## 0.1.0-rc.2 — 9 November 2026
 

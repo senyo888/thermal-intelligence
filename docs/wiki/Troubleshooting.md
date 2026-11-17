@@ -1,6 +1,8 @@
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/main/assets/presentation/wiki-troubleshooting.png" alt="Thermal Intelligence Wiki — Troubleshooting" width="100%">
-
 # Troubleshooting and support
+
+Picker labels follow the module channel: **Thermal Intelligence Thermostat · Beta** for the unreleased beta.8 candidate; **Thermal Intelligence Thermostat · RC** for published RC.3 and the unreleased RC.4 candidate.
+
+RC.4 remains unreleased on the beta branch. It passed bounded manual Lab checks on inert fixtures; installer and physical-device acceptance remain unverified. RC.3 remains the published prerelease.
 
 ## The card is missing from Add Card
 
@@ -20,7 +22,7 @@ They describe different observations: temperature response, temperature slope an
 
 ## Update or rollback
 
-Use the exact module and resource procedure in [RC.2 package record](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/rc.md) and [migration guide](https://github.com/senyo888/thermal-intelligence/blob/bella/ti-rc3-candidate-20261113/docs/migration.md). Retain the previous file and configuration. A frontend rollback cannot undo a provider command.
+Use the exact module and resource procedure in [RC.3 package record](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md) and [migration guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md). Retain the previous file and configuration. A frontend rollback cannot undo a provider command.
 
 ## Report a problem
 

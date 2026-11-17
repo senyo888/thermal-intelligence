@@ -1,5 +1,7 @@
 # Standalone climate command lifecycle
 
+The [published RC.3](rc-3.md) preserves RC.2 configuration and control boundaries while correcting request ordering, configuration editing and presentation. RC.2 acceptance remains dated evidence for RC.2; see the [RC.3 validation limits](rc-3.md#validation-limits) for the current release.
+
 Implemented in `src/commands/coordinator.js`; unit fixtures establish the cases below. This is a frontend request contract, not live Home Assistant/provider compatibility or physical-device validation.
 
 ## Explicit action boundary
@@ -55,7 +57,7 @@ const result = await commands.request({
 
 `status` is an immutable snapshot containing phase/message and, for tracked requests, target/service/values. `busy` is separate because a timed-out transport may remain unsettled. Context updates and observations are synchronous and perform no I/O. The request promise resolves with its terminal tracked outcome; it does not reject merely because a command fails. A busy attempt returns a failed result without replacing the existing request's status.
 
-Run `node --test tests/unit/commands.test.mjs`. Fixtures cover both acknowledgement/observation orders, late rejection, external changes, stale state, preview, context replacement, disconnected/authentication/service gaps, payload mutation, unsupported writes, rapid attempts, timeout, cancellation, disposal and rendering exceptions. Live Generic Thermostat/VT evidence remains a separate gate.
+From a clean checkout of released RC.3 commit `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`, run `node --test tests/unit/commands.test.mjs`. Fixtures cover both acknowledgement/observation orders, late rejection, external changes, stale state, preview, context replacement, disconnected/authentication/service gaps, payload mutation, unsupported writes, rapid attempts, timeout, cancellation, disposal and rendering exceptions. Live Generic Thermostat/VT evidence remains a separate gate.
 
 ## Administrator VT lock requests
 
@@ -75,12 +77,20 @@ Confirmation captures both identities, direction, meaningful switch state, sessi
 
 This path requires acknowledgement plus a valid mapped `last_updated` baseline immediately before dispatch and a strictly later matching mapped update. It never substitutes `last_changed`, a climate timestamp or zero for a missing baseline. Newer contrary states replace a match while awaiting acknowledgement. A valid same-state request is an explicit no-op. Missing evidence, timeout and disconnect remain unconfirmed/uncertain; no retry, compensation or mode restoration occurs. Existing climate and lock observation semantics are unchanged. See [configuration, integration effects and rollback](optional-switch-control.md).
 
-## RC.3 observation ordering
-
-Climate and lock reports retain up to nanosecond precision from Home Assistant timestamps, matching the mapped-switch ordering path. A newer contradictory report before acknowledgement replaces an earlier match, even within the same millisecond. The current request remains accepted but unobserved until later matching evidence arrives or the bounded timeout expires. Timestamp handling sends no requests and does not change captured targets, permissions or reconnect behavior.
-
 ## Completed-result presentation
 
-The stored terminal result describes one captured request. A success notice is removed after a selected-entity, configuration, session, readiness or preview change, detachment, or a contrary provider report. Returning to the previous context does not revive it. Current degradation takes precedence on the card and general dialogs. Failed or uncertain outcomes remain visible; presentation does not release an unresolved transport, alter its evidence or send a new request.
+The stored terminal result describes one captured request. Successful actions do not leave a visible banner under the card. Press feedback, selected controls and pending target captions remain distinct from the provider's reported state. The full request status is available in the thermostat overview and one accessible live region.
 
-Retiring successful presentation notifies consumers with the current presentation status while preserving the stored result. Newer matching reports advance its ordering timestamp; delayed older contradictions cannot remove it. Equal-time contradictions or unknown/unavailable observations still retire the notice. Mapped switch no-op results use the same timestamp precision as later reports.
+Failed or uncertain requests, cancelled drafts and current availability problems can show a brief notice below the card. It disappears after ten seconds without clearing the underlying issue. Routine state updates do not extend that window; a new request failure receives its own window, even when the wording is unchanged. Each card owns its notice timer. Expiry does not interrupt a draft, move focus, release an unresolved transport, change command evidence or send another request.
+
+Failed and uncertain request outcomes retain an amber LED and an explanation in the overview after the notice disappears. Disconnection or an unavailable thermostat retains red precedence. A later successful request can replace the earlier request outcome; dismissing a notice cannot claim recovery.
+
+Successful detail presentation is removed after a selected-entity, configuration, session, readiness or preview change, detachment, or a contrary provider report. Returning to the previous context does not revive it. Current degradation takes precedence on the card and general dialogs.
+
+Retiring successful presentation notifies consumers with the current presentation status while preserving the stored result. Newer matching reports advance its ordering timestamp; delayed older contradictions cannot remove it. Equal-time contradictions or unknown/unavailable observations still retire successful presentation. Mapped switch no-op results use the same timestamp precision as later reports.
+
+## Display-only icon configuration
+
+The RC.4 top-row chooser changes a local display draft. Runtime selection, ordering, Add reading and Copy configuration do not read or write Lovelace storage or dispatch thermostat services. Copying exports the complete draft, including preserved unknown fields; it does not claim a save. Clipboard failure exposes selected text for manual copying, and late callbacks cannot affect another dialog or reselected card.
+
+The same chooser in Home Assistant’s card editor emits the ordinary `config-changed` event. Home Assistant owns that editor’s selected card and Save/Cancel operation. Runtime configuration equality is not treated as proof of a saved card’s identity: stale or generated copies can match unrelated saved cards. No runtime dashboard writer is shipped.

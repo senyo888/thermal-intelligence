@@ -1,6 +1,6 @@
 # Thermal Intelligence architecture contract
 
-The standalone frontend is prepared as a release candidate on `develop`; the last beta remains on `senyo888-patch-1`. It presents Home Assistant/provider state and sends commands only after explicit user interaction. The optional backend and additional cards remain planned.
+The standalone frontend is published as [RC.3](docs/rc-3.md) from [source `f93fb64`](https://github.com/senyo888/thermal-intelligence/tree/f93fb6489f87fbf9c393dd8cd03e85e5718277ef). `main` carries documentation and a separately promoted frozen snapshot. Candidates are prepared through `develop`, with beta work on `senyo888-patch-1`. The card presents Home Assistant/provider state and sends commands only after explicit user interaction. A future TI backend is a separate component and is not required by this card.
 
 ## Ownership and layers
 
@@ -21,7 +21,7 @@ Thermostats and TRVs are one part of the input landscape. Independent indoor sen
 
 The **selected climate entity** supplies the dial’s current temperature and target, advertised controls and provider details. The **independent source mappings** supply optional humidity, temperature trend, valve position, power, energy and named readings. Those sensors do not have to pass through VT. Existing HA trend sensors/helpers supply the trend; TI reads that configured result.
 
-An independent room or TRV temperature can be a named reading or an explicitly mapped response-arc input. The dial continues to use the selected climate entity’s `current_temperature`. Outdoor readings and weather conditions can be explicit scalar feature/custom-telemetry mappings; forecast processing and weather-driven heating policy belong to separate provider/backend contracts.
+An independent room or TRV temperature can be a named reading or an explicitly mapped response-arc input. The dial continues to use the selected climate entity’s `current_temperature`. The unreleased [RC.4 candidate](docs/rc-4.md) carries beta.8’s typed temperature observations and a guided outdoor mapping with live weather-unit validation. Other weather conditions remain explicit scalar feature/custom-telemetry mappings; forecast processing and weather-driven heating policy belong to separate provider/backend contracts.
 
 Raw window, presence and motion inputs remain distinct from the feature states accepted by VT. TI preserves which source a reading came from, its availability, units and any configured freshness requirement. [Configuration and mapping reference](docs/card-configuration.md).
 
@@ -29,7 +29,7 @@ Raw window, presence and motion inputs remain distinct from the feature states a
 
 Rendering, setup and reconnects read state. A command starts with explicit user intent and a captured target, then passes capability and readiness checks before calling the supported Home Assistant service. Displaying a sensor gives it no control authority.
 
-Regulation and house policy stay with the configured provider/backend, independently of the card. The planned TI backend sits outside the standalone frontend boundary; its future contracts must define deterministic decisions, ownership, persistence and failure behaviour.
+Regulation and house policy stay with the configured provider/backend, independently of the card. The planned TI backend sits outside this standalone frontend boundary; its future contracts must define deterministic decisions, ownership, persistence and failure behaviour.
 
 ## Evidence model
 
@@ -63,10 +63,6 @@ HI remains the authority for its seasonal humidity targets, Stability, selected 
 
 ## Code and documentation
 
-The frontend separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. Synthetic fixtures and unit/browser tests live under `tests/`. The reproducible module is `dist/thermal-intelligence.js`.
+The released RC.3 source separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. In that release checkout, synthetic fixtures and unit/browser tests live under `tests/`, and the reproducible module is `dist/thermal-intelligence.js`.
 
-The README introduces the product; the Wiki provides practical guidance; repository documents define configuration, compatibility and technical contracts. The website presents the same supported features and beta limits. See [distribution](docs/distribution.md) and [command contracts](docs/command-contract.md).
-
-## Explicit optional switch path
-
-Introduced in beta.6 and retained in RC.2, the card supports one schema-2 enrolled switch to the existing card. `model/mapped-control.js` validates the row independently of climate controls; `providers/mapped-registry.js` maintains current-session registry proof. The shared coordinator keeps the climate anchor distinct from the captured switch dispatch/observation target. It admits only On/Off, with confirmation, no replay and strict mapped-target timestamps. This is frontend request handling, not a new backend or controller. See [Optional switch control](docs/optional-switch-control.md).
+The README introduces the product; the Wiki provides practical guidance; repository documents define configuration, compatibility and technical contracts. The website presents the same supported features and prerelease limits. See [distribution](docs/distribution.md) and [command contracts](docs/command-contract.md).

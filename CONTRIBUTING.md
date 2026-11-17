@@ -1,6 +1,6 @@
 # Contributing to Thermal Intelligence
 
-Open pull requests against `develop`. Release-candidate source and tests are on `develop`; the last beta remains on `senyo888-patch-1`. `main` contains public documentation and the website. There is no stable release yet.
+Changes start on `senyo888-patch-1`, then enter `develop` by pull request for release-candidate preparation. Promotion from `develop` to `main` is separate. `main` carries public documentation, the website and the separately promoted frozen distribution snapshot. RC.3 is published from `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`; the [RC.4 candidate](docs/rc-4.md) consolidates beta.8 usability work on `senyo888-patch-1` pending future develop reconciliation. There is no stable release yet. Senyo retains merges; local preparation does not authorize publication or installation.
 
 Read [Architecture](ARCHITECTURE.md) and [AGENTS.md](AGENTS.md). Keep changes focused and describe the problem, resulting behaviour and checks actually run. Update configuration, compatibility, migration and release notes when affected.
 
@@ -21,7 +21,7 @@ scripts/security/scan_secrets.sh tracked
 scripts/security/scan_secrets.sh full-history
 ```
 
-The secret checks require Gitleaks. Keep detailed reports private. On `develop` and the beta branch, also run the relevant unit/browser tests and build/package checks documented in `package.json`. A successful source or browser test is not proof of physical heating or HACS installation.
+The secret checks require Gitleaks. Keep detailed reports private. For candidate source work, run the relevant unit/browser tests and build/package checks documented in `package.json` and the Project checks workflow. Carry a tested beta into `develop` for RC preparation. A successful source or browser test is not proof of physical heating or installer acceptance.
 
 The [issue forms](https://github.com/senyo888/thermal-intelligence/issues/new/choose) cover bugs, setup help, feature suggestions and gallery submissions. Use [private vulnerability reporting](https://github.com/senyo888/thermal-intelligence/security/advisories/new) for security issues.
 

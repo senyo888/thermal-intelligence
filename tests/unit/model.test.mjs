@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { normalizeConfig, finiteNumber, snapshotDialogConfig } from '../../src/model/config.js';
-import { buildModel, quantize, targetPayload, FEATURES } from '../../src/model/climate.js';
+import { buildModel, quantize, targetPayload, targetBoundary, FEATURES } from '../../src/model/climate.js';
 import { readOwnPath } from '../../src/model/telemetry.js';
 import { HUMIDITY_DEFAULTS, humidityBands, humidityBand, humidityGradient, moveHumidityBoundary, validHumidityBands, legacyHumidityBands } from '../../src/model/humidity.js';
 
@@ -10,6 +10,53 @@ const entity = 'climate.example';
 const identity = { entity_id: entity, platform: 'generic_thermostat' };
 const vtIdentity = { entity_id: entity, platform: 'versatile_thermostat' };
 const config = { entity };
+
+test('keyboard bounds use only valid grid points and never change a range sibling', () => {
+  const h = fixture({ supported_features: 2, min_temp: 7, max_temp: 30.2, target_temp_step: .5, target_temp_low: 18.2, target_temp_high: 22.3 });
+  const m = buildModel(h, config, identity);
+  assert.equal(targetBoundary(m, 'target_temp_high', false), 18.5);
+  assert.equal(targetBoundary(m, 'target_temp_low', true), 22);
+  assert.equal(targetBoundary(m, 'target_temp_low', false), 7);
+  assert.equal(targetBoundary(m, 'target_temp_high', true), 30);
+  assert.deepEqual(targetPayload(m, 'target_temp_high', targetBoundary(m, 'target_temp_high', false)), { target_temp_low: 18.2, target_temp_high: 18.5 });
+  assert.deepEqual(m.targets, { target_temp_low: 18.2, target_temp_high: 22.3 });
+  const noGrid = { ...m, max: 18.3, targets: { target_temp_low: 18.2, target_temp_high: 18.3 } };
+  assert.throws(() => targetBoundary(noGrid, 'target_temp_high', false), /No valid temperature step/);
+  const single = buildModel(fixture({ min_temp: 7, max_temp: 30.2 }), config, identity);
+  assert.equal(targetBoundary(single, 'temperature', false), 7);
+  assert.equal(targetBoundary(single, 'temperature', true), 30);
+  assert.throws(() => targetBoundary({ ...m, canSet: false }, 'target_temp_high', false));
+});
+
+test('trend observation availability is independent of permission but retains source and climate validity', () => {
+  const h = fixture({ is_ready: true, is_lock_configured: true, specific_states: { is_locked: true } });
+  h.states['sensor.trend'] = { state: '0.4', attributes: { unit_of_measurement: '°C/hour' }, last_updated: '2026-10-25T10:00:00Z' };
+  const c = { ...config, trend_entity: 'sensor.trend' };
+  const locked = buildModel(h, c, vtIdentity);
+  assert.equal(locked.trend.label, 'Rising'); assert.equal(locked.trend.color, '#ff962e');
+  assert.equal(locked.canSet, false); assert.equal(locked.ready, false);
+  for (const ready of [false, undefined]) {
+    h.states[entity].attributes.is_ready = ready;
+    const model = buildModel(h, c, vtIdentity);
+    assert.equal(model.trend.available, true); assert.equal(model.canSet, false);
+  }
+  for (const bad of [null, undefined, 'bad', Infinity]) {
+    h.states[entity].attributes.current_temperature = bad;
+    assert.equal(buildModel(h, c, vtIdentity).trend.available, false);
+  }
+  h.states[entity].attributes.current_temperature = 19.8;
+  h.connected = false; assert.equal(buildModel(h, c, vtIdentity).trend.available, false); h.connected = true;
+  for (const state of ['unknown', 'unavailable', '']) {
+    h.states[entity].state = state; assert.equal(buildModel(h, c, vtIdentity).trend.available, false);
+  }
+  h.states[entity].state = 'heat';
+  for (const state of ['unknown', 'unavailable', 'NaN']) {
+    h.states['sensor.trend'].state = state; assert.equal(buildModel(h, c, vtIdentity).trend.available, false);
+  }
+  h.states['sensor.trend'].state = '0.4';
+  assert.equal(buildModel(h, { ...c, telemetry: [{ kind: 'trend', entity: 'sensor.trend', max_age_seconds: 1 }] }, vtIdentity, { now: Date.parse('2026-10-25T11:00:00Z') }).trend.status, 'stale');
+  assert.equal(buildModel(h, { ...c, trend_entity: '' }, vtIdentity).trend.available, false);
+});
 
 test('dialog snapshots preserve independent unknown JSON data without changing live configuration', () => {
   const shared={kept:['value']};

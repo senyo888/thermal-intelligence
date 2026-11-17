@@ -1,23 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { normalizeConfig, snapshotDialogConfig, CARD_TYPE, EDITOR_TAG } from '../model/config.js';
-import { buildModel, targetPayload, quantize } from '../model/climate.js';
+import { buildModel, targetPayload, targetBoundary, quantize } from '../model/climate.js';
 import { CommandCoordinator } from '../commands/coordinator.js';
 import { styles, mappedControlStyles } from './styles.js';
 import { renderCard } from './source-view.js';
-import { renderDialog, dialogStyles } from './dialogs.js';
+import { renderDialog, dialogStyles, headerPreview } from './dialogs.js';
 import { humidityBands, moveHumidityBoundary } from '../model/humidity.js';
 import { lockCapability } from '../providers/lock-control.js';
 import { lockDialog, lockScope, lockRelock } from './lock-dialog.js';
 import { mappedCapability } from '../model/mapped-control.js';
 import { MappedRegistry } from '../providers/mapped-registry.js';
 import { mappedDialog } from './mapped-dialog.js';
+import { bindActivationFeedback, feedbackStyles } from './interaction-feedback.js';
+import { IconSettingsDialog } from './icon-settings-dialog.js';
 
 const format = value => Number.isFinite(value) ? new Intl.NumberFormat(undefined, { maximumSignificantDigits: 12 }).format(value) : '—';
 const previewHosts = new Set(['hui-card-preview', 'hui-dialog-edit-card', 'hui-dialog-create-card', 'hui-card-element-editor']);
 
 export class ThermalIntelligenceCard extends HTMLElement {
   constructor() {
-    super(); this.attachShadow({ mode: 'open' });
+    super(); this.attachShadow({ mode: 'open' }); bindActivationFeedback(this.shadowRoot);
     this._view = document.createElement('div'); this.shadowRoot.append(this._view);
     this._animationOffset = Date.now() % 4000;
     this.config = normalizeConfig({}); this._preview = false; this._editMode = false;
@@ -55,7 +57,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
   set editMode(value) { this._editMode = value === true; this._cancelDraft(); this._updateContext(); this._scheduleRender(); }
   get editMode() { return this._editMode; }
   connectedCallback() { this._refreshIdentity(); this._updateContext(); this._scheduleRender(); }
-  disconnectedCallback() { this._closeDialog(); this._mappedRegistry.stop(); clearTimeout(this._collapseTimer); clearTimeout(this._freshnessTimer); this._identityToken++; this._registryKey = null; this._cancelDraft(); this._coordinator.cancel('Card detached. Any remote outcome remains unverified.'); }
+  disconnectedCallback() { this._closeDialog(); this._mappedRegistry.stop(); clearTimeout(this._collapseTimer); clearTimeout(this._freshnessTimer); this._identityToken++; this._registryKey = null; this._cancelDraft(); this._coordinator.cancel('Card detached. Any remote outcome remains unverified.'); this._cardNotice(this.model()); this._expireNotice(); }
   _isPreview() {
     if (this._preview || this._editMode || this.config.preview === true) return true;
     let node = this;
@@ -97,25 +99,32 @@ export class ThermalIntelligenceCard extends HTMLElement {
     if (!hass || !entity) { this._registryStatus = 'idle'; return; }
     this._syncIdentityContext();
     const key = `${entity}|${this._configRevision}`;
-    if (this._registryKey === key) return;
+    if (this._registryKey !== key) {
+      this._registryKey = key; this._registryAttempts = 0; this._registryRetryAt = 0; this._registryStatus = 'idle';
+    }
+    if (this._registryStatus === 'verified' || this._registryStatus === 'loading') return;
     if (this._knownVT.has(entity)) this._identity = { entity_id: entity, platform: 'versatile_thermostat' };
     if (hass.connected !== true) { this._registryStatus = 'unavailable'; return; }
-    this._registryKey = key;
     const cached = hass.entities?.[entity];
-    if (cached?.entity_id === entity && typeof cached.platform === 'string') {
+    if (cached?.entity_id === entity && typeof cached.platform === 'string' && cached.platform.trim()) {
       this._acceptIdentity(cached); return;
     }
     if (typeof hass.callWS !== 'function') { this._registryStatus = 'unavailable'; return; }
+    // Only later hass updates trigger retries. A valid cache may recover even
+    // after the three-attempt budget; never poll or replay a thermostat command.
+    if (this._registryAttempts >= 3 || Date.now() < this._registryRetryAt) return;
+    this._registryAttempts++;
     const session = this._session();
     const token = ++this._identityToken; this._registryStatus = 'loading';
     try {
       const entry = await hass.callWS({ type: 'config/entity_registry/get', entity_id: entity });
       if (token !== this._identityToken || !this._sameSession(session, this._session()) || this.config.entity !== entity) return;
-      if (entry?.entity_id !== entity || typeof entry.platform !== 'string') throw new Error('Invalid identity');
+      if (entry?.entity_id !== entity || typeof entry.platform !== 'string' || !entry.platform.trim()) throw new Error('Invalid identity');
       this._acceptIdentity(entry);
     } catch {
       if (token !== this._identityToken || !this._sameSession(session, this._session())) return;
       this._registryStatus = 'unavailable';
+      this._registryRetryAt = Date.now() + 1000 * 2 ** (this._registryAttempts - 1);
     }
     this._updateContext(); this._scheduleRender();
   }
@@ -124,6 +133,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     if (entry.platform === 'versatile_thermostat') this._knownVT.add(entry.entity_id);
     else this._knownVT.delete(entry.entity_id);
     this._registryStatus = 'verified';
+    this._registryAttempts = 0; this._registryRetryAt = 0;
   }
   model() { return buildModel(this._hass ?? {}, this.config, this._identity); }
   _guard(model = this.model()) {
@@ -160,13 +170,13 @@ export class ThermalIntelligenceCard extends HTMLElement {
       if (Object.entries(payload).every(([name, target]) => model.targets[name] === target)) return Promise.resolve();
       return this._request('set_temperature', payload);
     }
-    catch (error) { this._draftMessage = error.message; this._scheduleRender(); return Promise.resolve(); }
+    catch (error) { this._draftMessage = error.message; this._draftNoticeKey = {}; this._scheduleRender(); return Promise.resolve(); }
   }
   _targetKey(model) { return model.keys.includes(this._activeTarget) ? this._activeTarget : model.keys[0]; }
   _signature(model) { return JSON.stringify([this.config.entity, this._configRevision, this._isPreview(), this._targetKey(model), model.ready, model.canSet, model.unit, model.min, model.max, model.step, model.keys, model.targets, model.choices.find(row=>row.key==='hvac_mode')?.value, model.provider]); }
   _startDraft(model = this.model()) { this._draftContext = { session:this._session(), signature:this._signature(model) }; }
   _draftStillValid(model = this.model()) { return !!this._draftContext && this._sameSession(this._draftContext.session, this._session()) && this._draftContext.signature === this._signature(model) && this._guard(model).allowed && !this._coordinator.busy; }
-  _cancelDraft(message = '') { this._drag = null; this._draft = null; this._draftContext = null; if (message) this._draftMessage = message; }
+  _cancelDraft(message = '') { this._drag = null; this._draft = null; this._draftContext = null; if (message) { this._draftMessage = message; this._draftNoticeKey = {}; } }
   _scheduleRender() {
     if (this._renderQueued) return;
     this._renderQueued = true;
@@ -234,6 +244,10 @@ export class ThermalIntelligenceCard extends HTMLElement {
     });
     this.shadowRoot.querySelector('.dial > svg')?.classList.add('adjusting');
   }
+  _boundedDraft(model, key, proposed) {
+    const lower = targetBoundary(model, key, false), upper = targetBoundary(model, key, true);
+    return targetPayload(model, key, Math.max(lower, Math.min(upper, proposed)))[key];
+  }
   _bindMarker(marker, model) {
     if (!model.canSet || !this._guard(model).allowed || this._coordinator.busy) return;
     const key = marker.dataset.marker;
@@ -259,7 +273,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
       drag.offset = Math.max(0,Math.min(270,drag.offset+(angle-drag.lastAngle+540)%360-180)); drag.lastAngle = angle;
       const current = this.model();
       try {
-        this._draft = targetPayload(current,key,current.min+drag.offset/270*(current.max-current.min))[key];
+        this._draft = this._boundedDraft(current,key,current.min+drag.offset/270*(current.max-current.min));
         this._paintDraft(this._draft); return true;
       } catch { this._cancelDraft('The temperature draft is no longer valid.'); this._scheduleRender(); return false; }
     };
@@ -284,8 +298,10 @@ export class ThermalIntelligenceCard extends HTMLElement {
       if (this._drag || (event.repeat && !this._draftContext)) return;
       if (!this._draftContext) { this._activeTarget = key; this._startDraft(current); }
       if (!this._draftStillValid(current)) { this._cancelDraft(); this._scheduleRender(); return; }
-      const next = event.key === 'Home' ? current.min : event.key === 'End' ? current.max : value+amounts[event.key];
-      try { this._draft = targetPayload(current,key,next)[key]; this._paintDraft(this._draft); this._activity(); }
+      try {
+        const next = ['Home','End'].includes(event.key) ? targetBoundary(current,key,event.key === 'End') : value+amounts[event.key];
+        this._draft = this._boundedDraft(current,key,next); this._paintDraft(this._draft); this._activity();
+      }
       catch { this._cancelDraft(); this._scheduleRender(); }
     };
     marker.onkeyup = event => {
@@ -334,34 +350,40 @@ export class ThermalIntelligenceCard extends HTMLElement {
     button.onkeydown=event=>{if(event.key==='Enter'&&event.shiftKey){event.preventDefault();clear();this._deviceSettings();}};
   }
   _closeDialog() {
+    this._iconSettings?.close();this._iconSettings=null;
     this._mappedIntent = null;
     this._clearLockCode(); this._lockIntent = null;
     const host = this._dialogHost,returnFocus=this._dialogReturnFocus; this._dialogHost = null; this._dialogSpec = null; this._dialogMarkup = null; this._settingsDraft = null; this._displayDraft = null;this._displayExportComplete = false;this._dialogReturnFocus=null;
     host?.shadowRoot.querySelector('dialog')?.close(); host?.remove(); this._activity();
     if(host&&returnFocus)this.shadowRoot.querySelector(`[data-focus="${CSS.escape(returnFocus)}"]`)?.focus({preventScroll:true});
   }
-  _openDialog(kind='overview',rowKey) {
+  _openDialog(kind='overview',rowKey,draftOverride) {
     const capability = kind === 'lock' ? this._lockCapability() : null;
     const mapped = kind === 'mapped' ? this._mappedCapability() : null;
     if (kind === 'mapped' && (!mapped.allowed || this._coordinator.busy)) return;
     if (kind === 'lock' && (!capability.allowed || this._coordinator.busy)) return;
     const returnFocus=this._dialogReturnFocus||this.shadowRoot.activeElement?.getAttribute('data-focus');
     this._closeDialog(); this._cancelDraft(); this._dialogSpec = {kind,rowKey};
-    const draft = snapshotDialogConfig(this.config);
+    const draft = snapshotDialogConfig(draftOverride||this.config);
     this._displayDraft = draft.config; this._displayExportComplete = draft.complete; this._dialogReturnFocus=returnFocus;
     if (kind === 'lock') this._lockIntent = { entity:this.config.entity, revision:this._configRevision, session:this._session(), signature:capability.signature, locked:!capability.locked, codeRequired:capability.codeRequired, submitted:false, invalid:false, message:'' };
     if (kind === 'mapped') this._mappedIntent = { entity:this.config.entity, target:mapped.entity, item:mapped.item, revision:this._configRevision, session:this._session(), signature:mapped.signature, identityKey:mapped.identityKey, on:mapped.reported === 'off', submitted:false, invalid:false, message:'' };
     this._dialogHost = document.createElement('div'); this._dialogHost.attachShadow({mode:'open'});
+    bindActivationFeedback(this._dialogHost.shadowRoot);
     this._dialogHost.style.cssText='--primary-text-color:#eff5ff;--secondary-text-color:#a9b8cb;--card-background-color:#0d1622;--input-fill-color:#152234;--secondary-background-color:#152234;--divider-color:#34465c;--primary-color:#8ac9f1;color-scheme:dark';
-    this.shadowRoot.append(this._dialogHost); this._renderDialog(true);
+    this.shadowRoot.append(this._dialogHost);
+    if(kind==='icons'){this._iconSettings=new IconSettingsDialog(this,this._dialogHost.shadowRoot);this._iconSettings.open();this._scheduleFreshness();return;}
+    this._renderDialog(true);
   }
   _renderDialog(show=false) {
     if (!this._dialogHost || !this._dialogSpec) return;
+    if (this._dialogSpec.kind === 'icons') {this._iconSettings?.update();return;}
     if (this._dialogSpec.kind === 'lock') { this._renderLockDialog(show); return; }
     if (this._dialogSpec.kind === 'mapped') { this._renderMappedDialog(show); return; }
     // Keep the actual editor node and its draft while telemetry changes.
     if (!show && this._dialogSpec.kind === 'settings') {
       const editor = this._dialogHost.shadowRoot.querySelector('[data-dialog-editor]'); if (editor) editor.hass = this._hass;
+      const preview = this._dialogHost.shadowRoot.querySelector('.preview'); if (preview) preview.innerHTML = headerPreview(this.model());
       return;
     }
     const root = this._dialogHost.shadowRoot, model = this.model();
@@ -372,18 +394,19 @@ export class ThermalIntelligenceCard extends HTMLElement {
     const actionValue = actionAttribute ? active.getAttribute(actionAttribute) : null;
     const openSections = [...root.querySelectorAll('details[open][id]')].map(node=>node.id);
     const scroll = root.querySelector('.content,.body')?.scrollTop || 0;
-    const result = renderDialog({...this._dialogSpec,model,config:this._displayDraft||this.config,allowed:this._guard(model).allowed,busy:this._coordinator.busy,preview:this._isPreview(),statusMessage:this._statusMessage(model)});
+    const result = renderDialog({...this._dialogSpec,model,config:this._displayDraft||this.config,savedConfig:this.config,allowed:this._guard(model).allowed,busy:this._coordinator.busy,preview:this._isPreview(),statusMessage:this._statusMessage(model)});
     const old = root.querySelector('dialog'), wasOpen = old?.open;
     if (!show && old?.dataset.view==='humidity' && active?.hasAttribute('data-humidity-boundary')) {this._paintHumidityDraft(result.html);return;}
     if (!show && result.html === this._dialogMarkup) return;
     this._dialogMarkup = result.html;
-    old?.close(); root.innerHTML = `<style>${result.styles||dialogStyles}</style>${result.html}`;
+    old?.close(); root.innerHTML = `<style>${result.styles||dialogStyles}${feedbackStyles}</style>${result.html}`;
     const dialog = root.querySelector('dialog');
     dialog.addEventListener('cancel', event=>{event.preventDefault();this._closeDialog();});
     for (const button of root.querySelectorAll('[data-dialog-close]')) button.onclick=()=>this._closeDialog();
     for (const button of root.querySelectorAll('[data-dialog-info]')) button.onclick=()=>this._moreInfo(button.dataset.dialogInfo);
     for (const button of root.querySelectorAll('[data-dialog-preset]')) button.onclick=()=>this._request('set_preset_mode',{preset_mode:button.dataset.dialogPreset});
     for (const button of root.querySelectorAll('[data-dialog-settings]')) button.onclick=()=>this._openDialog('settings');
+    for (const button of root.querySelectorAll('[data-vt-settings]')) button.onclick=()=>this._deviceSettings();
     const editor = root.querySelector('[data-dialog-editor]');
     if (!this._displayExportComplete && root.querySelector('[data-copy-settings],[data-copy-humidity]')) {
       for (const button of root.querySelectorAll('[data-copy-settings],[data-copy-humidity]')) button.disabled = true;
@@ -392,7 +415,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
       root.querySelector('.body,.content')?.prepend(notice);
     }
     if (editor) {
-      editor.setConfig(this._displayDraft); editor.hass = this._hass;
+      editor.exportOnly=true; editor.setConfig(this._displayDraft); editor.hass = this._hass;
       editor.addEventListener('config-changed',event=>{
         event.stopPropagation(); this._settingsDraft=event.detail.config;
         const output=root.querySelector('[data-settings-export]');if(output)output.value=this._displayExportComplete?JSON.stringify(this._settingsDraft,null,2):'';
@@ -402,14 +425,19 @@ export class ThermalIntelligenceCard extends HTMLElement {
         if(!this._displayExportComplete)return;
         const statusNode=root.querySelector('[data-dialog-status]');
         try {await navigator.clipboard.writeText(JSON.stringify(this._settingsDraft||this._displayDraft,null,2));if(statusNode)statusNode.textContent='Configuration copied. Paste it into this card’s Home Assistant configuration editor, then save.';}
-        catch {output?.focus();output?.select();if(statusNode)statusNode.textContent='Select and copy the configuration below. Save it in this card’s Home Assistant configuration editor.';}
+        catch {
+          if(root!==this._dialogHost?.shadowRoot||root.querySelector('[data-settings-export]')!==output)return;
+          for(let section=output?.closest('details');section;section=section.parentElement?.closest('details'))section.open=true;
+          output?.focus();output?.select();
+          if(statusNode)statusNode.textContent='Select and copy the configuration shown. Save it in this card’s Home Assistant configuration editor.';
+        }
       });
     }
     for(const input of root.querySelectorAll('[data-humidity-boundary]'))input.oninput=()=>{
       const key=input.dataset.humidityBoundary, current=humidityBands(this._displayDraft)||this._displayDraft.humidity_bands||{};
       const number=input.value.trim()===''?NaN:Number(input.value);
       this._displayDraft={...this._displayDraft,humidity_bands:input.type==='range'?moveHumidityBoundary(current,key,number):{...current,[key]:number}};
-      const update=renderDialog({...this._dialogSpec,model:this.model(),config:this._displayDraft});this._paintHumidityDraft(update.html);
+      const update=renderDialog({...this._dialogSpec,model:this.model(),config:this._displayDraft,savedConfig:this.config});this._paintHumidityDraft(update.html);
     };
     root.querySelector('[data-copy-humidity]')?.addEventListener('click',async()=>{
       if(!this._displayExportComplete||!humidityBands(this._displayDraft))return;
@@ -417,9 +445,12 @@ export class ThermalIntelligenceCard extends HTMLElement {
       const text=JSON.stringify(this._displayDraft,null,2);
       try{await navigator.clipboard.writeText(text);if(statusNode)statusNode.textContent='Configuration copied. Paste it into this card’s Home Assistant configuration editor, then save.';}
       catch{
+        if(root!==this._dialogHost?.shadowRoot||root.querySelector('dialog')?.dataset.view!=='humidity')return;
         let output=root.querySelector('[data-humidity-export]');
         if(!output){output=document.createElement('textarea');output.dataset.humidityExport='';output.readOnly=true;output.setAttribute('aria-label','Draft humidity configuration');output.style.cssText='width:100%;min-height:150px;color:inherit;background:#0b1420';root.querySelector('.body').append(output);}
-        output.value=text;output.focus();output.select();if(statusNode)statusNode.textContent='Select and copy the configuration shown below, then save it in this card’s Home Assistant editor.';
+        this._syncHumidityExport();
+        if(!output.disabled){output.focus();output.select();}
+        if(statusNode)statusNode.textContent=output.disabled?'Correct the humidity boundaries before copying.':'Select and copy the configuration shown below, then save it in this card’s Home Assistant editor.';
       }
     });
     for (const id of openSections) root.querySelector(`#${CSS.escape(id)}`)?.setAttribute('open','');
@@ -450,14 +481,17 @@ export class ThermalIntelligenceCard extends HTMLElement {
     if (!intent || !root) return;
     const capability = this._mappedCapability(); this._checkMappedIntent(capability);
     if (!root.querySelector('[data-mapped-dialog]')) {
-      root.innerHTML = mappedDialog(intent.item, intent.on);
+      root.innerHTML = `<style>${feedbackStyles}</style>` + mappedDialog(intent.item, intent.on);
       root.querySelector('dialog').addEventListener('cancel', event => { event.preventDefault(); this._closeDialog(); });
       root.querySelector('[data-mapped-close]').onclick = () => this._closeDialog();
       root.querySelector('[data-mapped-submit]').onclick = () => this._submitMapped();
     }
     root.querySelector('[data-mapped-current]').textContent = `Switch reports: ${this._hass?.connected === true ? capability.reported : 'unavailable'}`;
     const status = this._coordinator.presentationStatus;
-    root.querySelector('[data-mapped-message]').textContent = intent.message || (intent.submitted
+    const invalidConfirmation = intent.invalid && !intent.submitted
+      ? capability.allowed ? 'This confirmation is no longer valid. Close and reopen the switch control.' : capability.reason
+      : '';
+    root.querySelector('[data-mapped-message]').textContent = invalidConfirmation || intent.message || (intent.submitted
       ? status.domain === 'switch' && status.target === intent.target ? status.message : 'Check the current reported state before another action.'
       : 'No command has been sent.');
     root.querySelector('[data-mapped-close]').textContent = intent.submitted ? 'Close' : 'Cancel';
@@ -502,7 +536,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     const capability = this._lockCapability(); this._checkLockIntent(capability);
     if (!root.querySelector('[data-lock-dialog]')) {
       const name = this.config.name || this._hass?.states?.[intent.entity]?.attributes?.friendly_name || intent.entity;
-      root.innerHTML = lockDialog({ name, locked:intent.locked, codeRequired:intent.codeRequired });
+      root.innerHTML = `<style>${feedbackStyles}</style>` + lockDialog({ name, locked:intent.locked, codeRequired:intent.codeRequired });
       root.querySelector('dialog').addEventListener('cancel', event=>{event.preventDefault();this._closeDialog();});
       for (const button of root.querySelectorAll('[data-lock-close]')) button.onclick=()=>this._closeDialog();
       root.querySelector('form').onsubmit=event=>{event.preventDefault();this._submitLock();};
@@ -553,12 +587,17 @@ export class ThermalIntelligenceCard extends HTMLElement {
       intent.message = 'The lock request could not be completed. Check the current state before trying again.';
     } finally { code = undefined; this._renderLockDialog(); this._scheduleRender(); }
   }
+  _syncHumidityExport() {
+    const output=this._dialogHost?.shadowRoot.querySelector('[data-humidity-export]');if(!output)return;
+    const valid=this._displayExportComplete&&!!humidityBands(this._displayDraft);
+    output.value=valid?JSON.stringify(this._displayDraft,null,2):'';output.disabled=!valid;
+  }
   _paintHumidityDraft(html) {
     const root=this._dialogHost?.shadowRoot;if(!root)return;
     const template=document.createElement('template');template.innerHTML=html;const next=template.content;
     const status=next.querySelector('dialog')?.getAttribute('data-reading-status');if(status)root.querySelector('dialog')?.setAttribute('data-reading-status',status);
     // Update the source preview without replacing focused fields or a captured slider.
-    for(const selector of ['.track','.preview','.reading','[data-dialog-status]']) {
+    for(const selector of ['.track','.preview','.reading','.saved-guide','[data-dialog-status]']) {
       const current=root.querySelector(selector), replacement=next.querySelector(selector);
       if(current&&replacement){current.innerHTML=replacement.innerHTML;const style=replacement.getAttribute('style');if(style!==null)current.setAttribute('style',style);}
     }
@@ -570,6 +609,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
       for(const attribute of ['aria-invalid','aria-valuetext'])if(replacement.hasAttribute(attribute))input.setAttribute(attribute,replacement.getAttribute(attribute));
     }
     const copy=root.querySelector('[data-copy-humidity]'), newCopy=next.querySelector('[data-copy-humidity]');if(copy&&newCopy)copy.disabled=!this._displayExportComplete||newCopy.disabled;
+    this._syncHumidityExport();
     for(const button of root.querySelectorAll('[data-dialog-info]'))button.onclick=()=>this._moreInfo(button.dataset.dialogInfo);
   }
   _scheduleFreshness() {
@@ -579,6 +619,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
       const stamp = Date.parse(this._hass?.states?.[row.entity]?.last_updated);
       return stamp > now ? stamp + 1 : stamp + row.max_age_seconds * 1000 + 1;
     }).filter(deadline=>Number.isFinite(deadline) && deadline > now);
+    if(this.config.vt_telemetry?.includes('temperature_seen')||this._dialogSpec?.kind==='icons')deadlines.push(now+30000);
     const arcExpiry = this.model().arc?.expiresAt;
     if (Number.isFinite(arcExpiry) && arcExpiry + 1 > now) deadlines.push(arcExpiry + 1);
     if(this.isConnected && deadlines.length) this._freshnessTimer = setTimeout(()=>this._scheduleRender(), Math.min(30000, Math.max(1, Math.min(...deadlines)-now)));
@@ -592,19 +633,46 @@ export class ThermalIntelligenceCard extends HTMLElement {
     }
     return this._draftMessage || (status.phase !== 'idle' ? status.message : current);
   }
+  _expireNotice() {
+    clearTimeout(this._noticeTimer); this._noticeTimer = null; this._noticeMessage = '';
+    this._paintNotice();
+  }
+  _paintNotice() {
+    // Expiry must not replace controls, interrupt a draft or move keyboard focus.
+    const notice = this._view.querySelector('[data-request-status]');
+    if (notice) { notice.hidden = !this._noticeMessage; notice.textContent = this._noticeMessage || ''; }
+  }
+  _cardNotice(model) {
+    const status = this._coordinator.presentationStatus;
+    const reason = this._registryStatus === 'loading' || model.ready || model.readiness.status === 'locked' ? '' : model.reason || '';
+    const draft = this._draftMessage ? this._draftNoticeKey : null;
+    const request = ['failed', 'uncertain'].includes(status.phase) ? status : null;
+    const keys = [reason, draft, request];
+    if (!this._noticeKeys || keys.some((key, index) => key !== this._noticeKeys[index])) {
+      this._expireNotice(); this._noticeKeys = keys;
+      if (this.isConnected && (reason || draft || request)) {
+        this._noticeMessage = this._statusMessage(model);
+        this._noticeTimer = setTimeout(() => this._expireNotice(), 10000);
+      }
+    }
+    return this._noticeMessage || '';
+  }
   render() {
     const model = this.model();
     const focused = this.shadowRoot.activeElement?.getAttribute('data-focus');
     const headerScroll = this.shadowRoot.querySelector('[data-header-telemetry]')?.scrollLeft || 0;
     const statusMessage = this._statusMessage(model);
+    this._cardNotice(model);
     // Unrelated HA updates must not replace an open native select or its focus.
     // Readiness, capabilities and command status still participate in this markup.
-    const html = `<style>${styles}${mappedControlStyles}</style>` + renderCard({ config:this.config,model,open:this._open,allowed:this._guard(model).allowed,lockAllowed:this._lockCapability().allowed,optionalControl:this._mappedCapability(model),busy:this._coordinator.busy,
+    const html = `<style>${styles}${mappedControlStyles}${feedbackStyles}</style>` + renderCard({ config:this.config,model,open:this._open,allowed:this._guard(model).allowed,lockAllowed:this._lockCapability().allowed,optionalControl:this._mappedCapability(model),busy:this._coordinator.busy,requestPhase:this._coordinator.presentationStatus.phase,
       draftValues:this._draftContext?{...model.targets,[this._targetKey(model)]:this._draft}:null,statusMessage,preview:this._isPreview(),animationOffset:this._animationOffset });
     if (html === this._viewHTML) {
+      this._paintNotice();
       this._renderDialog(); this._scheduleFreshness(); return;
     }
     this._view.innerHTML = html; this._viewHTML = html;
+    this._paintNotice();
     this.shadowRoot.querySelector('[data-expand]')?.addEventListener('click',()=>{this._open=!this._open;this._activity();this.render();});
     for (const button of this.shadowRoot.querySelectorAll('[data-details]')) button.onclick=()=>this._moreInfo();
     for (const button of this.shadowRoot.querySelectorAll('[data-info]')) button.onclick=()=>this._moreInfo(button.dataset.info);
@@ -613,7 +681,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     this.shadowRoot.querySelector('[data-mapped-control]')?.addEventListener('click', () => this._openDialog('mapped'));
     for (const button of this.shadowRoot.querySelectorAll('[data-status-overview]')) button.onclick=()=>this._openDialog('overview');
     for (const button of this.shadowRoot.querySelectorAll('[data-presets]')) button.onclick=()=>this._openDialog('presets');
-    for (const button of this.shadowRoot.querySelectorAll('[data-icon-settings]')) button.onclick=()=>this._openDialog('settings');
+    for (const button of this.shadowRoot.querySelectorAll('[data-icon-settings]')) button.onclick=()=>this._openDialog('icons');
     for (const button of this.shadowRoot.querySelectorAll('[data-telemetry-topic]')) button.onclick=()=>this._openDialog('telemetry',button.dataset.telemetryKey||button.dataset.telemetryTopic);
     for (const button of this.shadowRoot.querySelectorAll('[data-adjust]')) button.onclick=()=>{const current=this.model(),key=button.dataset.adjust;this._temperature(current.targets[key]+Number(button.dataset.delta)*current.step,key);this._activity();};
     for (const button of this.shadowRoot.querySelectorAll('[data-preset]')) button.onclick=()=>{this._request('set_preset_mode',{preset_mode:button.dataset.preset});this._activity();};
