@@ -8,7 +8,7 @@ export function orderHeaderIcons(rows, order = []) {
 export function selectHeaderIcons(rows, config) {
   const hidden = new Set(config.header_icons?.hidden ?? []);
   const vt = new Set(config.vt_telemetry ?? []);
-  return ['primary','vt'].flatMap(group=>orderHeaderIcons(rows.filter(row=>row.group===group),config.header_icons?.order)
+  return ['primary','control','vt'].flatMap(group=>orderHeaderIcons(rows.filter(row=>row.group===group),config.header_icons?.order)
     .filter(row=>row.headerEligible!==false && (group==='vt'?vt.has(row.vtKey):!hidden.has(row.key))));
 }
 

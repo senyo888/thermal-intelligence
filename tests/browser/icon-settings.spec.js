@@ -38,7 +38,7 @@ test.afterEach(async({page})=>expect(page.errors).toEqual([]));
 
 test('dedicated VT catalogue previews drafts; Cancel preserves storage and controls',async({page})=>{
   await setup(page);const before=await page.evaluate(()=>structuredClone(savedDashboard));await open(page);
-  await expect(dialog(page).getByRole('group',{name:'VT readings'}).getByRole('checkbox')).toHaveCount(11);
+  await expect(dialog(page).getByRole('group',{name:'VT readings'}).getByRole('checkbox')).toHaveCount(13);
   await dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true}).check();
   await expect(dialog(page).getByLabel('Draft top row preview')).toContainText('Estimated energy · ≈ 2.5 kWh');
   await expect(card(page).locator('[data-header-telemetry]')).not.toContainText('2.5 kWh');
@@ -67,7 +67,9 @@ test('boundary arrow moves retain focus in the popup and HA editor; hidden readi
   await dialog(page).getByRole('button',{name:'Move Estimated energy up',exact:true}).click();
   await expect(dialog(page).getByRole('button',{name:'Reorder Estimated energy',exact:true})).toBeFocused();
   await page.evaluate(()=>{const c=fixture.cards[0],draft=structuredClone(c._iconSettings.draft);c.setConfig(draft);});
-  await expect(card(page).locator('[data-focus^="info-"]').filter({hasText:'Valve'})).toBeVisible();
+  await card(page).getByRole('button',{name:'Readings',exact:true}).click();
+  await expect(dialog(page).locator('summary').filter({hasText:'Valve'})).toBeVisible();
+  await page.keyboard.press('Escape');
   await page.evaluate(()=>{fixture.editor.setConfig({...fixture.cards[0].config,adapter:'vtherm'});});
   const editor=page.locator('#editor thermal-intelligence-beta-card-editor');
   await editor.locator('[data-section="sources"] > summary').click();await editor.locator('[data-section="header-icons"] > summary').click();

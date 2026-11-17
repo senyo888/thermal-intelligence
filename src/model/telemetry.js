@@ -4,6 +4,7 @@ import { buildResponseArc } from './response-arc.js';
 import { buildTelemetry } from './readings.js';
 import { buildVTReadings } from './vt-readings.js';
 import { selectHeaderIcons } from './header-icons.js';
+import { buildControlIndicators } from './control-indicators.js';
 export { buildTelemetry, readOwnPath } from './readings.js';
 
 const ICONS = { temperature: 'mdi:thermometer', humidity: 'mdi:water-percent', trend: 'mdi:trending-up', valve: 'mdi:pipe-valve', energy: 'mdi:lightning-bolt', power: 'mdi:flash', custom: 'mdi:information-outline' };
@@ -61,11 +62,15 @@ export function buildSourceTelemetry(hass, config, climate, now, connected) {
       activityLabel: preset ? 'Preset selected' : row.kind === 'humidity' ? row.status === 'available' ? row.bandStatus.label : row.status.charAt(0).toUpperCase() + row.status.slice(1) : '', topic: row.topic || (row.kind === 'humidity' ? 'humidity' : 'entity'), preset,
     };
   });
+  const controls=buildControlIndicators(hass,config,climate,now,connected);
+  // Keep an existing explicit preset-temperature indicator instead of duplicating it.
+  for(const row of controls.rows)if(row.preset&&headerOptions.some(item=>item.preset===row.preset&&item.headerEligible&&item.status==='available'&&!config.header_icons?.hidden?.includes(item.key)))row.headerEligible=false;
+  headerOptions.push(...controls.rows);
   const headerTelemetry = selectHeaderIcons(headerOptions,config);
   const trend = trendPresentation(trendSource, climate, connected);
   const output = outputPresentation(valve, climate, connected);
   const arc = buildResponseArc({ hass, config, climate, trendSource, valve, now, connected });
-  return { telemetry, vtReadings, humidity, features: featureRows, headerOptions, headerTelemetry, presetReadings, trend, output, arc };
+  return { telemetry, vtReadings, humidity, features: featureRows, headerOptions, headerTelemetry, presetReadings, trend, output, arc, ownership:controls.ownership };
 }
 
 function buildPresetReadings(features, config, climate, connected) {

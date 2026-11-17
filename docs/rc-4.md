@@ -1,5 +1,13 @@
 # Release candidate 0.1.0-rc.4 — unreleased
 
+## Unreleased control-icon and expanded-layout refinement
+
+The working RC.4 now adds advertised preset indicators, separate provider/policy/control-source icons, VT outside temperature and auto start/stop observations. Other providers and reported policies use a circled P; VT uses its own text badge. Optional House and schedule mappings remain read-only. The expanded card places Mode above the side-by-side preset-temperature and icon-settings buttons, with compact utilities below. Runtime drafts and advanced export are preserved.
+
+The locally built module is 258549 bytes, SHA-256 `f822b133316a354262c8516db3f34f77de1c9dce9e0ad36acdd1fcecc4efb9a3`. Synthetic checks cover the new indicators, independent mappings, manual-action retirement, safe native navigation, editor clearing and compact layouts.
+
+These changes are separate from the earlier installed modules and acceptance results below. They have not been installed on HA Lab or Stable. See [configuration](card-configuration.md#presets-provider-and-policy-icons) and the [VT navigation boundary](provider-contracts.md#additional-vt-observations-and-native-controls).
+
 RC.4 is prepared on `senyo888-patch-1` for future reconciliation into `develop`. It is not a named release or an available installer update. [RC.3](rc-3.md) remains the published prerelease; its assets and the main discovery snapshot are unchanged.
 
 ## Changes from RC.3

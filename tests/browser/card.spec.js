@@ -144,7 +144,7 @@ test('presets retain provider service values and never establish ownership',asyn
   const details=await overview(page);
   const ownership=await openSection(details,'control');
   await expect(ownership.locator('.note')).toBeVisible();
-  await expect(ownership).toContainText('presets and temperatures do not establish ownership');
+  await expect(ownership).toContainText('do not establish ownership');
   await expect(details).not.toContainText('[object Object]');
   await expect(card(page).getByRole('combobox',{name:'Fan',exact:true})).toHaveCount(0);
 });
@@ -343,7 +343,7 @@ test('source dial keeps its geometry, glass details, central current and lower t
 
 test('source centre opens native details without acting as a target gesture',async({page})=>{
   await page.evaluate(()=>{window.nativeDetails=[];fixture.cards[0].addEventListener('hass-more-info',event=>window.nativeDetails.push(event.detail));});
-  await card(page).locator('[data-details]').click();
+  await card(page).locator('.centre[data-details]').click();
   expect(await page.evaluate(()=>window.nativeDetails)).toEqual([{entityId:'climate.fixture_thermostat'}]);
   expect(await calls(page)).toEqual([]);expect(await page.evaluate(()=>fixture.cards[0]._draftContext)).toBeFalsy();
 });
@@ -530,7 +530,7 @@ test('optional telemetry failure and freshness do not block climate controls',as
   await reset(page,'standard',{humidity_bands:{low:40,high:60},telemetry:[{kind:'humidity',entity:'sensor.fixture_humidity',max_age_seconds:.2},{kind:'power',entity:'sensor.missing',unit:'W'}]});
   await page.evaluate(()=>{fixture.hass.states['sensor.fixture_humidity'].last_updated=new Date(Date.now()-50).toISOString();fixture.refresh();});
   const humidity=card(page).locator('.header-telemetry [data-telemetry-topic="humidity"]');
-  const power=card(page).locator('.header-telemetry [data-telemetry-topic="entity"]');
+  const power=card(page).getByRole('button',{name:'Power: Unavailable',exact:true});
   await expect(humidity).toContainText('48 %');await expect(power).toContainText('Unavailable');
   await humidity.click();
   const humidityDialog=card(page).getByRole('dialog');

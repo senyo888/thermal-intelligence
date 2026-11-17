@@ -29,7 +29,7 @@ The YAML below describes the same configuration contract. The preview shows the 
 
 ## Top row icon settings
 
-Expand **Controls & features**, then choose **Top row icon settings**. Primary icons are existing mapped readings; VT readings are optional observations from the selected provider. Check a reading to include it, then drag its handle, use its arrow buttons, or focus the handle and press Up or Down. The two groups keep their order: Primary first, then VT. The preview reflects the draft. Preset icons still appear only when their exact preset is selected.
+Expand **Controls & features**, then choose **Top row icon settings**. Primary icons are existing mapped readings; VT readings are optional observations from the selected provider. Check a reading to include it, then drag its handle, use its arrow buttons, or focus the handle and press Up or Down. The groups keep their order: Primary, Presets and control source, then VT readings. The preview reflects the draft. Preset icons still appear only when their exact preset is selected.
 
 Hiding or moving an icon changes only the header. It preserves sensor mappings, their priority, preset controls, expanded source details, the dial and response evidence. The lock indicator and health LED remain independent. Display keys follow source, type and preset identity, with separate occurrences for duplicate rows; source renaming does not reset visibility or order. Source replacement creates a different reading key.
 
@@ -52,10 +52,41 @@ The runtime page is a draft workspace. **Copy configuration** copies the complet
 | `power_management` | Provider-reported power limiting |
 | `follow` | Follow underlying target, read-only |
 | `humidity` | Explicit humidity mapping or provider-declared humidity source |
+| `external_temperature` | Outside temperature last accepted by VT, with its own receipt time |
+| `auto_start_stop` | Configured/enabled state and automatic-stop detection |
 
 All are opt-in and require VT identity or an explicitly selected VT adapter. Missing inputs, configuration flags and units remain unknown, unavailable or invalid. Explicitly disabled humidity and its configured freshness limit remain effective; a failed sensor never triggers a fallback. Energy/power use the provider’s live units and retain their estimated/configured labels. Temperature-report age uses VT’s receipt timestamp, not an unrelated thermostat update.
 
 Tapping a displayed VT icon opens its current observation and available provider details, including window delays/bypass/action, motion delays/presets or power limits. **Open VT device settings** exposes Home Assistant’s existing provider settings route; TI does not edit those settings. See the [source contract](provider-contracts.md#optional-vt-header-readings).
+
+## Presets, provider and policy icons
+
+Advertised Frost, Eco, Comfort and Boost presets have built-in top-row options. The selected preset appears while connected and ready in Heat, without needing a separate temperature mapping. Exact provider values select the icon; `preset_labels` changes only its display label. An existing visible preset-temperature mapping takes precedence to avoid duplicate indicators. Hiding that mapping leaves the built-in option available.
+
+A small **VT** or **Thermostat** label distinguishes an individual preset from a mapped **House** preset. The **VT** badge identifies Versatile Thermostat; a circled **P** identifies another provider or an explicitly reported Policy/Other source. These are text marks created by TI, not upstream logos. Provider identity does not establish request ownership.
+
+The control-source icon reports **House**, **Schedule**, **Manual**, **VT**, **Provider**, **Policy**, **Other**, **Pending** or **Unknown** from an explicit source. Without that source, ownership stays Unknown. After a temperature adjustment made through this card is acknowledged and a matching target is observed, a separate hand icon can show **Manual input**. That is a last-action indication, not a persistent ownership claim. It retires on a new request, changed target/mode/preset, lost readiness, session/configuration change or detachment. An explicit control-source mapping takes precedence over this local indication.
+
+Use **Control source, House policy and schedule** in the card editor to map these optional observations:
+
+```yaml
+control_source:
+  entity: sensor.example_control_source
+  climate_attribute: climate_entity
+  ready_attribute: intent_ready
+house_preset:
+  entity: sensor.example_effective_policy
+schedule:
+  entity: schedule.example_room
+```
+
+Each mapping accepts `entity`, optional `attribute` (otherwise the entity state), `climate_attribute` (must equal the selected thermostat), `ready_attribute` (must be literal `true`) and `max_age_seconds`. Use binding/readiness fields for a backend contract that exposes them. Add an age limit only when the source defines one: a confirmation timestamp is not necessarily a heartbeat. Missing, stale, invalid and unavailable reports remain distinct. Unknown fields survive edits.
+
+House preset reads Frost/Eco/Comfort/Boost from the effective policy source; it does not infer that a room follows House. Avoid mapping a command selector that retains the last requested action. Schedule activity accepts on/off, active/inactive or booleans and remains separate from Schedule ownership. TI creates no schedules, policy writers or Hold behavior.
+
+## Expanded controls
+
+Quick presets come first, followed by Mode and any other advertised climate choices. **Preset temperatures** and **Top row icon settings** share the next row on both VT and standard cards. Compact **Readings**, **VT settings** (or **Thermostat**) and **Card settings** buttons keep less frequent actions available. Readings includes hidden top-row observations; humidity display settings and advanced export remain accessible through their existing dialogs.
 
 ## Top-level options
 
@@ -68,7 +99,7 @@ Tapping a displayed VT icon opens its current observation and available provider
 | `name` | Card name | No override | Plain text. When omitted or empty, use the entity's friendly name, then its entity ID. |
 | `background` | Background | `blue` | `blue` (Midnight Blue), `plum` or `black`, preserving the existing TI palettes. |
 | `show_activity` | Show activity | `true` | Boolean. Show the measured trend and reported output summary, with their distinct sources. |
-| `show_details` | Show details | `true` | Boolean. Show provider and mapped feature detail rows in expanded **Controls & features**. |
+| `show_details` | Show details | `true` | Boolean. Show the compact **Readings** button in expanded **Controls & features**. Provider details remain in the LED overview; displayed top-row icons still open their details. |
 | `step` | Temperature step override | Unset | Finite positive number, used only when the provider omits `target_temp_step`. It does not override a reported provider step. |
 | `preset_labels` | Preset display labels | `{}` | Object mapping exact provider preset values to plain-text display labels. Does not add capabilities or change service values. |
 | `trend_entity` | Optional trend entity | Unset | Explicit `sensor.*` temperature-trend source; reported units are required. |
@@ -77,6 +108,7 @@ Tapping a displayed VT icon opens its current observation and available provider
 | `features` | Custom telemetry & features | `[]` | Ordered portable named observations for the header and expanded features; fields below. |
 | `telemetry` | Optional telemetry | `[]` | Ordered list of explicit source rows; see fields and kinds below. |
 | `vt_telemetry` | VT readings | `[]` | Opt-in provider observations listed below; selecting one never enables a VT feature. |
+| `control_source`, `house_preset`, `schedule` | Control source, House policy and schedule | Unset | Optional read-only entity mappings described below. No scheduling or ownership commands. |
 | `header_icons` | Top row icon settings | No overrides | Display-only `hidden` and `order` arrays of reading keys, maintained by the editor. Unknown nested fields remain intact. |
 | `humidity_bands` | Four humidity guide boundaries, or explicit legacy low/high | Original `30/40/60/70` guides | `{dry_below, good_min, good_max, wet_above}` requires ordered integers within 0–100. Existing `{low, high}` remains an explicit legacy format. Local display classification only; details below. |
 

@@ -215,7 +215,7 @@ test('reported relock removes historical unlock success from the open action dia
 
 test('read-only lock and empty telemetry header fit at phone tablet and desktop widths',async({page},info)=>{
   await setup(page,{admin:false});
-  await page.evaluate(()=>fixture.configure({...fixture.config,name:'A long synthetic thermostat title for header layout',telemetry:[],features:[]}));
+  await page.evaluate(()=>fixture.configure({...fixture.config,name:'A long synthetic thermostat title for header layout',telemetry:[],features:[],header_icons:{hidden:['control:provider','control:ownership']}}));
   for (const width of [390,768,1440]) {
     await page.setViewportSize({width,height:1000});
     const heading=card(page).locator('.heading.no-telemetry');

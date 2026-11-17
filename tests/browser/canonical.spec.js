@@ -123,7 +123,7 @@ test('canonical Manual target remains 20.3 with no inferred preset or control ow
   await control.locator('summary').click();
   await expect(control.locator('dl > div').filter({ hasText: 'Control ownership' }).locator('dd')).toHaveText('Unknown');
   await expect(control.locator('.note')).toBeVisible();
-  await expect(control.locator('.note')).toContainText('presets and temperatures do not establish ownership');
+  await expect(control.locator('.note')).toContainText('do not establish ownership');
 });
 
 for (const mode of ['Off', 'Disconnected']) {

@@ -31,6 +31,12 @@ function details(key, attrs, usable) {
     for(const [label,path] of [['Current power','current_power'],['Power limit','current_max_power']])add(label,`power_manager.${path}`,{numeric:true,unitPath:'power_manager.central_power_unit',units:['W','kW']});
     add('Limited temperature','power_manager.power_temp',{numeric:true,nonnegative:false,unitPath:'configuration.temperature_unit',units:['°C','°F']});
     add('Power input','power_manager.power_sensor_entity_id',{link:true});add('Power limit input','power_manager.max_power_sensor_entity_id',{link:true});
+  } else if(key==='external_temperature') {
+    add('Last received','specific_states.last_ext_temperature_datetime');
+  } else if(key==='auto_start_stop') {
+    add('Automatic stop detected','auto_start_stop_manager.is_auto_stop_detected',{boolean:true});
+    add('Detection level','auto_start_stop_manager.auto_start_stop_level');
+    add('Stop mode','auto_start_stop_manager.auto_start_stop_stop_mode');
   }
   return rows;
 }
@@ -52,6 +58,17 @@ export function buildVTReadings(hass, config, climate, now, connected) {
       }
     }
     let row=buildTelemetry(hass,{...config,telemetry:[entry]},now,connected,climate)[0];
+    if(key==='external_temperature') {
+      row.detail='Outside temperature last accepted by VT, in its declared temperature unit. The receipt time is separate from other thermostat updates; this is not a new sensor measurement.';
+    }
+    if(key==='auto_start_stop') {
+      const type=get(attrs,'configuration.type'),configured=get(attrs,'is_auto_start_stop_configured');
+      const valve=get(attrs,'configuration.have_valve_regulation');
+      const enabled=get(attrs,spec.path),stopped=get(attrs,'auto_start_stop_manager.is_auto_stop_detected');
+      const status=!connected||!climate.available?'unavailable':typeof type!=='string'?'unknown':type!=='over_climate'||valve===true?'unsupported':valve!==false?'unknown':configured===false?'disabled':configured!==true?'unknown':typeof enabled!=='boolean'?'unknown':'available';
+      row={...row,status,value:status==='available'?(enabled?'Enabled':'Disabled'):null,activity:status==='available'?(enabled?'active':'neutral'):'unknown',detail:'VT auto start/stop is available for over-climate thermostats without valve regulation. Enabled permits the provider feature; it does not mean an automatic stop is active. Open the linked VT switch to change it in Home Assistant.',detailRows:details(key,attrs,connected&&status==='available')};
+      if(status==='available'&&enabled&&stopped===true)row.value='Auto-stopped';
+    }
     if(key==='temperature_seen') {
       const value=get(attrs,'specific_states.last_temperature_datetime');
       const stamp=typeof value==='string'&&/T.*(?:Z|[+-]\d\d:\d\d)$/.test(value)?Date.parse(value):NaN;

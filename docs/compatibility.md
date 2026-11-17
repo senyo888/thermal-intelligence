@@ -137,3 +137,9 @@ The test establishes the real-HA registry, frontend and service path for this in
 ## RC.2 acceptance boundary
 
 Named-release Marketplace selection, passive installation checks, bounded controls and maintainer-observed heating now have [dated RC.2 evidence](rc2-validation.md). Earlier beta.7 inert-switch tests remain specific to beta.7. Default catalogue admission, wider physical-device support, a formal RC.2 soak and complete update/removal/recovery acceptance are not established.
+
+## Unreleased RC.4 control-icon refinement
+
+The current patch adds exact advertised preset indicators, read-only ownership/House/schedule mappings, separate VT and circled-P provider marks, VT outside temperature and auto start/stop observations. The latter uses the inspected VT 10.6.5 attribute shape and opens only a uniquely verified same-device/config-entry native switch. It does not broaden ordinary optional-switch eligibility.
+
+Synthetic browser coverage includes state separation, acknowledgement without observation, contrary-preset retirement, wrong/missing registry targets, delayed replies after context loss, native-editor mapping round trips, and phone/tablet/desktop plus a 250px card layout. The native-link test verifies the emitted Home Assistant event and zero TI service calls; it does not test Home Assistant's subsequent switch action. No new Lab or Stable installation, physical response or formal soak acceptance is claimed. Existing acceptance applies to its original hashes.

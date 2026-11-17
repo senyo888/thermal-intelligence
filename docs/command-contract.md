@@ -94,3 +94,9 @@ Retiring successful presentation notifies consumers with the current presentatio
 The RC.4 top-row chooser changes a local display draft. Runtime selection, ordering, Add reading and Copy configuration do not read or write Lovelace storage or dispatch thermostat services. Copying exports the complete draft, including preserved unknown fields; it does not claim a save. Clipboard failure exposes selected text for manual copying, and late callbacks cannot affect another dialog or reselected card.
 
 The same chooser in Home Assistant’s card editor emits the ordinary `config-changed` event. Home Assistant owns that editor’s selected card and Save/Cancel operation. Runtime configuration equality is not treated as proof of a saved card’s identity: stale or generated copies can match unrelated saved cards. No runtime dashboard writer is shipped.
+
+## Control-source display and native feature navigation
+
+Optional ownership, House-preset and schedule mappings are observations only. They never add ownership services or trigger scheduling. A hand marked Manual input uses the existing acknowledged-and-observed temperature-request result; it does not infer ownership from `none` or a target match. A contrary mode/preset also retires that local indication permanently.
+
+Opening VT auto start/stop controls verifies a fresh registry target and opens native Home Assistant more-info after explicit intent. It does not widen the coordinator's service allowlist or mapped-switch eligibility. Readiness/preview/session guards apply before navigation; subsequent actions inside the native dialog belong to Home Assistant.

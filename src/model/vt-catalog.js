@@ -12,4 +12,6 @@ export const VT_READINGS = Object.freeze({
   power_management: {label:'Power management',icon:'mdi:transmission-tower',kind:'power_management',path:'power_manager.overpowering_state'},
   follow: {label:'Follow underlying target',icon:'mdi:link-variant',kind:'follow',path:'vtherm_over_climate.follow_underlying_temp_change'},
   humidity: {label:'Humidity',icon:'mdi:water-percent',kind:'humidity'},
+  external_temperature: {label:'VT outside temperature',icon:'mdi:thermometer',kind:'temperature',path:'specific_states.ext_current_temperature',unitPath:'configuration.temperature_unit'},
+  auto_start_stop: {label:'Auto start/stop',icon:'mdi:power-sleep',path:'auto_start_stop_manager.auto_start_stop_enable'},
 });
