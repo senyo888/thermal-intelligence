@@ -670,7 +670,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
   _scheduleFreshness() {
     clearTimeout(this._freshnessTimer);
     const now = Date.now();
-    const deadlines = [...this.config.telemetry,...['control_source','house_preset','schedule'].map(key=>this.config[key]).filter(Boolean)].filter(row=>row.max_age_seconds && row.entity).map(row=>{
+    const deadlines = [...this.config.telemetry,...['control_source','house_preset','schedule','schedule_preset'].map(key=>this.config[key]).filter(Boolean)].filter(row=>row.max_age_seconds && row.entity).map(row=>{
       const stamp = Date.parse(this._hass?.states?.[row.entity]?.last_updated);
       return stamp > now ? stamp + 1 : stamp + row.max_age_seconds * 1000 + 1;
     }).filter(deadline=>Number.isFinite(deadline) && deadline > now);

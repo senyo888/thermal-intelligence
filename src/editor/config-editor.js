@@ -431,11 +431,12 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     for(const [key,title,note] of [
       ['control_source','Control source','Exact reported values: House, Schedule, Manual, VT, Provider, Policy, Other, Pending or Unknown. For a confirmed ownership source, set its thermostat and readiness attributes below.'],
       ['house_preset','House preset','Map the effective policy, not a command selector. Frost, Eco, Comfort and Boost are shown with a House label; this does not mean this room follows House.'],
+      ['schedule_preset','Schedule mode','Map the last confirmed Frost, Eco, Comfort or Boost intent from the schedule controller. Set its thermostat and readiness attributes when available. It joins the calendar only during confirmed Schedule ownership; it does not prove that a period or Boost timer is running.'],
       ['schedule','Schedule activity','An on/off or true/false source, including a schedule entity. Activity does not establish control ownership.'],
     ]) {
       const mapping=this._draft[key]??{},grid=element('div','grid');
       section.append(element('h3','',title),element('p','hint',note));
-      for(const [field,name,help] of [['entity','entity','Leave empty to remove this observation.'],['attribute','value attribute','Leave empty to read the entity state.'],['climate_attribute','thermostat attribute','Optional attribute that must equal this card’s climate entity, such as climate_entity.'],['ready_attribute','readiness attribute','Optional attribute that must be literal true, such as intent_ready.']]) {
+      for(const [field,name,help] of [['entity','entity',key==='schedule_preset'?'Leave empty to disable this badge. Removing the entire mapping in YAML restores the thermostat-preset fallback.':'Leave empty to remove this observation.'],['attribute','value attribute','Leave empty to read the entity state.'],['climate_attribute','thermostat attribute','Optional attribute that must equal this card’s climate entity, such as climate_entity.'],['ready_attribute','readiness attribute','Optional attribute that must be literal true, such as intent_ready.']]) {
         grid.append(this._field(`${title} ${name}`,`${key}.${field}`,mapping[field]??'',{...(field==='entity'?{list:list.id}:{}),help,onChange:value=>{
           const next=clone(this._draft);next[key]={...next[key],entity:next[key]?.entity??''};
           if(value||field==='entity')next[key][field]=value;else delete next[key][field];
@@ -445,6 +446,11 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
       grid.append(this._field(`${title} maximum age (seconds)`,`${key}.max_age_seconds`,mapping.max_age_seconds??'',{type:'number',help:'Optional. Use only a timeout defined by this source’s contract; an unchanged value need not be stale.',onChange:value=>{
         const next=clone(this._draft);next[key]={...next[key],entity:next[key]?.entity??''};
         if(value===undefined)delete next[key].max_age_seconds;else next[key].max_age_seconds=value;
+        this._commit(next);
+      }}));
+      grid.append(this._field(`${title} clear attributes`,`${key}.clear_attributes`,(mapping.clear_attributes??[]).join(', '),{help:'Optional comma-separated attribute paths that must each exist and be null, such as a pending transaction or storage error. Use only fields defined by this source.',onChange:value=>{
+        const next=clone(this._draft);next[key]={...next[key],entity:next[key]?.entity??''};
+        if(value.trim())next[key].clear_attributes=value.split(',').map(path=>path.trim());else delete next[key].clear_attributes;
         this._commit(next);
       }}));
       section.append(grid);

@@ -17,17 +17,21 @@ export function compactHeader(model) {
   const primary=manual||owner;
   const known=owner.status==='available'&&!['Unknown','Pending'].includes(owner.value);
   const house=selected.find(row=>row.key==='control:house'&&row.status==='available');
-  const preset=known||manual?(owner.value==='House'&&!manual?house:selected.find(row=>row.preset&&row.status==='available')):null;
-  const presetLabel=owner.value==='House'?preset?.value:(model.headerOptions??rows).find(row=>row.key===`preset:${preset?.preset}`)?.value||model.presetReadings?.[preset?.preset]?.label||preset?.shortLabel||preset?.value;
-  const title=`${manual?'Last confirmed card action: Manual adjustment; ':''}Control source: ${owner.value}${preset?`; ${owner.value==='House'?'House policy':'Thermostat preset'}: ${presetLabel}`:''}`;
+  // An explicit schedule-mode mapping owns this badge even when hidden or degraded.
+  const scheduled=(model.headerOptions??rows).some(row=>row.key==='control:schedule_preset');
+  const scheduleMode=selected.find(row=>row.key==='control:schedule_preset'&&row.status==='available');
+  const preset=known||manual?(owner.value==='House'&&!manual?house:owner.value==='Schedule'&&scheduled?scheduleMode:selected.find(row=>row.preset&&row.status==='available')):null;
+  const presetLabel=owner.value==='House'||preset?.schedulePreset?preset?.value:(model.headerOptions??rows).find(row=>row.key===`preset:${preset?.preset}`)?.value||model.presetReadings?.[preset?.preset]?.label||preset?.shortLabel||preset?.value;
+  const presetKind=owner.value==='House'?'House policy':preset?.schedulePreset?'Last confirmed schedule mode':'Thermostat preset';
+  const title=`${manual?'Last confirmed card action: Manual adjustment; ':''}Control source: ${owner.value}${preset?`; ${presetKind}: ${presetLabel}`:''}`;
   const facts=(model.headerOptions??rows).filter(row=>
     row.group==='control'&&!row.preset&&row.key!=='control:manual_adjustment'
     ||row.preset&&row.headerEligible!==false
     ||row.key==='control:manual_adjustment'&&row.headerEligible);
   const summary={...primary,key:'control:summary',label:'Control source and preset',title,value:manual?'Manual adjustment (last action)':owner.value,topic:'entity',group:'control',activity:known||manual?'active':'unknown',lastAction:!!manual,
     source:manual?manual.source:model.ownership?.source,
-    secondary:preset?{icon:preset.icon,preset:owner.value==='House'?String(preset.value).toLowerCase():preset.preset}:null,
-    detail:'The source, thermostat preset, House policy and schedule activity are independent reported facts. A provider identity or matching temperature does not establish ownership. Unknown means no confirmed control source is available.',
+    secondary:preset?{icon:preset.icon,preset:owner.value==='House'?String(preset.value).toLowerCase():preset.schedulePreset||preset.preset}:null,
+    detail:'The source, thermostat preset, House policy, last confirmed schedule mode and schedule activity are independent reported facts. A confirmed schedule mode records accepted intent, not a running period or Boost timer. Provider identity and matching temperatures do not establish ownership. Unknown means no confirmed control source is available.',
     detailRows:facts.map(row=>({label:row.label,value:row.value??row.status})),
   };
   const first=rows.findIndex(isControl);
