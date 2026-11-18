@@ -6,7 +6,9 @@ RC.4 combines the reported control source and selected preset in one top-row slo
 
 Categorical readings use icons, colour and hover/press details; numeric readings retain their values and units. The expanded card places Mode above side-by-side preset-temperature and icon-settings buttons, with compact utilities below. VT outside temperature and auto start/stop observations are available. Runtime drafts and advanced export are preserved.
 
-The current module is 262418 bytes, SHA-256 `d7701409f421da0127a4b5a4fde887aecc86245a860230fc6d39b993e8ef13e9`, built from [source `65d40ef`](https://github.com/senyo888/thermal-intelligence/commit/65d40efc83d0aba14bc1a4fce3625ca36384208c). Its bounded Lab results are below. See [configuration](card-configuration.md#presets-provider-and-policy-icons) and the [VT navigation boundary](provider-contracts.md#additional-vt-observations-and-native-controls).
+The current module is 262718 bytes, SHA-256 `f1a730956bd471373d9389f0d55a9e9a7267898c7c2056ed1ed75a7d53de71a2`. It keeps expanded reading values upright and checks the current targets before showing confirmed manual-action history, including conflicting reports with the same timestamp. These corrections have synthetic regression coverage; this module has not been installed or accepted on Lab or Stable.
+
+The preceding Lab-tested module is 262418 bytes, SHA-256 `d7701409f421da0127a4b5a4fde887aecc86245a860230fc6d39b993e8ef13e9`, built from [source `65d40ef`](https://github.com/senyo888/thermal-intelligence/commit/65d40efc83d0aba14bc1a4fce3625ca36384208c). Its bounded results below do not cover the corrected bytes. See [configuration](card-configuration.md#presets-provider-and-policy-icons) and the [VT navigation boundary](provider-contracts.md#additional-vt-observations-and-native-controls).
 
 RC.4 is prepared on `senyo888-patch-1` for future reconciliation into `develop`. It is not a named release or an available installer update. [RC.3](rc-3.md) remains the published prerelease; its assets and the main discovery snapshot are unchanged.
 

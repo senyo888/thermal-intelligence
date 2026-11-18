@@ -1,5 +1,56 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import {test,expect} from '@playwright/test';
+
+for(const width of [390,768,1440])test(`expanded reading values stay upright at ${width}px`,async({page},info)=>{
+  await page.setViewportSize({width,height:1100});await setup(page);
+  await card(page).locator('[data-expand]').click();
+  await card(page).getByRole('button',{name:'Readings',exact:true}).click();
+  const reading=dialog(page).locator('details').filter({has:page.locator('summary').filter({hasText:'Outside temperature'})});
+  const value=reading.locator('summary span').first();
+  await expect(value).toHaveText('-2 °C');await expect(value).toHaveCSS('transform','none');
+  await reading.locator('summary').click();await expect(value).toHaveCSS('transform','none');
+  await dialog(page).screenshot({path:info.outputPath(`readings-open-${width}.png`)});
+  await page.keyboard.press('Escape');
+  await card(page).getByRole('button',{name:'Thermostat overview',exact:true}).click();
+  const section=dialog(page).locator('#section-temperatures');
+  await section.locator('summary').click();
+  await expect(section.locator('summary span')).toHaveCSS('transform','matrix(-1, 0, 0, -1, 0, 0)');
+  expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+});
+
+for(const scenario of ['standard','range'])for(const report of ['matching','later contrary','equal-time contrary'])test(`manual history checks current ${scenario} targets after ${report} pre-ack reports`,async({page})=>{
+  await setup(page,scenario);
+  await page.evaluate(()=>{
+    fixture.behavior='pending';
+    const id=fixture.config.entity;
+    fixture.hass.states[id]={...fixture.hass.states[id],last_updated:'2026-11-18T10:00:00.001000Z'};
+    fixture.refresh();
+  });
+  const key=scenario==='range'?'target_temp_low':'temperature';
+  await card(page).locator(`[data-adjust="${key}"][data-delta="1"]`).click();
+  const hand=card(page).locator('[data-header-telemetry] .action-mark');
+  await expect(hand).toHaveCount(0);
+  await page.evaluate(({report,scenario})=>{
+    const {entity_id,...values}=fixture.calls[0].payload;
+    const update=(attributes,stamp)=>{
+      const old=fixture.hass.states[entity_id];
+      fixture.hass.states={...fixture.hass.states,[entity_id]:{...old,attributes:{...old.attributes,...attributes},last_updated:stamp}};
+      fixture.refresh();
+    };
+    update(values,'2026-11-18T10:00:00.002100Z');
+    if(report!=='matching') {
+      const contraryKey=scenario==='range'?'target_temp_high':'temperature';
+      update({...values,[contraryKey]:values[contraryKey]+0.5},report==='later contrary'?'2026-11-18T10:00:00.002200Z':'2026-11-18T10:00:00.002100Z');
+    }
+    fixture.pending[0].resolve();
+  },{report,scenario});
+  await expect.poll(()=>page.evaluate(()=>fixture.cards[0]._coordinator.status.phase)).toBe(report==='later contrary'?'accepted':'observed');
+  if(report==='matching')await expect(hand).toBeVisible();else {
+    await expect(hand).toHaveCount(0);
+    expect(await page.evaluate(()=>fixture.cards[0]._manualFeedback)).toBeNull();
+  }
+  expect(await page.evaluate(()=>fixture.calls.length)).toBe(1);
+});
 const card=page=>page.locator('thermal-intelligence-beta-card').first();
 const dialog=page=>card(page).getByRole('dialog');
 async function setup(page,scenario='vt') {

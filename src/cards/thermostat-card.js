@@ -28,7 +28,13 @@ export class ThermalIntelligenceCard extends HTMLElement {
     this._identity = null; this._identityToken = 0; this._knownVT = new Set(); this._vtByConnection = new WeakMap(); this._configRevision = 0;
     this._open = false; this._activeTarget = 'temperature'; this._registryStatus = 'idle';
     this._coordinator = new CommandCoordinator({ onChange: status => {
-      this._manualFeedback=status.phase==='observed'&&status.service==='set_temperature'?{status,tuple:this._manualTuple()}:null;
+      this._manualFeedback=null;
+      if(status.phase==='observed'&&status.service==='set_temperature') {
+        const current=buildModel(this._hass??{},this.config,this._identity);
+        const matches=status.target===current.entity&&Object.entries(status.values).every(([key,value])=>
+          typeof current.targets[key]==='number'&&Number.isFinite(current.targets[key])&&Math.abs(current.targets[key]-value)<1e-6);
+        if(matches)this._manualFeedback={status,tuple:this._manualTuple()};
+      }
       this._scheduleRender();
     } });
     this._mappedRegistry = new MappedRegistry(() => { this._updateContext(); this._scheduleRender(); });

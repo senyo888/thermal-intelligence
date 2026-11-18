@@ -9,6 +9,7 @@
 - Retain develop’s reviewed Pages tooling and align telemetry and migration guidance with current behavior.
 - Combine reported control source and preset in one icon, with Unknown standing alone and confirmed local adjustments marked as the last action. Keep categorical states icon-only, with full details on hover or press.
 - Add VT outside-temperature and native auto start/stop observations, and arrange expanded mode, preset settings and compact utility controls consistently across providers.
+- Keep expanded reading values upright and show manual-action history only while the current targets match the acknowledged request.
 
 Prepared on `senyo888-patch-1` for future reconciliation into `develop`; RC.3 remains the published prerelease. [RC.4 package checks and limits](docs/rc-4.md) are separate from beta.8’s bounded Lab results. Temperature mappings require compatible module/configuration rollback together.
 

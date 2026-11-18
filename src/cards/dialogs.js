@@ -68,7 +68,7 @@ function overview({ model, config, statusMessage }) {
     ], note: model.arc?.explanation || 'Temperature-response evidence is unavailable.' },
   ];
   if (model.details?.length) sections.push({ id: 'provider-details', title: 'Provider details', rows: model.details.map(row => ({ label: row.label, value: `${row.value ?? row.status ?? 'Unavailable'}${row.unit ? ` ${row.unit}` : ''}${row.detail ? ` · ${row.detail}` : ''}` })) });
-  const groups = `<div class="groups">${sections.map(section => `<details id="section-${section.id}"><summary>${esc(section.title)}<span aria-hidden="true">⌄</span></summary>${plainRows(section.rows)}${section.note ? `<p class="note">${esc(section.note)}</p>` : ''}</details>`).join('')}</div>`;
+  const groups = `<div class="groups">${sections.map(section => `<details id="section-${section.id}"><summary>${esc(section.title)}<span class="expansion-indicator" aria-hidden="true">⌄</span></summary>${plainRows(section.rows)}${section.note ? `<p class="note">${esc(section.note)}</p>` : ''}</details>`).join('')}</div>`;
   const footer = `<button data-dialog-settings>Readings and display</button>${nativeButton(config.entity, 'Thermostat details')}${model.provider?.kind==='vtherm'?'<button data-vt-settings>Open VT device settings</button>':''}<p>Thermostat details open in Home Assistant.</p>`;
   return { title, html: standardShell({ view: 'overview', title, eyebrow: 'Thermal intelligence · overview', content: (level === 'green' ? summary + healthPanel : healthPanel + summary) + groups, footer, tone }) };
 }
@@ -138,7 +138,7 @@ function settings({ model, config, statusMessage }) {
 function readings({model,config}) {
   const rows=(model.headerOptions??[]).filter(row=>!row.preset);
   const title='Readings';
-  const content=`<p class="note">All available card readings, including icons hidden from the top row.</p><div class="groups">${rows.map(row=>`<details id="reading-${esc(encodeURIComponent(row.key))}"><summary>${esc(row.label)}<span>${esc(row.value??row.status)}</span></summary>${plainRows([{label:'Status',value:row.status},{label:'Source',value:sourceText(row.source)}])}<p class="note">${esc(row.detail)}</p><button data-reading-key="${esc(row.key)}">Open details</button></details>`).join('')}</div>`;
+  const content=`<p class="note">All available card readings, including icons hidden from the top row.</p><div class="groups">${rows.map(row=>`<details id="reading-${esc(encodeURIComponent(row.key))}"><summary>${esc(row.label)}<span class="reading-value">${esc(row.value??row.status)}</span></summary>${plainRows([{label:'Status',value:row.status},{label:'Source',value:sourceText(row.source)}])}<p class="note">${esc(row.detail)}</p><button data-reading-key="${esc(row.key)}">Open details</button></details>`).join('')}</div>`;
   return {title,html:standardShell({view:'readings',title,eyebrow:config.name||model.name||'Thermostat',content})};
 }
 

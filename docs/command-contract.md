@@ -99,4 +99,6 @@ The same chooser in Home Assistant’s card editor emits the ordinary `config-ch
 
 Optional ownership, House-preset and schedule mappings are observations only. They never add ownership services or trigger scheduling. A hand marked Manual input uses the existing acknowledged-and-observed temperature-request result; it does not infer ownership from `none` or a target match. A contrary mode/preset also retires that local indication permanently.
 
+Before recording the manual-action indication, the card checks that every current target still matches the captured request. Conflicting reports with an equal timestamp cannot attach that indication to a contrary target. This presentation check does not send a correction or change the stored request result.
+
 Opening VT auto start/stop controls verifies a fresh registry target and opens native Home Assistant more-info after explicit intent. It does not widen the coordinator's service allowlist or mapped-switch eligibility. Readiness/preview/session guards apply before navigation; subsequent actions inside the native dialog belong to Home Assistant.
