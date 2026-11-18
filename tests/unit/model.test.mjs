@@ -541,7 +541,7 @@ test('direct sources retain an explicitly configured age limit for the same type
   h.states['sensor.humidity'] = { state: '48', attributes: { unit_of_measurement: '%' }, last_updated: '2026-10-25T10:00:00Z' };
   const c = { ...config, humidity_entity: 'sensor.humidity', telemetry: [{ kind: 'humidity', entity: 'sensor.humidity', label: 'Measured humidity', max_age_seconds: 300 }] };
   const m = buildModel(h, c, identity, { now });
-  assert.equal(m.humidity.status, 'stale'); assert.equal(m.headerTelemetry.length, 1); assert.equal(m.headerTelemetry[0].status, 'stale'); assert.equal(m.headerTelemetry[0].label, 'Measured humidity'); assert.equal(m.canSet, true);
+  assert.equal(m.humidity.status, 'stale'); assert.equal(m.headerTelemetry.filter(row=>row.group==='primary').length, 1); assert.equal(m.headerTelemetry[0].status, 'stale'); assert.equal(m.headerTelemetry[0].label, 'Measured humidity'); assert.equal(m.canSet, true);
 });
 
 test('target comparison arc preserves original below, at and above colours in display units', () => {
@@ -610,7 +610,7 @@ test('only the exact selected preset contributes an active header source', () =>
   for (const unit of ['°C', '°F']) {
     const { h, c } = presetFixture(unit);
     const m = buildModel(h, c, identity);
-    assert.equal(m.headerTelemetry.length, 1); assert.equal(m.headerTelemetry[0].preset, 'comfort');
+    assert.equal(m.headerTelemetry.filter(row=>row.group==='primary').length, 1); assert.equal(m.headerTelemetry[0].preset, 'comfort');
     assert.equal(m.headerTelemetry[0].value, `21 ${unit}`); assert.equal(m.headerTelemetry[0].icon, 'mdi:sofa');
     assert.equal(m.presetReadings.eco.value, 17); assert.equal(m.presetReadings.boost.value, 23);
     assert.equal(m.presetReadings.comfort.source.entity, c.features[1].entity); assert.equal(m.presetReadings.comfort.selected, true);
@@ -641,16 +641,16 @@ test('preset readings reject unsupported, duplicate, unavailable, nonfinite and 
   const { h, c } = presetFixture(); const id = c.features[1].entity;
   const read = (overrides = c) => buildModel(h, overrides, identity);
   for (const value of [NaN, Infinity, 'Infinity', 'not numeric', true, {}, []]) {
-    h.states[id].state = value; assert.equal(read().presetReadings.comfort.status, 'invalid'); assert.equal(read().headerTelemetry.length, 0);
+    h.states[id].state = value; assert.equal(read().presetReadings.comfort.status, 'invalid'); assert.equal(read().headerTelemetry.filter(row=>row.group==='primary').length, 0);
   }
   h.states[id].state = '21';
   for (const unit of ['°F', '%', undefined]) { h.states[id].attributes.unit_of_measurement = unit; assert.equal(read().presetReadings.comfort.status, 'invalid'); }
   h.states[id].attributes.unit_of_measurement = '°C';
   const duplicate = { ...c, features: [...c.features, { entity: id, preset: 'comfort' }] };
-  assert.equal(read(duplicate).presetReadings.comfort.status, 'invalid'); assert.equal(read(duplicate).headerTelemetry.length, 0);
+  assert.equal(read(duplicate).presetReadings.comfort.status, 'invalid'); assert.equal(read(duplicate).headerTelemetry.filter(row=>row.group==='primary').length, 0);
   h.states[id].state = 'unavailable'; assert.equal(read().presetReadings.comfort.status, 'unavailable');
   h.states[id].state = '21'; h.states[entity].attributes.preset_modes = ['none', 'eco'];
-  assert.equal(read().presetReadings.comfort.status, 'unsupported'); assert.equal(read().headerTelemetry.length, 0);
+  assert.equal(read().presetReadings.comfort.status, 'unsupported'); assert.equal(read().headerTelemetry.filter(row=>row.group==='primary').length, 0);
   h.states[entity].attributes.preset_modes.push('comfort'); h.config.unit_system.temperature = undefined;
   assert.equal(read().presetReadings.comfort.status, 'unknown');
 });

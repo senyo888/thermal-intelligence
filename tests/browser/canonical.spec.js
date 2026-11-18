@@ -5,6 +5,8 @@ const card = page => page.locator('thermal-intelligence-beta-card');
 const target = page => card(page).locator('[data-value="temperature"]');
 const marker = page => card(page).locator('[data-marker="temperature"]');
 const activePreset = page => card(page).locator('.header-telemetry [data-presets]');
+const controlIndicator = page => card(page).locator('[data-telemetry-key="control:summary"]');
+async function openPresetChart(page) { await expand(page); await card(page).locator('.settings-pair [data-presets]').click(); }
 const calls = page => page.evaluate(() => canonicalFixture.calls);
 
 async function load(page, surface = 'active-presets') {
@@ -41,9 +43,10 @@ for (const surface of ['active-presets', 'polish']) {
     await expect(marker(page)).toHaveAttribute('aria-valuemin', '7');
     await expect(marker(page)).toHaveAttribute('aria-valuemax', '30');
     expect(await page.evaluate(() => canonicalFixture.card.model().step)).toBe(.1);
-    await expect(activePreset(page)).toHaveCount(1);
-    await expect(activePreset(page)).toHaveAttribute('aria-label', /^Comfort: 21 °C.*Preset selected/);
-    await activePreset(page).click();
+    await expect(activePreset(page)).toHaveCount(0);
+    await expect(controlIndicator(page)).toHaveAccessibleName('Control source: Unknown');
+    expect(await page.evaluate(() => canonicalFixture.card.model().presetReadings.comfort.value)).toBe(21);
+    await openPresetChart(page);
     const dialog = card(page).getByRole('dialog');
     await expect(dialog).toHaveAttribute('data-view', 'presets');
     await expect(dialog.locator('.chart-row')).toHaveCount(4);
@@ -75,10 +78,11 @@ test('supplemental advertised Frost uses its explicit 10 degree observation with
     f.card.setConfig({ ...f.config, features: [...f.config.features, { entity: 'number.room_preset_frost_temp', label: 'Frost', preset: 'frost' }] });
     f.card.hass = { ...f.hass, states: { ...f.states, 'climate.room': structuredClone(f.states['climate.room']) } };
   });
-  await expect(activePreset(page)).toHaveCount(1);
-  await expect(activePreset(page)).toHaveAttribute('aria-label', /^Frost: 10 °C.*Preset selected/);
+  await expect(activePreset(page)).toHaveCount(0);
+    await expect(controlIndicator(page)).toHaveAccessibleName('Control source: Unknown');
+  expect(await page.evaluate(() => canonicalFixture.card.model().presetReadings.frost.value)).toBe(10);
   await expect(target(page)).toHaveText('21°C');
-  await activePreset(page).click();
+  await openPresetChart(page);
   const frost = card(page).getByRole('dialog').locator('.chart-row').filter({ has: page.locator('.chart-label strong', { hasText: /^Frost$/ }) });
   await expect(frost.locator('button[data-dialog-info]')).toHaveText('10 °C');
   await expect(frost.locator('button[data-dialog-info]')).toHaveAttribute('data-dialog-info', 'number.room_preset_frost_temp');
@@ -92,9 +96,9 @@ test('canonical preset scenarios change selected preset only and expose exactly 
   await load(page);
   for (const [preset, name, value] of [['eco', 'Eco', 17], ['boost', 'Boost', 23], ['comfort', 'Comfort', 21]]) {
     await scenario(page, preset);
-    await expect(activePreset(page)).toHaveCount(1);
-    await expect(activePreset(page)).toHaveAttribute('aria-label', new RegExp(`^${name}: ${value} °C.*Preset selected`));
-    await expect(activePreset(page)).toHaveAttribute('data-activity', 'active');
+    await expect(activePreset(page)).toHaveCount(0);
+    await expect(controlIndicator(page)).toHaveAccessibleName('Control source: Unknown');
+    expect(await page.evaluate(preset => canonicalFixture.card.model().presetReadings[preset].value, preset)).toBe(value);
     await expect(target(page)).toHaveText('21°C');
     await expect(card(page).locator('[data-current-value]')).toHaveText('20');
     const observed = await page.evaluate(() => {
@@ -123,7 +127,7 @@ test('canonical Manual target remains 20.3 with no inferred preset or control ow
   await control.locator('summary').click();
   await expect(control.locator('dl > div').filter({ hasText: 'Control ownership' }).locator('dd')).toHaveText('Unknown');
   await expect(control.locator('.note')).toBeVisible();
-  await expect(control.locator('.note')).toContainText('presets and temperatures do not establish ownership');
+  await expect(control.locator('.note')).toContainText('do not establish ownership');
 });
 
 for (const mode of ['Off', 'Disconnected']) {
@@ -140,8 +144,9 @@ for (const mode of ['Off', 'Disconnected']) {
     await expect(activePreset(page)).toHaveCount(0);
     if (mode === 'Disconnected') await expect(marker(page)).toBeDisabled();
     await scenario(page, 'comfort');
-    await expect(activePreset(page)).toHaveCount(1);
-    await expect(activePreset(page)).toHaveAttribute('aria-label', /^Comfort: 21 °C.*Preset selected/);
+    await expect(activePreset(page)).toHaveCount(0);
+    await expect(controlIndicator(page)).toHaveAccessibleName('Control source: Unknown');
+    expect(await page.evaluate(() => canonicalFixture.card.model().presetReadings.comfort.value)).toBe(21);
     await expect(target(page)).toHaveText('21°C');
   });
 }
@@ -155,7 +160,7 @@ test('canonical humidity samples retain the original five display bands and colo
     await expect(humidity).toContainText(`${value} %`);
     await expect.poll(() => humidity.evaluate(node => getComputedStyle(node).getPropertyValue('--telemetry-colour').trim())).toBe(colour);
     await expect(target(page)).toHaveText('21°C');
-    await expect(activePreset(page)).toHaveAttribute('aria-label', /^Comfort: 21 °C.*Preset selected/);
+    expect(await page.evaluate(() => canonicalFixture.card.model().presetReadings.comfort.value)).toBe(21);
   }
 });
 

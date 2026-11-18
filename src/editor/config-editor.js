@@ -409,7 +409,7 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     const readings = this._sourceMappings(states);
     readings.append(this._outsideTemperature(states), this._sourcePreviewPanel(), this._suggestionPanel());
     readings.append(this._iconDisplay(), this._features(states), this._telemetry(states));
-    form.append(readings, this._humidityDisplay(), this._optionalSwitch(states), this._responseArc(states), this._presets(states), this._advanced());
+    form.append(readings, this._controlSources(states), this._humidityDisplay(), this._optionalSwitch(states), this._responseArc(states), this._presets(states), this._advanced());
     form.append(element('p', 'hint', 'Save the card in Home Assistant when you are finished. Unknown advanced options are preserved.'));
     this.shadowRoot.replaceChildren(style, form);
     this._refreshPreviews();
@@ -420,6 +420,35 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     const section=this._details('header-icons','Top row icon settings');
     const host=element('div');section.append(host);
     this._iconOptions=new IconOptions(host,next=>this._commit(next,{rerender:false}));
+    return section;
+  }
+
+  _controlSources(states) {
+    const section=this._details('control-sources','Control source, House policy and schedule');
+    section.append(element('p','hint','Optional observations only. A provider preset, a House policy and an active schedule are different signals. These mappings never select a controller or run a schedule.'));
+    const list=element('datalist');list.id='ti-control-source-entities';
+    for(const id of Object.keys(states).sort()){const option=element('option');option.value=id;list.append(option);}section.append(list);
+    for(const [key,title,note] of [
+      ['control_source','Control source','Exact reported values: House, Schedule, Manual, VT, Provider, Policy, Other, Pending or Unknown. For a confirmed ownership source, set its thermostat and readiness attributes below.'],
+      ['house_preset','House preset','Map the effective policy, not a command selector. Frost, Eco, Comfort and Boost are shown with a House label; this does not mean this room follows House.'],
+      ['schedule','Schedule activity','An on/off or true/false source, including a schedule entity. Activity does not establish control ownership.'],
+    ]) {
+      const mapping=this._draft[key]??{},grid=element('div','grid');
+      section.append(element('h3','',title),element('p','hint',note));
+      for(const [field,name,help] of [['entity','entity','Leave empty to remove this observation.'],['attribute','value attribute','Leave empty to read the entity state.'],['climate_attribute','thermostat attribute','Optional attribute that must equal this card’s climate entity, such as climate_entity.'],['ready_attribute','readiness attribute','Optional attribute that must be literal true, such as intent_ready.']]) {
+        grid.append(this._field(`${title} ${name}`,`${key}.${field}`,mapping[field]??'',{...(field==='entity'?{list:list.id}:{}),help,onChange:value=>{
+          const next=clone(this._draft);next[key]={...next[key],entity:next[key]?.entity??''};
+          if(value||field==='entity')next[key][field]=value;else delete next[key][field];
+          this._commit(next);
+        }}));
+      }
+      grid.append(this._field(`${title} maximum age (seconds)`,`${key}.max_age_seconds`,mapping.max_age_seconds??'',{type:'number',help:'Optional. Use only a timeout defined by this source’s contract; an unchanged value need not be stale.',onChange:value=>{
+        const next=clone(this._draft);next[key]={...next[key],entity:next[key]?.entity??''};
+        if(value===undefined)delete next[key].max_age_seconds;else next[key].max_age_seconds=value;
+        this._commit(next);
+      }}));
+      section.append(grid);
+    }
     return section;
   }
 

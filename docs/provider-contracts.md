@@ -169,3 +169,15 @@ Only literal `is_lock_configured: false` retires a retained locked flag from the
 ## Optional switch eligibility (introduced in beta.6)
 
 The optional row requires an enrolled schema-2 mapping, an available/ready registered standard climate anchor and an exact registered switch. Current-session registry lookup plus subscription is required for this new path; remembered VT identity never falls back to standard. Known group/template platforms are excluded. Missing proof or switch state disables only this row. Climate Off and temperature-specific `canSet` do not prohibit an otherwise eligible switch. Provider-reported On/Off may be optimistic and does not prove physical association, heat, or authorization. See [Optional switch control](optional-switch-control.md) for Honeywell mode effects and the narrower compatibility boundary.
+
+## Additional VT observations and native controls
+
+The outside-temperature option reads `specific_states.ext_current_temperature` in `configuration.temperature_unit`, with reception time from `specific_states.last_ext_temperature_datetime`. It accepts negative temperatures. Other thermostat updates do not renew that reception time. This is VT's accepted reading, not a newly measured sample; TI does not guess the external sensor entity ID or alter VT input configuration. Independent outdoor/weather mappings remain available.
+
+Auto start/stop reads `is_auto_start_stop_configured`, `auto_start_stop_manager.auto_start_stop_enable` and `is_auto_stop_detected`. Configuration, enabled state and detected stop are separate. The supported VT 10.6.5 shape is `configuration.type: over_climate` with `configuration.have_valve_regulation: false`; other types are unsupported, and missing/invalid capability evidence remains unknown. Stop details may report Off, Fan only or Dry, so detection does not establish heating-off or physical response.
+
+**Open VT auto start/stop controls** performs a fresh entity-registry lookup after an explicit click. It requires one enabled, visible VT switch with the provider-defined `_enable_auto_start_stop` unique-ID suffix and the same nonempty config-entry and device identities as the selected VT climate. Entity names are not used to guess a target. Ambiguous, unavailable, mismatched or late replies open nothing. Configuration/session changes or dismissal retire the lookup; an unresolved old lookup does not prevent a new explicit attempt.
+
+The link opens Home Assistant's native switch dialog. TI sends no switch service, and it does not govern later actions in that native dialog. Changing the switch can stop or resume provider behavior. The ordinary optional-switch enrollment remains separate and still excludes VT.
+
+VT's [10.6.5 auto start/stop documentation](https://github.com/jmcollin78/versatile_thermostat/blob/10.6.5/documentation/en/feature-auto-start-stop.md) describes its configuration and enable switch.

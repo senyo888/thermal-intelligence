@@ -201,6 +201,16 @@ export function normalizeConfig(raw) {
       result.header_icons[key]=[...values];
     }
   }
+  for(const key of ['control_source','house_preset','schedule']) if(raw[key]!==undefined) {
+    const mapping=raw[key];
+    if(!isRecord(mapping)||typeof mapping.entity!=='string'||(mapping.entity!==''&&!ENTITY.test(mapping.entity)))throw new Error(`${key} requires an entity ID or an empty source.`);
+    for(const field of ['attribute','climate_attribute','ready_attribute'])if(mapping[field]!==undefined){
+      safeText(mapping[field],`${key}.${field}`);
+      if(mapping[field].split('.').some(part=>!/^\w+$/.test(part)||FORBIDDEN_KEYS.has(part)))throw new Error(`Invalid ${key} attribute path.`);
+    }
+    if(mapping.max_age_seconds!==undefined)numberOption(mapping.max_age_seconds,`${key}.max_age_seconds`,true);
+    result[key]={...mapping};
+  }
   if (raw.humidity_bands !== undefined) {
     if (!isRecord(raw.humidity_bands)) throw new Error('humidity_bands must be an object.');
     if (!validHumidityBands(raw.humidity_bands) && !legacyHumidityBands(raw.humidity_bands)) throw new Error('Humidity guides require ordered integer dry_below < good_min < good_max < wet_above within 0–100, or explicit legacy low < high bounds. Do not mix the formats.');

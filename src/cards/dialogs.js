@@ -2,6 +2,7 @@
 // Adapted from the Thermal Intelligence dialog surfaces.
 // Source shells, declarations and finishing styles are retained; variant selectors are isolated.
 // Provenance is recorded in docs/source-provenance.md. This module has no service or persistence path.
+import { compactHeader, headerPresentation, headerGlyphStyles } from './header-presentation.js';
 import { EDITOR_TAG } from '../model/config.js';
 import { renderHumidity } from './humidity-dialog.js';
 import { overviewDialogStyles, humidityDialogStyles, settingsDialogStyles } from './dialog-styles.js';
@@ -67,13 +68,13 @@ function overview({ model, config, statusMessage }) {
     ], note: model.arc?.explanation || 'Temperature-response evidence is unavailable.' },
   ];
   if (model.details?.length) sections.push({ id: 'provider-details', title: 'Provider details', rows: model.details.map(row => ({ label: row.label, value: `${row.value ?? row.status ?? 'Unavailable'}${row.unit ? ` ${row.unit}` : ''}${row.detail ? ` · ${row.detail}` : ''}` })) });
-  const groups = `<div class="groups">${sections.map(section => `<details id="section-${section.id}"><summary>${esc(section.title)}<span aria-hidden="true">⌄</span></summary>${plainRows(section.rows)}${section.note ? `<p class="note">${esc(section.note)}</p>` : ''}</details>`).join('')}</div>`;
+  const groups = `<div class="groups">${sections.map(section => `<details id="section-${section.id}"><summary>${esc(section.title)}<span class="expansion-indicator" aria-hidden="true">⌄</span></summary>${plainRows(section.rows)}${section.note ? `<p class="note">${esc(section.note)}</p>` : ''}</details>`).join('')}</div>`;
   const footer = `<button data-dialog-settings>Readings and display</button>${nativeButton(config.entity, 'Thermostat details')}${model.provider?.kind==='vtherm'?'<button data-vt-settings>Open VT device settings</button>':''}<p>Thermostat details open in Home Assistant.</p>`;
   return { title, html: standardShell({ view: 'overview', title, eyebrow: 'Thermal intelligence · overview', content: (level === 'green' ? summary + healthPanel : healthPanel + summary) + groups, footer, tone }) };
 }
 
-function telemetry({ model, config, savedConfig, rowKey, statusMessage }) {
-  const rows = model.headerOptions ?? model.headerTelemetry ?? [];
+function telemetry({ model, config, savedConfig, rowKey, statusMessage, allowed, preview }) {
+  const rows = [...(model.headerOptions ?? model.headerTelemetry ?? []),...compactHeader(model)];
   let row = rowKey === 'humidity' ? model.humidity : rows.find(item => item.key === rowKey) ?? rows.find(item => item.topic === rowKey);
   if(rowKey==='follow' && !row && model.provider?.kind==='vtherm') {
     const value=model.connected&&model.available?model.attrs?.vtherm_over_climate?.follow_underlying_temp_change:null;
@@ -87,10 +88,11 @@ function telemetry({ model, config, savedConfig, rowKey, statusMessage }) {
     { label: semantic ? 'State' : 'Selected reading', value: reading },
     { label: 'Status', value: row?.status || 'Not configured' },
     { label: 'Source', value: sourceText(row?.source), entity: row?.source?.entity },
-    ...semantic || row?.vtKey==='temperature_seen' ? [] : [{ label: 'Unit', value: row?.unit || 'Not reported' }],
+    ...semantic || row?.vtKey==='temperature_seen' || row?.key==='control:summary' ? [] : [{ label: 'Unit', value: row?.unit || 'Not reported' }],
     ...(row?.detailRows??[]),
   ];
-  const content = `<section aria-label="${esc(title)}">${plainRows(values)}<p class="note">${esc(row?.detail || 'No matching configured source is available. No source is inferred from an entity name.')}</p><div class="topic-links">${nativeButton(row?.source?.entity)}<button data-dialog-settings>Readings and display</button></div>${message(statusMessage)}</section>`;
+  const featureLink=row?.vtKey==='auto_start_stop'?`<p class="note">Changing this switch can stop or resume the appliance. Home Assistant’s native dialog owns those controls.</p><button data-vt-auto-start-stop ${!allowed||preview||row.status!=='available'?'disabled':''}>Open VT auto start/stop controls</button><p data-vt-feature-status role="status"></p>`:'';
+  const content = `<section aria-label="${esc(title)}">${plainRows(values)}<p class="note">${esc(row?.detail || 'No matching configured source is available. No source is inferred from an entity name.')}</p>${featureLink}<div class="topic-links">${row?.key==='control:summary'?'<button data-show-presets>Preset temperatures</button>':''}${nativeButton(row?.source?.entity)}<button data-dialog-settings>Readings and display</button></div>${message(statusMessage)}</section>`;
   return { title, html: standardShell({ view: 'telemetry', title, eyebrow: config.name || model.name || 'Thermostat', content }) };
 }
 
@@ -118,7 +120,7 @@ function presets({ model, config, allowed, busy, preview, statusMessage }) {
 }
 
 export function headerPreview(model) {
-  return (model.headerTelemetry ?? []).map(row => `<span><ha-icon icon="${esc(row.icon || 'mdi:information-outline')}" aria-hidden="true"></ha-icon><span>${esc(row.label)} · ${esc(row.value ?? 'Unavailable')}</span></span>`).join('') || '<small>No configured header readings.</small>';
+  return compactHeader(model).map(row => {const p=headerPresentation(row);return `<span role="img" aria-label="${esc(p.title)}" title="${esc(p.title)}" style="--telemetry-colour:${p.colour}">${p.content}</span>`;}).join('') || '<small>No configured header readings.</small>';
 }
 
 function settings({ model, config, statusMessage }) {
@@ -133,11 +135,18 @@ function settings({ model, config, statusMessage }) {
     <p class="status" data-dialog-status role="status">${esc(statusMessage || '')}</p></div><footer><button data-dialog-close>Close</button></footer></dialog>` };
 }
 
+function readings({model,config}) {
+  const rows=(model.headerOptions??[]).filter(row=>!row.preset);
+  const title='Readings';
+  const content=`<p class="note">All available card readings, including icons hidden from the top row.</p><div class="groups">${rows.map(row=>`<details id="reading-${esc(encodeURIComponent(row.key))}"><summary>${esc(row.label)}<span class="reading-value">${esc(row.value??row.status)}</span></summary>${plainRows([{label:'Status',value:row.status},{label:'Source',value:sourceText(row.source)}])}<p class="note">${esc(row.detail)}</p><button data-reading-key="${esc(row.key)}">Open details</button></details>`).join('')}</div>`;
+  return {title,html:standardShell({view:'readings',title,eyebrow:config.name||model.name||'Thermostat',content})};
+}
+
 /** Pure dialog rendering. The host attaches the editor and owns every user action. */
 export function renderDialog({ kind = 'overview', model = {}, config = {}, rowKey, settingsDraft, savedConfig, statusMessage = '', allowed = false, busy = false, preview = false } = {}) {
   const options = { model, config: kind === 'settings' && settingsDraft ? settingsDraft : config, rowKey, savedConfig, statusMessage, allowed, busy, preview };
   const result = kind === 'telemetry' || kind === 'humidity' ? telemetry({ ...options, rowKey: kind === 'humidity' ? 'humidity' : rowKey })
-    : kind === 'presets' ? presets(options) : kind === 'settings' ? settings(options) : overview(options);
+    : kind === 'presets' ? presets(options) : kind === 'settings' ? settings(options) : kind==='readings'?readings(options):overview(options);
   const styles=result.html.startsWith('<dialog data-view="humidity"')?humidityDialogStyles:kind==='settings'?settingsDialogStyles:overviewDialogStyles;
-  return {...result,styles};
+  return {...result,styles:styles+headerGlyphStyles};
 }

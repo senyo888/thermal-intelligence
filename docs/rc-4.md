@@ -1,5 +1,15 @@
 # Release candidate 0.1.0-rc.4 — unreleased
 
+## Combined control icons and expanded layout
+
+RC.4 combines the reported control source and selected preset in one top-row slot, such as VT Eco or House Boost. Unknown or degraded source evidence replaces the other control symbols. A confirmed card temperature adjustment can show a hand with a history mark when no ownership source is mapped; its details identify the last action without claiming current ownership. Reported policies use a circled P, and VT uses a text badge. Optional House and schedule mappings remain read-only.
+
+Categorical readings use icons, colour and hover/press details; numeric readings retain their values and units. The expanded card places Mode above side-by-side preset-temperature and icon-settings buttons, with compact utilities below. VT outside temperature and auto start/stop observations are available. Runtime drafts and advanced export are preserved.
+
+The current module is 262718 bytes, SHA-256 `f1a730956bd471373d9389f0d55a9e9a7267898c7c2056ed1ed75a7d53de71a2`. It keeps expanded reading values upright and checks the current targets before showing confirmed manual-action history, including conflicting reports with the same timestamp. These corrections have synthetic regression coverage; this module has not been installed or accepted on Lab or Stable.
+
+The preceding Lab-tested module is 262418 bytes, SHA-256 `d7701409f421da0127a4b5a4fde887aecc86245a860230fc6d39b993e8ef13e9`, built from [source `65d40ef`](https://github.com/senyo888/thermal-intelligence/commit/65d40efc83d0aba14bc1a4fce3625ca36384208c). Its bounded results below do not cover the corrected bytes. See [configuration](card-configuration.md#presets-provider-and-policy-icons) and the [VT navigation boundary](provider-contracts.md#additional-vt-observations-and-native-controls).
+
 RC.4 is prepared on `senyo888-patch-1` for future reconciliation into `develop`. It is not a named release or an available installer update. [RC.3](rc-3.md) remains the published prerelease; its assets and the main discovery snapshot are unchanged.
 
 ## Changes from RC.3
@@ -13,7 +23,7 @@ RC.4 is prepared on `senyo888-patch-1` for future reconciliation into `develop`.
 - Typed temperature readings support sensor units and live weather temperature units without conversion. The outside reading does not replace the dial's indoor temperature.
 - Request presentation exposes one accessible status message. An uncertain request keeps an uncertain overview tooltip while its transport is unsettled and after late acknowledgement, without relaxing the command guard.
 
-RC.4 carries the reviewed beta.8 behavior. Command/provider modules are unchanged from published RC.3. Existing readiness, identity, captured-target, confirmation and no-replay checks remain in force.
+RC.4 carries the reviewed beta.8 behavior and subsequent icon refinements. Existing readiness, identity, captured-target, confirmation and no-replay checks remain in force. Native VT feature navigation requires a uniquely verified switch on the same device and config entry; it does not broaden optional-switch eligibility.
 
 ## Configuration and rollback
 
@@ -21,9 +31,23 @@ The card type remains `custom:thermal-intelligence-beta-card`, with editor `ther
 
 The `temperature` telemetry kind and `unit_attribute` require beta.8 or RC.4. RC.3 and earlier reject this kind. Keep a compatible saved configuration with its original module before adding temperature rows; rollback must restore both while preserving unrelated dashboard edits. See [configuration](card-configuration.md) and [update and rollback](migration.md).
 
-## Latest Lab-tested revision — 16 November 2026
+## Latest Lab-tested revision — 17 November 2026
 
-The current module is 243670 bytes, SHA-256 `8ffca1f7a4636862cd754cb588f6ab50b4ded7748215d40aeb981582c4fc0b2c`, built from `20fcd0b40b2208cd0669b5dc349409a7bb44df5a`. Lab testing found one Safari usability issue: the first manual-copy fallback selected the configuration without reliably revealing it. The corrected dialog focuses, selects and scrolls the export into view after its status layout settles. The first-copy path passed again in Safari. All 184 unit, 186 browser, 14 foundation, 13 package and eight distribution checks passed, with public-data and redacted secret checks.
+The exact `d7701409…` module above passed bounded Safari checks on HA 2026.11.0. Served bytes matched the committed build, and a fresh document registered the RC.4 card and editor. The combined indicator passed VT, Manual, Policy, Schedule, House, Pending, Unknown, wrong-target and unready-source cases. House Boost remained distinct from the thermostat's Eco preset. The combined visibility switch hid the whole slot in preview; Cancel restored the existing display without a command or dashboard write.
+
+Actual controls covered Generic temperature buttons, keyboard dial, preset and Heat/Off; all four VT presets; optional-switch Cancel/On/Off; and range endpoints, fan and both swing controls. A temporary inert VT auto start/stop feature exposed the correctly bound native switch. Opening its dialog sent no control request; explicit native Off/On actions returned matching states.
+
+All 27 card requests and two native switch requests had acknowledgements and unique matching server events. One negative acknowledgement was the intentional rejection test. Its notice disappeared after 9,997 ms, while the amber LED retained the failure explanation; a successful retry restored normal feedback. No request remained pending. An independent observer spanned the final fresh load without a connection gap and recorded no service replay.
+
+All nine climate control tuples, helper/switch values, saved dashboard configuration, config-entry data/options and active registry identities were restored. Temporary observations and feature entries were removed, and rollback copies were reverified. Protected-file differences were limited to the intended resource URL and provider/registry bookkeeping. The Marketplace package and legacy frontend were preserved. No Core restart or Stable change was made.
+
+The final source passed 199 unit, 205 synthetic browser, 14 foundation, 13 package and eight distribution tests; repeat packages, link/public-data checks, redacted secret checks and source CI passed. Independent product and safety reviews found no outstanding blocker. Scoped static security reviews of both implementation commits reported no findings. These checks do not establish absence of all vulnerabilities.
+
+This is inert-fixture acceptance, not physical heating, Marketplace installation, wider-client or formal-soak acceptance. The loaded VT version was not independently established. Native editor Save/reopen and advanced export retain their earlier live evidence and current synthetic coverage; they were not repeated on these exact bytes. Two temporary browser test-capture errors were corrected during the session; client request evidence and the independent server observer remained available. The previous `f822b133…` intermediate build was superseded during this trial and is not the accepted module.
+
+## Earlier Lab-tested revision — 16 November 2026
+
+That module is 243670 bytes, SHA-256 `8ffca1f7a4636862cd754cb588f6ab50b4ded7748215d40aeb981582c4fc0b2c`, built from `20fcd0b40b2208cd0669b5dc349409a7bb44df5a`. Lab testing found one Safari usability issue: the first manual-copy fallback selected the configuration without reliably revealing it. The corrected dialog focuses, selects and scrolls the export into view after its status layout settles. The first-copy path passed again in Safari. All 184 unit, 186 browser, 14 foundation, 13 package and eight distribution checks passed, with public-data and redacted secret checks.
 
 On HA 2026.11.0, the final module passed runtime icon selection/export, the native VT device-settings link, Generic and VT temperature buttons, VT presets and unlock/automatic relock, optional-switch Cancel/On/Off, and the inert range fixture's HVAC mode, endpoints, fan and both swing controls. Runtime settings sent no service requests or dashboard writes. An intentional rejection displayed a notice for 9,999 ms; the amber LED retained its failure explanation after the notice disappeared. A later successful request restored the observed outcome and green LED.
 
