@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { buildModel } from '../../src/model/climate.js';
 import { normalizeConfig } from '../../src/model/config.js';
 import { autoStartStopSwitch } from '../../src/providers/vt-feature-link.js';
+import { compactHeader } from '../../src/cards/header-presentation.js';
 const entity='climate.example',now=Date.parse('2026-11-17T12:00:00Z');
 function fixture() {
   const config={entity,adapter:'vtherm',vt_telemetry:['external_temperature','auto_start_stop']};
@@ -81,4 +82,54 @@ test('display labels survive in preset icons and hiding a mapped indicator revea
   f.config.features=[{entity:'sensor.comfort',preset:'comfort',unit:'°C'}];f.hass.states['sensor.comfort']={state:'21',attributes:{unit_of_measurement:'°C'}};
   assert.equal(f.row('preset:comfort').headerEligible,false);
   const mapped=f.model().headerOptions.find(row=>row.feature);f.config.header_icons={hidden:[mapped.key]};assert.equal(f.row('preset:comfort').headerEligible,true);
+});
+
+test('each source combines with its own confirmed mode, including Schedule with no VT preset',()=>{
+  const f=fixture();Object.assign(f.config,{control_source:{entity:'sensor.owner',climate_attribute:'climate_entity',ready_attribute:'intent_ready'},house_preset:{entity:'sensor.policy'},schedule_preset:{entity:'sensor.owner',attribute:'mode',climate_attribute:'climate_entity',ready_attribute:'intent_ready'}});
+  f.hass.states['sensor.owner']={state:'Schedule',attributes:{climate_entity:entity,intent_ready:true,mode:'Comfort'}};
+  f.hass.states['sensor.policy']={state:'Boost',attributes:{}};
+  const icons={frost:'mdi:snowflake',eco:'mdi:leaf',comfort:'mdi:sofa',boost:'mdi:fire'};
+  for(const owner of ['House','Manual','VT','Schedule'])for(const [preset,icon] of Object.entries(icons)) {
+    f.hass.states['sensor.owner'].state=owner;
+    f.hass.states['sensor.owner'].attributes.mode=owner==='Schedule'?preset:'boost';
+    f.hass.states['sensor.policy'].state=owner==='House'?preset:'frost';
+    f.attrs.preset_mode=['Manual','VT'].includes(owner)?preset:'none';
+    const row=compactHeader(f.model()).find(row=>row.key==='control:summary');
+    assert.equal(row.value,owner);assert.deepEqual(row.secondary,{icon,preset});
+    assert.match(row.title,new RegExp(owner==='House'?'House policy:':owner==='Schedule'?'Last confirmed schedule mode:':'Thermostat preset:'));
+  }
+});
+
+test('explicit schedule mode never falls back on unknown, unready, mismatched, hidden or stale evidence',()=>{
+  const f=fixture();Object.assign(f.config,{control_source:{entity:'sensor.owner'},schedule_preset:{entity:'sensor.mode',attribute:'mode',climate_attribute:'climate_entity',ready_attribute:'intent_ready'}});
+  f.hass.states['sensor.owner']={state:'Schedule',attributes:{}};
+  const good={state:'confirmed',attributes:{mode:'Eco',climate_entity:entity,intent_ready:true},last_updated:new Date(now).toISOString()};
+  const badge=()=>compactHeader(f.model()).find(row=>row.key==='control:summary').secondary;
+  for(const bad of [undefined,{...good,state:'unavailable'},{...good,attributes:{...good.attributes,mode:'none'}},{...good,attributes:{...good.attributes,mode:'<script>'}},{...good,attributes:{...good.attributes,intent_ready:false}},{...good,attributes:{...good.attributes,climate_entity:'climate.other'}}]) {
+    f.hass.states['sensor.mode']=bad;assert.equal(badge(),null);
+  }
+  f.hass.states['sensor.mode']=good;assert.equal(badge().preset,'eco');
+  f.config.header_icons={hidden:['control:schedule_preset']};assert.equal(badge(),null);delete f.config.header_icons;
+  f.config.schedule_preset.max_age_seconds=30;good.last_updated='2020-01-01T00:00:00Z';assert.equal(f.row('control:schedule_preset').status,'stale');assert.equal(badge(),null);
+  good.last_updated='2099-01-01T00:00:00Z';assert.equal(badge(),null);delete f.config.schedule_preset.max_age_seconds;
+  for(const owner of ['Unknown','Pending']){f.hass.states['sensor.owner'].state=owner;assert.equal(badge(),null);}
+  f.hass.states['sensor.owner'].state='House';assert.equal(f.row('control:schedule_preset').value,'Not controlling');
+  f.hass.states['sensor.owner'].state='Schedule';f.attrs.is_ready=false;assert.equal(badge(),null);f.attrs.is_ready=true;
+  f.hass.states[entity].state='off';assert.equal(badge(),null);f.hass.states[entity].state='heat';
+  f.hass.connected=false;assert.equal(badge(),null);f.hass.connected=true;
+  f.config.schedule_preset.entity='';assert.equal(badge(),null);
+  delete f.config.schedule_preset;assert.equal(badge().preset,'comfort');
+});
+
+test('schedule mode mapping preserves extensions and validates every supported path',()=>{
+  const mapping={entity:'sensor.mode',attribute:'confirmed.mode',climate_attribute:'climate_entity',ready_attribute:'intent_ready',clear_attributes:['transaction_token','storage_problem'],max_age_seconds:30,future:{keep:true}};
+  assert.deepEqual(normalizeConfig({schedule_preset:mapping}).schedule_preset,mapping);
+  for(const change of [{entity:'bad'},{attribute:'__proto__.mode'},{ready_attribute:'constructor'},{climate_attribute:'prototype'},{max_age_seconds:-1},{clear_attributes:'pending'},{clear_attributes:['__proto__.x']},{clear_attributes:[null]}])assert.throws(()=>normalizeConfig({schedule_preset:{...mapping,...change}}));
+});
+test('required clear attributes reject missing, inherited or uncleared guards',()=>{
+  const f=fixture();Object.assign(f.config,{control_source:{entity:'sensor.owner'},schedule_preset:{entity:'sensor.owner',attribute:'mode',clear_attributes:['pending','storage']}});
+  const source={state:'Schedule',attributes:{mode:'Boost',pending:null,storage:null}};f.hass.states['sensor.owner']=source;
+  assert.equal(f.row('control:schedule_preset').value,'Boost');
+  for(const value of [undefined,false,'error',0]) {source.attributes.storage=value;assert.equal(f.row('control:schedule_preset').status,'unknown');assert.equal(compactHeader(f.model()).find(r=>r.key==='control:summary').secondary,null);}
+  source.attributes=Object.assign(Object.create({storage:null}),{mode:'Boost',pending:null});assert.equal(f.row('control:schedule_preset').status,'unknown');
 });

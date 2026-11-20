@@ -6,13 +6,15 @@ RC.3 retains existing **schema-1** and **schema-2** configurations. Explicit enr
 
 ## Unreleased RC.4 candidate
 
-[RC.4](rc-4.md) carries the beta.8 usability changes and the reviewed request-tooltip correction. It retains the trial card/editor names and schema-1/schema-2 support. It is prepared on the beta branch for future develop reconciliation; no named RC.4 release or installer update is available.
+[RC.4](rc-4.md) carries the beta.8 usability changes and the reviewed request-tooltip correction. It retains the trial card/editor names and schema-1/schema-2 support. It is prepared on the beta branch for develop reconciliation. An immutable-commit Marketplace trial has passed; no named RC.4 release or automatic installer update is available.
 
 The `temperature` kind and optional `unit_attribute` are supported by beta.8 and RC.4, but rejected by RC.3 and earlier. Before adopting them, retain the older module and compatible saved configuration together. A return to the older module requires restoring that configuration without discarding unrelated dashboard edits. Advanced export remains available and does not save the dashboard.
 
 The later RC.4 working revision adds `vt_telemetry`, display-only `header_icons` and live `unit_attribute` for other numeric telemetry kinds. Earlier modules do not implement these displays. Keep the prior module and compatible card configuration together for rollback. Save through Home Assistant’s selected-card editor; runtime icon drafts and export do not migrate or synchronize other room copies.
 
-RC.4 has its own synthetic, package and [bounded manual Lab checks](rc-4.md#validation-limits). The beta.8 observations below retain their exact module identities. RC.4 installer and physical-device acceptance remain unverified.
+The confirmed Schedule-mode mapping (`schedule_preset`) and null-valued `clear_attributes` guards require [source `61c299a`](https://github.com/senyo888/thermal-intelligence/commit/61c299a9f0acf4a1ced4698fa3e0b0e531e18489) or a later build containing that change. Earlier RC.4 modules preserve these unknown fields but do not implement the mode or enforce those guards. Retain the previous compatible module and configuration before adopting them; do not rely on these fields when rolling back. Unknown-field preservation does not establish feature support.
+
+RC.4 has its own synthetic, package, bounded manual Lab and [immutable-commit Stable checks](rc-4.md#stable-marketplace-and-schedule-checks--1819-november-2026). Each result applies to its recorded module. Named-release installation, full installer update/removal/recovery, physical heating and broader device acceptance remain unverified.
 
 ## Unreleased beta.8 candidate
 

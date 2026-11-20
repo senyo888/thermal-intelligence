@@ -201,7 +201,7 @@ export function normalizeConfig(raw) {
       result.header_icons[key]=[...values];
     }
   }
-  for(const key of ['control_source','house_preset','schedule']) if(raw[key]!==undefined) {
+  for(const key of ['control_source','house_preset','schedule','schedule_preset']) if(raw[key]!==undefined) {
     const mapping=raw[key];
     if(!isRecord(mapping)||typeof mapping.entity!=='string'||(mapping.entity!==''&&!ENTITY.test(mapping.entity)))throw new Error(`${key} requires an entity ID or an empty source.`);
     for(const field of ['attribute','climate_attribute','ready_attribute'])if(mapping[field]!==undefined){
@@ -209,6 +209,7 @@ export function normalizeConfig(raw) {
       if(mapping[field].split('.').some(part=>!/^\w+$/.test(part)||FORBIDDEN_KEYS.has(part)))throw new Error(`Invalid ${key} attribute path.`);
     }
     if(mapping.max_age_seconds!==undefined)numberOption(mapping.max_age_seconds,`${key}.max_age_seconds`,true);
+    if(mapping.clear_attributes!==undefined&&(!Array.isArray(mapping.clear_attributes)||mapping.clear_attributes.length>16||mapping.clear_attributes.some(path=>typeof path!=='string'||!path.length||path.split('.').some(part=>!/^\w+$/.test(part)||FORBIDDEN_KEYS.has(part)))))throw new Error(`Invalid ${key} clear attributes.`);
     result[key]={...mapping};
   }
   if (raw.humidity_bands !== undefined) {

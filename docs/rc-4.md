@@ -6,11 +6,15 @@ RC.4 combines the reported control source and selected preset in one top-row slo
 
 Categorical readings use icons, colour and hover/press details; numeric readings retain their values and units. The expanded card places Mode above side-by-side preset-temperature and icon-settings buttons, with compact utilities below. VT outside temperature and auto start/stop observations are available. Runtime drafts and advanced export are preserved.
 
-The current module is 262718 bytes, SHA-256 `f1a730956bd471373d9389f0d55a9e9a7267898c7c2056ed1ed75a7d53de71a2`. It keeps expanded reading values upright and checks the current targets before showing confirmed manual-action history, including conflicting reports with the same timestamp. These corrections have synthetic regression coverage; this module has not been installed or accepted on Lab or Stable.
+The current module is **265805 bytes**, SHA-256 `c7deef911f85cdbd7deb3d8017635f19cf81eeea45207e3d0ee14ade4fd99229`. It retains the explicit last-confirmed Schedule mode introduced in [source `61c299a`](https://github.com/senyo888/thermal-intelligence/commit/61c299a9f0acf4a1ced4698fa3e0b0e531e18489), so the calendar can pair with Frost, Eco, Comfort or Boost even when the thermostat preset is `none`. Configured binding, readiness, freshness and null-valued source guards suppress unsupported evidence. A confirmed mode records accepted intent; it does not prove that a period or Boost timer is still running.
 
-The preceding Lab-tested module is 262418 bytes, SHA-256 `d7701409f421da0127a4b5a4fde887aecc86245a860230fc6d39b993e8ef13e9`, built from [source `65d40ef`](https://github.com/senyo888/thermal-intelligence/commit/65d40efc83d0aba14bc1a4fce3625ca36384208c). Its bounded results below do not cover the corrected bytes. See [configuration](card-configuration.md#presets-provider-and-policy-icons) and the [VT navigation boundary](provider-contracts.md#additional-vt-observations-and-native-controls).
+The current reconciliation fixes two review findings: invalid source-guard values remain visible and editable without accepting the invalid configuration, and expiring combined control evidence updates during a dial draft without replacing the captured marker or expanded controls. The current source passed 203 unit, 222 synthetic browser, 14 foundation, 13 package and eight Marketplace tests. The two regressions failed before the fixes and passed afterward. This module has not been installed or accepted on Lab or Stable.
 
-RC.4 is prepared on `senyo888-patch-1` for future reconciliation into `develop`. It is not a named release or an available installer update. [RC.3](rc-3.md) remains the published prerelease; its assets and the main discovery snapshot are unchanged.
+The preceding Stable-tested module is **265389 bytes**, SHA-256 `25e47e4bdca8328469a1aecf488dd84344ca31854ba921fdc83dafc0e896b9a5`, from `61c299a`. It was installed through Marketplace by immutable commit and passed the bounded Stable checks below. Both modules retain the earlier upright expanded values and current-target checks for confirmed manual-action history. The version remains `0.1.0-rc.4`; the hash distinguishes revisions with that same candidate label.
+
+The latest Lab-tested module is 262418 bytes, SHA-256 `d7701409f421da0127a4b5a4fde887aecc86245a860230fc6d39b993e8ef13e9`, built from [source `65d40ef`](https://github.com/senyo888/thermal-intelligence/commit/65d40efc83d0aba14bc1a4fce3625ca36384208c). Its bounded results below remain specific to those bytes. The intermediate 262718-byte module `f1a730956bd471373d9389f0d55a9e9a7267898c7c2056ed1ed75a7d53de71a2` had synthetic coverage and was superseded. See [configuration](card-configuration.md#presets-provider-and-policy-icons) and the [VT navigation boundary](provider-contracts.md#additional-vt-observations-and-native-controls).
+
+RC.4 is prepared on `senyo888-patch-1` for reconciliation into `develop`. The immutable-commit trial is separate from a named release or automatic installer update. [RC.3](rc-3.md) remains the published prerelease; its assets and the main discovery snapshot are unchanged.
 
 ## Changes from RC.3
 
@@ -22,6 +26,7 @@ RC.4 is prepared on `senyo888-patch-1` for future reconciliation into `develop`.
 - Reading previews retain source and observation status. VT suggestions require explicit adoption and renewed identity checks; selecting a source never enables a feature or sends a command.
 - Typed temperature readings support sensor units and live weather temperature units without conversion. The outside reading does not replace the dial's indoor temperature.
 - Request presentation exposes one accessible status message. An uncertain request keeps an uncertain overview tooltip while its transport is unsettled and after late acknowledgement, without relaxing the command guard.
+- A confirmed Schedule source can pair with an explicitly mapped Frost/Eco/Comfort/Boost mode. Configured but missing, hidden or degraded mode evidence never falls back to the thermostat or House preset. Optional source guards require each declared pending/error attribute to exist and be null.
 
 RC.4 carries the reviewed beta.8 behavior and subsequent icon refinements. Existing readiness, identity, captured-target, confirmation and no-replay checks remain in force. Native VT feature navigation requires a uniquely verified switch on the same device and config entry; it does not broaden optional-switch eligibility.
 
@@ -30,6 +35,20 @@ RC.4 carries the reviewed beta.8 behavior and subsequent icon refinements. Exist
 The card type remains `custom:thermal-intelligence-beta-card`, with editor `thermal-intelligence-beta-card-editor` and picker label **Thermal Intelligence Thermostat · RC**. Existing schema-1 and schema-2 configurations, per-card settings and unknown configuration fields remain supported. Advanced export does not save a dashboard.
 
 The `temperature` telemetry kind and `unit_attribute` require beta.8 or RC.4. RC.3 and earlier reject this kind. Keep a compatible saved configuration with its original module before adding temperature rows; rollback must restore both while preserving unrelated dashboard edits. See [configuration](card-configuration.md) and [update and rollback](migration.md).
+
+The `schedule_preset` mapping and `clear_attributes` guards require `61c299a` or a later build containing that change. Earlier RC.4 modules preserve these fields as unknown data without implementing their behavior. Restore a compatible saved configuration with its matching module; do not assume an earlier build enforces the new guards.
+
+## Stable Marketplace and Schedule checks — 18–19 November 2026
+
+The exact `25e47e4b…` module was installed through Marketplace by immutable source commit. On HA 2026.11.2 with VT 10.6.5, inert frontend fixtures covered all sixteen House/Manual/VT/Schedule and Frost/Eco/Comfort/Boost icon combinations. The temporary fixtures were removed. Synthetic coverage also includes conflicting presets, invalid or stale mappings, hidden and disabled modes, editor round trips and preservation of unknown fields.
+
+Real Schedule ownership and confirmed Comfort, Eco and Frost modes passed, followed by a natural five-minute Schedule/Boost period and confirmed return to Comfort. Safari showed the matching combined icons and VT provider details. Original requests, ownership, schedules, policy settings and dashboard configuration were restored; the temporary Boost record was cleared. A fresh-page observation recorded no VT requests.
+
+An installation-specific ownership error initially prevented these handoffs. The configured controller was corrected and independently tested before the successful run; that backend correction is outside this card and is not a TI dependency. A separate startup output fault recovered automatically before testing. The subsequent fifteen-minute witness recorded no native/adapter incidents or observation gaps. Brief transitional Unknown/Pending reports were retained; no settled checkpoint remained Unknown.
+
+These results establish the observed ownership, accepted-intent and display paths for that installation. They do not establish physical heating, uninterrupted restart health, a formal soak, wider-provider support, named-release installation or complete installer recovery. The latest Lab control checks below remain tied to their earlier module.
+
+The Stable-tested runtime source passed 203 unit, 220 synthetic browser, 14 foundation, 13 package and eight Marketplace checks. Its ten-path change from the preceding reviewed source had a completed scoped security scan with no findings. That scan does not cover later runtime revisions. These are bounded checks, not proof of the absence of all vulnerabilities.
 
 ## Latest Lab-tested revision — 17 November 2026
 

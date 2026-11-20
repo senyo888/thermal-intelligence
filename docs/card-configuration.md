@@ -65,6 +65,12 @@ The top row uses icons for categorical states, with colour for active states and
 
 Provider, source and preset observations share **one combined control indicator**. A reported VT source can pair the VT mark with the selected Comfort icon; Manual can pair the hand with Eco; House can pair the house with its reported Boost policy. A circled **P** represents another reported Provider, Policy or Other source. These are TI marks, not upstream logos. The combined indicator's details retain provider identity, room preset, House policy and schedule activity as separate facts.
 
+Schedule can pair its calendar with an explicitly mapped **last confirmed schedule mode**: Frost, Eco, Comfort or Boost. This supports controllers that apply a numeric target while the thermostat reports preset `none`. The mapping must report accepted intent, not a requested selector or raw timetable metadata. It joins the icon only with confirmed Schedule ownership and a connected, available, ready thermostat in Heat. Its details identify it as the last confirmed mode, not proof that a period or Boost timer is still running. No target-temperature matching or timer inference is used.
+
+Without a schedule-mode mapping, Schedule retains the existing exact selected thermostat-preset display. Once a mapping is configured, missing, invalid, unready, stale or hidden schedule-mode evidence suppresses that badge; it never borrows the thermostat or House preset. Outside Schedule ownership, a valid mode is shown as **Not controlling** in details. **Show Last confirmed schedule mode** controls this badge independently in Top row icon settings.
+
+Clearing **Schedule mode entity** leaves an explicitly disabled mapping and suppresses the badge. Remove the entire `schedule_preset` mapping in YAML to restore the exact thermostat-preset fallback.
+
 The source comes from an explicit mapping reporting **House**, **Schedule**, **Manual**, **VT**, **Provider**, **Policy**, **Other**, **Pending** or **Unknown**. Unknown or degraded evidence from an explicitly mapped source shows only its source/status icon, without a provider, preset or local-action fallback. Without a mapping, the slot shows Unknown unless it is showing the confirmed last card action described below. Provider identity, matching targets and an active schedule do not establish ownership. House pairs only with the mapped effective House policy; it never borrows the room preset or claims that the room has applied that policy.
 
 Advertised Frost, Eco, Comfort and Boost supply the room-preset part only while connected and ready in Heat with that exact preset selected. `preset_labels` changes its display label, not the provider value. Existing preset-temperature mappings remain available in the combined details and **Preset temperatures** chart. A visible mapping takes precedence over the built-in preset option; hiding it leaves the built-in option available. **Show Combined control indicator** hides the whole slot, using the existing `control:ownership` visibility key. Individual preset and House choices control which preset can join it. Provider identity and schedule activity remain in details rather than occupying separate slots.
@@ -82,9 +88,17 @@ house_preset:
   entity: sensor.example_effective_policy
 schedule:
   entity: schedule.example_room
+schedule_preset:
+  entity: sensor.example_control_source
+  attribute: mode
+  climate_attribute: climate_entity
+  ready_attribute: intent_ready
+  clear_attributes: [transaction_token, storage_problem]
 ```
 
 Each mapping accepts `entity`, optional `attribute` (otherwise the entity state), `climate_attribute` (must equal the selected thermostat), `ready_attribute` (must be literal `true`) and `max_age_seconds`. Use binding/readiness fields for a backend contract that exposes them. Add an age limit only when the source defines one: a confirmation timestamp is not necessarily a heartbeat. Missing, stale, invalid and unavailable reports remain distinct. Unknown fields survive edits.
+
+Optional `clear_attributes` lists up to 16 own-property paths that must each exist and be literal `null`. Use it only for contract-defined pending/error fields; missing, false or non-null values do not pass. The visual editor exposes these as comma-separated **clear attributes**. The example assumes a source whose ownership/readiness report already validates its recorded intent against the selected thermostat; the mapping does not install or create that controller.
 
 House preset reads Frost/Eco/Comfort/Boost from the effective policy source; it does not infer that a room follows House. Avoid mapping a command selector that retains the last requested action. Schedule activity accepts on/off, active/inactive or booleans and remains separate from Schedule ownership. TI creates no schedules, policy writers or Hold behavior.
 
@@ -112,7 +126,7 @@ Quick presets come first, followed by Mode and any other advertised climate choi
 | `features` | Custom telemetry & features | `[]` | Ordered portable named observations for the header and expanded features; fields below. |
 | `telemetry` | Optional telemetry | `[]` | Ordered list of explicit source rows; see fields and kinds below. |
 | `vt_telemetry` | VT readings | `[]` | Opt-in provider observations listed below; selecting one never enables a VT feature. |
-| `control_source`, `house_preset`, `schedule` | Control source, House policy and schedule | Unset | Optional read-only entity mappings described below. No scheduling or ownership commands. |
+| `control_source`, `house_preset`, `schedule`, `schedule_preset` | Control source, House policy and schedule | Unset | Optional read-only ownership, effective House policy, schedule activity and last-confirmed schedule-mode mappings described above. No scheduling or ownership commands. |
 | `header_icons` | Top row icon settings | No overrides | Display-only `hidden` and `order` arrays of reading keys, maintained by the editor. Unknown nested fields remain intact. |
 | `humidity_bands` | Four humidity guide boundaries, or explicit legacy low/high | Original `30/40/60/70` guides | `{dry_below, good_min, good_max, wet_above}` requires ordered integers within 0–100. Existing `{low, high}` remains an explicit legacy format. Local display classification only; details below. |
 

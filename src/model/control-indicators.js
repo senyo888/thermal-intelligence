@@ -16,6 +16,8 @@ function mapped(hass,config,key,now,connected) {
     row={...row,status:'invalid',value:null,detail:'The mapped source does not identify this thermostat.'};
   if(row.status==='available'&&mapping.ready_attribute&&readOwnPath(attrs,mapping.ready_attribute).value!==true)
     row={...row,status:'unknown',value:null,detail:'The mapped source has not confirmed that its report is ready.'};
+  if(row.status==='available'&&mapping.clear_attributes?.some(path=>{const field=readOwnPath(attrs,path);return field.value!==null;}))
+    row={...row,status:'unknown',value:null,detail:'A required source guard is missing or has not cleared.'};
   return row;
 }
 
@@ -42,6 +44,16 @@ export function buildControlIndicators(hass,config,climate,now,connected) {
     const preset=typeof house.value==='string'?house.value.toLowerCase():'';
     const known=house.status==='available'&&Object.hasOwn(PRESETS,preset);
     rows.push({...base,...house,key:'control:house',label:'House preset',icon:known?PRESETS[preset]:'mdi:home-thermometer',value:known?label(preset):house.status==='available'?'Unknown':label(house.status),badge:'House',activity:known?'active':'unknown',status:known?house.status:house.status==='available'?'unknown':house.status,detail:'Reported household policy preset. This does not establish that this room is following it.'});
+  }
+  const scheduled=mapped(hass,config,'schedule_preset',now,connected)||(config.schedule_preset?{status:'disabled',value:null,source:{entity:'',attribute:null}}:null);
+  if(scheduled) {
+    const preset=typeof scheduled.value==='string'?scheduled.value.toLowerCase():'';
+    const known=scheduled.status==='available'&&Object.hasOwn(PRESETS,preset);
+    const confirmed=ownership.status==='available'&&owner==='Schedule';
+    rows.push({...base,...scheduled,key:'control:schedule_preset',label:'Last confirmed schedule mode',icon:known&&confirmed?PRESETS[preset]:'mdi:calendar-clock',schedulePreset:known&&confirmed?preset:null,
+      value:known?confirmed?label(preset):'Not controlling':scheduled.status==='available'?'Unknown':label(scheduled.status),status:known?confirmed?scheduled.status:'disabled':scheduled.status==='available'?'unknown':scheduled.status,
+      headerEligible:known&&confirmed&&connected&&climate.available&&climate.ready&&climate.state==='heat',
+      activity:known?confirmed?'active':'neutral':'unknown',detail:'Last accepted mode reported by the mapped schedule controller while Schedule owns this thermostat. This is confirmed intent, not proof that a schedule period or Boost timer is still running. It does not establish physical heating.'});
   }
   const schedule=mapped(hass,config,'schedule',now,connected);
   if(schedule) {
