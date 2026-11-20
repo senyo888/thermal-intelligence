@@ -71,7 +71,7 @@ The optional switch control is available from beta.6 and retained in RC.3; it is
 
 ## Trial and legacy coexistence
 
-All betas and published release candidates use the same trial card and editor registrations. Load only one trial module in a browser document; changing the trial resource requires a fresh document. Keep the separate legacy TI resources and cards unchanged. Untagged beta updates do not change the RC.1 tag or its release assets.
+Beta, RC and prepared stable packages use the same card and editor registrations. Load only one of those modules in a browser document. A stable upgrade replaces the selected beta/RC resource, and changing that resource requires a fresh document. Keep the separate legacy TI resources and cards unchanged. Untagged beta updates do not change the RC.1 tag or its release assets.
 
 ## Installer-managed recovery
 

@@ -82,7 +82,7 @@ The resource-manager source above is from HA 2026.11.0; source review alone does
 
 Add the module once as a **JavaScript module** resource. After updating its versioned URL, open a fresh browser document before checking the card and editor. A custom element already registered in an open page cannot be replaced in place.
 
-RC.3 retains `custom:thermal-intelligence-beta-card`, with the picker name **Thermal Intelligence Thermostat · RC**. Beta and RC packages share their trial registrations; load only one of those modules in a document. Keep existing legacy TI resources and card types in place. See [upgrade and rollback](migration.md).
+RC.3 retains `custom:thermal-intelligence-beta-card`, with the picker name **Thermal Intelligence Thermostat · RC**. Beta, RC and prepared stable packages share the same card and editor registrations; load only one of those modules in a document. A stable upgrade replaces the selected beta/RC resource; do not add it alongside that resource. Keep existing legacy TI resources and card types in place. See [upgrade and rollback](migration.md).
 
 `scripts/package_beta.py` packages both explicit `-beta.N` and `-rc.N` versions from an immutable commit. Its manifest records the version, channel, delivery branch, exact commit/tree and file hashes. It rejects stable versions and mismatched bundles. The script name is retained for existing beta tooling.
 

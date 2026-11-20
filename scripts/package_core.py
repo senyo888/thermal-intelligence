@@ -57,5 +57,3 @@ def package_marketplace(commit, output, *, channels):
     manifest["distribution"] = distribution
     (Path(output) / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     return manifest
-
-
