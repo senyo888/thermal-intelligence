@@ -69,6 +69,8 @@ Schedule can pair its calendar with an explicitly mapped **last confirmed schedu
 
 Without a schedule-mode mapping, Schedule retains the existing exact selected thermostat-preset display. Once a mapping is configured, missing, invalid, unready, stale or hidden schedule-mode evidence suppresses that badge; it never borrows the thermostat or House preset. Outside Schedule ownership, a valid mode is shown as **Not controlling** in details. **Show Last confirmed schedule mode** controls this badge independently in Top row icon settings.
 
+Clearing **Schedule mode entity** leaves an explicitly disabled mapping and suppresses the badge. Remove the entire `schedule_preset` mapping in YAML to restore the exact thermostat-preset fallback.
+
 The source comes from an explicit mapping reporting **House**, **Schedule**, **Manual**, **VT**, **Provider**, **Policy**, **Other**, **Pending** or **Unknown**. Unknown or degraded evidence from an explicitly mapped source shows only its source/status icon, without a provider, preset or local-action fallback. Without a mapping, the slot shows Unknown unless it is showing the confirmed last card action described below. Provider identity, matching targets and an active schedule do not establish ownership. House pairs only with the mapped effective House policy; it never borrows the room preset or claims that the room has applied that policy.
 
 Advertised Frost, Eco, Comfort and Boost supply the room-preset part only while connected and ready in Heat with that exact preset selected. `preset_labels` changes its display label, not the provider value. Existing preset-temperature mappings remain available in the combined details and **Preset temperatures** chart. A visible mapping takes precedence over the built-in preset option; hiding it leaves the built-in option available. **Show Combined control indicator** hides the whole slot, using the existing `control:ownership` visibility key. Individual preset and House choices control which preset can join it. Provider identity and schedule activity remain in details rather than occupying separate slots.
@@ -124,7 +126,7 @@ Quick presets come first, followed by Mode and any other advertised climate choi
 | `features` | Custom telemetry & features | `[]` | Ordered portable named observations for the header and expanded features; fields below. |
 | `telemetry` | Optional telemetry | `[]` | Ordered list of explicit source rows; see fields and kinds below. |
 | `vt_telemetry` | VT readings | `[]` | Opt-in provider observations listed below; selecting one never enables a VT feature. |
-| `control_source`, `house_preset`, `schedule` | Control source, House policy and schedule | Unset | Optional read-only entity mappings described below. No scheduling or ownership commands. |
+| `control_source`, `house_preset`, `schedule`, `schedule_preset` | Control source, House policy and schedule | Unset | Optional read-only ownership, effective House policy, schedule activity and last-confirmed schedule-mode mappings described above. No scheduling or ownership commands. |
 | `header_icons` | Top row icon settings | No overrides | Display-only `hidden` and `order` arrays of reading keys, maintained by the editor. Unknown nested fields remain intact. |
 | `humidity_bands` | Four humidity guide boundaries, or explicit legacy low/high | Original `30/40/60/70` guides | `{dry_below, good_min, good_max, wet_above}` requires ordered integers within 0–100. Existing `{low, high}` remains an explicit legacy format. Local display classification only; details below. |
 
