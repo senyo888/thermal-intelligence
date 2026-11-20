@@ -4,6 +4,7 @@ import { buildModel, targetPayload, targetBoundary, quantize } from '../model/cl
 import { CommandCoordinator } from '../commands/coordinator.js';
 import { styles, mappedControlStyles, expandedStyles } from './styles.js';
 import { selectHeaderIcons } from '../model/header-icons.js';
+import { compactHeader, headerPresentation } from './header-presentation.js';
 import { renderCard } from './source-view.js';
 import { renderDialog, dialogStyles, headerPreview } from './dialogs.js';
 import { humidityBands, moveHumidityBoundary } from '../model/humidity.js';
@@ -240,7 +241,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
   }
   _refreshArcDuringDraft() {
     // Keep pointer capture and the target draft mounted while response evidence expires.
-    const arc = this.model().arc;
+    const model = this.model(), arc = model.arc;
     const colour = /^#[0-9a-f]{6}$/i.test(arc?.color ?? '') ? arc.color : '#94a3b8';
     const surface = this.shadowRoot.querySelector('ha-card');
     if (surface) {
@@ -249,6 +250,17 @@ export class ThermalIntelligenceCard extends HTMLElement {
       surface.dataset.arcReason = arc?.reason || 'unavailable';
     }
     for (const circle of this.shadowRoot.querySelectorAll('[data-response-arc]')) circle.setAttribute('stroke', colour);
+    // Refresh expiring control evidence without replacing the captured dial or controls.
+    const indicator = this._view.querySelector('[data-telemetry-key="control:summary"]');
+    const control = compactHeader(model).find(row=>row.key==='control:summary');
+    if (indicator && control) {
+      const presentation = headerPresentation(control);
+      indicator.title = presentation.title;
+      indicator.setAttribute('aria-label', presentation.title);
+      indicator.style.setProperty('--telemetry-colour', presentation.colour);
+      indicator.dataset.activity = control.activity ?? 'unknown';
+      indicator.innerHTML = presentation.content;
+    }
     this._viewHTML = null;
     this._renderDialog();
     this._scheduleFreshness();

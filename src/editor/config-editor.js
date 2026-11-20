@@ -448,7 +448,9 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
         if(value===undefined)delete next[key].max_age_seconds;else next[key].max_age_seconds=value;
         this._commit(next);
       }}));
-      grid.append(this._field(`${title} clear attributes`,`${key}.clear_attributes`,(mapping.clear_attributes??[]).join(', '),{help:'Optional comma-separated attribute paths that must each exist and be null, such as a pending transaction or storage error. Use only fields defined by this source.',onChange:value=>{
+      const guards=mapping.clear_attributes;
+      const guardText=Array.isArray(guards)&&guards.every(path=>typeof path==='string')?guards.join(', '):typeof guards==='string'?guards:guards===undefined?'':JSON.stringify(guards);
+      grid.append(this._field(`${title} clear attributes`,`${key}.clear_attributes`,guardText,{help:'Optional comma-separated attribute paths that must each exist and be null, such as a pending transaction or storage error. Use only fields defined by this source.',onChange:value=>{
         const next=clone(this._draft);next[key]={...next[key],entity:next[key]?.entity??''};
         if(value.trim())next[key].clear_attributes=value.split(',').map(path=>path.trim());else delete next[key].clear_attributes;
         this._commit(next);

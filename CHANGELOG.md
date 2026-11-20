@@ -11,6 +11,7 @@
 - Add VT outside-temperature and native auto start/stop observations, and arrange expanded mode, preset settings and compact utility controls consistently across providers.
 - Keep expanded reading values upright and show manual-action history only while the current targets match the acknowledged request.
 - Pair Schedule ownership with an explicitly mapped last-confirmed Frost, Eco, Comfort or Boost mode, including when the thermostat preset is `none`. Preserve unavailable, pending and storage-error evidence without borrowing another preset.
+- Keep invalid source-guard values editable without accepting them, and refresh expiring combined control icons during a dial draft without interrupting the gesture.
 
 Prepared on `senyo888-patch-1` for reconciliation into `develop`; RC.3 remains the published prerelease. [RC.4 package checks and limits](docs/rc-4.md) distinguish each Lab-tested module from the later immutable-commit Marketplace installation and bounded Stable Schedule/Boost checks. Temperature and guarded control-source mappings require compatible module/configuration rollback together.
 

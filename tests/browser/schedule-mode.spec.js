@@ -60,3 +60,53 @@ test('schedule mode editor preserves unknown fields and source freshness expires
   await expect(badge(page)).toHaveAccessibleName('Control source: Schedule; Last confirmed schedule mode: Eco');
   await expect(badge(page)).toHaveAccessibleName('Control source: Schedule',{timeout:5000});await expect(badge(page).locator('.preset-mark')).toHaveCount(0);
 });
+
+test('invalid clear guards remain editable without replacing the accepted configuration',async({page})=>{
+  await setup(page);const editor=page.locator('#editor thermal-intelligence-beta-card-editor');
+  for(const [key,title,value] of [
+    ['control_source','Control source','pending'],['house_preset','House preset',42],
+    ['schedule','Schedule activity',true],['schedule_preset','Schedule mode',null],
+    ['schedule_preset','Schedule mode',{toString:null}],['schedule_preset','Schedule mode',[{toString:0}]],
+  ]) {
+    const before=await page.evaluate(()=>JSON.stringify(fixture.config));
+    await page.evaluate(({key,value})=>{
+      fixture.editor.setConfig({...fixture.config,[key]:{...fixture.config[key],entity:'sensor.owner',clear_attributes:value,future:{keep:true}}});
+    },{key,value});
+    await expect(editor.locator('.status.error')).toContainText(`Invalid ${key} clear attributes`);
+    const section=editor.locator('[data-section="control-sources"]');
+    if(!await section.evaluate(node=>node.open))await section.locator('summary').first().click();
+    const field=editor.getByLabel(`${title} clear attributes`,{exact:true});
+    await expect(field).toHaveValue(typeof value==='string'?value:JSON.stringify(value));
+    expect(await page.evaluate(()=>JSON.stringify(fixture.config))).toBe(before);
+    await field.fill('pending, storage');await field.press('Tab');
+    expect(await page.evaluate(key=>fixture.config[key].clear_attributes,key)).toEqual(['pending','storage']);
+    expect(await page.evaluate(key=>fixture.config[key].future,key)).toEqual({keep:true});
+    await expect(editor.locator('.status.error')).toBeHidden();
+  }
+});
+
+test('schedule expiry refreshes the combined icon without interrupting a captured dial draft',async({page})=>{
+  await page.clock.install({time:new Date('2026-11-20T12:00:00Z')});
+  await page.clock.pauseAt(new Date('2026-11-20T12:00:01Z'));
+  await setup(page);
+  await page.evaluate(()=>{fixture.configure({...fixture.config,schedule_preset:{...fixture.config.schedule_preset,max_age_seconds:1}});fixture.refresh();});
+  await expect(badge(page)).toHaveAccessibleName('Control source: Schedule; Last confirmed schedule mode: Eco');
+  await card(page).locator('[data-expand]').click();
+  const marker=card(page).locator('[data-marker="temperature"]');await expect(marker).toBeEnabled();
+  const box=await marker.boundingBox();await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();
+  await page.mouse.move(box.x+box.width/2+12,box.y+box.height/2+6,{steps:3});
+  const draft=await card(page).evaluate(host=>{
+    const root=host.shadowRoot;window.capturedScheduleNodes={marker:root.querySelector('[data-marker]'),badge:root.querySelector('[data-telemetry-key="control:summary"]'),choice:root.querySelector('[data-choice]')};
+    return {value:host._draft,pointer:host._drag?.pointer};
+  });
+  expect(draft.pointer).toEqual(expect.any(Number));
+  await page.clock.runFor(1100);
+  await expect(badge(page)).toHaveAccessibleName('Control source: Schedule');await expect(badge(page).locator('.preset-mark')).toHaveCount(0);
+  expect(await card(page).evaluate(host=>{
+    const root=host.shadowRoot,saved=window.capturedScheduleNodes;
+    return {sameMarker:root.querySelector('[data-marker]')===saved.marker,sameBadge:root.querySelector('[data-telemetry-key="control:summary"]')===saved.badge,sameChoice:root.querySelector('[data-choice]')===saved.choice,value:host._draft,pointer:host._drag?.pointer,captured:saved.marker.hasPointerCapture(host._drag?.pointer)};
+  })).toEqual({sameMarker:true,sameBadge:true,sameChoice:true,value:draft.value,pointer:draft.pointer,captured:true});
+  await expect(marker).toHaveAttribute('aria-valuenow',String(draft.value));
+  await page.keyboard.press('Escape');await page.mouse.up();
+  await badge(page).click();await expect(card(page).getByRole('dialog')).toContainText('Stale');
+});
