@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0 — Unreleased
+
+- Prepare the RC.4 feature set as a stable-version package, preserving existing card/editor registrations and saved configurations.
+- Use the unsuffixed **Thermal Intelligence Thermostat** picker name and an exact stable version/channel manifest.
+- Retain separate beta/RC package routes and reject mismatched metadata or module identities.
+
+This package is prepared for validation, not released or installed. [Package identity and limits](docs/v1.0.0.md) distinguish it from the earlier RC.4 live results. RC.3 remains the published prerelease.
+
 ## 0.1.0-rc.4 — Unreleased
 
 - Carry beta.8’s clearer button feedback, Home Assistant editor guidance, humidity controls, source previews/suggestions and typed temperature observations into an RC candidate.

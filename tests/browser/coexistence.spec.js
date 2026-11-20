@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { build } from 'esbuild';
 const version = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version;
 
-for (const identity of [...new Set([version, '1.0.0', '1.0.0-beta.1'])]) {
+for (const identity of [...new Set([version, '0.1.0-rc.4', '1.0.0', '1.0.0-beta.1'])]) {
 for (const order of ['legacy-first', 'beta-first']) {
   test(`${identity} card and editor coexist with legacy registrations: ${order}`, async ({ page }) => {
     if (identity !== version) {

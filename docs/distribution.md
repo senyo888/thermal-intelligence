@@ -36,7 +36,7 @@ For a reviewed commit containing the metadata and licence copy, replace `REVIEWE
 
 ```sh
 python3 -B scripts/check_marketplace.py --commit REVIEWED_COMMIT
-python3 -B scripts/package_beta.py --commit REVIEWED_COMMIT --marketplace --output /tmp/ti-marketplace-candidate
+python3 -B scripts/package_candidate.py --commit REVIEWED_COMMIT --marketplace --output /tmp/ti-marketplace-candidate
 ```
 
 The destination must not exist. This produces separate `thermal-intelligence.js`, `LICENSE` and `manifest.json` files locally. The manifest records the immutable source, package hashes and distribution metadata. These are candidate release assets; the command does not publish or install them. `hacs.json` stays at the repository root of the selected source revision. The released RC.1 source already contains its own metadata; preparing or promoting RC.3 does not change that release.
