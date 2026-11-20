@@ -43,6 +43,20 @@ The destination must not exist. This produces separate `thermal-intelligence.js`
 
 The distribution check rejects wrong filenames, root modules that would shadow `dist/`, missing or changed licence text, extra payload files, symlinks, executable files, source maps and mismatched module versions. It deliberately accepts only TI's reviewed manifest options. CI checks the committed input and reproduces both manual and Marketplace candidate packages.
 
+### Prepare a stable package
+
+The stable packaging route is available for release preparation. It requires an immutable commit whose package version and generated module both identify the same stable version, such as `1.0.0`:
+
+```sh
+python3 -B scripts/package_release.py --commit REVIEWED_STABLE_COMMIT --marketplace --output /tmp/ti-stable-candidate
+```
+
+Omit `--marketplace` for the manual package. Both routes produce the same three asset filenames and preserve `custom:thermal-intelligence-beta-card` and its editor registration for existing configurations. The stable picker name is **Thermal Intelligence Thermostat**. The older `custom:thermal-intelligence-card` remains independently owned and is never replaced.
+
+`package_beta.py` continues to accept only beta and RC versions; `package_release.py` accepts only stable versions. CI uses `package_candidate.py` for all three validated channels. Every route reads committed files, checks the exact generated version and channel, and rejects an existing output directory. A stable manifest's `delivery_branch: main` records its intended destination only. These commands do not promote a branch, create a tag, publish a release or install the module.
+
+Changing the version or picker changes the module bytes. Validate that resulting package and its upgrade and rollback paths separately; acceptance of an RC does not establish acceptance of a different stable module. Release preparation does not change the current published version or waive the remaining checks below.
+
 ### Remaining installation and release checks
 
 | Check | Status |

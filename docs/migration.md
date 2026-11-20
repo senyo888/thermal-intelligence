@@ -24,6 +24,8 @@ Humidity editor sliders, search and source suggestions do not change schema or e
 
 ## Keep existing TI alongside the trial card
 
+The prepared stable packaging route retains `custom:thermal-intelligence-beta-card` and `thermal-intelligence-beta-card-editor`. Existing schema-1 and schema-2 card configurations therefore keep their type; no rename to the legacy `custom:thermal-intelligence-card` is required. A stable build uses **Thermal Intelligence Thermostat** in the picker, while beta and RC builds retain their channel suffix. This is a compatibility contract for release preparation, not a claim that a stable version has been published or accepted on an installation.
+
 Keep existing `custom:thermal-intelligence-card` instances and their resources in place. Add new trial cards through **Thermal Intelligence Thermostat · RC**. The wider system keeps responsibility for schedules, holds, ownership, cutoff and recovery controls. Preserve its backend-dependent cards and their types.
 
 ## Update an existing trial card

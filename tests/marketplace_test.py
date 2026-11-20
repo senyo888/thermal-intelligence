@@ -16,7 +16,7 @@ class MarketplaceTests(unittest.TestCase):
             "package.json": b'{"version":"0.1.0-rc.1"}',
             "LICENSE": b"Fixture licence",
             "dist/LICENSE": b"Fixture licence",
-            "dist/thermal-intelligence.js": b"0.1.0-rc.1 thermal-intelligence-beta-card thermal-intelligence-beta-card-editor",
+            "dist/thermal-intelligence.js": "/*! Thermal Intelligence Cards 0.1.0-rc.1 — prerelease frontend module. GPL-3.0-only. */ thermal-intelligence-beta-card thermal-intelligence-beta-card-editor".encode(),
         }
 
     def check(self):

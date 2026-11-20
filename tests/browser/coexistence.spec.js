@@ -1,10 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { build } from 'esbuild';
 const version = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version;
 
+for (const identity of [...new Set([version, '1.0.0', '1.0.0-beta.1'])]) {
 for (const order of ['legacy-first', 'beta-first']) {
-  test(`beta card and editor coexist with legacy registrations: ${order}`, async ({ page }) => {
+  test(`${identity} card and editor coexist with legacy registrations: ${order}`, async ({ page }) => {
+    if (identity !== version) {
+      const result = await build({ entryPoints: ['src/index.js'], bundle: true, format: 'esm', write: false,
+        define: { __TI_VERSION__: JSON.stringify(identity) } });
+      await page.route('**/dist/thermal-intelligence.js*', route => route.fulfill({ contentType: 'text/javascript', body: result.outputFiles[0].text }));
+    }
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.goto('/tests/fixtures/index.html');
@@ -43,10 +50,31 @@ for (const order of ['legacy-first', 'beta-first']) {
     }, order);
     expect(result).toEqual({
       legacyPreserved: true, betaPreserved: true, editorCorrect: true,
-      version, pickerName: `Thermal Intelligence Thermostat · ${version.includes('-rc.') ? 'RC' : 'Beta'}`,
+      version: identity, pickerName: `Thermal Intelligence Thermostat${identity.includes('-') ? ` · ${identity.includes('-rc.') ? 'RC' : 'Beta'}` : ''}`,
       stub: 'custom:thermal-intelligence-beta-card',
       picker: order === 'legacy-first' ? ['thermal-intelligence-card', 'thermal-intelligence-beta-card'] : ['thermal-intelligence-beta-card', 'thermal-intelligence-card'], calls: 0,
     });
     expect(errors).toEqual([]);
   });
 }
+}
+
+test('stable resource detects an already registered RC without replacing it', async ({ page }) => {
+  const warnings = [];
+  page.on('console', message => { if (message.type() === 'warning') warnings.push(message.text()); });
+  const rc = await build({ entryPoints: ['src/index.js'], bundle: true, format: 'esm', write: false,
+    define: { __TI_VERSION__: JSON.stringify('0.1.0-rc.4') } });
+  await page.route('**/dist/thermal-intelligence.js', route => route.fulfill({ contentType: 'text/javascript', body: rc.outputFiles[0].text }));
+  await page.goto('/tests/fixtures/coexistence.html');
+  await page.evaluate(async () => { await import('/dist/thermal-intelligence.js'); window.originalCard = customElements.get('thermal-intelligence-beta-card'); });
+  const result = await build({ entryPoints: ['src/index.js'], bundle: true, format: 'esm', write: false,
+    define: { __TI_VERSION__: JSON.stringify('1.0.0') } });
+  await page.route('**/stable-identity.js', route => route.fulfill({ contentType: 'text/javascript', body: result.outputFiles[0].text }));
+  const preserved = await page.evaluate(async () => {
+    await import('/stable-identity.js');
+    return customElements.get('thermal-intelligence-beta-card') === window.originalCard &&
+      window.customCards.filter(card => card.type === 'thermal-intelligence-beta-card').length === 1;
+  });
+  expect(preserved).toBe(true);
+  expect(warnings.filter(message => message.includes('already registered by another version'))).toHaveLength(2);
+});

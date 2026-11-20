@@ -7,6 +7,7 @@ import json
 import stat
 import subprocess
 from pathlib import Path
+from package_identity import validate_bundle
 
 
 EXPECTED_MANIFEST = {
@@ -53,9 +54,7 @@ def validate(read, paths):
     version = metadata.get("version")
     bundle = read("dist/thermal-intelligence.js")
     text = bundle.decode("utf-8")
-    if not isinstance(version, str) or not version or not all(value in text for value in (
-            version, "thermal-intelligence-beta-card", "thermal-intelligence-beta-card-editor")):
-        raise ValueError("Module version or trial registration does not match the package")
+    validate_bundle(version, text)
     if "sourceMappingURL=" in text or not 0 < len(bundle) <= 1_000_000:
         raise ValueError("Unexpected source map or module size")
     return {
