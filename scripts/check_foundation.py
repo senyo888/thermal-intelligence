@@ -23,10 +23,10 @@ PRIVATE_DOCUMENTS = {
 }
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".svg", ".webp", ".gif"}
 
-# Frozen RC.3 candidate distribution from f93fb6489f87fbf9c393dd8cd03e85e5718277ef.
+# Frozen 1.0.0 distribution from 03df08e1fbcd8c8635543bded041e2ccdf2bed8d.
 # Update only alongside an explicitly reviewed candidate promotion.
 DISTRIBUTION_HASHES = {
-    "dist/thermal-intelligence.js": "750be9cc7acc0f1a6449be0a578c90d73d771372a106e2af9d31d8d5d45a45be",
+    "dist/thermal-intelligence.js": "2f838e7ed3d59d4dc87f7e156872b2b820ca8cc19fa24410d66b6759190cdeba",
     "dist/LICENSE": "fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0",
 }
 HACS_METADATA = {
@@ -51,7 +51,7 @@ def check_distribution(indexed):
         data = git("show", f":{name}")
         if name in DISTRIBUTION_HASHES:
             if hashlib.sha256(data).hexdigest() != DISTRIBUTION_HASHES[name]:
-                errors.append(f"{name}: differs from the reviewed RC.3 snapshot")
+                errors.append(f"{name}: differs from the reviewed distribution snapshot")
         else:
             try:
                 metadata = json.loads(data)
