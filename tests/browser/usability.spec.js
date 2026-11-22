@@ -12,6 +12,32 @@ test.beforeEach(async({page})=>{
 });
 test.afterEach(async({page})=>expect(page.errors).toEqual([]));
 
+for (const [field, invalid, message] of [
+  ['hidden', {header_icons: {hidden: {}}}, 'header_icons.hidden must contain unique reading keys.'],
+  ['order', {header_icons: {order: {}}}, 'header_icons.order must contain unique reading keys.'],
+  ['vt_telemetry', {vt_telemetry: {}}, 'Choose supported VT readings.'],
+]) {
+  test(`invalid ${field} survives editor refresh and recovers after YAML correction`, async ({page}) => {
+    await page.evaluate(invalid => {
+      fixture.editor.setConfig({...fixture.config, ...invalid});
+      fixture.refresh();
+    }, invalid);
+    await expect(editor(page).getByRole('alert')).toHaveText(message);
+    await expect(editor(page).locator('[data-reading-preview]')).toContainText('Correct the draft');
+    expect(await page.evaluate(() => fixture.editor._draft)).toMatchObject(invalid);
+    await expect(editor(page).locator('[data-icon-row]')).toHaveCount(0);
+
+    await page.evaluate(() => {
+      fixture.editor.setConfig(fixture.config);
+      fixture.refresh();
+    });
+    await expect(editor(page).locator('[data-reading-preview]')).toContainText('Humidity');
+    await expect(editor(page).locator('[data-icon-row]').first()).toBeAttached();
+    await expect(editor(page).getByRole('alert')).toHaveCount(0);
+    expect(await page.evaluate(() => [fixture.events, fixture.calls])).toEqual([[], []]);
+  });
+}
+
 test('1000 switches search by name and exact ID without selecting, enrolling or sending commands',async({page})=>{
   await page.evaluate(()=>{
     for(let i=0;i<1000;i++) fixture.hass.states['switch.example_'+i]={entity_id:'switch.example_'+i,state:'off',attributes:{friendly_name:i<2?'Duplicate name':'Example '+i}};

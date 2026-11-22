@@ -2,13 +2,16 @@
 
 <img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/f4bd1ce81e272d80823f7a1c64a0cb5ceafc345c/assets/presentation/thermal-intelligence-v1-release-header.png" alt="Thermal Intelligence 1.0.0 with the TI house logo and Plum dial" width="100%">
 
-Start with one thermostat. The [first-room walkthrough](https://github.com/senyo888/thermal-intelligence/wiki/Configuration) takes you from an empty dashboard card to a dial with a reading you chose yourself.
-
 ## Start here
 
-1. **Choose the right guide.** RC.3 is the published prerelease. Use its [Marketplace instructions](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md) or [HACS guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/hacs.md). The prepared 1.0.0 module has an unsuffixed **Thermal Intelligence Thermostat** picker.
-2. **Set up your room.** Select a climate entity and save. Expose [VT readings or your own sensors](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#choose-your-sources), then [arrange the header](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#arrange-the-top-row).
-3. **Read the result.** Learn what the [arc, slope ring, status chip and LED](https://github.com/senyo888/thermal-intelligence/wiki/Reading-the-card) tell you. To enable the optional warming response, follow the [temperature response walkthrough](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#set-up-temperature-response).
+**Using the published RC.3 prerelease?** Its picker reads **Thermal Intelligence Thermostat · RC**. Follow the [RC.3 setup guide](https://github.com/senyo888/thermal-intelligence/blob/4caf6f84868079a4d8f25c5d5731654f015bc260/docs/card-configuration.md#visual-configuration) for that editor. For installation, use the [Marketplace instructions](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md) or [HACS guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/hacs.md).
+
+## Set up your first room with 1.0.0
+
+The prepared 1.0.0 card appears as **Thermal Intelligence Thermostat** in the picker. Start with one thermostat and follow the [first-room walkthrough](https://github.com/senyo888/thermal-intelligence/wiki/Configuration).
+
+1. **Set up your room.** Select a climate entity and save. Expose [VT readings or your own sensors](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#choose-your-sources), then [arrange the header](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#arrange-the-top-row).
+2. **Read the result.** Learn what the [arc, slope ring, status chip and LED](https://github.com/senyo888/thermal-intelligence/wiki/Reading-the-card) tell you. To enable the optional warming response, follow the [temperature response walkthrough](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#set-up-temperature-response).
 
 [See the Plum card, top-row layout and VT response setup in Senyo’s introduction to 1.0.0](https://github.com/senyo888/thermal-intelligence/blob/fe8414957fd490fa412eaa80920ecfe84f5e9561/docs/v1.0.0.md) · [Complete settings and YAML](https://github.com/senyo888/thermal-intelligence/blob/fe8414957fd490fa412eaa80920ecfe84f5e9561/docs/card-configuration.md)
 

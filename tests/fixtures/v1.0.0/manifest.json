@@ -8,7 +8,7 @@
       "dist/LICENSE",
       "dist/thermal-intelligence.js"
     ],
-    "module_sha256": "711b0cbd081f7bfee93bf6b94277b4db3e51248e8e2b9297911985d1e9f03223",
+    "module_sha256": "811304537ba70ddd4d5d81c25f5135ac260ce82143af0d561662a9a2bcb2b289",
     "repository_manifest": {
       "content_in_root": false,
       "filename": "thermal-intelligence.js",
@@ -17,7 +17,7 @@
     },
     "repository_manifest_sha256": "cbd811d94d0b7d19d81d13e628c7f3dba9fe236b47ba6e9fa45bd5756eb1490f",
     "scope": "Offline package structure only; installation, migration and catalogue inclusion unverified",
-    "source": "fe8414957fd490fa412eaa80920ecfe84f5e9561"
+    "source": "f78709b12fad79bd19ce2da7d60186ad13b8ea9f"
   },
   "editor_tag": "thermal-intelligence-thermostat-editor",
   "files": [
@@ -27,15 +27,15 @@
       "sha256": "fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0"
     },
     {
-      "bytes": 268404,
+      "bytes": 268409,
       "path": "thermal-intelligence.js",
-      "sha256": "711b0cbd081f7bfee93bf6b94277b4db3e51248e8e2b9297911985d1e9f03223"
+      "sha256": "811304537ba70ddd4d5d81c25f5135ac260ce82143af0d561662a9a2bcb2b289"
     }
   ],
   "product": "Thermal Intelligence",
   "repository": "https://github.com/senyo888/thermal-intelligence",
   "schema": 1,
-  "source_commit": "fe8414957fd490fa412eaa80920ecfe84f5e9561",
-  "source_tree": "f5960fa5f5aaa09c6d3ea7d429df2283e3679f20",
+  "source_commit": "f78709b12fad79bd19ce2da7d60186ad13b8ea9f",
+  "source_tree": "9982b40c656285d3fa055f732a653f27e0f8c13d",
   "version": "1.0.0"
 }
