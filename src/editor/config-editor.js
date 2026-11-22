@@ -527,7 +527,7 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     let model;
     try { model = buildModel(this._hass ?? {}, this._draft, this._previewIdentity()); }
     catch { /* Invalid drafts keep their fields without inventing a preview. */ }
-    this._iconOptions?.update(model,this._draft,!model);
+    this._iconOptions?.update(model, model ? this._draft : {}, !model);
     const container = this.shadowRoot.querySelector('[data-reading-preview]');
     if (container) {
       const rows = model?.headerTelemetry ?? [];
