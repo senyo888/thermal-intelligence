@@ -42,6 +42,11 @@ def validate(read, paths):
         raise ValueError("dist/ may contain only the module and LICENSE")
     if ROOT_MODULES & paths:
         raise ValueError("A root module would shadow the reviewed dist/ module")
+    # Marketplace can select a Dashboard module by filename anywhere in the tree.
+    filename = EXPECTED_MANIFEST["filename"]
+    duplicates = sorted(p for p in paths if Path(p).name == filename and p != f"dist/{filename}")
+    if duplicates:
+        raise ValueError("Duplicate Marketplace module filename: " + ", ".join(duplicates))
     manifest_bytes = read("hacs.json")
     manifest = json.loads(manifest_bytes, object_pairs_hook=unique_object)
     # Strict types matter: Python otherwise treats 0 as False and 1 as True.

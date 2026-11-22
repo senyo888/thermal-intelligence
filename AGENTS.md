@@ -14,7 +14,7 @@ Thermal Intelligence is created and maintained by **Senyo (senyo888)**. Lead pub
 
 ## Contribution order
 
-Commit and push changes to `senyo888-patch-1` first, then open a pull request into `develop`. Prepare and validate release candidates through `develop`. Promotion to `main`, formal releases and installation upgrades require their separate approvals. Preserve beta and RC runtime identities when carrying shared tooling or documentation between branches.
+Commit and push changes to `senyo888-patch-1` first, then open a pull request into `develop`. Validate the release candidate on `develop`, then promote it by pull request from `develop` to `main`. After that pull request merges, tag and release the approved commit on `main`. Promotion, formal releases and installation upgrades require their separate approvals. Preserve beta and RC runtime identities when carrying shared tooling or documentation between branches.
 
 ## Public and private material
 

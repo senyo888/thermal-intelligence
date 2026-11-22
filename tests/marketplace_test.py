@@ -44,6 +44,11 @@ class MarketplaceTests(unittest.TestCase):
         self.files['thermal-intelligence.js'] = b'old root module'
         with self.assertRaises(ValueError): self.check()
 
+    def test_historical_fixture_cannot_shadow_dist(self):
+        self.files['tests/fixtures/rc-1/dist/thermal-intelligence.js'] = b'historical module'
+        with self.assertRaisesRegex(ValueError, "Duplicate Marketplace module filename"):
+            self.check()
+
     def test_extra_dist_source_map_rejected(self):
         self.files['dist/thermal-intelligence.js.map'] = b'{}'
         with self.assertRaises(ValueError): self.check()

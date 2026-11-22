@@ -2,11 +2,12 @@
 
 ## 1.0.0 — Unreleased
 
-- Prepare the RC.4 feature set as a stable-version package, preserving existing card/editor registrations and saved configurations.
-- Use the unsuffixed **Thermal Intelligence Thermostat** picker name and an exact stable version/channel manifest.
-- Retain separate beta/RC package routes and reject mismatched metadata or module identities.
+- Choose a thermostat, add independent room sensors or expose VT readings, and arrange the top row separately on each card.
+- Read the confirmed control source and applicable preset together. Open the indicator for ownership, House policy and Schedule details.
+- Configure the optional VT temperature response arc using measured room trend and accepted output.
+- Select **Thermal Intelligence Thermostat** in Add Card. The existing YAML registration and compatible schema-1/schema-2 cards are retained.
 
-This package is prepared for validation, not released or installed. [Package identity and limits](docs/v1.0.0.md) distinguish it from the earlier RC.4 live results. RC.3 remains the published prerelease.
+[Senyo’s introduction](docs/v1.0.0.md) · [Package details](docs/v1.0.0-package.md) · [First-room walkthrough](docs/wiki/Configuration.md) · [Tested coverage](docs/compatibility.md#unreleased-100-package). RC.3 is the published prerelease.
 
 ## 0.1.0-rc.4 — Unreleased
 

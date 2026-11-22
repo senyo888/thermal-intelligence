@@ -1,6 +1,6 @@
 # Thermal Intelligence architecture contract
 
-The standalone frontend is published as [RC.3](docs/rc-3.md) from [source `f93fb64`](https://github.com/senyo888/thermal-intelligence/tree/f93fb6489f87fbf9c393dd8cd03e85e5718277ef). `main` carries documentation and a separately promoted frozen snapshot. Candidates are prepared through `develop`, with beta work on `senyo888-patch-1`. The card presents Home Assistant/provider state and sends commands only after explicit user interaction. A future TI backend is a separate component and is not required by this card.
+This checkout contains the prepared [1.0.0 frontend](docs/v1.0.0.md). The latest published prerelease is [RC.3](docs/rc-3.md) from [source `f93fb64`](https://github.com/senyo888/thermal-intelligence/tree/f93fb6489f87fbf9c393dd8cd03e85e5718277ef). `main` carries documentation and a separately promoted frozen snapshot. Candidates are prepared through `develop`, with beta work on `senyo888-patch-1`. The card presents Home Assistant/provider state and sends commands only after explicit user interaction. A future TI backend is a separate component and is not required by this card.
 
 ## Ownership and layers
 
@@ -21,7 +21,7 @@ Thermostats and TRVs are one part of the input landscape. Independent indoor sen
 
 The **selected climate entity** supplies the dial’s current temperature and target, advertised controls and provider details. The **independent source mappings** supply optional humidity, temperature trend, valve position, power, energy and named readings. Those sensors do not have to pass through VT. Existing HA trend sensors/helpers supply the trend; TI reads that configured result.
 
-An independent room or TRV temperature can be a named reading or an explicitly mapped response-arc input. The dial continues to use the selected climate entity’s `current_temperature`. The unreleased [RC.4 candidate](docs/rc-4.md) carries beta.8’s typed temperature observations and a guided outdoor mapping with live weather-unit validation. Other weather conditions remain explicit scalar feature/custom-telemetry mappings; forecast processing and weather-driven heating policy belong to separate provider/backend contracts.
+An independent room or TRV temperature can be a named reading or an explicitly mapped response-arc input. The dial continues to use the selected climate entity’s `current_temperature`. Version 1.0.0 includes typed temperature observations and a guided outdoor mapping with live weather-unit validation. Other weather conditions remain explicit scalar feature/custom-telemetry mappings; forecast processing and weather-driven heating policy belong to separate provider/backend contracts.
 
 Raw window, presence and motion inputs remain distinct from the feature states accepted by VT. TI preserves which source a reading came from, its availability, units and any configured freshness requirement. [Configuration and mapping reference](docs/card-configuration.md).
 
@@ -55,7 +55,7 @@ Define coalescing/cancellation behavior for rapid inputs and stale completions. 
 
 Use a versioned, validated card configuration with documented migrations. All declared first-release options must be available visually, including optional telemetry/provider details where retained. Preserve unknown/advanced fields during edits. Scope settings to a card instance unless the user explicitly selects a broader operation.
 
-Separate a no-entity setup state from operational validation. Stub generation, editor construction and preview have no device side effects. Escape dynamic text at DOM sinks. No unsafe HTML from entities, provider reason text or imported config. The prerelease registers only `thermal-intelligence-beta-card` and its editor, preserving legacy registrations. Guard duplicate resource loading without masking incompatible versions; see [migration](docs/migration.md).
+Separate a no-entity setup state from operational validation. Stub generation, editor construction and preview have no device side effects. Escape dynamic text at DOM sinks. No unsafe HTML from entities, provider reason text or imported config. The standalone module registers only `thermal-intelligence-beta-card` and its editor, preserving legacy registrations. Guard duplicate resource loading without masking incompatible versions; see [migration](docs/migration.md).
 
 ## Optional Humidity Intelligence interoperability
 

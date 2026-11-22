@@ -1,5 +1,7 @@
 # Distribution
 
+The [1.0.0 release preparation](v1.0.0-package.md) identifies the tested module and its upgrade path. It has been installed by exact commit. The newest published tag is still RC.3. Stable releases follow two pull requests in order, `senyo888-patch-1` into `develop`, then `develop` into `main`. The stable tag and its release assets come from the approved commit on `main` after the second merge.
+
 [RC.3](rc-3.md) is the current published prerelease, from source `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`. Its exact package is preserved by the `v0.1.0-rc.3` tag; `main` carries the promoted snapshot and current documentation. Verify a branch revision before use rather than assuming it matches the released tag. [RC.2](rc.md), [RC.1](rc-1.md) and [beta.7](beta-7.md) retain their dated historical records. Use [Marketplace](marketplace.md) for Home Assistant 2026.11 and later, or [HACS](hacs.md) on older installations.
 
 [RC.4](rc-4.md) is an unreleased candidate prepared on `senyo888-patch-1` for later reconciliation into `develop`. Its local package manifest names `develop` as the intended delivery branch; that field does not prove branch promotion, publication or installation. The published RC.3 package and main discovery snapshot remain unchanged.

@@ -1,14 +1,24 @@
 # Compatibility
 
+## Unreleased 1.0.0 package
+
+The 265,844-byte module was verified at SHA-256 `2f838e7ed3d59d4dc87f7e156872b2b820ca8cc19fa24410d66b6759190cdeba`. Use the [1.0.0 package and upgrade notes](v1.0.0-package.md) for the matching picker and resource.
+
+| Check | Coverage for this module |
+| --- | --- |
+| Home Assistant and VT | A manual test installation on HA 2026.11.2 with VT 10.6.5 exercised eight control actions on inert fixtures. A second installation used Marketplace with the exact source commit. |
+| Editor and room controls | Save and reload, invalid humidity draft, room target adjustment, VT Boost and clearing the preset were checked. A five-minute scheduled Boost started and returned to Comfort automatically. |
+| Whole-house policy supplied by a separate controller | Comfort confirmed across eight rooms. Boost confirmed in seven. A thermostat with its user lock enabled kept its target. After the house timer expired all eight confirmed Comfort, then their original settings were restored. Physical heat delivery was outside these checks. |
+| Marketplace rollback and reinstall | On HA 2026.11.2, an in-place rollback to RC.4 and reinstall of 1.0.0 preserved the resource ID and loaded the expected card and editor. Removal preserved the dashboard and unrelated resource. Home Assistant served the exact installed card and full licence. A local named-release rehearsal also delivered both files. See the [installer results and package checks](v1.0.0-package.md#validation-boundaries). |
+| Devices and observation | Phone, tablet and desktop layout fixtures passed. The 48-hour Lab soak finished on 22 November 2026. All nine checkpoints reported healthy for Home Assistant Core, the exact 1.0.0 module, VT and the expected HA/VT versions. Verification of the public tagged download follows release. A minimum supported HA version has not been established. |
+
+## Published RC.3
+
 Current published prerelease: **0.1.0-rc.3**. [RC.3](rc-3.md) corrects request ordering, configuration editing and presentation while preserving schema-1/schema-2 configurations and existing control restrictions.
 
 On 13 November 2026, the exact released module passed passive manual Lab checks on HA 2026.11.0: six inert fixture renders, humidity editing/manual export, clearing a visual valve mapping and browser reconnect, with no observed thermostat commands or observation gaps. The independent observation exceeded its planned five-minute limit, lasting about 10 minutes 43 seconds. This is a pass for the completed checks, not full timing-plan compliance or a soak. See the [exact package and validation limits](rc-3.md#validation-limits).
 
 The Lab used a manual overlay while Marketplace retained RC.2. RC.3 named-release Marketplace acceptance, physical clients, wider providers, installer update/removal/recovery and backup restore rehearsal remain incomplete. Explicitly empty YAML valve sources, range controls and delayed clipboard/stale-registry cases retain synthetic or historical coverage. A minimum supported HA version has not been established.
-
-## Unreleased 1.0.0 package
-
-The prepared stable-version module is `2f838e7ed3d59d4dc87f7e156872b2b820ca8cc19fa24410d66b6759190cdeba` (265844 bytes). It retains the runtime source and card/editor registrations from the RC.4 packaging preparation, with stable version/banner/picker identity. These bytes have not been installed on Lab or Stable and do not inherit earlier live acceptance. [Package and upgrade details](v1.0.0.md).
 
 ## Unreleased RC.4 candidate
 
