@@ -12,12 +12,13 @@ for (const order of ['legacy-first', 'beta-first']) {
         define: { __TI_VERSION__: JSON.stringify(identity) } });
       await page.route('**/dist/thermal-intelligence.js*', route => route.fulfill({ contentType: 'text/javascript', body: result.outputFiles[0].text }));
     }
+    const tag = identity.includes('-') ? 'thermal-intelligence-beta-card' : 'thermal-intelligence-thermostat';
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.goto('/tests/fixtures/index.html');
     // A fresh document avoids the fixture's automatic module registration.
     await page.goto('/tests/fixtures/coexistence.html');
-    const result = await page.evaluate(async order => {
+    const result = await page.evaluate(async ({order,tag}) => {
       class LegacyCard extends HTMLElement {}
       class LegacyEditor extends HTMLElement {}
       const legacy = () => {
@@ -29,7 +30,7 @@ for (const order of ['legacy-first', 'beta-first']) {
       if (order === 'legacy-first') legacy();
       await import('/dist/thermal-intelligence.js');
       const Card = customElements.get('thermal-intelligence-beta-card');
-      const Editor = customElements.get('thermal-intelligence-beta-card-editor');
+      const Editor = customElements.get(tag + '-editor');
       if (order === 'beta-first') legacy();
       await import('/dist/thermal-intelligence.js?duplicate=1');
       const element = new Card();
@@ -38,21 +39,29 @@ for (const order of ['legacy-first', 'beta-first']) {
       element.hass = { states: {}, callService: () => { calls++; }, connected: true };
       document.body.append(element);
       const configEditor = await Card.getConfigElement();
+      const stub = Card.getStubConfig({states:{}});
+      const fromYaml = document.createElement(stub.type.slice('custom:'.length));
+      fromYaml.setConfig({...stub, future_option:{preserved:true}});
+      const alias = new Card();
+      alias.setConfig({type:'custom:thermal-intelligence-beta-card', future_option:{preserved:true}});
+      const exportable = fromYaml.config.type === stub.type && fromYaml.config.future_option.preserved
+        && alias.config.type === stub.type && alias.config.future_option.preserved;
+
       return {
         legacyPreserved: customElements.get('thermal-intelligence-card') === LegacyCard && customElements.get('thermal-intelligence-card-editor') === LegacyEditor,
         betaPreserved: customElements.get('thermal-intelligence-beta-card') === Card,
-        editorCorrect: configEditor instanceof Editor,
+        editorCorrect: configEditor instanceof Editor, exportable,
         stub: Card.getStubConfig({ states: {} }).type,
         picker: window.customCards.map(card => card.type), calls,
         version: Card.tiVersion,
-        pickerName: window.customCards.find(card => card.type === 'thermal-intelligence-beta-card').name,
+        pickerName: window.customCards.find(card => card.type === tag).name,
       };
-    }, order);
+    }, {order,tag});
     expect(result).toEqual({
-      legacyPreserved: true, betaPreserved: true, editorCorrect: true,
+      legacyPreserved: true, betaPreserved: true, editorCorrect: true, exportable:true,
       version: identity, pickerName: `Thermal Intelligence Thermostat${identity.includes('-') ? ` · ${identity.includes('-rc.') ? 'RC' : 'Beta'}` : ''}`,
-      stub: 'custom:thermal-intelligence-beta-card',
-      picker: order === 'legacy-first' ? ['thermal-intelligence-card', 'thermal-intelligence-beta-card'] : ['thermal-intelligence-beta-card', 'thermal-intelligence-card'], calls: 0,
+      stub: 'custom:'+tag,
+      picker: order === 'legacy-first' ? ['thermal-intelligence-card', tag] : [tag, 'thermal-intelligence-card'], calls: 0,
     });
     expect(errors).toEqual([]);
   });

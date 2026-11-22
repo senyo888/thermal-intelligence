@@ -72,6 +72,13 @@ test('humidity editor gives matching slider, exact fields and preserved unknown 
   await page.evaluate(()=>fixture.reset('standard',{humidity_bands:{dry_below:30,good_min:40,good_max:60,wet_above:70,future:{retained:true}}}));
   await section(page,'humidity');
   const slider=editor(page).getByRole('slider',{name:'Too dry below humidity slider'});
+  const bar=editor(page).locator('[data-humidity-preview] .bar');
+  await expect(bar.getByRole('slider')).toHaveCount(4);
+  const tracks=await bar.getByRole('slider').evaluateAll(nodes=>nodes.map(node=>{
+    const {left,top,width}=node.getBoundingClientRect();
+    return [left,top,width];
+  }));
+  expect(tracks.every(rect=>rect.every((value,index)=>value===tracks[0][index]))).toBe(true);
   await slider.focus();await slider.press('ArrowRight');
   await expect(editor(page).getByLabel('Humidity too dry below (%)',{exact:true})).toHaveValue('31');
   await expect(editor(page).locator('[data-humidity-preview]')).toContainText('48% · Good range');
@@ -159,6 +166,7 @@ for(const clipboard of ['absent','rejected','delayed'])test(`settings export rev
   }
   await expect(output).toBeVisible();await expect(output).toBeFocused();
   expect(await output.evaluate(node=>[node.selectionStart,node.selectionEnd])).toEqual([0,(await output.inputValue()).length]);
+  expect(JSON.parse(await output.inputValue()).type).toBe('custom:thermal-intelligence-thermostat');
   expect(JSON.parse(await output.inputValue()).name).toBe(clipboard==='delayed'?'Latest export draft':'Manual export draft');
   await page.keyboard.press('Escape');
   expect(await page.evaluate(()=>fixture.config)).toEqual(saved);
@@ -370,4 +378,61 @@ test('a dashboard-style host can cancel or save one card draft without commands'
   await expect(card(page)).toContainText('Saved draft');
   await expect(page.locator('thermal-intelligence-beta-card').nth(1)).toContainText('Second card');
   expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+});
+
+test('outside choices track unit eligibility and deferred inventory appears after blur',async({page})=>{
+  await section(page,'sources');
+  const select=editor(page).locator('[data-field="outside.entity"]');
+  const option=select.locator('option[value="sensor.garden"]');
+  await page.evaluate(()=>fixture.editor.shadowRoot.activeElement?.blur());
+  async function report(unit) {
+    await page.evaluate(unit=>{
+      fixture.hass.states['sensor.garden']={state:'18',attributes:{friendly_name:'Garden',unit_of_measurement:unit}};
+      fixture.refresh();
+    },unit);
+  }
+  await report('%');await expect(option).toHaveCount(0);
+  await report('°C');await expect(option).toHaveCount(1);
+  await select.selectOption('sensor.garden');
+  await report('°F');await expect(select).toHaveValue('sensor.garden');
+  await select.focus();await report('%');
+  await select.evaluate(node=>node.blur());
+  await expect(option).toHaveCount(0);
+  await expect(editor(page).getByRole('button',{name:'Add outside reading'})).toBeDisabled();
+  expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+});
+
+for(const surface of ['editor','dialog'])test(`adjacent humidity thumbs can each be selected by touch in the ${surface}`,async({browser})=>{
+  const page=await browser.newPage({viewport:{width:390,height:844},hasTouch:true,isMobile:true});
+  try {
+    await page.goto('/');
+    await page.evaluate(()=>fixture.reset('standard',{humidity_bands:{dry_below:40,good_min:41,good_max:42,wet_above:43}}));
+    let bar;
+    if(surface==='editor'){
+      await section(page,'humidity');bar=editor(page).locator('[data-humidity-preview] .bar');
+    } else {
+      await card(page).locator('[data-telemetry-topic="humidity"]').click();
+      await card(page).locator('#humidity-advanced summary').click();
+      bar=card(page).locator('dialog .bar');
+    }
+    await bar.scrollIntoViewIfNeeded();
+    const rect=await bar.boundingBox();
+    const x=percent=>rect.x+11+(rect.width-22)*percent/100,y=rect.y+rect.height/2;
+    const inputs=bar.getByRole('slider');
+    for(const [index,value] of [40,41,42,43].entries()){
+      await page.touchscreen.tap(x(value),y);
+      await expect(inputs.nth(index)).toBeFocused();
+    }
+    const touch=await page.context().newCDPSession(page);
+    const expected=[40,41,42,43];
+    for(const [index,to] of [30,35,37,50].entries()){
+      const from=expected[index];
+      await touch.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:x(from),y}]});
+      await touch.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x(to),y}]});
+      await touch.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+      expected[index]=to;
+      await expect.poll(()=>inputs.evaluateAll(nodes=>nodes.map(node=>node.valueAsNumber))).toEqual(expected);
+    }
+    expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+  } finally {await page.close();}
 });

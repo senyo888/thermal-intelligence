@@ -11,10 +11,10 @@ This walkthrough covers **Thermal Intelligence Thermostat** in the prepared **1.
 3. Leave **Provider** on **Automatic** for a registered thermostat. Check that the preview shows the right room, current temperature and target or target range. The provider supplies the available modes, presets, limits and step.
 4. Select **Save**. Reopen **Edit** whenever you want to add readings. You can check the finished card without moving a target.
 
-**Prefer YAML?** Replace the example thermostat with yours and paste this in the card’s code editor. The word `beta` is part of the registered YAML type in 1.0.0. The picker name has no suffix.
+**Prefer YAML?** Replace the example thermostat with yours and paste this in the card’s code editor. The picker and exports use the type below. Dashboards saved with `custom:thermal-intelligence-beta-card` can keep that type.
 
 ```yaml
-type: custom:thermal-intelligence-beta-card
+type: custom:thermal-intelligence-thermostat
 entity: climate.example_room
 ```
 
@@ -26,7 +26,7 @@ entity: climate.example_room
 
 | Reading or icon | What to select and what you’ll see |
 | --- | --- |
-| Humidity | Choose the room’s relative humidity sensor. Tap the reading for its current band and available history. In **Humidity display**, set four sliders or enter the percentages exactly. Defaults are 30, 40, 60 and 70%. These boundaries colour this card. |
+| Humidity | Choose the room’s relative humidity sensor. Tap the reading for its current band and available history. In **Humidity display**, drag four markers on one colour bar or enter exact percentages below it. Defaults are 30, 40, 60 and 70%. These boundaries colour this card. |
 | Temperature and trend | The dial uses the climate entity’s current temperature. Add another temperature as typed telemetry for comparison. A signed rate sensor drives the fine ring and Rising, Stable or Falling text. |
 | Outside | In **Outside temperature**, choose a temperature sensor or a weather entity and select **Add outside reading**. With weather, TI reads its temperature and unit attributes. The optional VT outside reading shows the value VT last received. |
 | Valve and activity | Map a valve opening from 0–100% to see **TRV Open/Closed** and its position. Without a valve mapping the card uses reported thermostat activity. **Heat requested** describes a VT request. |
@@ -34,7 +34,7 @@ entity: climate.example_room
 | Power, energy and other VT readings | Use explicit telemetry for a meter. VT also offers estimated energy, estimated mean power, configured device power, power limiting, Follow, automatic window detection and auto start/stop when reported. Tap the icon to inspect its source. |
 | Control source and preset | The combined indicator can show House, Schedule, Manual or another reported source with its applicable preset or mode. Tap it for the separate reports. An unmapped owner can be Unknown. A hand with a history marker identifies the last confirmed adjustment made on this card. |
 
-The in-card humidity panel also has a shared colour track under **Advanced draft and export**. To save thresholds directly, use the four sliders or percentage fields in the dashboard editor.
+The in-card humidity panel also has a shared colour track under **Advanced draft and export**. To save thresholds directly, use the same colour bar or the percentage fields in the dashboard editor.
 
 ## Arrange the top row
 
@@ -44,13 +44,13 @@ The in-card humidity panel also has a shared colour track under **Advanced draft
 
 <details><summary>See the top-row draft and its copy button</summary>
 
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/v1.0.0/assets/presentation/v1-top-row-settings.png" alt="Version 1.0.0 top-row draft with Humidity and Valve checkboxes, reorder buttons, a preview and Copy configuration" width="360">
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/f4bd1ce81e272d80823f7a1c64a0cb5ceafc345c/assets/presentation/v1-top-row-settings.png" alt="Version 1.0.0 top-row draft with the control source, Humidity and Valve in the preview, preset choices and Copy configuration" width="360">
 
 Synthetic room in the 1.0.0 card. The footer stays visible as you scroll through the groups.
 
 </details>
 
-In 1.0.0 the settings groups run **Primary icons → Presets and control source → VT readings**. Hiding a primary icon keeps its source available in expanded readings. VT checkboxes opt into provider observations. The combined indicator has its own visibility setting, and individual preset choices determine which badge can join it. The lock and status LED keep their own positions.
+In 1.0.0 the settings groups run **Presets and control source → Primary icons → VT readings**. Hiding a primary icon keeps its source available in expanded readings. VT checkboxes opt into provider observations. The combined indicator has its own visibility setting, and individual preset choices determine which badge can join it. The lock and status LED keep their own positions.
 
 ## Set up temperature response
 
@@ -67,7 +67,7 @@ If your system has a separate thermostat for the heat source, **Optional heat-so
 
 <details><summary>See a native thermostat response mapping</summary>
 
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/v1.0.0/assets/presentation/v1-temperature-response.png" alt="Temperature response fields with a room sensor and native thermostat selected, the TRV controller empty, and default freshness of ten minutes" width="460">
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/f4bd1ce81e272d80823f7a1c64a0cb5ceafc345c/assets/presentation/v1-temperature-response.png" alt="Temperature response fields with a room sensor and native thermostat selected, the TRV controller empty, and default freshness of ten minutes" width="460">
 
 Example entities in the 1.0.0 editor. Use the entities that report these values in your room.
 

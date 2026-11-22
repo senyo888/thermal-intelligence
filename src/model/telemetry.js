@@ -39,7 +39,7 @@ export function buildSourceTelemetry(hass, config, climate, now, connected) {
     const entry = { kind: 'custom', entity: feature.entity, label };
     if (feature.attribute) entry.attribute = feature.attribute;
     if (feature.unit) entry.unit = feature.unit;
-    return { ...buildTelemetry(hass, { ...config, telemetry: [entry] }, now, connected)[0], icon: feature.icon, feature, group:'primary', key:keyFor('feature',[feature.entity,feature.attribute||'',feature.preset||'']) };
+    return { ...buildTelemetry(hass, { ...config, telemetry: [entry] }, now, connected)[0], icon: feature.icon, feature, group:feature.preset ? 'control' : 'primary', key:keyFor('feature',[feature.entity,feature.attribute||'',feature.preset||'']) };
   });
   const presetReadings = buildPresetReadings(featureRows, config, climate, connected);
   const vtReadings = buildVTReadings(hass,config,climate,now,connected);

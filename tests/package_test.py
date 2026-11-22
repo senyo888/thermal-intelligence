@@ -159,6 +159,21 @@ class PackageTests(unittest.TestCase):
                 self.assertEqual(Path("stable-" + str(marketplace), "thermal-intelligence.js").read_bytes(), original)
         with self.assertRaises(ValueError): module.package_marketplace("HEAD", "wrong-route")
 
+    def test_stable_package_records_canonical_registration_and_requires_its_editor(self):
+        self.stable_source()
+        bundle = Path("dist/thermal-intelligence.js")
+        with bundle.open("a") as out:
+            out.write(" thermal-intelligence-thermostat")
+        self.commit()
+        with self.assertRaises(ValueError):
+            package_release.package("HEAD", "incomplete")
+        with bundle.open("a") as out:
+            out.write(" thermal-intelligence-thermostat-editor")
+        self.commit()
+        manifest = package_release.package("HEAD", "canonical")
+        self.assertEqual(manifest["card_type"], "custom:thermal-intelligence-thermostat")
+        self.assertEqual(manifest["editor_tag"], "thermal-intelligence-thermostat-editor")
+
     def test_release_route_rejects_prereleases(self):
         self.marketplace_files()
         for builder in [package_release.package, package_release.package_marketplace]:

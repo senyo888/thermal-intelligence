@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { bindHumidityTrack } from './humidity-track.js';
 import { normalizeConfig, snapshotDialogConfig, CARD_TYPE, EDITOR_TAG } from '../model/config.js';
 import { buildModel, targetPayload, targetBoundary, quantize } from '../model/climate.js';
 import { CommandCoordinator } from '../commands/coordinator.js';
@@ -500,6 +501,8 @@ export class ThermalIntelligenceCard extends HTMLElement {
         }
       });
     }
+    const humidityBar = root.querySelector('dialog[data-view=humidity] .bar');
+    if (humidityBar) bindHumidityTrack(humidityBar);
     for(const input of root.querySelectorAll('[data-humidity-boundary]'))input.oninput=()=>{
       const key=input.dataset.humidityBoundary, current=humidityBands(this._displayDraft)||this._displayDraft.humidity_bands||{};
       const number=input.value.trim()===''?NaN:Number(input.value);

@@ -15,7 +15,13 @@ def channel_for(version):
 def validate_bundle(version, text):
     channel = channel_for(version)
     match = re.match(r"/\*! Thermal Intelligence Cards (\S+) — (prerelease )?frontend module\. GPL-3\.0-only\.", text)
+    legacy = "thermal-intelligence-beta-card"
+    current = "thermal-intelligence-thermostat"
+    tags = set(re.findall(r"thermal-intelligence-[a-z0-9-]+", text))
+    canonical = {current, current + "-editor"} & tags
     if (not match or match.group(1) != version or
             bool(match.group(2)) != (channel != "stable") or
-            not all(tag in text for tag in ["thermal-intelligence-beta-card", "thermal-intelligence-beta-card-editor"])):
+            not {legacy, legacy + "-editor"} <= tags or
+            (canonical and canonical != {current, current + "-editor"})):
         raise ValueError("Module identity does not exactly match the package version and channel")
+    return current if channel == "stable" and canonical else legacy

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { normalizeConfig, assertConfigAuthorityData, TELEMETRY_KINDS } from '../model/config.js';
+import { normalizeConfig, assertConfigAuthorityData, LEGACY_CARD_TAG, TELEMETRY_KINDS } from '../model/config.js';
+import { bindHumidityTrack, humidityTrackStyles } from '../cards/humidity-track.js';
 import { HUMIDITY_DEFAULTS, HUMIDITY_KEYS, humidityBands, humidityBand, humidityGradient, moveHumidityBoundary } from '../model/humidity.js';
 import { STATE_TELEMETRY } from '../model/state-telemetry.js';
 import { mappedControl } from '../model/mapped-control.js';
@@ -13,6 +14,10 @@ const UNSAFE_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 const KIND_LABELS = { temperature: 'Temperature', humidity: 'Humidity', trend: 'Temperature trend', valve: 'Valve position', energy: 'Energy', power: 'Power', custom: 'Custom telemetry', ...Object.fromEntries(Object.entries(STATE_TELEMETRY).map(([key, value]) => [key, value.label])) };
 const own = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
 const record = (value) => value && typeof value === 'object' && !Array.isArray(value);
+
+function outsideCandidate(id, state) {
+  return id.startsWith('weather.') || (id.startsWith('sensor.') && ['°C', '°F'].includes(state?.attributes?.unit_of_measurement));
+}
 
 function clone(value) {
   return structuredClone(value);
@@ -90,9 +95,7 @@ const STYLES = `
   .reading-preview ha-icon { width:20px;height:20px;--mdc-icon-size:20px;flex:none; }
   .reading-preview small { color:var(--secondary-text-color,#566575);line-height:1.5; }
   .reading-preview[data-status=invalid],.reading-preview[data-status=unavailable] { border-left:3px solid var(--warning-color,#b87225); }
-  .humidity-gradient { height:14px;border-radius:7px; }
   .humidity-preview { display:grid;gap:10px;padding:14px;background:var(--secondary-background-color,#f4f6f8);border-radius:10px; }
-  .humidity-slider { display:grid;gap:5px;font-size:13px; }
   input[type=range] { padding:0;accent-color:var(--primary-color,#168cbb); }
   .search-results { min-height:44px; }
   .editor-route { padding:12px 14px;border-left:3px solid var(--primary-color,#168cbb);border-radius:6px;background:var(--secondary-background-color,#f4f6f8);font-size:13px; }
@@ -122,7 +125,15 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     this._suggestionGeneration = 0;
     this._suggestionMessage = '';
     bindActivationFeedback(this.shadowRoot);
-    this.shadowRoot.addEventListener('focusout', event => this._flushInventory(event));
+    this.shadowRoot.addEventListener('focusout', () => this._flushInventory());
+    this.shadowRoot.addEventListener('pointerdown', event => {
+      if (event.isPrimary) this._editorPointer = event.pointerId;
+    }, true);
+    this._releasePointer = event => {
+      if (event.pointerId !== this._editorPointer) return;
+      this._editorPointer = null;
+      this._flushInventory();
+    };
   }
 
   set hass(value) {
@@ -137,8 +148,9 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     const signature = this._inventory();
     if (!contextChanged && signature === this._inventorySignature && this.shadowRoot.childElementCount) { this._refreshPreviews(); return; }
     this._inventorySignature = signature;
-    if (this.shadowRoot.activeElement) {
+    if (this.shadowRoot.activeElement || this._editorPointer != null) {
       this._pendingInventory = true;
+      this._refreshPreviews();
       return;
     }
     this._render();
@@ -175,14 +187,25 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
   }
 
   connectedCallback() {
+    this.ownerDocument.addEventListener('pointerup', this._releasePointer, true);
+    this.ownerDocument.addEventListener('pointercancel', this._releasePointer, true);
+    this._flushInventory();
     if (!this.shadowRoot.childElementCount) this._render();
   }
 
-  disconnectedCallback() { this._suggestionGeneration++; this._registry = null; this._registryContext = null; }
+  disconnectedCallback() {
+    this.ownerDocument.removeEventListener('pointerup', this._releasePointer, true);
+    this.ownerDocument.removeEventListener('pointercancel', this._releasePointer, true);
+    clearTimeout(this._inventoryTimer);
+    this._editorPointer = null;
+    this._suggestionGeneration++;
+    this._registry = null;
+    this._registryContext = null;
+  }
 
   _inventory() {
     const states = this._hass?.states ?? {};
-    const entities = Object.keys(states).sort().map((id) => [id, states[id]?.attributes?.friendly_name]);
+    const entities = Object.keys(states).sort().map((id) => [id, states[id]?.attributes?.friendly_name, outsideCandidate(id, states[id])]);
     const presets = states[this._draft?.entity]?.attributes?.preset_modes;
     return JSON.stringify([entities, Array.isArray(presets) ? presets : []]);
   }
@@ -223,6 +246,8 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     let accepted;
     try {
       accepted = normalizeConfig(next);
+      // Home Assistant owns previously saved YAML. Dedicated exports use the new type.
+      if (!this.exportOnly && next.type === `custom:${LEGACY_CARD_TAG}`) accepted.type = next.type;
       this._draft = clone(accepted);
       this._error = '';
       this._invalidField = '';
@@ -312,16 +337,13 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     return wrapper;
   }
 
-  _flushInventory(event) {
-    // A null relatedTarget can be an in-progress pointer focus transition. Do not
-    // replace its button or summary before the click/default action completes.
-    const next = event?.relatedTarget;
-    if (!this._pendingInventory || !next || next.getRootNode() === this.shadowRoot) return;
-    queueMicrotask(() => {
-      if (this.shadowRoot.activeElement) return;
-      this._pendingInventory = false;
-      this._render();
-    });
+  _flushInventory() {
+    if (!this._pendingInventory || this._editorPointer != null) return;
+    clearTimeout(this._inventoryTimer);
+    // Let focus settle and the pointer's click/default action run before rebuilding.
+    this._inventoryTimer = setTimeout(() => {
+      if (this.isConnected && this._pendingInventory && !this.shadowRoot.activeElement && this._editorPointer == null) this._render();
+    }, 0);
   }
 
   _checkbox(label, key, checked, onChange) {
@@ -356,10 +378,11 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
   }
 
   _render({ focus, open } = {}) {
+    this._pendingInventory = false;
     const snapshot = this._capture();
     if (open) this._sections.set(open, true);
     const style = element('style');
-    style.textContent = STYLES + feedbackStyles + iconOptionsStyles;
+    style.textContent = STYLES + humidityTrackStyles + feedbackStyles + iconOptionsStyles;
     const form = element('form');
     form.addEventListener('submit', (event) => event.preventDefault());
     form.append(element('p', 'editor-route', this.exportOnly ? 'Advanced draft — changes here are not saved. Copy the configuration, then save it in Home Assistant’s Edit card.' : 'Configure this card, then choose Save in Home Assistant. Cancel keeps the saved configuration.'));
@@ -544,8 +567,6 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
         const key = input.dataset.humiditySlider;
         input.disabled = !bands;
         if (bands) { input.value = String(bands[key]); input.setAttribute('aria-valuetext',bands[key] + ' percent'); }
-        const text = input.parentElement.querySelector('output');
-        if (text) text.textContent = bands ? bands[key] + '%' : 'Invalid';
       }
     }
   }
@@ -553,7 +574,8 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
   _outsideTemperature(states) {
     const section = element('section','section stack');
     section.append(element('h3','','Outside temperature'),element('p','hint','Show an outdoor sensor or the temperature reported by a weather entity. The dial keeps the thermostat’s indoor temperature.'));
-    const candidates = Object.keys(states).filter(id => id.startsWith('weather.') || id.startsWith('sensor.') && ['°C','°F'].includes(states[id]?.attributes?.unit_of_measurement)).sort();
+    const candidates = Object.keys(states).filter(id => outsideCandidate(id, states[id])).sort();
+    if (!candidates.includes(this._outsideSource)) this._outsideSource = '';
     const options = [['','Choose an outside source'],...candidates.map(id=>[id,`${states[id]?.attributes?.friendly_name || id} · ${id}`])];
     section.append(this._field('Outside temperature source','outside.entity',this._outsideSource ?? '',{
       options,onChange:value=>{this._outsideSource=value; this._render({open:'sources',focus:'outside.entity'});},
@@ -936,14 +958,16 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
         this._change(['humidity_bands'], { ...current, [key]: value }, { field: `humidity_bands.${key}`, open: 'humidity' });
       },
     }));
-    stack.append(element('p', 'hint', legacy ? 'Legacy two-bound format is preserved explicitly. Reset to source defaults to use the original five display bands. These are local display guides, not HI targets or control thresholds.' : 'Original five-band humidity display guides default to 30, 40, 60 and 70%. All four ordered integer boundaries must be valid. These are local display guides, not HI targets or control thresholds.'));
+    stack.append(element('p', 'hint', legacy ? 'Legacy two-bound format is preserved explicitly. Reset to source defaults to use the original five display bands. These are local display guides, not HI targets or control thresholds.' : 'Drag the four markers on the colour bar or enter exact percentages below. The starting boundaries are 30, 40, 60 and 70%. These are local display guides, not HI targets or control thresholds.'));
     const preview=element('div','humidity-preview');preview.dataset.humidityPreview='';
-    const gradient=element('div','humidity-gradient');gradient.dataset.humidityGradient='';gradient.setAttribute('aria-hidden','true');
+    const bar=element('div','bar');
+    const gradient=element('div','track');gradient.dataset.humidityGradient='';gradient.setAttribute('aria-hidden','true');
     const reading=element('p','hint');reading.dataset.humidityReading='';reading.setAttribute('role','status');
-    preview.append(gradient,reading);stack.append(preview);
+    const scale=element('div','scale');
+    scale.append(element('span','','0%'),element('span','','100%'));
+    bar.append(gradient);
+    preview.append(bar,scale,reading);stack.append(preview);
     if (!legacy) for (const key of HUMIDITY_KEYS) {
-      const wrapper=element('label','humidity-slider');
-      const line=element('span','',labels[key]+' · ');line.append(element('output','',bands[key]+'%'));
       const input=element('input');input.type='range';input.min='0';input.max='100';input.step='1';input.value=String(bands[key]);
       input.dataset.humiditySlider=key;input.dataset.field='humidity-slider.'+key;input.setAttribute('aria-label',labels[key]+' humidity slider');
       input.addEventListener('input',()=>{
@@ -952,8 +976,9 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
         this._change(['humidity_bands'],next,{rerender:false});
         const number=this.shadowRoot.querySelector('[data-field="humidity_bands.'+key+'"]');if(number){number.value=String(next[key]);this._buffers.delete('humidity_bands.'+key);}
       });
-      wrapper.append(line,input);stack.append(wrapper);
+      bar.append(input);
     }
+    if (!legacy) bindHumidityTrack(bar);
     stack.append(bandGrid);
     stack.append(this._button('Reset humidity guides to source defaults', 'clear-humidity-bands', () => {
       const preserved = { ...(this._draft.humidity_bands ?? {}) };

@@ -108,7 +108,7 @@ test('picker, empty setup, editor, reopen and duplicate resource never dispatch'
   const stub=await page.evaluate(()=>customElements.get('thermal-intelligence-beta-card').getStubConfig({states:{}}));
   expect(stub.entity).toBe('');
   await page.evaluate(async()=>{await import('/dist/thermal-intelligence.js?duplicate');fixture.cards[0].setConfig(fixture.config);fixture.cards[0].hass=fixture.hass;});
-  expect(await page.evaluate(()=>window.customCards.filter(row=>row.type==='thermal-intelligence-beta-card').length)).toBe(1);
+  expect(await page.evaluate(()=>window.customCards.filter(row=>row.type==='thermal-intelligence-thermostat').length)).toBe(1);
   expect(await calls(page)).toEqual([]);
 });
 
@@ -131,7 +131,12 @@ test('intentional target command retains target and distinguishes observation',a
   await expect(card(page).getByRole('status')).toContainText('accepted');
   await expect(card(page).locator('[data-request-status]')).toBeHidden();
   await expect(increase(page)).toBeDisabled();
+  await expect(card(page).locator('.targets')).toHaveAttribute('aria-busy','true');
+  await expect(card(page).locator('[data-target-edit]')).toHaveText('Pending');
   await page.evaluate(()=>fixture.apply(fixture.calls[0]));
+  await expect(card(page).locator('.targets')).toHaveAttribute('aria-busy','false');
+  await expect(card(page).locator('[data-target-edit]')).toBeHidden();
+  expect(await calls(page)).toHaveLength(1);
   await expect(card(page).getByRole('status')).toContainText('observed');
   await expect(card(page).locator('[data-request-status]')).toBeHidden();
   await expect(card(page).getByRole('status')).toContainText('does not establish physical heating');

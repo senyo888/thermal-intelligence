@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
+export const HEADER_GROUPS = ['control', 'primary', 'vt'];
+
 /** Header presentation never mutates the readings which supply other card views. */
 export function orderHeaderIcons(rows, order = []) {
   const rank = new Map(order.map((key, index) => [key, index]));
@@ -8,7 +10,7 @@ export function orderHeaderIcons(rows, order = []) {
 export function selectHeaderIcons(rows, config) {
   const hidden = new Set(config.header_icons?.hidden ?? []);
   const vt = new Set(config.vt_telemetry ?? []);
-  return ['primary','control','vt'].flatMap(group=>orderHeaderIcons(rows.filter(row=>row.group===group),config.header_icons?.order)
+  return HEADER_GROUPS.flatMap(group=>orderHeaderIcons(rows.filter(row=>row.group===group),config.header_icons?.order)
     .filter(row=>row.headerEligible!==false && (group==='vt'?vt.has(row.vtKey):!hidden.has(row.key))));
 }
 

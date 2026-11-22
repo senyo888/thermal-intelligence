@@ -56,7 +56,7 @@ test('runtime copy retains display-only draft and unknown fields without changin
   await expect(dialog(page).getByRole('button',{name:'Reorder Estimated energy',exact:true})).toBeFocused();
   await dialog(page).getByRole('button',{name:'Copy configuration',exact:true}).click();
   await expect(dialog(page)).toContainText('Configuration copied');
-  const copied=await page.evaluate(()=>JSON.parse(copiedIcons));expect(copied.vt_telemetry).toEqual(['energy']);expect(copied.future).toEqual({keep:['unchanged']});expect(copied.header_icons.future).toBe('preserve');
+  const copied=await page.evaluate(()=>JSON.parse(copiedIcons));expect(copied.type).toBe('custom:thermal-intelligence-thermostat');expect(copied.vt_telemetry).toEqual(['energy']);expect(copied.future).toEqual({keep:['unchanged']});expect(copied.header_icons.future).toBe('preserve');
   expect(await page.evaluate(()=>savedDashboard)).toEqual(before);expect(await page.evaluate(()=>dashboardCalls)).toEqual([]);expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
   await expect(card(page).locator('[data-header-telemetry]')).not.toContainText('2.5 kWh');
 });
@@ -157,4 +157,40 @@ test('delayed clipboard success identifies an earlier draft and later edits reti
   await expect(dialog(page)).toContainText('Configuration copied. Nothing has been saved yet.');await expect(dialog(page).getByRole('button',{name:'Copy configuration',exact:true})).toBeFocused();expect(await page.evaluate(()=>JSON.parse(copiedIcons).vt_telemetry)).toEqual(['energy','power']);
   await dialog(page).getByRole('checkbox',{name:'Show Estimated energy',exact:true}).uncheck();await expect(dialog(page).locator('[data-icon-status]')).toBeHidden();
   expect(await page.evaluate(()=>dashboardCalls)).toEqual([]);expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+});
+
+test('a changing preset list cancels the in-flight drag and the new list can reorder',async({page})=>{
+  await setup(page);
+  await page.evaluate(()=>{fixture.hass.states[fixture.config.entity].attributes.preset_modes=['none','frost','eco','comfort','boost'];fixture.refresh();});
+  await open(page);
+  const group=dialog(page).getByRole('group',{name:'Presets and control source'});
+  const grip=group.locator('[data-icon-row="preset:frost"] [data-icon-grip]');
+  await grip.scrollIntoViewIfNeeded();const box=await grip.boundingBox();
+  await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();
+  await page.mouse.move(box.x+box.width/2,box.y+box.height+60);
+  await page.evaluate(()=>{fixture.hass.states[fixture.config.entity].attributes.preset_modes=['none','frost','comfort','boost'];fixture.refresh();});
+  await expect(group.locator('[data-icon-row="preset:eco"]')).toHaveCount(0);
+  await page.mouse.up();
+  expect(await page.evaluate(()=>fixture.cards[0]._iconSettings.draft.header_icons.order??[])).toEqual([]);
+  await grip.focus();await grip.press('ArrowDown');
+  await expect(group.locator('[data-icon-row]').first()).toHaveAttribute('data-icon-row','preset:comfort');
+  expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+});
+
+test('the dashboard editor also cancels a drag when an advertised preset disappears',async({page})=>{
+  await setup(page);
+  await page.evaluate(()=>{fixture.hass.states[fixture.config.entity].attributes.preset_modes=['none','frost','eco','comfort'];fixture.refresh();});
+  const editor=page.locator('#editor thermal-intelligence-beta-card-editor');
+  await editor.locator('[data-section="sources"] > summary').click();
+  await editor.locator('[data-section="header-icons"] > summary').click();
+  const group=editor.getByRole('group',{name:'Presets and control source'});
+  const grip=group.locator('[data-icon-row="preset:frost"] [data-icon-grip]');
+  await grip.scrollIntoViewIfNeeded();const box=await grip.boundingBox();
+  await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();
+  await page.mouse.move(box.x+box.width/2,box.y+box.height+60);
+  await page.evaluate(()=>{fixture.hass.states[fixture.config.entity].attributes.preset_modes=['none','frost','comfort'];fixture.refresh();});
+  await expect(group.locator('[data-icon-row="preset:eco"]')).toHaveCount(0);
+  await page.mouse.up();expect(await page.evaluate(()=>fixture.events)).toEqual([]);
+  await grip.focus();await grip.press('ArrowDown');
+  await expect(group.locator('[data-icon-row]').first()).toHaveAttribute('data-icon-row','preset:comfort');
 });

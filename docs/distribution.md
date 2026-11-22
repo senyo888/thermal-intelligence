@@ -1,6 +1,6 @@
 # Distribution
 
-The [1.0.0 release preparation](v1.0.0-package.md) identifies the tested module and its upgrade path. It has been installed by exact commit. The newest published tag is still RC.3. Stable releases follow two pull requests in order, `senyo888-patch-1` into `develop`, then `develop` into `main`. The stable tag and its release assets come from the approved commit on `main` after the second merge.
+The [1.0.0 release preparation](v1.0.0-package.md) identifies the tested module and its upgrade path. The installation results apply to the earlier candidate identified there. The newest published tag is still RC.3. Stable releases follow two pull requests in order, `senyo888-patch-1` into `develop`, then `develop` into `main`. The stable tag and its release assets come from the approved commit on `main` after the second merge.
 
 [RC.3](rc-3.md) is the current published prerelease, from source `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`. Its exact package is preserved by the `v0.1.0-rc.3` tag; `main` carries the promoted snapshot and current documentation. Verify a branch revision before use rather than assuming it matches the released tag. [RC.2](rc.md), [RC.1](rc-1.md) and [beta.7](beta-7.md) retain their dated historical records. Use [Marketplace](marketplace.md) for Home Assistant 2026.11 and later, or [HACS](hacs.md) on older installations.
 
@@ -53,7 +53,7 @@ The stable packaging route is available for release preparation. It requires an 
 python3 -B scripts/package_release.py --commit REVIEWED_STABLE_COMMIT --marketplace --output /tmp/ti-stable-candidate
 ```
 
-Omit `--marketplace` for the manual package. Both routes produce the same three asset filenames and preserve `custom:thermal-intelligence-beta-card` and its editor registration for existing configurations. The stable picker name is **Thermal Intelligence Thermostat**. The older `custom:thermal-intelligence-card` remains independently owned and is never replaced.
+Omit `--marketplace` for the manual package. Both routes produce the same three asset filenames and preserve `custom:thermal-intelligence-beta-card` and its editor registration for existing configurations. New stable cards and exports use `custom:thermal-intelligence-thermostat`. The stable picker name is **Thermal Intelligence Thermostat**. The older `custom:thermal-intelligence-card` remains independently owned and is never replaced.
 
 `package_beta.py` continues to accept only beta and RC versions; `package_release.py` accepts only stable versions. CI uses `package_candidate.py` for all three validated channels. Every route reads committed files, checks the exact generated version and channel, and rejects an existing output directory. A stable manifest's `delivery_branch: main` records its intended destination only. These commands do not promote a branch, create a tag, publish a release or install the module.
 
@@ -84,7 +84,7 @@ The resource-manager source above is from HA 2026.11.0; source review alone does
 
 Add the module once as a **JavaScript module** resource. After updating its versioned URL, open a fresh browser document before checking the card and editor. A custom element already registered in an open page cannot be replaced in place.
 
-RC.3 retains `custom:thermal-intelligence-beta-card`, with the picker name **Thermal Intelligence Thermostat · RC**. Beta, RC and prepared stable packages share the same card and editor registrations; load only one of those modules in a document. A stable upgrade replaces the selected beta/RC resource; do not add it alongside that resource. Keep existing legacy TI resources and card types in place. See [upgrade and rollback](migration.md).
+RC.3 retains `custom:thermal-intelligence-beta-card`, with the picker name **Thermal Intelligence Thermostat · RC**. The stable module also supports the beta and RC card and editor registrations; load only one of those modules in a document. A stable upgrade replaces the selected beta/RC resource; do not add it alongside that resource. Keep existing legacy TI resources and card types in place. See [upgrade and rollback](migration.md).
 
 `scripts/package_beta.py` packages both explicit `-beta.N` and `-rc.N` versions from an immutable commit. Its manifest records the version, channel, delivery branch, exact commit/tree and file hashes. It rejects stable versions and mismatched bundles. The script name is retained for existing beta tooling.
 

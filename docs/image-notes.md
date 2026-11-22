@@ -15,7 +15,7 @@ The [release header](../assets/presentation/thermal-intelligence-v1-release-head
 
 ## Version 1.0.0 settings
 
-[Top row icon settings](../assets/presentation/v1-top-row-settings.png) shows the draft preview, selectable readings, reorder handles and copy action. [Temperature response](../assets/presentation/v1-temperature-response.png) shows the native thermostat route in the dashboard editor. Both are captures of the 1.0.0 module in the standalone browser fixture, using synthetic room data and example entity IDs.
+[Top row icon settings](../assets/presentation/v1-top-row-settings.png) shows the control source first, then humidity and valve position in the draft preview, selectable readings, reorder handles and copy action. [Temperature response](../assets/presentation/v1-temperature-response.png) shows the native thermostat route in the dashboard editor. Both are captures of the 1.0.0 module in the standalone browser fixture, using synthetic room data and example entity IDs.
 
 ## Project artwork
 

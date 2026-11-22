@@ -104,7 +104,7 @@ test('editor emits a complete isolated configuration only after a valid intentio
   assert.equal(events[0].type, 'config-changed');
   assert.equal(events[0].bubbles, true);
   assert.equal(events[0].composed, true);
-  assert.equal(events[0].detail.config.type, 'custom:thermal-intelligence-beta-card');
+  assert.equal(events[0].detail.config.type, 'custom:thermal-intelligence-thermostat');
   assert.equal(events[0].detail.config.step, 0.5);
   assert.deepEqual(events[0].detail.config.future_option, { keep: true });
   events[0].detail.config.future_option.keep = false;

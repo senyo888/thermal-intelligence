@@ -1,6 +1,6 @@
 # Thermal Intelligence Wiki
 
-<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/v1.0.0/assets/presentation/thermal-intelligence-v1-release-header.png" alt="Thermal Intelligence 1.0.0 with the TI house logo and Plum dial" width="100%">
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/f4bd1ce81e272d80823f7a1c64a0cb5ceafc345c/assets/presentation/thermal-intelligence-v1-release-header.png" alt="Thermal Intelligence 1.0.0 with the TI house logo and Plum dial" width="100%">
 
 Start with one thermostat. The [first-room walkthrough](https://github.com/senyo888/thermal-intelligence/wiki/Configuration) takes you from an empty dashboard card to a dial with a reading you chose yourself.
 
