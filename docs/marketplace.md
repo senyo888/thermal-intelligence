@@ -1,5 +1,7 @@
 # Install with Home Assistant Marketplace
 
+The named download in this guide is **RC.3**. The [1.0.0 package](v1.0.0-package.md) has been tested from its exact source commit and is awaiting release.
+
 Thermal Intelligence is a standalone **Dashboard** card. It uses your existing climate entities; no TI controller or backend integration is required. On Home Assistant 2026.11 and later, Marketplace is the installation route. For earlier Home Assistant versions, use the [HACS guide](hacs.md).
 
 [RC.3 is published](rc-3.md). Its exact module passed passive manual Lab checks; named-release Marketplace acceptance is still incomplete. The earlier [RC.2 installation](rc2-validation.md) passed on 9 November 2026 and does not validate an RC.3 update. Update, removal and recovery coverage remain incomplete. TI is not claimed to be in the default catalogue; add its repository link.
@@ -33,6 +35,8 @@ For a manual-to-Marketplace transition, retain the old module and its saved reso
 These steps follow the [official Marketplace instructions](https://www.home-assistant.io/integrations/marketplace/). The [version selector](https://github.com/home-assistant/frontend/blob/a67b691a451e0b3fc469679b07158f963a61842c/src/panels/marketplace/dialogs/dialog-marketplace-install.ts#L618) supports explicit prerelease selection before installation; update preferences are separate. UI labels can vary with translation.
 
 ## Verify the trial
+
+Reload the dashboard in a new browser session and check the card version. For a published TI release, Marketplace downloads the attached card and licence. TI prepares stable releases from `main`. A release tag identifies the exact download even as that branch moves on. [How Marketplace selects versions](https://contributors.home-assistant.io/marketplace/how-it-works/) · [1.0.0 package verification](v1.0.0-package.md#validation-boundaries)
 
 Record the selected version, installer result, installed file list and generated resource URL. Verify the served `thermal-intelligence.js` against the exact release manifest’s size and SHA-256. Identical bytes on another branch do not prove that the intended named version was selected.
 

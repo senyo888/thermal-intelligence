@@ -1,12 +1,16 @@
 # Troubleshooting and support
 
-Picker labels follow the module channel: **Thermal Intelligence Thermostat · Beta** for the unreleased beta.8 candidate; **Thermal Intelligence Thermostat · RC** for published RC.3 and the unreleased RC.4 candidate.
-
-RC.4 remains unreleased on the beta branch. It passed bounded manual Lab checks on inert fixtures; installer and physical-device acceptance remain unverified. RC.3 remains the published prerelease.
-
 ## The card is missing from Add Card
 
-Check that the verified module for the intended release candidate is registered once as a **JavaScript module** resource. Open a fresh browser document after changing its URL. The picker entry is **Thermal Intelligence Thermostat · RC**. Keep legacy TI resources separate.
+Check the module you loaded. Version 1.0.0 appears as **Thermal Intelligence Thermostat**, RC.3 as **Thermal Intelligence Thermostat · RC**, and beta builds add **· Beta**. These versions share a YAML type. Keep one registration for the standalone module, then open a fresh browser document. The older dashboard card uses a separate registration. [Upgrade and rollback](https://github.com/senyo888/thermal-intelligence/blob/9785775e674ed6b0820ad3b916c1ac41d21632f0/docs/migration.md).
+
+## My icon layout disappeared
+
+The settings opened from the card are a draft. Copy the complete configuration into that card’s dashboard code editor and choose **Save**, or make the change in **Edit dashboard → Edit → Readings and icons → Top row icon settings**. Reopen the card to verify it. [Step-by-step guide](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#arrange-the-top-row).
+
+## My reading is missing
+
+Check the entity’s current value and unit in Home Assistant. A humidity reading needs a number in percent. A trend needs degrees per unit of time. For a VT suggestion, check that the feature is configured and its entity enabled. Open the reading preview for its source and status. [Source setup](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#choose-your-sources).
 
 ## The LED is amber
 

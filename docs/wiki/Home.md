@@ -1,15 +1,16 @@
 # Thermal Intelligence Wiki
 
-**Temperature, control and context in one Home Assistant card.**
+<img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/v1.0.0/assets/presentation/thermal-intelligence-v1-release-header.png" alt="Thermal Intelligence 1.0.0 with the TI house logo and Plum dial" width="100%">
 
-This manual describes RC.3 prerelease. Use a standard Home Assistant climate entity or Versatile Thermostat, then add humidity, trend, valve and provider details to suit each room.
+Start with one thermostat. The [first-room walkthrough](https://github.com/senyo888/thermal-intelligence/wiki/Configuration) takes you from an empty dashboard card to a dial with a reading you chose yourself.
 
 ## Start here
 
-1. Read the [RC.3 candidate status](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md) and [Marketplace installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md).
-2. [Configure your card](https://github.com/senyo888/thermal-intelligence/wiki/Configuration) with Home Assistant’s visual editor.
-3. [Read the card](https://github.com/senyo888/thermal-intelligence/wiki/Reading-the-card): arc, slope ring, status chip, LED and top-row readings.
-4. [Explore the state gallery](https://github.com/senyo888/thermal-intelligence/wiki/State-gallery) and [check compatibility](https://github.com/senyo888/thermal-intelligence/wiki/Compatibility).
+1. **Choose the right guide.** RC.3 is the published prerelease. Use its [Marketplace instructions](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md) or [HACS guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/hacs.md). The prepared 1.0.0 module has an unsuffixed **Thermal Intelligence Thermostat** picker.
+2. **Set up your room.** Select a climate entity and save. Expose [VT readings or your own sensors](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#choose-your-sources), then [arrange the header](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#arrange-the-top-row).
+3. **Read the result.** Learn what the [arc, slope ring, status chip and LED](https://github.com/senyo888/thermal-intelligence/wiki/Reading-the-card) tell you. To enable the optional warming response, follow the [temperature response walkthrough](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#set-up-temperature-response).
+
+[See the Plum card, top-row layout and VT response setup in Senyo’s introduction to 1.0.0](https://github.com/senyo888/thermal-intelligence/blob/9785775e674ed6b0820ad3b916c1ac41d21632f0/docs/v1.0.0.md) · [Complete settings and YAML](https://github.com/senyo888/thermal-intelligence/blob/9785775e674ed6b0820ad3b916c1ac41d21632f0/docs/card-configuration.md)
 
 ## Find your way
 
@@ -18,6 +19,6 @@ This manual describes RC.3 prerelease. Use a standard Home Assistant climate ent
 - [Marketplace](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md) covers Home Assistant 2026.11 and later; [HACS](https://github.com/senyo888/thermal-intelligence/blob/main/docs/hacs.md) covers older installations.
 - [Troubleshooting](https://github.com/senyo888/thermal-intelligence/wiki/Troubleshooting) helps with resource loading, observations and rollback.
 
-Current published prerelease: **0.1.0-rc.3**. The [compatibility record](https://github.com/senyo888/thermal-intelligence/wiki/Compatibility) separates current RC.3 passive checks from historical RC.2 installation/control evidence and remaining acceptance work.
+[Compatibility by version](https://github.com/senyo888/thermal-intelligence/wiki/Compatibility) covers the prepared 1.0.0 module and the published prereleases.
 
 [Website](https://senyo888.github.io/thermal-intelligence/) · [Repository](https://github.com/senyo888/thermal-intelligence) · [Changelog](https://github.com/senyo888/thermal-intelligence/blob/main/CHANGELOG.md)

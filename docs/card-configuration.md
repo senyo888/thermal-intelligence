@@ -1,10 +1,28 @@
 # Card configuration
 
-The health LED distinguishes connection/readiness and incomplete provider observations from heating activity. VT's explicitly null **Off reason** and **Mode reason** mean **None reported**, not a telemetry failure. Missing fields and genuine unknown or unavailable values remain visible in the overview and may keep the LED amber; disconnected or unavailable thermostats remain red. An amber provider-detail warning does not itself change command permissions: the existing readiness and capability guards remain authoritative.
+Use this guide for the prepared [1.0.0 Thermostat](v1.0.0.md). For a guided first room, follow the [settings walkthrough](wiki/Configuration.md). The latest published prerelease has its own [RC.3 guide](rc-3.md).
 
-This branch’s guide describes the **[unreleased 0.1.0-rc.4 candidate](rc-4.md)**. The current published prerelease remains RC.3. Existing schema-1 cards remain supported; explicitly enabling an optional switch uses schema 2. Published RC.1 and beta.5 do not include this feature. See [Compatibility](compatibility.md) for tested Home Assistant and provider versions.
+## What you need
 
-The card presents a selected climate entity, its advertised controls and explicit optional observations. It does not need a TI backend, create schedules or take ownership of an existing controller. See the [provider contracts](provider-contracts.md) for capability and evidence rules, and the [command contract](command-contract.md) for request tracking and uncertainty.
+Choose a Home Assistant `climate.*` entity for the room. For the dial, check that it reports current temperature and a target or target range in Home Assistant. The card uses the thermostat’s advertised modes and limits. Seeing the right current temperature is a good first checkpoint before mapping anything else.
+
+| What you want | Minimum source |
+| --- | --- |
+| Thermostat dial and controls | A compatible climate entity. Automatic provider selection uses the Home Assistant entity registry. VT must also report ready for dependent controls. |
+| Humidity or valve position | A humidity sensor or valve-opening sensor reporting a number from 0 to 100 with unit `%`. Map each to its own field. |
+| Rising or falling temperature | A numeric temperature **rate** from a sensor, such as `°C/h` or `°F/min`. If you need to create a rate sensor, follow the [walkthrough](wiki/Configuration.md#set-up-temperature-response). |
+| Extra indoor or outside temperature | A typed temperature observation from a sensor or a weather entity with both temperature and unit attributes. It adds a reading alongside the dial. |
+| Confirmed owner, House policy or Schedule mode | An entity or attribute from the controller that reports the accepted value. Leave the mapping empty if you have no such source. |
+| Orange response arc on VT | VT’s actual room sensor, matching recent slope and confirmed native target or supported TRV output. The [response setup](#temperature-response-arc) covers both routes. |
+
+For the smallest usable configuration, replace the example with your own climate entity. The picker reads **Thermal Intelligence Thermostat**. Existing and new 1.0.0 cards use this YAML type.
+
+```yaml
+type: custom:thermal-intelligence-beta-card
+entity: climate.example_room
+```
+
+The card reads state during setup and preview. Your thermostat provider keeps regulating the room and running its schedules. [Provider contracts](provider-contracts.md) · [Command behaviour](command-contract.md)
 
 ## Visual configuration
 
@@ -27,6 +45,12 @@ Dialog drafts copy configuration data without evaluating JavaScript getters or s
 
 The YAML below describes the same configuration contract. The preview shows the normalized configuration as JSON; it does not include a YAML importer. Type and schema version are managed by the card and editor rather than exposed as ordinary display settings.
 
+## Guided VT sources or manual mappings
+
+On a VT card, **VT readings** lets you expose observations from the selected thermostat with a checkbox. For an entity or feature mapping, **Find VT sources** checks the thermostat’s registry identity and configured features. Review the suggested value and choose **Use this source**. A disabled slope sensor or ambiguous match needs attention in Home Assistant. Already mapped sources keep their place.
+
+For independent sensors or a standard thermostat, choose the exact entity under **Readings and icons**. Use **Custom telemetry & features** for a named value with an optional icon or preset association. Use **Optional telemetry** for a reading with a defined type, attribute, unit or maximum age. Preview a value you recognise, save, then tap the icon on the finished card. You can mix explicit mappings with VT readings.
+
 ## Top row icon settings
 
 Expand **Controls & features**, then choose **Top row icon settings**. Primary icons are existing mapped readings; VT readings are optional observations from the selected provider. Check a reading to include it, then drag its handle, use its arrow buttons, or focus the handle and press Up or Down. The groups keep their order: Primary, Presets and control source, then VT readings. The preview reflects the draft. Preset icons still appear only when their exact preset is selected.
@@ -38,6 +62,8 @@ Hiding or moving an icon changes only the header. It preserves sensor mappings, 
 Save icon choices through **Edit dashboard → Edit this card → Readings and icons → Top row icon settings**, then choose Home Assistant’s **Save**. Home Assistant owns the selected card and persistence.
 
 The runtime page is a draft workspace. **Copy configuration** copies the complete draft for this card’s configuration editor; if clipboard access is unavailable, the text opens selected for manual copying. Copying does not save or update the live card. Cancel discards the draft. The runtime page never looks up or rewrites dashboard storage, so matching, stale or template-generated copies cannot redirect a save to another card. Advanced export remains available.
+
+[View the top-row settings in a synthetic room](../assets/presentation/v1-top-row-settings.png).
 
 ### Optional VT readings
 
@@ -128,6 +154,8 @@ Quick presets come first, followed by Mode and any other advertised climate choi
 | `vt_telemetry` | VT readings | `[]` | Opt-in provider observations listed below; selecting one never enables a VT feature. |
 | `control_source`, `house_preset`, `schedule`, `schedule_preset` | Control source, House policy and schedule | Unset | Optional read-only ownership, effective House policy, schedule activity and last-confirmed schedule-mode mappings described above. No scheduling or ownership commands. |
 | `header_icons` | Top row icon settings | No overrides | Display-only `hidden` and `order` arrays of reading keys, maintained by the editor. Unknown nested fields remain intact. |
+| `response_arc` | Temperature response | Unset | Select a room sensor, one output confirmation route, optional heat-source thermostat and freshness window. See [response setup](#temperature-response-arc). |
+| `mapped_controls` | Optional switch control | Unset | Explicit schema-2 enrollment of one eligible switch paired with a registered standard thermostat. See [switch setup](optional-switch-control.md). |
 | `humidity_bands` | Four humidity guide boundaries, or explicit legacy low/high | Original `30/40/60/70` guides | `{dry_below, good_min, good_max, wet_above}` requires ordered integers within 0–100. Existing `{low, high}` remains an explicit legacy format. Local display classification only; details below. |
 
 Names, labels, units and preset keys must be plain text without markup delimiters or control characters. Optional numbers use YAML numbers, not quoted numeric strings. Boolean options use `true` or `false`. Clear an optional setting by omitting it; `null` is not a substitute for a valid recognized value.
@@ -208,7 +236,7 @@ The outer arc follows the canonical TI response design; the fine ring around the
 
 An Idle chip does not force a particular arc colour. Temperature relative to target, measured slope and reported activity remain separate facts. Tap the status LED or chip for **Temperature response**, including the reason warming is or is not established.
 
-Choose the actual room-temperature sensor and the existing trend source. For a VT controlling a native thermostat, map **Native thermostat**. For a TRV path, map **Confirmed output** plus an explicit valve-position source. The confirmed output must implement the [documented acceptance contract](provider-contracts.md#temperature-response-evidence); a generic TRV entity or valve percentage alone is insufficient. An optional **Heat source** adds a Heat-mode check.
+Under **Room temperature sensor**, choose the sensor whose measurement VT uses for this room. Under **Readings and icons**, map the room’s signed rate of change. For a VT response, its value must agree with VT’s own slope. A generic warming/cooling binary sensor cannot supply that rate. For VT over a native thermostat, select **Native thermostat (target confirmation)** and leave the valve and confirmed-output mappings unset. For a TRV path, select **Confirmed TRV output controller** and map the separate valve-position percentage. The confirmed output must implement the [documented acceptance contract](provider-contracts.md#temperature-response-evidence); a generic TRV entity or valve percentage alone is insufficient. An optional **Heat source** adds a Heat-mode check.
 
 ```yaml
 # Synthetic example: replace every mapping with your own documented sources.
@@ -218,6 +246,8 @@ response_arc:
   native_thermostat: climate.example_native_thermostat
   freshness_minutes: 10
 ```
+
+[View the native thermostat mapping in the editor](../assets/presentation/v1-temperature-response.png).
 
 The freshness window defaults to 10 minutes, can be set above zero through 30, and is capped by a valid VT safety delay. The room sensor's last value change and the trend's last update must both be recent. Repeated VT attribute updates do not renew that evidence. Stricter typed telemetry age limits still apply. Orange expires without requiring another HA update, including during a target-marker draft.
 
@@ -360,7 +390,7 @@ An existing `humidity_bands: {low: 35, high: 65}` retains the explicit legacy th
 
 All humidity colours are **Local display band** preferences. They are not HI seasonal targets, Stability, lanes, controller reasons or safety thresholds. This card has no automatic HI contract or HI service path.
 
-Activity is kept separate from mode, preset and ownership. Standard `hvac_action` is integration-reported activity; VT `heating` is presented as **Heat requested**, with physical heat delivery unverified. Ownership remains unknown without an authoritative ownership contract.
+Activity is kept separate from mode, preset and ownership. Standard `hvac_action` is integration-reported activity; VT `heating` is presented as **Heat requested**, with physical heat delivery unverified. To show who controls the room, map `control_source` to the entity or attribute that reports the owner. The card shows the reported owner when the source is available, passes its configured checks and reports a recognised value. If the mapping is empty, the report is unavailable or a value is unrecognised, ownership is **Unknown**. Provider identity, presets, matching targets and an active schedule do not identify the owner.
 
 When details are enabled, applicable VT regulation observations include the provider's climate regulation mode/internal target or proportional function/demand and requested valve opening. These are read-only, type-gated observations with their own sources and availability states. The internal target retains its provider-declared unit, and requested valve opening is distinct from a measured valve-position source. See the [VT detail contract](provider-contracts.md#activity-and-vt-details) for exact paths and limitations; there is no regulation-setting control in this card.
 

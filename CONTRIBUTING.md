@@ -1,6 +1,6 @@
 # Contributing to Thermal Intelligence
 
-Changes start on `senyo888-patch-1`, then enter `develop` by pull request for release-candidate preparation. Promotion from `develop` to `main` is separate. `main` carries public documentation, the website and the separately promoted frozen distribution snapshot. RC.3 is published from `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`; the [RC.4 candidate](docs/rc-4.md) consolidates beta.8 usability work on `senyo888-patch-1` pending future develop reconciliation. There is no stable release yet. Senyo retains merges; local preparation does not authorize publication or installation.
+Changes start on `senyo888-patch-1`, then enter `develop` by pull request for release-candidate preparation. A second pull request promotes the validated candidate from `develop` to `main`. Once it merges, tag the approved commit on `main` and publish the stable release from that commit. `main` carries public documentation, the website and the separately promoted frozen distribution snapshot. RC.3 is published from `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`; the [RC.4 candidate](docs/rc-4.md) consolidates beta.8 usability work on `senyo888-patch-1` pending future develop reconciliation. There is no stable release yet. Senyo retains merges; local preparation does not authorize publication or installation.
 
 Read [Architecture](ARCHITECTURE.md) and [AGENTS.md](AGENTS.md). Keep changes focused and describe the problem, resulting behaviour and checks actually run. Update configuration, compatibility, migration and release notes when affected.
 

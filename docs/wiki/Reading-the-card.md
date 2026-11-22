@@ -1,6 +1,6 @@
 # Reading the card
 
-**Unreleased RC.4 preview:** carrying beta.8’s usability changes, display setup moves into Home Assistant’s card editor, with humidity sliders, reading/icon previews, outdoor temperature and searchable switch selection. Runtime **Readings and display** keeps **Advanced draft and export** available. Press feedback acknowledges interaction; selected presets still follow provider state. RC.4 passed bounded manual Lab checks on inert fixtures; installer and physical-device acceptance remain unverified. RC.3 remains the published prerelease. See the [unreleased candidate record](https://github.com/senyo888/thermal-intelligence/blob/senyo888-patch-1/docs/rc-4.md).
+This guide covers the 1.0.0 card. For example, a room can be below target, its valve can be closed, and the temperature can still be rising. Read the arc, chip and fine ring together. [Choose the sources for your room](https://github.com/senyo888/thermal-intelligence/wiki/Configuration).
 
 ## Every detail has a purpose
 
@@ -19,7 +19,7 @@ The everyday view stays simple: the room temperature, your target, a clear statu
 
 The outer arc, slope ring and activity chip are deliberately independent: the arc combines the room's state with corroborated temperature response, the fine ring shows measured temperature slope, and the chip reports activity. Idle is a reported activity, not a universal arc colour. A rising temperature slope can continue after the valve closes; the closed TRV does not establish an orange response arc.
 
-**Orange has a specific meaning.** With the optional VT response sources configured, the room must be below its effective target, the current heat request must be accepted, and fresh room and trend readings must agree that it is warming. An open valve or a heating request alone is insufficient. When those observations expire, the arc returns to blue and the LED overview explains why. Standard thermostats and cards without response mappings retain the temperature comparison and reported cooling colours; they do not invent accepted-output evidence. [Response setup and colour meanings](https://github.com/senyo888/thermal-intelligence/blob/main/docs/card-configuration.md#temperature-response-arc).
+**Orange has a specific meaning.** With the optional VT response sources configured, the room must be below its effective target, the current heat request must be accepted, and fresh room and trend readings must agree that it is warming. An open valve or a heating request alone is insufficient. When those observations expire, the arc returns to blue and the LED overview explains why. Standard thermostats and cards without response mappings retain the temperature comparison and reported cooling colours; they do not invent accepted-output evidence. [Response setup and colour meanings](https://github.com/senyo888/thermal-intelligence/blob/9785775e674ed6b0820ad3b916c1ac41d21632f0/docs/card-configuration.md#temperature-response-arc).
 
 The staggered glint of the small lights around the dial and the slope ring's gentle breathing preserve the original glass-and-light character. They add depth without replacing readable values or status text, and respect reduced-motion preferences.
 
@@ -36,6 +36,8 @@ The staggered glint of the small lights around the dial and the slope ring's gen
 ### Your readings, arranged your way
 
 Each configured icon combines a compact reading with colour that follows its meaning. Humidity follows your display bands; window, presence and motion distinguish **Open/Closed**, **Home/Away** and **Detected/Clear**; supported presets retain their own Frost, Eco, Comfort and Boost colours. Active, inactive and unknown observations receive distinct treatments, with missing information muted.
+
+The combined control indicator puts a reported owner and its applicable preset or last confirmed Schedule mode in one place. Open it to inspect the evidence. The history-marked hand records a confirmed action from this card. An ordinary hand can identify a controller reporting Manual. [Choose the icon and map its source](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#arrange-the-top-row).
 
 Choose which readings appear, their order, labels and icons for each card. Humidity, temperature, valve position and provider features can sit beside the room name without filling the main dial with detail. Tap a reading for its focused panel or Home Assistant source details. The compact VT lock indicates its reported state and opens [Lock/Unlock controls](https://github.com/senyo888/thermal-intelligence/blob/main/docs/lock-control.md) for verified administrators when supported.
 

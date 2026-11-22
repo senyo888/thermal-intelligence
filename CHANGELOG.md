@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.0 — Unreleased
+
+- Choose a thermostat, add independent room sensors or expose VT readings, and arrange the top row separately on each card.
+- Read the confirmed control source and applicable preset together. Open the indicator for ownership, House policy and Schedule details.
+- Configure the optional VT temperature response arc using measured room trend and accepted output.
+- Select **Thermal Intelligence Thermostat** in Add Card. The existing YAML registration and compatible schema-1/schema-2 cards are retained.
+
+[Senyo’s introduction](docs/v1.0.0.md) · [Package details](docs/v1.0.0-package.md) · [First-room walkthrough](docs/wiki/Configuration.md) · [Tested coverage](docs/compatibility.md#unreleased-100-package). RC.3 is the published prerelease.
+
 ## 0.1.0-rc.4 — Unreleased
 
 - Carry beta.8’s clearer button feedback, Home Assistant editor guidance, humidity controls, source previews/suggestions and typed temperature observations into an RC candidate.
