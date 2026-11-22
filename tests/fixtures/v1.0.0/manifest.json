@@ -1,5 +1,5 @@
 {
-  "card_type": "custom:thermal-intelligence-beta-card",
+  "card_type": "custom:thermal-intelligence-thermostat",
   "channel": "stable",
   "delivery_branch": "main",
   "distribution": {
@@ -8,7 +8,7 @@
       "dist/LICENSE",
       "dist/thermal-intelligence.js"
     ],
-    "module_sha256": "2f838e7ed3d59d4dc87f7e156872b2b820ca8cc19fa24410d66b6759190cdeba",
+    "module_sha256": "711b0cbd081f7bfee93bf6b94277b4db3e51248e8e2b9297911985d1e9f03223",
     "repository_manifest": {
       "content_in_root": false,
       "filename": "thermal-intelligence.js",
@@ -17,9 +17,9 @@
     },
     "repository_manifest_sha256": "cbd811d94d0b7d19d81d13e628c7f3dba9fe236b47ba6e9fa45bd5756eb1490f",
     "scope": "Offline package structure only; installation, migration and catalogue inclusion unverified",
-    "source": "03df08e1fbcd8c8635543bded041e2ccdf2bed8d"
+    "source": "fe8414957fd490fa412eaa80920ecfe84f5e9561"
   },
-  "editor_tag": "thermal-intelligence-beta-card-editor",
+  "editor_tag": "thermal-intelligence-thermostat-editor",
   "files": [
     {
       "bytes": 34674,
@@ -27,15 +27,15 @@
       "sha256": "fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0"
     },
     {
-      "bytes": 265844,
+      "bytes": 268404,
       "path": "thermal-intelligence.js",
-      "sha256": "2f838e7ed3d59d4dc87f7e156872b2b820ca8cc19fa24410d66b6759190cdeba"
+      "sha256": "711b0cbd081f7bfee93bf6b94277b4db3e51248e8e2b9297911985d1e9f03223"
     }
   ],
   "product": "Thermal Intelligence",
   "repository": "https://github.com/senyo888/thermal-intelligence",
   "schema": 1,
-  "source_commit": "03df08e1fbcd8c8635543bded041e2ccdf2bed8d",
-  "source_tree": "6179ce2707c2b1c588d65003c5dcde2ab87d3bb7",
+  "source_commit": "fe8414957fd490fa412eaa80920ecfe84f5e9561",
+  "source_tree": "f5960fa5f5aaa09c6d3ea7d429df2283e3679f20",
   "version": "1.0.0"
 }

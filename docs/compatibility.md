@@ -2,9 +2,11 @@
 
 ## Unreleased 1.0.0 package
 
-The 265,844-byte module was verified at SHA-256 `2f838e7ed3d59d4dc87f7e156872b2b820ca8cc19fa24410d66b6759190cdeba`. Use the [1.0.0 package and upgrade notes](v1.0.0-package.md) for the matching picker and resource.
+The [rebuilt module](v1.0.0-package.md#package-identity-and-upgrade) has unit, synthetic browser and package coverage. Its live installation and soak are unverified.
 
-| Check | Coverage for this module |
+The table records the previous 265,844-byte candidate, verified at SHA-256 `2f838e7ed3d59d4dc87f7e156872b2b820ca8cc19fa24410d66b6759190cdeba`. Use the [1.0.0 package and upgrade notes](v1.0.0-package.md) for the matching picker and resource.
+
+| Check | Coverage for the earlier candidate |
 | --- | --- |
 | Home Assistant and VT | A manual test installation on HA 2026.11.2 with VT 10.6.5 exercised eight control actions on inert fixtures. A second installation used Marketplace with the exact source commit. |
 | Editor and room controls | Save and reload, invalid humidity draft, room target adjustment, VT Boost and clearing the preset were checked. A five-minute scheduled Boost started and returned to Comfort automatically. |

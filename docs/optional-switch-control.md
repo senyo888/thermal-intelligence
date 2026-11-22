@@ -13,7 +13,7 @@ Enabling deliberately opts this card into schema 2. Other cards and ordinary edi
 The equivalent explicit YAML configuration uses synthetic entities:
 
 ```yaml
-type: custom:thermal-intelligence-beta-card
+type: custom:thermal-intelligence-thermostat
 schema_version: 2
 entity: climate.example_thermostat
 adapter: auto

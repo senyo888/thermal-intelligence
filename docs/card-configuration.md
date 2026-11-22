@@ -15,10 +15,10 @@ Choose a Home Assistant `climate.*` entity for the room. For the dial, check tha
 | Confirmed owner, House policy or Schedule mode | An entity or attribute from the controller that reports the accepted value. Leave the mapping empty if you have no such source. |
 | Orange response arc on VT | VT’s actual room sensor, matching recent slope and confirmed native target or supported TRV output. The [response setup](#temperature-response-arc) covers both routes. |
 
-For the smallest usable configuration, replace the example with your own climate entity. The picker reads **Thermal Intelligence Thermostat**. Existing and new 1.0.0 cards use this YAML type.
+For the smallest usable configuration, replace the example with your own climate entity. The picker reads **Thermal Intelligence Thermostat**. The picker and card exports use the YAML type below. Saved cards using `custom:thermal-intelligence-beta-card` continue to work.
 
 ```yaml
-type: custom:thermal-intelligence-beta-card
+type: custom:thermal-intelligence-thermostat
 entity: climate.example_room
 ```
 
@@ -31,7 +31,7 @@ Open the dashboard menu, choose **Edit dashboard**, then **Edit** on this card. 
 1. In **Thermostat**, select a climate entity and provider mode. Set the name, background and activity/detail visibility.
 2. In **Readings and icons**, use **Top row icon settings** to select and order visible readings, and map trend, humidity and valve sensors. Preview each header icon, value, status and source. **Custom telemetry & features** and **Optional telemetry** retain their full fields, ordering and preset associations.
 3. **Outside temperature** adds an explicitly selected temperature sensor or weather entity. It leaves the indoor dial unchanged. **Find VT sources** lists verified suggestions; each needs a deliberate **Use this source** action.
-4. In **Humidity display**, adjust the four sliders or exact percentages, inspect the gradient and current reading, or reset the guides. Legacy low/high guides remain two labelled fields; reset preserves unknown nested preferences.
+4. In **Humidity display**, drag the four markers on one colour bar or enter exact percentages below it, inspect the gradient and current reading, or reset the guides. Legacy low/high guides remain two labelled fields; reset preserves unknown nested preferences.
 5. In **Optional switch control**, search by friendly name or entity ID, select the exact switch, and enroll it separately. Searching alone changes no configuration.
 6. **Preset display labels**, **Temperature response** and **Advanced display settings** retain preset labels, response mappings and the fallback temperature step.
 
@@ -53,7 +53,7 @@ For independent sensors or a standard thermostat, choose the exact entity under 
 
 ## Top row icon settings
 
-Expand **Controls & features**, then choose **Top row icon settings**. Primary icons are existing mapped readings; VT readings are optional observations from the selected provider. Check a reading to include it, then drag its handle, use its arrow buttons, or focus the handle and press Up or Down. The groups keep their order: Primary, Presets and control source, then VT readings. The preview reflects the draft. Preset icons still appear only when their exact preset is selected.
+Expand **Controls & features**, then choose **Top row icon settings**. Primary icons are existing mapped readings; VT readings are optional observations from the selected provider. Check a reading to include it, then drag its handle, use its arrow buttons, or focus the handle and press Up or Down. Presets and control source come first, including readings linked to a preset. Primary icons follow, then VT readings. The preview reflects the draft. Preset icons still appear only when their exact preset is selected.
 
 Hiding or moving an icon changes only the header. It preserves sensor mappings, their priority, preset controls, expanded source details, the dial and response evidence. The lock indicator and health LED remain independent. Display keys follow source, type and preset identity, with separate occurrences for duplicate rows; source renaming does not reset visibility or order. Source replacement creates a different reading key.
 
@@ -136,7 +136,7 @@ Quick presets come first, followed by Mode and any other advertised climate choi
 
 | YAML key | Visual field | Default | Accepted value and behavior |
 | --- | --- | --- | --- |
-| `type` | Managed by the card | `custom:thermal-intelligence-beta-card` | This exact card type. Include it in a complete YAML configuration. |
+| `type` | Managed by the card | `custom:thermal-intelligence-thermostat` | This exact card type. Include it in a complete YAML configuration. |
 | `schema_version` | Managed by the card | `1` | Numeric `1` (existing cards) or `2` (explicit optional-control enrollment). Unsupported versions are rejected. |
 | `entity` | Thermostat entity | Empty string | A `climate.*` entity ID. Empty is the safe setup state. Entity names do not establish provider identity. |
 | `adapter` | Provider | `auto` | `auto`, `standard` or `vtherm`; see identity rules below. |
@@ -206,7 +206,7 @@ Preset associations require a finite numeric reading and a reported or explicit 
 For example, this mapping is explicit and portable; the synthetic number entity must exist in the chosen fixture or installation:
 
 ```yaml
-type: custom:thermal-intelligence-beta-card
+type: custom:thermal-intelligence-thermostat
 entity: climate.example
 features:
   - entity: number.example_comfort_temperature
@@ -332,7 +332,7 @@ The editor withholds provider-dependent accepted feature interpretation until it
 This example uses entity IDs present in the bundled fixture. All identifiers are synthetic. It exercises the implemented top-level settings and every telemetry-row field without requiring extra entities:
 
 ```yaml
-type: custom:thermal-intelligence-beta-card
+type: custom:thermal-intelligence-thermostat
 schema_version: 1
 entity: climate.fixture_thermostat
 adapter: auto
@@ -376,7 +376,7 @@ The fixture advertises its own temperature step, so the example's `step: 0.25` r
 For an empty setup state, the minimal configuration is:
 
 ```yaml
-type: custom:thermal-intelligence-beta-card
+type: custom:thermal-intelligence-thermostat
 entity: ""
 ```
 

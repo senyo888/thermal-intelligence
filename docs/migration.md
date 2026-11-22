@@ -1,6 +1,6 @@
 # Update and rollback
 
-The 1.0.0 picker reads **Thermal Intelligence Thermostat**. Beta builds add **· Beta** and RC builds add **· RC**. All three use `custom:thermal-intelligence-beta-card`. Replace the existing standalone resource when moving between them. Keep the previous module, resource URL and matching card configuration for rollback. [1.0.0 package](v1.0.0-package.md).
+The 1.0.0 picker reads **Thermal Intelligence Thermostat**. Beta builds add **· Beta** and RC builds add **· RC**. New 1.0.0 cards and exports use `custom:thermal-intelligence-thermostat`. Saved beta and RC cards continue to load using `custom:thermal-intelligence-beta-card`. Loading two standalone builds, even two marked 1.0.0, can leave an old picker or duplicate entries. Keep one standalone resource and reload the dashboard in a fresh browser tab. If you return to an older module, use the previous YAML type and the configuration saved with that module. Replace the existing standalone resource when moving between them. Keep the previous module, resource URL and matching card configuration for rollback. [1.0.0 package](v1.0.0-package.md).
 
 RC.3 retains existing **schema-1** and **schema-2** configurations. Explicit enrollment of the optional switch control, introduced in beta.6, uses **schema 2**; keep the original configuration for rollback. The trial card type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`.
 
@@ -24,7 +24,7 @@ Humidity editor sliders, search and source suggestions do not change schema or e
 
 ## Keep existing TI alongside the trial card
 
-The prepared stable packaging route retains `custom:thermal-intelligence-beta-card` and `thermal-intelligence-beta-card-editor`. Existing schema-1 and schema-2 card configurations therefore keep their type; no rename to the legacy `custom:thermal-intelligence-card` is required. A stable build uses **Thermal Intelligence Thermostat** in the picker, while beta and RC builds retain their channel suffix. This is a compatibility contract for release preparation, not a claim that a stable version has been published or accepted on an installation.
+The prepared stable module supports the earlier registrations `custom:thermal-intelligence-beta-card` and `thermal-intelligence-beta-card-editor`. Existing schema-1 and schema-2 card configurations therefore keep their type; no rename to the legacy `custom:thermal-intelligence-card` is required. A stable build uses **Thermal Intelligence Thermostat** in the picker, while beta and RC builds retain their channel suffix. This is a compatibility contract for release preparation, not a claim that a stable version has been published or accepted on an installation.
 
 Keep existing `custom:thermal-intelligence-card` instances and their resources in place. Add new trial cards through **Thermal Intelligence Thermostat · RC**. The wider system keeps responsibility for schedules, holds, ownership, cutoff and recovery controls. Preserve its backend-dependent cards and their types.
 
@@ -71,7 +71,7 @@ The optional switch control is available from beta.6 and retained in RC.3; it is
 
 ## Trial and legacy coexistence
 
-Beta, RC and prepared stable packages use the same card and editor registrations. Load only one of those modules in a browser document. A stable upgrade replaces the selected beta/RC resource, and changing that resource requires a fresh document. Keep the separate legacy TI resources and cards unchanged. Untagged beta updates do not change the RC.1 tag or its release assets.
+The stable package also registers the beta and RC names for backwards compatibility. Load only one of those modules in a browser document. A stable upgrade replaces the selected beta/RC resource, and changing that resource requires a fresh document. Keep the separate legacy TI resources and cards unchanged. Untagged beta updates do not change the RC.1 tag or its release assets.
 
 ## Installer-managed recovery
 

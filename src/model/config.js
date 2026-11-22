@@ -2,8 +2,11 @@
 import { validHumidityBands, legacyHumidityBands } from './humidity.js';
 import { VT_READINGS } from './vt-catalog.js';
 
-export const CARD_TAG = 'thermal-intelligence-beta-card';
-export const EDITOR_TAG = 'thermal-intelligence-beta-card-editor';
+export const LEGACY_CARD_TAG = 'thermal-intelligence-beta-card';
+export const LEGACY_EDITOR_TAG = 'thermal-intelligence-beta-card-editor';
+const prerelease = typeof __TI_VERSION__ !== 'undefined' && __TI_VERSION__.includes('-');
+export const CARD_TAG = prerelease ? LEGACY_CARD_TAG : 'thermal-intelligence-thermostat';
+export const EDITOR_TAG = prerelease ? LEGACY_EDITOR_TAG : 'thermal-intelligence-thermostat-editor';
 export const CARD_TYPE = `custom:${CARD_TAG}`;
 export const SCHEMA_VERSION = 1;
 export const TELEMETRY_KINDS = ['temperature', 'humidity', 'trend', 'valve', 'energy', 'power', 'window', 'motion', 'presence', 'power_management', 'follow', 'custom'];
@@ -105,7 +108,7 @@ export function snapshotDialogConfig(config) {
 
 export function normalizeConfig(raw) {
   assertConfigAuthorityData(raw);
-  if (raw.type !== undefined && raw.type !== CARD_TYPE) throw new Error(`Card type must be ${CARD_TYPE}.`);
+  if (raw.type !== undefined && raw.type !== CARD_TYPE && raw.type !== `custom:${LEGACY_CARD_TAG}`) throw new Error(`Card type must be ${CARD_TYPE}.`);
   const schemaVersion = Object.getOwnPropertyDescriptor(raw, 'schema_version')?.value;
   if (schemaVersion !== undefined && ![SCHEMA_VERSION, 2].includes(schemaVersion)) throw new Error('Unsupported configuration schema_version.');
   const entity = raw.entity === undefined ? '' : raw.entity;

@@ -54,7 +54,7 @@ The arc, slope ring and status chip describe different parts of the room’s sto
 
 ## Your readings, arranged your way
 
-Set up each room independently. Show humidity in one room and valve position in another. Tap a reading for its value, source and status. The combined control indicator can pair a confirmed owner with its applicable preset or schedule mode. Unknown ownership stays visible.
+Set up each room independently. Show humidity in one room and valve position in another. Tap a reading for its value, source and status. Presets and control source come first, followed by primary icons and then VT readings. In **Humidity display**, drag the four markers along the colour bar or enter exact percentages. The combined control indicator can pair a confirmed owner with its applicable preset or schedule mode. Unknown ownership stays visible.
 
 **Controls & features** opens the thermostat’s advertised modes and presets, preset temperatures and card settings. VT can also expose accepted window, presence and motion states, estimated energy and provider settings. A compatible standard thermostat can use an explicitly enrolled [optional switch](docs/optional-switch-control.md). The card asks for confirmation before operating it.
 

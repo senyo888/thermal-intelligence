@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { compactHeader, headerPresentation, headerGlyphStyles } from '../cards/header-presentation.js';
-import { orderHeaderIcons, moveHeaderIcon, setHeaderVisible } from '../model/header-icons.js';
+import { HEADER_GROUPS, orderHeaderIcons, moveHeaderIcon, setHeaderVisible } from '../model/header-icons.js';
 
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const iconOptionsStyles=`${headerGlyphStyles}
@@ -74,10 +74,10 @@ export class IconOptions {
   }
   update(model,config,disabled=false) {
     this.model=model;this.config=config;this.disabled=disabled;
-    this.rows=['primary','control','vt'].flatMap(group=>orderHeaderIcons((model?.headerOptions??[]).filter(row=>row.group===group&&!['control:provider','control:schedule'].includes(row.key)),config.header_icons?.order))
+    this.rows=HEADER_GROUPS.flatMap(group=>orderHeaderIcons((model?.headerOptions??[]).filter(row=>row.group===group&&!['control:provider','control:schedule'].includes(row.key)),config.header_icons?.order))
       .map(row=>row.key==='control:ownership'?{...row,label:'Combined control indicator'}:row);
     const signature=JSON.stringify(this.rows.map(row=>[row.key,row.group]));
-    if(this.drag&&disabled)this.endDrag(false);
+    if(this.drag&&(disabled||signature!==this.signature))this.endDrag(false);
     if(signature!==this.signature&&!this.drag) {
       this.signature=signature;
       const group=(kind,title,note)=>{
@@ -85,7 +85,7 @@ export class IconOptions {
         if(kind==='vt'&&!rows.length)return '<p>VT readings appear when the Versatile Thermostat provider is selected or verified. Use Find VT sources in advanced settings if identity is not yet known.</p>';
         return `<fieldset><legend>${title}</legend><p>${note}</p>${rows.map((row,index)=>`<div class="icon-choice" data-icon-row="${esc(row.key)}"><label><input type="checkbox" data-icon-visible="${esc(row.key)}" aria-label="Show ${esc(row.label)}"><ha-icon icon="${esc(row.icon)}" aria-hidden="true"></ha-icon><span><span data-icon-label>${esc(row.label)}</span><small data-icon-reading></small></span></label><div class="icon-order"><button data-icon-grip aria-label="Reorder ${esc(row.label)}" title="Drag or use arrow keys"><ha-icon icon="mdi:menu" aria-hidden="true"></ha-icon></button><div class="icon-arrows"><button data-icon-move="-1" data-edge="${index===0}" aria-label="Move ${esc(row.label)} up">↑</button><button data-icon-move="1" data-edge="${index===rows.length-1}" aria-label="Move ${esc(row.label)} down">↓</button></div></div></div>`).join('')||'<p>No mapped readings yet. Add a reading below.</p>'}</fieldset>`;
       };
-      this.host.innerHTML=`<div class="icon-preview" aria-label="Draft top row preview"></div>${group('primary','Primary icons','Show or hide existing readings. Selected presets join the combined control indicator.')}${group('control','Presets and control source','One icon combines the reported source and selected preset. The combined control indicator switch hides the whole slot. Unknown source evidence hides the other control symbols. Provider identity and schedule activity remain in its details. Add source mappings in the card editor.')}${group('vt','VT readings','Optional provider observations. Selecting an icon does not enable or change a VT feature.')}<p class="icon-sr" data-icon-announcement role="status"></p>`;
+      this.host.innerHTML=`<div class="icon-preview" aria-label="Draft top row preview"></div>${group('control','Presets and control source','One icon combines the reported source and selected preset. The combined control indicator switch hides the whole slot. Unknown source evidence hides the other control symbols. Provider identity and schedule activity remain in its details. Add source mappings in the card editor.')}${group('primary','Primary icons','Show or hide existing readings.')}${group('vt','VT readings','Optional provider observations. Selecting an icon does not enable or change a VT feature.')}<p class="icon-sr" data-icon-announcement role="status"></p>`;
     }
     const hidden=new Set(config.header_icons?.hidden??[]),selected=new Set(config.vt_telemetry??[]);
     for(const node of this.host.querySelectorAll('[data-icon-row]')) {

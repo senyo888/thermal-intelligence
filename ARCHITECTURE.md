@@ -55,7 +55,7 @@ Define coalescing/cancellation behavior for rapid inputs and stale completions. 
 
 Use a versioned, validated card configuration with documented migrations. All declared first-release options must be available visually, including optional telemetry/provider details where retained. Preserve unknown/advanced fields during edits. Scope settings to a card instance unless the user explicitly selects a broader operation.
 
-Separate a no-entity setup state from operational validation. Stub generation, editor construction and preview have no device side effects. Escape dynamic text at DOM sinks. No unsafe HTML from entities, provider reason text or imported config. The standalone module registers only `thermal-intelligence-beta-card` and its editor, preserving legacy registrations. Guard duplicate resource loading without masking incompatible versions; see [migration](docs/migration.md).
+Separate a no-entity setup state from operational validation. Stub generation, editor construction and preview have no device side effects. Escape dynamic text at DOM sinks. No unsafe HTML from entities, provider reason text or imported config. The stable module registers `thermal-intelligence-thermostat` and its editor. It also supports the beta card and editor names for saved dashboards. The original dashboard keeps its separate registration. Guard duplicate resource loading without masking incompatible versions; see [migration](docs/migration.md).
 
 ## Optional Humidity Intelligence interoperability
 

@@ -56,6 +56,7 @@ for (const legacy of [false, true]) test(`manual humidity export follows ${legac
   await dialog.getByRole('button', { name: 'Copy configuration' }).click(); await expect(output).toBeVisible();
   await input.fill('31');
   await expect.poll(async () => JSON.parse(await output.inputValue()).humidity_bands[key]).toBe(31);
+  expect(JSON.parse(await output.inputValue()).type).toBe('custom:thermal-intelligence-thermostat');
   expect(JSON.parse(await output.inputValue()).future_option).toEqual({ kept: true });
   expect(JSON.parse(await output.inputValue()).humidity_bands.future).toEqual({ kept: true });
   await input.fill('90'); await expect(output).toHaveValue(''); await expect(output).toBeDisabled();

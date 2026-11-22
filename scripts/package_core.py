@@ -28,7 +28,7 @@ def package(commit, output, *, channels):
             raise ValueError("Payload must contain ordinary, non-executable tracked files")
         payload[name] = git("show", f"{commit}:{source}")
     bundle = payload["thermal-intelligence.js"].decode()
-    validate_bundle(version, bundle)
+    tag = validate_bundle(version, bundle)
     if "sourceMappingURL=" in bundle or len(payload["thermal-intelligence.js"]) > 1_000_000:
         raise ValueError("Unexpected source map or payload size")
     manifest = {
@@ -36,8 +36,8 @@ def package(commit, output, *, channels):
         "repository": "https://github.com/senyo888/thermal-intelligence",
         "channel": channel, "delivery_branch": delivery_branch, "source_commit": commit,
         "source_tree": git("rev-parse", f"{commit}^{{tree}}").decode().strip(),
-        "card_type": "custom:thermal-intelligence-beta-card",
-        "editor_tag": "thermal-intelligence-beta-card-editor",
+        "card_type": f"custom:{tag}",
+        "editor_tag": f"{tag}-editor",
         "files": [{"path": name, "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}
                   for name, data in sorted(payload.items())],
     }

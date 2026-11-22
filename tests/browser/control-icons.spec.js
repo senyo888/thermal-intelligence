@@ -217,3 +217,36 @@ for(const scenario of ['standard','vt'])for(const width of [390,768,1440])test(`
   const geometry=await card(page).evaluate(node=>{const root=node.shadowRoot,outer=root.querySelector('ha-card'),pair=root.querySelector('.settings-pair button');return {direction:getComputedStyle(pair).flexDirection,fit:outer.scrollWidth<=outer.clientWidth+1,targets:[...root.querySelectorAll('.settings-pair button,.utility-actions button')].every(button=>button.getBoundingClientRect().height>=44)};});
   expect(geometry).toEqual({direction:'column',fit:true,targets:true});await card(page).screenshot({path:info.outputPath('narrow-expanded.png')});expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
 });
+
+for(const width of [390,768,1440])test(`preset captions sit above their readings and control source leads at ${width}px`,async({page})=>{
+  await page.setViewportSize({width,height:1080});await setup(page);
+  await page.evaluate(()=>{
+    Object.assign(fixture.hass.states[fixture.config.entity].attributes,{preset_temperatures:{frost_temp:7,eco_temp:17,comfort_temp:21,boost_temp:23}});
+    fixture.hass.states['sensor.owner']={state:'House',attributes:{}};
+    fixture.hass.states['sensor.policy']={state:'Comfort',attributes:{}};
+    fixture.configure({...fixture.config,control_source:{entity:'sensor.owner'},house_preset:{entity:'sensor.policy'},
+      features:[{entity:'sensor.policy',label:'Linked reading',preset:'comfort'}]});
+    fixture.refresh();
+  });
+  const header=card(page).locator('[data-header-telemetry] button').first();
+  await expect(header).toHaveAccessibleName('Control source: House; House policy: Comfort');
+  await card(page).locator('[data-expand]').click();
+  const frost=card(page).locator('[data-preset="frost"]');
+  for(const chosen of ['comfort','frost']){
+    await page.evaluate(chosen=>{fixture.hass.states[fixture.config.entity].attributes.preset_mode=chosen;fixture.refresh();},chosen);
+    await expect(frost).toHaveAttribute('aria-pressed',String(chosen==='frost'));
+    await expect(frost.locator('.preset-temperature')).toHaveText('7°C');
+    const layout=await frost.evaluate(button=>{
+      const rect=selector=>button.querySelector(selector).getBoundingClientRect();
+      const label=rect('.preset-label'),value=rect('.preset-temperature');
+      return {offset:(label.left+label.width/2)-(value.left+value.width/2),gap:value.top-label.bottom};
+    });
+    expect(Math.abs(layout.offset)).toBeLessThan(1);expect(layout.gap).toBeGreaterThanOrEqual(0);
+  }
+  await card(page).getByRole('button',{name:'Top row icon settings',exact:true}).click();
+  const groups=dialog(page).locator('[data-icon-options] legend');
+  await expect(groups).toHaveText(['Presets and control source','Primary icons','VT readings']);
+  await expect(dialog(page).getByRole('group',{name:'Presets and control source'}).getByText('Linked reading',{exact:true})).toHaveCount(1);
+  await expect(dialog(page).getByLabel('Draft top row preview').getByRole('img').first()).toHaveAccessibleName('Control source: House; House policy: Comfort');
+  expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
+});
