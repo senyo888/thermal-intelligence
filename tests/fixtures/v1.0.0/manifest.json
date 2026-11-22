@@ -1,0 +1,41 @@
+{
+  "card_type": "custom:thermal-intelligence-beta-card",
+  "channel": "stable",
+  "delivery_branch": "main",
+  "distribution": {
+    "category": "plugin",
+    "install_files": [
+      "dist/LICENSE",
+      "dist/thermal-intelligence.js"
+    ],
+    "module_sha256": "2f838e7ed3d59d4dc87f7e156872b2b820ca8cc19fa24410d66b6759190cdeba",
+    "repository_manifest": {
+      "content_in_root": false,
+      "filename": "thermal-intelligence.js",
+      "hide_default_branch": true,
+      "name": "Thermal Intelligence"
+    },
+    "repository_manifest_sha256": "cbd811d94d0b7d19d81d13e628c7f3dba9fe236b47ba6e9fa45bd5756eb1490f",
+    "scope": "Offline package structure only; installation, migration and catalogue inclusion unverified",
+    "source": "03df08e1fbcd8c8635543bded041e2ccdf2bed8d"
+  },
+  "editor_tag": "thermal-intelligence-beta-card-editor",
+  "files": [
+    {
+      "bytes": 34674,
+      "path": "LICENSE",
+      "sha256": "fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0"
+    },
+    {
+      "bytes": 265844,
+      "path": "thermal-intelligence.js",
+      "sha256": "2f838e7ed3d59d4dc87f7e156872b2b820ca8cc19fa24410d66b6759190cdeba"
+    }
+  ],
+  "product": "Thermal Intelligence",
+  "repository": "https://github.com/senyo888/thermal-intelligence",
+  "schema": 1,
+  "source_commit": "03df08e1fbcd8c8635543bded041e2ccdf2bed8d",
+  "source_tree": "6179ce2707c2b1c588d65003c5dcde2ab87d3bb7",
+  "version": "1.0.0"
+}

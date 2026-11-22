@@ -21,15 +21,15 @@ SPEC.loader.exec_module(foundation)
 class FoundationTargetTests(unittest.TestCase):
     """Candidate changes must not bypass shared checks or weaken main validation."""
 
-    def test_distribution_pins_match_frozen_rc3_manifest(self):
+    def test_distribution_pins_match_frozen_v1_manifest(self):
         """Bind main pins to the separately reviewed immutable candidate record."""
-        data = (ROOT / "tests/fixtures/rc-3/manifest.json").read_bytes()
+        data = (ROOT / "tests/fixtures/v1.0.0/manifest.json").read_bytes()
         self.assertEqual(hashlib.sha256(data).hexdigest(),
-            "99f0023b96ac479e3462666b196854c41210db41a7a15029645880fb6324f283")
+            "4b7fcdf1c52f89d4e62211557a8640aa79bd9c95c66ee5f382756047758d488a")
         manifest = json.loads(data)
-        self.assertEqual(manifest["version"], "0.1.0-rc.3")
-        self.assertEqual(manifest["source_commit"], "f93fb6489f87fbf9c393dd8cd03e85e5718277ef")
-        self.assertEqual(manifest["source_tree"], "0758e5e9acc724c123a9b2e4ec38018255219ac9")
+        self.assertEqual(manifest["version"], "1.0.0")
+        self.assertEqual(manifest["source_commit"], "03df08e1fbcd8c8635543bded041e2ccdf2bed8d")
+        self.assertEqual(manifest["source_tree"], "6179ce2707c2b1c588d65003c5dcde2ab87d3bb7")
         self.assertEqual(foundation.DISTRIBUTION_HASHES,
             {f'dist/{item["path"]}': item["sha256"] for item in manifest["files"]})
 
@@ -86,7 +86,7 @@ class FoundationTargetTests(unittest.TestCase):
             with self.subTest(environment=environment):
                 code, output = self.run_foundation(environment)
                 self.assertEqual(code, 1)
-                self.assertIn("differs from the reviewed RC.3 snapshot", output)
+                self.assertIn("differs from the reviewed distribution snapshot", output)
 
     def test_candidate_pushes_accept_evolving_payload(self):
         """Candidate and beta pushes do not inherit the main payload freeze."""
@@ -110,7 +110,7 @@ class FoundationTargetTests(unittest.TestCase):
             with self.subTest(environment=environment):
                 code, output = self.run_foundation(environment)
                 self.assertEqual(code, 1)
-                self.assertIn("differs from the reviewed RC.3 snapshot", output)
+                self.assertIn("differs from the reviewed distribution snapshot", output)
 
     def test_exact_main_snapshot_passes(self):
         """The approved snapshot remains acceptable on main."""
@@ -148,7 +148,7 @@ class FoundationTargetTests(unittest.TestCase):
                                            changed_payload=False,
                                            extra={"dist/LICENSE": b"changed licence\n"})
         self.assertEqual(code, 1)
-        self.assertIn("dist/LICENSE: differs from the reviewed RC.3 snapshot", output)
+        self.assertIn("dist/LICENSE: differs from the reviewed distribution snapshot", output)
 
     def test_main_rejects_incorrect_hacs_metadata(self):
         """Main rejects invalid JSON, changed values and equal values of wrong types."""
