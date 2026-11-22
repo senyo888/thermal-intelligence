@@ -1,6 +1,6 @@
 # HACS on earlier Home Assistant installations
 
-The named download in this guide is **RC.3**. The [1.0.0 package](https://github.com/senyo888/thermal-intelligence/blob/fe8414957fd490fa412eaa80920ecfe84f5e9561/docs/v1.0.0-package.md) is awaiting release. Its verification notes identify the rebuilt module and the earlier module used for installation checks.
+The named download in this guide is **RC.3**. The [1.0.0 package](https://github.com/senyo888/thermal-intelligence/blob/f78709b12fad79bd19ce2da7d60186ad13b8ea9f/docs/v1.0.0-package.md) is awaiting release. Its verification notes identify the rebuilt module and the earlier module used for installation checks.
 
 For Home Assistant 2026.11 and later, use [Marketplace](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md). For older systems still using HACS, follow the [HACS custom Dashboard repository guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/hacs.md).
 
