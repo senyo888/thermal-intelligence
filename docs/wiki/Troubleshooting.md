@@ -2,7 +2,7 @@
 
 ## The card is missing from Add Card
 
-Check the module you loaded. Version 1.0.0 appears as **Thermal Intelligence Thermostat**, RC.3 as **Thermal Intelligence Thermostat · RC**, and beta builds add **· Beta**. These versions share a YAML type. Keep one registration for the standalone module, then open a fresh browser document. The older dashboard card uses a separate registration. [Upgrade and rollback](https://github.com/senyo888/thermal-intelligence/blob/v1.0.0/docs/migration.md).
+Check the module you loaded. Version 1.0.0 appears as **Thermal Intelligence Thermostat**, RC.3 as **Thermal Intelligence Thermostat · RC**, and beta builds add **· Beta**. These versions share a YAML type. Keep one registration for the standalone module, then open a fresh browser document. The older dashboard card uses a separate registration. [Upgrade and rollback](https://github.com/senyo888/thermal-intelligence/blob/9785775e674ed6b0820ad3b916c1ac41d21632f0/docs/migration.md).
 
 ## My icon layout disappeared
 
