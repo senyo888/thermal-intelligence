@@ -14,7 +14,7 @@
 
 Thermal Intelligence puts your thermostat’s current temperature, target and reported activity on one Home Assistant card. Add the readings that help you understand a room. A closed radiator valve and a rising room temperature, for example, can both be true. Tap the status chip for the reported activity, or open a top-row icon to inspect its source.
 
-**Start with your version.** This guide covers **Thermal Intelligence Thermostat** in 1.0.0. The RC.3 prerelease has **· RC** in the picker and its own [setup guide](docs/rc-3.md). The [1.0.0 package notes](docs/v1.0.0-package.md#validation-boundaries) record the Marketplace upgrade and dashboard checks on Home Assistant 2026.11.2.
+**Start with your version.** This guide covers **Thermal Intelligence Thermostat** in 1.0.0. The RC.3 prerelease has **· RC** in the picker and its own [setup guide](https://github.com/senyo888/thermal-intelligence/blob/4caf6f84868079a4d8f25c5d5731654f015bc260/docs/card-configuration.md#visual-configuration). The [1.0.0 package notes](docs/v1.0.0-package.md#validation-boundaries) record the Marketplace upgrade and dashboard checks on Home Assistant 2026.11.2.
 
 ## Set up your first room
 

@@ -1,6 +1,8 @@
 # Changelog
 
-## 1.0.0 — Unreleased
+<a name="100--unreleased"></a>
+
+## 1.0.0
 
 - Selecting a different thermostat clears the previous room’s request warning. An outstanding call still has to finish before the controls become available.
 - Choose a thermostat, add independent room sensors or expose VT readings, and arrange the top row separately on each card.
@@ -11,7 +13,7 @@
 - The dashboard editor shows a validation message for malformed icon or VT reading lists. Correcting the YAML restores the preview.
 - Adding an outside reading now preserves malformed telemetry or feature mappings and shows the validation error so you can correct the YAML and retry.
 
-[Senyo’s introduction](docs/v1.0.0.md) · [Package details](docs/v1.0.0-package.md) · [First-room walkthrough](docs/wiki/Configuration.md) · [Tested coverage](docs/compatibility.md#unreleased-100-package). RC.3 is the published prerelease.
+[Senyo’s introduction](docs/v1.0.0.md) · [Package details](docs/v1.0.0-package.md) · [First-room walkthrough](docs/wiki/Configuration.md) · [Tested coverage](docs/compatibility.md#100-package). [Available releases](https://github.com/senyo888/thermal-intelligence/releases).
 
 ## 0.1.0-rc.4 — Unreleased
 
