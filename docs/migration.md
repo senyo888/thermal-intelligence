@@ -24,9 +24,9 @@ Humidity editor sliders, search and source suggestions do not change schema or e
 
 ## Keep existing TI alongside the trial card
 
-The prepared stable module supports the earlier registrations `custom:thermal-intelligence-beta-card` and `thermal-intelligence-beta-card-editor`. Existing schema-1 and schema-2 card configurations therefore keep their type; no rename to the legacy `custom:thermal-intelligence-card` is required. A stable build uses **Thermal Intelligence Thermostat** in the picker, while beta and RC builds retain their channel suffix. This is a compatibility contract for release preparation, not a claim that a stable version has been published or accepted on an installation.
+The prepared stable module supports the earlier registrations `custom:thermal-intelligence-beta-card` and `thermal-intelligence-beta-card-editor`. Existing schema-1 and schema-2 card configurations therefore keep their type; no rename to the legacy `custom:thermal-intelligence-card` is required. A stable build uses **Thermal Intelligence Thermostat** in the picker, while beta and RC builds retain their channel suffix. The [1.0.0 package notes](v1.0.0-package.md#validation-boundaries) record the verified Marketplace upgrade and the earlier rollback trial.
 
-Keep existing `custom:thermal-intelligence-card` instances and their resources in place. Add new trial cards through **Thermal Intelligence Thermostat · RC**. The wider system keeps responsibility for schedules, holds, ownership, cutoff and recovery controls. Preserve its backend-dependent cards and their types.
+Keep existing `custom:thermal-intelligence-card` instances and their resources in place. For a new 1.0.0 card choose **Thermal Intelligence Thermostat**. Use **Thermal Intelligence Thermostat · RC** with RC.3. The wider system keeps responsibility for schedules, holds, ownership, cutoff and recovery controls. Preserve its backend-dependent cards and their types.
 
 ## Update an existing trial card
 
@@ -35,8 +35,8 @@ Use the installer that owns the existing trial. On Home Assistant 2026.11 and la
 ### Update a manually installed trial card
 
 1. Retain the previous bundle, resource URL and saved card configuration.
-2. Use the [release package record](rc-3.md) and verify its digest. Select the published `v0.1.0-rc.3` release; do not substitute a branch download.
-3. Save it under a new versioned filename and change only the beta resource URL. Do not register a second copy.
+2. Download the module attached to the version you chose on the [releases page](https://github.com/senyo888/thermal-intelligence/releases) and verify its digest. Use the [1.0.0 package record](v1.0.0-package.md) for `v1.0.0` or the [RC.3 package record](rc-3.md) for `v0.1.0-rc.3`.
+3. Save it under a new versioned filename and update the existing standalone resource URL. Do not register a second copy.
 4. Open a fresh browser document, reopen the visual editor and check the thermostat, provider details and source mappings.
 
 A frontend-only resource update does not require a Home Assistant Core restart. Saving or reopening card configuration sends no thermostat command.

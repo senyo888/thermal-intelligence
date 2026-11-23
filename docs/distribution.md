@@ -1,14 +1,14 @@
 # Distribution
 
-The [1.0.0 release preparation](v1.0.0-package.md) identifies the tested module and its upgrade path. Marketplace upgraded an existing installation to the reviewed 1.0.0 card on Home Assistant 2026.11.2. The rollback trial used the earlier build listed in the package notes. The newest published tag is still RC.3. Stable releases follow two pull requests in order, `senyo888-patch-1` into `develop`, then `develop` into `main`. The stable tag and its release assets come from the approved commit on `main` after the second merge.
+The [1.0.0 release preparation](v1.0.0-package.md) identifies the tested module and its upgrade path. Marketplace upgraded an existing installation to the reviewed 1.0.0 card on Home Assistant 2026.11.2. The rollback trial used the earlier build listed in the package notes. Check the [releases page](https://github.com/senyo888/thermal-intelligence/releases) for available tags. Stable releases follow two pull requests in order, `senyo888-patch-1` into `develop`, then `develop` into `main`. The stable tag and its release assets come from the approved commit on `main` after the second merge.
 
 [RC.3](rc-3.md) is the current published prerelease, from source `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`. Its exact package is preserved by the `v0.1.0-rc.3` tag; `main` carries the promoted snapshot and current documentation. Verify a branch revision before use rather than assuming it matches the released tag. [RC.2](rc.md), [RC.1](rc-1.md) and [beta.7](beta-7.md) retain their dated historical records. Use [Marketplace](marketplace.md) for Home Assistant 2026.11 and later, or [HACS](hacs.md) on older installations.
 
-[RC.4](rc-4.md) is an unreleased candidate prepared on `senyo888-patch-1` for later reconciliation into `develop`. Its local package manifest names `develop` as the intended delivery branch; that field does not prove branch promotion, publication or installation. The published RC.3 package and main discovery snapshot remain unchanged.
+[RC.4](rc-4.md) is an unreleased candidate prepared on `senyo888-patch-1` for later reconciliation into `develop`. Its local package manifest names `develop` as the intended delivery branch; that field does not prove branch promotion, publication or installation. The tagged RC.3 files remain available at their original revision.
 
 | Branch | Contents |
 | --- | --- |
-| `main` | Public documentation, website and separately reviewed frozen discovery snapshot |
+| `main` | Public documentation, website and the promoted 1.0.0 card and licence |
 | `develop` | Release-candidate source, tests and reproducible candidate package |
 | `senyo888-patch-1` | Branch for beta development and packages; verify its current commit before use |
 
@@ -64,10 +64,10 @@ Changing the version or picker changes the module bytes. Validate that resulting
 | Check | Status |
 | --- | --- |
 | Repository description, topics, README images and software licence | Present |
-| Dashboard metadata, bounded install directory and repeatable candidate assets | RC.3 reproducible assets and public download hashes verified; exact module manually checked in Lab |
-| Published release containing the metadata and module | RC.3, RC.2 and RC.1 published; beta.7 has no named release |
+| Dashboard metadata, bounded install directory and repeatable candidate assets | Reproducible 1.0.0 packages contain the reviewed card, GPL licence and manifest. See the [package record](v1.0.0-package.md). |
+| Published release containing the metadata and module | The [release list](https://github.com/senyo888/thermal-intelligence/releases) identifies public packages. Public download verification for v1.0.0 follows publication. |
 | Upstream HACS validation with no ignored checks | RC.1 passed all 8 applicable checks on 3 November 2026; no beta.7 installer acceptance implied |
-| HACS and Marketplace install, update, removal, migration and recovery | RC.3 named-release Marketplace acceptance remains incomplete; historical RC.2 manual-to-installer Lab installation passed |
+| HACS and Marketplace install, update, removal, migration and recovery | The final 1.0.0 card passed an existing Marketplace upgrade on HA 2026.11.2. The earlier 1.0.0 build covered Marketplace rollback and reinstall. HACS lifecycle and public v1.0.0 download checks are separate. [Coverage by version](compatibility.md). |
 | Default catalogue inclusion | Not submitted or claimed |
 
 The intended versioned route uses a reviewed GitHub release with the standalone JS asset, software licence and package manifest. A manual ZIP or a bare tag is not that route. Keep internal reports, prompts and raw evidence out of release assets. Catalogue submission has [additional requirements](https://www.hacs.xyz/docs/publish/include/), including upstream validation and a published release; preparing the files does not complete those steps.

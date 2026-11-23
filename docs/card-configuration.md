@@ -1,6 +1,6 @@
 # Card configuration
 
-Use this guide for the prepared [1.0.0 Thermostat](v1.0.0.md). For a guided first room, follow the [settings walkthrough](wiki/Configuration.md). The latest published prerelease has its own [RC.3 guide](rc-3.md).
+Use this guide for the [1.0.0 Thermostat](v1.0.0.md). For a guided first room, follow the [settings walkthrough](wiki/Configuration.md). The latest published prerelease has its own [RC.3 guide](rc-3.md).
 
 ## What you need
 

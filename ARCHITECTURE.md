@@ -1,6 +1,6 @@
 # Thermal Intelligence architecture contract
 
-This checkout contains the prepared [1.0.0 frontend](docs/v1.0.0.md). The latest published prerelease is [RC.3](docs/rc-3.md) from [source `f93fb64`](https://github.com/senyo888/thermal-intelligence/tree/f93fb6489f87fbf9c393dd8cd03e85e5718277ef). `main` carries documentation and a separately promoted frozen snapshot. Candidates are prepared through `develop`, with beta work on `senyo888-patch-1`. The card presents Home Assistant/provider state and sends commands only after explicit user interaction. A future TI backend is a separate component and is not required by this card.
+This checkout contains the [1.0.0 frontend](docs/v1.0.0.md). The latest published prerelease is [RC.3](docs/rc-3.md) from [source `f93fb64`](https://github.com/senyo888/thermal-intelligence/tree/f93fb6489f87fbf9c393dd8cd03e85e5718277ef). `main` carries documentation and a separately promoted frozen snapshot. Candidates are prepared through `develop`, with beta work on `senyo888-patch-1`. The card presents Home Assistant/provider state and sends commands only after explicit user interaction. A future TI backend is a separate component and is not required by this card.
 
 ## Ownership and layers
 
@@ -63,6 +63,6 @@ HI remains the authority for its seasonal humidity targets, Stability, selected 
 
 ## Code and documentation
 
-The released RC.3 source separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. In that release checkout, synthetic fixtures and unit/browser tests live under `tests/`, and the reproducible module is `dist/thermal-intelligence.js`.
+The 1.0.0 source separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. In this checkout, synthetic fixtures and unit/browser tests live under `tests/`, and the reproducible module is `dist/thermal-intelligence.js`.
 
-The README introduces the product; the Wiki provides practical guidance; repository documents define configuration, compatibility and technical contracts. The website presents the same supported features and prerelease limits. See [distribution](docs/distribution.md) and [command contracts](docs/command-contract.md).
+The README introduces the product; the Wiki provides practical guidance; repository documents define configuration, compatibility and technical contracts. The website presents the same supported features and version-specific coverage. See [distribution](docs/distribution.md) and [command contracts](docs/command-contract.md).
