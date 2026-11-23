@@ -2,7 +2,7 @@
 
 These examples show how one card presents different combinations of temperature, trend and thermostat observations. The outer arc, fine slope ring and status chip carry separate information; they do not need to share one colour.
 
-These installation images come from earlier setups. Some ownership and cutoff indicators depend on a separate controller. The standalone Thermostat shows the evidence its configured sources report. [Image notes](https://github.com/senyo888/thermal-intelligence/blob/main/docs/image-notes.md) · [1.0.0 validation and limits](https://github.com/senyo888/thermal-intelligence/blob/1240526208b0fb0b914f57e29c539931768e031b/docs/v1.0.0-package.md#validation-boundaries). For the Plum card and both settings examples, see [Senyo’s 1.0.0 introduction](https://github.com/senyo888/thermal-intelligence/blob/9750e39b24309610bc8721097e84281e66abb01c/docs/v1.0.0.md).
+These installation images come from earlier setups. Some ownership and cutoff indicators depend on a separate controller. The standalone Thermostat shows the evidence its configured sources report. [Image notes](https://github.com/senyo888/thermal-intelligence/blob/main/docs/image-notes.md) · [1.0.0 validation and limits](https://github.com/senyo888/thermal-intelligence/blob/1240526208b0fb0b914f57e29c539931768e031b/docs/v1.0.0-package.md#validation-boundaries). For the Plum card and both settings examples, see [Senyo’s 1.0.0 introduction](https://github.com/senyo888/thermal-intelligence/blob/346b11d5ec37af584571eaa482178d67cd6bc41a/docs/v1.0.0.md).
 
 ## A heat request and a reported valve opening
 
