@@ -41,7 +41,7 @@ The combined control indicator puts a reported owner and its applicable preset o
 
 Choose which readings appear, their order, labels and icons for each card. Humidity, temperature, valve position and provider features can sit beside the room name without filling the main dial with detail. Tap a reading for its focused panel or Home Assistant source details. The compact VT lock indicates its reported state and opens [Lock/Unlock controls](https://github.com/senyo888/thermal-intelligence/blob/main/docs/lock-control.md) for verified administrators when supported.
 
-**Humidity presentation is customisable.** Set four boundaries for too dry, the start and end of your good range, and too wet. The display uses blue, amber, green, amber and red bands, with a reading and explanation in the humidity panel. These are visual preferences for this card; they do not change heating or humidity control. Save them through Home Assistant's visual card editor; the in-card adjustment panel provides a draft to copy.
+**Humidity colours belong to each card.** New cards use four boundaries for too dry, the start and end of the good range, and too wet. The five bands run from blue through amber and green to amber and red. Older cards with two saved limits show below, within or above that range. In the dashboard editor, open **Humidity display** to edit the limits or switch to four markers. Tap the humidity reading to see its band and preview a change. You can copy that draft or save your settings through the dashboard editor. These colours only change how humidity looks on this card.
 
 <details>
 <summary>Explore window details and administrator lock controls</summary>
