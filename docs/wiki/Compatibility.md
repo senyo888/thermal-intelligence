@@ -1,5 +1,9 @@
 # Compatibility
 
+**1.0.0 is prepared and unreleased.** The earlier 265,844-byte candidate was tested on HA 2026.11.2 with VT 10.6.5. Editor persistence, room control and a timed Schedule Boost passed. Whole-house Boost confirmed seven of eight rooms in a separate controller trial. Marketplace rolled an installed 1.0.0 back to RC.4 and reinstalled 1.0.0 successfully. Home Assistant served the installed 1.0.0 card and full licence. Both files also passed a local rehearsal of the named-release download. The 48-hour Lab soak passed all nine checkpoints on 22 November 2026. The rebuilt card has synthetic browser and package coverage. The earlier installation and soak receipts apply to the earlier module. The public tagged download can be verified after release. Physical mobile and Companion coverage is recorded separately. [Version-specific results](https://github.com/senyo888/thermal-intelligence/blob/fe8414957fd490fa412eaa80920ecfe84f5e9561/docs/compatibility.md#unreleased-100-package).
+
+## Published RC.3
+
 Current published prerelease: **0.1.0-rc.3**. [RC.3](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md) corrects request ordering, configuration editing and presentation while preserving schema-1/schema-2 configurations and existing control restrictions.
 
 On 13 November 2026, the exact released module passed passive manual Lab checks on HA 2026.11.0: six inert fixture renders, humidity editing/manual export, clearing a visual valve mapping and browser reconnect, with no observed thermostat commands or observation gaps. The independent observation exceeded its planned five-minute limit, lasting about 10 minutes 43 seconds. This is a pass for the completed checks, not full timing-plan compliance or a soak. See the [exact package and validation limits](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md#validation-limits).

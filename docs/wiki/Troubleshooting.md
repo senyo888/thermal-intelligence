@@ -2,7 +2,15 @@
 
 ## The card is missing from Add Card
 
-Check that the verified module for the intended release candidate is registered once as a **JavaScript module** resource. Open a fresh browser document after changing its URL. The picker entry is **Thermal Intelligence Thermostat · RC**. Keep legacy TI resources separate.
+Check the module you loaded. Version 1.0.0 appears as **Thermal Intelligence Thermostat**, RC.3 as **Thermal Intelligence Thermostat · RC**, and beta builds add **· Beta**. New 1.0.0 cards use `custom:thermal-intelligence-thermostat`. Existing cards using `custom:thermal-intelligence-beta-card` still work. Keep one registration for the standalone module, then open a fresh browser document. The older dashboard card uses a separate registration. [Upgrade and rollback](https://github.com/senyo888/thermal-intelligence/blob/fe8414957fd490fa412eaa80920ecfe84f5e9561/docs/migration.md).
+
+## My icon layout disappeared
+
+The settings opened from the card are a draft. Copy the complete configuration into that card’s dashboard code editor and choose **Save**, or make the change in **Edit dashboard → Edit → Readings and icons → Top row icon settings**. Reopen the card to verify it. [Step-by-step guide](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#arrange-the-top-row).
+
+## My reading is missing
+
+Check the entity’s current value and unit in Home Assistant. A humidity reading needs a number in percent. A trend needs degrees per unit of time. For a VT suggestion, check that the feature is configured and its entity enabled. Open the reading preview for its source and status. [Source setup](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#choose-your-sources).
 
 ## The LED is amber
 

@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        TI v0.1.0-rc.2 is a prerelease. For runtime reports, identify the exact TI version or source commit.
+        TI is prerelease software. For runtime reports, identify the exact TI version or source commit.
         Remove tokens, private URLs, device IDs and home details. Do not attach full backups.
   - type: input
     id: version

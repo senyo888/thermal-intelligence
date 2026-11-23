@@ -1,8 +1,30 @@
 # Update and rollback
 
+The 1.0.0 picker reads **Thermal Intelligence Thermostat**. Beta builds add **· Beta** and RC builds add **· RC**. New 1.0.0 cards and exports use `custom:thermal-intelligence-thermostat`. Saved beta and RC cards continue to load using `custom:thermal-intelligence-beta-card`. Loading two standalone builds, even two marked 1.0.0, can leave an old picker or duplicate entries. Keep one standalone resource and reload the dashboard in a fresh browser tab. If you return to an older module, use the previous YAML type and the configuration saved with that module. Replace the existing standalone resource when moving between them. Keep the previous module, resource URL and matching card configuration for rollback. [1.0.0 package](v1.0.0-package.md).
+
 RC.3 retains existing **schema-1** and **schema-2** configurations. Explicit enrollment of the optional switch control, introduced in beta.6, uses **schema 2**; keep the original configuration for rollback. The trial card type is `custom:thermal-intelligence-beta-card`; its editor is `thermal-intelligence-beta-card-editor`.
 
+## Unreleased RC.4 candidate
+
+[RC.4](rc-4.md) carries the beta.8 usability changes and the reviewed request-tooltip correction. It retains the trial card/editor names and schema-1/schema-2 support. It is prepared on the beta branch for develop reconciliation. An immutable-commit Marketplace trial has passed; no named RC.4 release or automatic installer update is available.
+
+The `temperature` kind and optional `unit_attribute` are supported by beta.8 and RC.4, but rejected by RC.3 and earlier. Before adopting them, retain the older module and compatible saved configuration together. A return to the older module requires restoring that configuration without discarding unrelated dashboard edits. Advanced export remains available and does not save the dashboard.
+
+The later RC.4 working revision adds `vt_telemetry`, display-only `header_icons` and live `unit_attribute` for other numeric telemetry kinds. Earlier modules do not implement these displays. Keep the prior module and compatible card configuration together for rollback. Save through Home Assistant’s selected-card editor; runtime icon drafts and export do not migrate or synchronize other room copies.
+
+The confirmed Schedule-mode mapping (`schedule_preset`) and null-valued `clear_attributes` guards require [source `61c299a`](https://github.com/senyo888/thermal-intelligence/commit/61c299a9f0acf4a1ced4698fa3e0b0e531e18489) or a later build containing that change. Earlier RC.4 modules preserve these unknown fields but do not implement the mode or enforce those guards. Retain the previous compatible module and configuration before adopting them; do not rely on these fields when rolling back. Unknown-field preservation does not establish feature support.
+
+RC.4 has its own synthetic, package, bounded manual Lab and [immutable-commit Stable checks](rc-4.md#stable-marketplace-and-schedule-checks--1819-november-2026). Each result applies to its recorded module. Named-release installation, full installer update/removal/recovery, physical heating and broader device acceptance remain unverified.
+
+## Unreleased beta.8 candidate
+
+Existing schema-1 and schema-2 configurations remain supported. The new `temperature` telemetry kind and its optional `unit_attribute` require the beta.8 candidate module; RC.3 and earlier reject that kind. Retain the earlier configuration and module together before adding temperature rows. Returning to the older module requires restoring compatible configuration too; preserve unrelated newer dashboard edits deliberately.
+
+Humidity editor sliders, search and source suggestions do not change schema or enroll controls. Runtime advanced export remains available and does not save the dashboard. Synthetic checks and bounded manual Lab checks cover the identified beta.8 modules; see [coverage and exact module limits](compatibility.md#unreleased-beta8-usability-candidate). Those results do not establish acceptance of different bytes, installer lifecycle, physical response or a formal soak. Beta.8 is a development-channel identity, not a higher semantic version than RC.3 and not an automatic installer update from it.
+
 ## Keep existing TI alongside the trial card
+
+The prepared stable module supports the earlier registrations `custom:thermal-intelligence-beta-card` and `thermal-intelligence-beta-card-editor`. Existing schema-1 and schema-2 card configurations therefore keep their type; no rename to the legacy `custom:thermal-intelligence-card` is required. A stable build uses **Thermal Intelligence Thermostat** in the picker, while beta and RC builds retain their channel suffix. This is a compatibility contract for release preparation, not a claim that a stable version has been published or accepted on an installation.
 
 Keep existing `custom:thermal-intelligence-card` instances and their resources in place. Add new trial cards through **Thermal Intelligence Thermostat · RC**. The wider system keeps responsibility for schedules, holds, ownership, cutoff and recovery controls. Preserve its backend-dependent cards and their types.
 
@@ -49,7 +71,7 @@ The optional switch control is available from beta.6 and retained in RC.3; it is
 
 ## Trial and legacy coexistence
 
-All betas and published release candidates use the same trial card and editor registrations. Load only one trial module in a browser document; changing the trial resource requires a fresh document. Keep the separate legacy TI resources and cards unchanged. Untagged beta updates do not change the RC.1 tag or its release assets.
+The stable package also registers the beta and RC names for backwards compatibility. Load only one of those modules in a browser document. A stable upgrade replaces the selected beta/RC resource, and changing that resource requires a fresh document. Keep the separate legacy TI resources and cards unchanged. Untagged beta updates do not change the RC.1 tag or its release assets.
 
 ## Installer-managed recovery
 

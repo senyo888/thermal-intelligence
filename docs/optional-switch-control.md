@@ -2,16 +2,18 @@
 
 From beta.6, the card offers one optional switch beside the thermostat's Mode and Fan choices. It uses an existing Home Assistant switch and needs no TI controller, integration or add-on. It is not included in released RC.1 or beta.5. Beta.7 corrected a false registry mismatch for device-less entities. RC.3 retains this feature and its eligibility rules.
 
+In the 1.0.0 editor, **Search switches** filters friendly names and exact entity IDs. The selected target stays visible even when it does not match the query or is currently missing. Up to 100 matching options are shown; refine the query for larger inventories. Arrow Down moves from search to the selector. Searching does not select, enroll or send a command.
+
 ## Set up the control
 
 Open **Optional switch control** in the visual editor. Select the exact switch, choose its label and icon, then select **Enable selected switch control**. The thermostat and switch must both have current entity-registry entries. The first version supports standard climate integrations; VT, helpers, group switches and template switches are not supported. It does not discover or prove an association between the two devices.
 
 Enabling deliberately opts this card into schema 2. Other cards and ordinary edits retain schema 1. A saved schema-1 `controls` or `mapped_controls` section remains inert. If a saved section conflicts, the editor requires **Replace saved optional-control section** before enrollment. Unknown fields elsewhere, including unknown nested fields on an already supported mapping, survive ordinary edits.
 
-The equivalent explicit YAML configuration uses synthetic entities:
+Use the example below for **1.0.0**. For **RC.3**, or a beta build that supports optional switches, use `type: custom:thermal-intelligence-beta-card` on the first line. Replace the example entity IDs with your thermostat and switch.
 
 ```yaml
-type: custom:thermal-intelligence-beta-card
+type: custom:thermal-intelligence-thermostat
 schema_version: 2
 entity: climate.example_thermostat
 adapter: auto
@@ -29,7 +31,7 @@ Only one item is supported. `version`, `enabled`, `kind` and `entity` must have 
 
 ## Use and reported results
 
-The button shows the switch's reported state. Select it to review the exact target and requested direction, then confirm **Turn on** or **Turn off**. Both directions require confirmation. Changed state, identity, configuration or connection invalidates an open confirmation; close it and review a new action. There is no automatic retry, generic toggle, alternate target or compensating thermostat command.
+The button shows the switch's reported state. Select it to review the exact target and requested direction, then confirm **Turn on** or **Turn off**. Both directions require confirmation. Changed state, identity, configuration or connection invalidates an open confirmation; close it and review a new action. If an unavailable switch recovers, the original confirmation stays disabled and explains that a fresh confirmation is required. There is no automatic retry, generic toggle, alternate target or compensating thermostat command.
 
 The card sends only `switch.turn_on` or `switch.turn_off` with one entity ID. Home Assistant remains responsible for authorization. Reading the switch or seeing its registry entry does not grant permission to control it; backend refusals produce a generic failure message. This is not an emergency-stop path, a global lock or a guarantee against other automations and users changing the system.
 
@@ -45,4 +47,4 @@ Setup, rendering, editor changes, cancellation, reconnect and removing/disabling
 
 Keep the pre-enrollment card configuration and its previous module. RC.1 and beta.5 do not accept schema 2, so rollback requires restoring **both configuration and module**. Removing a mapping or restoring an older module does not turn the switch off or reverse integration/automation effects.
 
-Beta.7 has synthetic coverage and a bounded real-HA trial on **6 November 2026** using a registered generic thermostat and an inert Command Line switch. Corrected registry proof, confirmed On/Off, cancellation and passive reconnect passed; the fixture reported state optimistically. This does not establish physical response, real Honeywell behavior, broader backend permissions, HACS/Marketplace installation or a minimum HA version. See [dated acceptance and limits](compatibility.md#beta7-lab-acceptance--6-november-2026). Publication, manual installation and installer lifecycle remain separate.
+The unreleased beta.8 candidate has [dated real-HA checks](compatibility.md#optional-switch-checks--15-november-2026) using a registered generic thermostat and an inert Command Line switch with local file readback. Confirmed On/Off, cancellation, unavailable-state recovery and fresh frontend connection passed after correcting the recovery explanation. The earlier [beta.7 trial](compatibility.md#beta7-lab-acceptance--6-november-2026) used optimistic fixture state. Neither establishes physical response, real Honeywell behavior, broader backend permissions, HACS/Marketplace installation or a minimum HA version. Publication, manual installation and installer lifecycle remain separate.

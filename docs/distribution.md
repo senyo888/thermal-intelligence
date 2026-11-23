@@ -1,6 +1,10 @@
 # Distribution
 
+The [1.0.0 release preparation](v1.0.0-package.md) identifies the tested module and its upgrade path. The installation results apply to the earlier candidate identified there. The newest published tag is still RC.3. Stable releases follow two pull requests in order, `senyo888-patch-1` into `develop`, then `develop` into `main`. The stable tag and its release assets come from the approved commit on `main` after the second merge.
+
 [RC.3](rc-3.md) is the current published prerelease, from source `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`. Its exact package is preserved by the `v0.1.0-rc.3` tag; `main` carries the promoted snapshot and current documentation. Verify a branch revision before use rather than assuming it matches the released tag. [RC.2](rc.md), [RC.1](rc-1.md) and [beta.7](beta-7.md) retain their dated historical records. Use [Marketplace](marketplace.md) for Home Assistant 2026.11 and later, or [HACS](hacs.md) on older installations.
+
+[RC.4](rc-4.md) is an unreleased candidate prepared on `senyo888-patch-1` for later reconciliation into `develop`. Its local package manifest names `develop` as the intended delivery branch; that field does not prove branch promotion, publication or installation. The published RC.3 package and main discovery snapshot remain unchanged.
 
 | Branch | Contents |
 | --- | --- |
@@ -34,12 +38,26 @@ For a reviewed commit containing the metadata and licence copy, replace `REVIEWE
 
 ```sh
 python3 -B scripts/check_marketplace.py --commit REVIEWED_COMMIT
-python3 -B scripts/package_beta.py --commit REVIEWED_COMMIT --marketplace --output /tmp/ti-marketplace-candidate
+python3 -B scripts/package_candidate.py --commit REVIEWED_COMMIT --marketplace --output /tmp/ti-marketplace-candidate
 ```
 
 The destination must not exist. This produces separate `thermal-intelligence.js`, `LICENSE` and `manifest.json` files locally. The manifest records the immutable source, package hashes and distribution metadata. These are candidate release assets; the command does not publish or install them. `hacs.json` stays at the repository root of the selected source revision. The released RC.1 source already contains its own metadata; preparing or promoting RC.3 does not change that release.
 
 The distribution check rejects wrong filenames, root modules that would shadow `dist/`, missing or changed licence text, extra payload files, symlinks, executable files, source maps and mismatched module versions. It deliberately accepts only TI's reviewed manifest options. CI checks the committed input and reproduces both manual and Marketplace candidate packages.
+
+### Prepare a stable package
+
+The stable packaging route is available for release preparation. It requires an immutable commit whose package version and generated module both identify the same stable version, such as `1.0.0`:
+
+```sh
+python3 -B scripts/package_release.py --commit REVIEWED_STABLE_COMMIT --marketplace --output /tmp/ti-stable-candidate
+```
+
+Omit `--marketplace` for the manual package. Both routes produce the same three asset filenames and preserve `custom:thermal-intelligence-beta-card` and its editor registration for existing configurations. New stable cards and exports use `custom:thermal-intelligence-thermostat`. The stable picker name is **Thermal Intelligence Thermostat**. The older `custom:thermal-intelligence-card` remains independently owned and is never replaced.
+
+`package_beta.py` continues to accept only beta and RC versions; `package_release.py` accepts only stable versions. CI uses `package_candidate.py` for all three validated channels. Every route reads committed files, checks the exact generated version and channel, and rejects an existing output directory. A stable manifest's `delivery_branch: main` records its intended destination only. These commands do not promote a branch, create a tag, publish a release or install the module.
+
+Changing the version or picker changes the module bytes. Validate that resulting package and its upgrade and rollback paths separately; acceptance of an RC does not establish acceptance of a different stable module. Release preparation does not change the current published version or waive the remaining checks below.
 
 ### Remaining installation and release checks
 
@@ -66,7 +84,7 @@ The resource-manager source above is from HA 2026.11.0; source review alone does
 
 Add the module once as a **JavaScript module** resource. After updating its versioned URL, open a fresh browser document before checking the card and editor. A custom element already registered in an open page cannot be replaced in place.
 
-RC.3 retains `custom:thermal-intelligence-beta-card`, with the picker name **Thermal Intelligence Thermostat · RC**. Beta and RC packages share their trial registrations; load only one of those modules in a document. Keep existing legacy TI resources and card types in place. See [upgrade and rollback](migration.md).
+RC.3 retains `custom:thermal-intelligence-beta-card`, with the picker name **Thermal Intelligence Thermostat · RC**. The stable module also supports the beta and RC card and editor registrations; load only one of those modules in a document. A stable upgrade replaces the selected beta/RC resource; do not add it alongside that resource. Keep existing legacy TI resources and card types in place. See [upgrade and rollback](migration.md).
 
 `scripts/package_beta.py` packages both explicit `-beta.N` and `-rc.N` versions from an immutable commit. Its manifest records the version, channel, delivery branch, exact commit/tree and file hashes. It rejects stable versions and mismatched bundles. The script name is retained for existing beta tooling.
 

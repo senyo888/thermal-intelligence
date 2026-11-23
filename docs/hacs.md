@@ -1,5 +1,7 @@
 # HACS on Home Assistant before 2026.11
 
+The named download in this guide is **RC.3**. The [1.0.0 package](v1.0.0-package.md) is awaiting release. Its verification notes identify the rebuilt module and the earlier module used for installation checks.
+
 For Home Assistant 2026.11 and later, use [Marketplace](marketplace.md). Do not install HACS alongside Marketplace. The older HACS route below is for systems that still use that integration.
 
 Thermal Intelligence is a **Dashboard** custom repository. It installs a frontend resource, not a TI backend integration. [RC.3](rc-3.md), [RC.2](rc.md) and [RC.1](rc-1.md) are published prereleases. RC.1 passed all eight applicable upstream validator checks on 3 November 2026, but that does not establish installation or update acceptance. See [distribution evidence](distribution.md).

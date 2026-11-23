@@ -212,7 +212,7 @@ test('categorical header telemetry uses canonical labels, changing icons and act
     ['power_management','Limiting','Normal','mdi:transmission-tower','#efb86b'],
     ['follow','On','Off','mdi:link-variant','#73c9bd'],
   ]) {
-    const read = () => buildModel(h, { ...config, telemetry: [{ kind, entity: id }] }, identity).headerTelemetry[0];
+    const read = () => buildModel(h, { ...config, telemetry: [{ kind, entity: id }] }, identity).headerTelemetry.find(row=>row.group==='primary');
     h.states[id].state = 'on'; assert.equal(read().value, active); assert.equal(read().colour, colour);
     h.states[id].state = 'off'; assert.equal(read().value, inactive); assert.equal(read().icon, icon); assert.equal(read().activity, 'neutral');
     h.states[id].state = 'unknown'; assert.equal(read().value, 'Unknown'); assert.equal(read().activity, 'unknown');
@@ -227,13 +227,13 @@ test('VT categorical telemetry respects configured flags and never enables a fea
   const h = fixture({ is_ready: true, is_window_configured: false, window_manager: { window_state: 'on' } });
   const c = { ...config, telemetry: [{ kind: 'window', entity, attribute: 'window_manager.window_state' }] };
   const read = () => buildModel(h, c, vtIdentity);
-  assert.equal(read().headerTelemetry[0].value, 'Not configured'); assert.equal(read().canSet, true);
+  assert.equal(read().headerTelemetry.find(row=>row.group==='primary').value, 'Not configured'); assert.equal(read().canSet, true);
   delete h.states[entity].attributes.is_window_configured;
-  assert.equal(read().headerTelemetry[0].status, 'unknown');
+  assert.equal(read().headerTelemetry.find(row=>row.group==='primary').status, 'unknown');
   h.states[entity].attributes.is_window_configured = true;
-  assert.equal(read().headerTelemetry[0].value, 'Open');
+  assert.equal(read().headerTelemetry.find(row=>row.group==='primary').value, 'Open');
   delete h.states[entity].attributes.window_manager.window_state;
-  assert.equal(read().headerTelemetry[0].status, 'unavailable'); assert.equal(read().canSet, true);
+  assert.equal(read().headerTelemetry.find(row=>row.group==='primary').status, 'unavailable'); assert.equal(read().canSet, true);
 });
 
 test('VT detector input failure cannot present a retained state as a current observation', () => {
@@ -243,32 +243,32 @@ test('VT detector input failure cannot present a retained state as a current obs
     const c = { ...config, telemetry: [{ kind, entity, attribute: `${kind}_manager.${kind}_state` }] };
     const read = () => buildModel(h, c, vtIdentity);
     h.states[input] = { state: 'on', attributes: {} };
-    assert.equal(read().headerTelemetry[0].status, 'available');
+    assert.equal(read().headerTelemetry.find(row=>row.group==='primary').status, 'available');
     for (const state of ['unknown', 'unavailable']) {
       h.states[input].state = state;
-      assert.equal(read().headerTelemetry[0].status, state);
-      assert.equal(read().headerTelemetry[0].activity, 'unknown');
-      assert.match(read().headerTelemetry[0].detail, /retained detector state/);
+      assert.equal(read().headerTelemetry.find(row=>row.group==='primary').status, state);
+      assert.equal(read().headerTelemetry.find(row=>row.group==='primary').activity, 'unknown');
+      assert.match(read().headerTelemetry.find(row=>row.group==='primary').detail, /retained detector state/);
       assert.equal(read().canSet, true);
     }
-    delete h.states[input]; assert.equal(read().headerTelemetry[0].status, 'unavailable');
+    delete h.states[input]; assert.equal(read().headerTelemetry.find(row=>row.group==='primary').status, 'unavailable');
     h.states[input] = { state: 'off', attributes: {} };
     // Respect the accepted VT state during its delay; do not substitute raw input.
-    assert.equal(read().headerTelemetry[0].activity, 'active');
+    assert.equal(read().headerTelemetry.find(row=>row.group==='primary').activity, 'active');
     h.states[entity].attributes[`${kind}_manager`][`${kind}_state`] = 'off';
-    assert.equal(read().headerTelemetry[0].activity, 'neutral');
+    assert.equal(read().headerTelemetry.find(row=>row.group==='primary').activity, 'neutral');
   }
 });
 
 test('VT input availability checks stay within the selected provider and exact manager mapping', () => {
   const h = fixture({ is_ready: true, is_window_configured: true, is_window_auto_configured: true, window_manager: { window_state: 'on', window_auto_state: 'on', window_sensor_entity_id: 'binary_sensor.missing' } });
   const c = { ...config, telemetry: [{ kind: 'window', entity, attribute: 'window_manager.window_state' }] };
-  assert.equal(buildModel(h, c, identity).headerTelemetry[0].status, 'available');
+  assert.equal(buildModel(h, c, identity).headerTelemetry.find(row=>row.group==='primary').status, 'available');
   c.telemetry[0].attribute = 'window_manager.window_auto_state';
-  assert.equal(buildModel(h, c, vtIdentity).headerTelemetry[0].status, 'available');
+  assert.equal(buildModel(h, c, vtIdentity).headerTelemetry.find(row=>row.group==='primary').status, 'available');
   c.telemetry[0].attribute = 'window_manager.window_state';
   h.states[entity].attributes.is_window_configured = false;
-  assert.equal(buildModel(h, c, vtIdentity).headerTelemetry[0].status, 'disabled');
+  assert.equal(buildModel(h, c, vtIdentity).headerTelemetry.find(row=>row.group==='primary').status, 'disabled');
 });
 
 test('connection and entity availability gate every command', () => {
@@ -470,11 +470,11 @@ test('portable features use own-property readings and never infer preset or owne
   h.states['binary_sensor.example'] = { state: 'on', attributes: { diagnostics: { ready: true }, icon: 'mdi:check' } };
   const features = [{ entity: 'sensor.example_preset_comfort_temp' }, { entity: 'binary_sensor.example', attribute: 'diagnostics.ready', label: 'Reported readiness' }];
   const m = buildModel(h, { ...config, features }, identity);
-  assert.equal(m.state, 'heat'); assert.equal(m.attrs.preset_mode, 'none'); assert.equal(m.headerTelemetry[0].value, '20 °C');
-  assert.equal(m.headerTelemetry[0].preset, null); assert.equal(m.headerTelemetry[0].activity, 'neutral'); assert.equal(m.ownership.label, 'Unknown');
-  assert.equal(m.headerTelemetry[1].value, 'On'); assert.equal(m.headerTelemetry[1].activity, 'active'); assert.equal(m.headerTelemetry[1].icon, 'mdi:check');
+  assert.equal(m.state, 'heat'); assert.equal(m.attrs.preset_mode, 'none'); assert.equal(m.headerTelemetry.find(row=>row.group==='primary').value, '20 °C');
+  assert.equal(m.headerTelemetry.find(row=>row.group==='primary').preset, null); assert.equal(m.headerTelemetry.find(row=>row.group==='primary').activity, 'neutral'); assert.equal(m.ownership.label, 'Unknown');
+  assert.equal(m.headerTelemetry.filter(row=>row.group==='primary')[1].value, 'On'); assert.equal(m.headerTelemetry.filter(row=>row.group==='primary')[1].activity, 'active'); assert.equal(m.headerTelemetry.filter(row=>row.group==='primary')[1].icon, 'mdi:check');
   h.states['binary_sensor.example'].attributes.diagnostics = Object.create({ ready: true });
-  assert.equal(buildModel(h, { ...config, features }, identity).headerTelemetry[1].status, 'unavailable');
+  assert.equal(buildModel(h, { ...config, features }, identity).headerTelemetry.filter(row=>row.group==='primary')[1].status, 'unavailable');
 });
 
 test('direct mappings take precedence over declared typed telemetry without guessing a replacement', () => {
@@ -541,7 +541,7 @@ test('direct sources retain an explicitly configured age limit for the same type
   h.states['sensor.humidity'] = { state: '48', attributes: { unit_of_measurement: '%' }, last_updated: '2026-10-25T10:00:00Z' };
   const c = { ...config, humidity_entity: 'sensor.humidity', telemetry: [{ kind: 'humidity', entity: 'sensor.humidity', label: 'Measured humidity', max_age_seconds: 300 }] };
   const m = buildModel(h, c, identity, { now });
-  assert.equal(m.humidity.status, 'stale'); assert.equal(m.headerTelemetry.length, 1); assert.equal(m.headerTelemetry[0].status, 'stale'); assert.equal(m.headerTelemetry[0].label, 'Measured humidity'); assert.equal(m.canSet, true);
+  assert.equal(m.humidity.status, 'stale'); assert.equal(m.headerTelemetry.filter(row=>row.group==='primary').length, 1); assert.equal(m.headerTelemetry.find(row=>row.group==='primary').status, 'stale'); assert.equal(m.headerTelemetry.find(row=>row.group==='primary').label, 'Measured humidity'); assert.equal(m.canSet, true);
 });
 
 test('target comparison arc preserves original below, at and above colours in display units', () => {
@@ -610,14 +610,14 @@ test('only the exact selected preset contributes an active header source', () =>
   for (const unit of ['°C', '°F']) {
     const { h, c } = presetFixture(unit);
     const m = buildModel(h, c, identity);
-    assert.equal(m.headerTelemetry.length, 1); assert.equal(m.headerTelemetry[0].preset, 'comfort');
+    assert.equal(m.headerTelemetry.filter(row=>row.preset).length, 1); assert.equal(m.headerTelemetry[0].preset, 'comfort');
     assert.equal(m.headerTelemetry[0].value, `21 ${unit}`); assert.equal(m.headerTelemetry[0].icon, 'mdi:sofa');
     assert.equal(m.presetReadings.eco.value, 17); assert.equal(m.presetReadings.boost.value, 23);
     assert.equal(m.presetReadings.comfort.source.entity, c.features[1].entity); assert.equal(m.presetReadings.comfort.selected, true);
     assert.equal(m.presetReadings.eco.selected, false); assert.equal(m.presetReadings.none.status, 'disabled');
     h.states['sensor.humidity'] = { state: '58.5', attributes: { unit_of_measurement: '%' } };
     const withHumidity = buildModel(h, { ...c, humidity_entity: 'sensor.humidity' }, identity);
-    assert.equal(withHumidity.headerTelemetry[0].preset, 'comfort'); assert.equal(withHumidity.headerTelemetry[1].kind, 'humidity'); assert.equal(withHumidity.headerTelemetry[1].colour, '#7dc39c');
+    assert.equal(withHumidity.headerTelemetry[0].preset, 'comfort'); assert.equal(withHumidity.headerTelemetry.at(-1).kind, 'humidity'); assert.equal(withHumidity.headerTelemetry.at(-1).colour, '#7dc39c');
     h.states[entity].attributes.preset_mode = 'eco';
     const renamed = buildModel(h, { ...c, preset_labels: { eco: 'Comfort' } }, identity);
     assert.equal(renamed.headerTelemetry[0].preset, 'eco'); assert.equal(renamed.headerTelemetry[0].shortLabel, 'Comfort');
@@ -639,20 +639,31 @@ test('preset header suppression follows ready Heat and exact selection, never te
 
 test('preset readings reject unsupported, duplicate, unavailable, nonfinite and incompatible evidence', () => {
   const { h, c } = presetFixture(); const id = c.features[1].entity;
-  const read = (overrides = c) => buildModel(h, overrides, identity);
+  function expectRejected(status, config = c) {
+    const model = buildModel(h, config, identity);
+    assert.equal(model.presetReadings.comfort.status, status);
+    assert.equal(model.headerTelemetry.some(row => row.group === 'primary'), false);
+    assert.equal(model.headerTelemetry.some(row => row.source.entity === id), false);
+  }
   for (const value of [NaN, Infinity, 'Infinity', 'not numeric', true, {}, []]) {
-    h.states[id].state = value; assert.equal(read().presetReadings.comfort.status, 'invalid'); assert.equal(read().headerTelemetry.length, 0);
+    h.states[id].state = value;
+    expectRejected('invalid');
   }
   h.states[id].state = '21';
-  for (const unit of ['°F', '%', undefined]) { h.states[id].attributes.unit_of_measurement = unit; assert.equal(read().presetReadings.comfort.status, 'invalid'); }
+  for (const unit of ['°F', '%', undefined]) {
+    h.states[id].attributes.unit_of_measurement = unit;
+    expectRejected('invalid');
+  }
   h.states[id].attributes.unit_of_measurement = '°C';
-  const duplicate = { ...c, features: [...c.features, { entity: id, preset: 'comfort' }] };
-  assert.equal(read(duplicate).presetReadings.comfort.status, 'invalid'); assert.equal(read(duplicate).headerTelemetry.length, 0);
-  h.states[id].state = 'unavailable'; assert.equal(read().presetReadings.comfort.status, 'unavailable');
-  h.states[id].state = '21'; h.states[entity].attributes.preset_modes = ['none', 'eco'];
-  assert.equal(read().presetReadings.comfort.status, 'unsupported'); assert.equal(read().headerTelemetry.length, 0);
-  h.states[entity].attributes.preset_modes.push('comfort'); h.config.unit_system.temperature = undefined;
-  assert.equal(read().presetReadings.comfort.status, 'unknown');
+  expectRejected('invalid', { ...c, features: [...c.features, { entity: id, preset: 'comfort' }] });
+  h.states[id].state = 'unavailable';
+  expectRejected('unavailable');
+  h.states[id].state = '21';
+  h.states[entity].attributes.preset_modes = ['none', 'eco'];
+  expectRejected('unsupported');
+  h.states[entity].attributes.preset_modes.push('comfort');
+  h.config.unit_system.temperature = undefined;
+  expectRejected('unknown');
 });
 
 test('preset attribute observations use only own fields and explicit units', () => {
@@ -691,14 +702,14 @@ test('humidity header uses original guide colour and label while degraded eviden
   h.states['sensor.humidity'] = { state: '50', attributes: { unit_of_measurement: '%' } };
   for (const value of [20, 35, 50, 65, 80]) {
     h.states['sensor.humidity'].state = String(value); const m = buildModel(h, c, identity), expected = humidityBand(value, HUMIDITY_DEFAULTS);
-    assert.equal(m.humidity.band, expected.key); assert.equal(m.humidity.guideMode, 'canonical'); assert.equal(m.headerTelemetry[0].colour, expected.colour); assert.equal(m.headerTelemetry[0].activityLabel, expected.label); assert.equal(m.canSet, true);
+    assert.equal(m.humidity.band, expected.key); assert.equal(m.humidity.guideMode, 'canonical'); assert.equal(m.headerTelemetry.find(row=>row.group==='primary').colour, expected.colour); assert.equal(m.headerTelemetry.find(row=>row.group==='primary').activityLabel, expected.label); assert.equal(m.canSet, true);
   }
   for (const state of ['unknown', 'unavailable', 'Infinity', '101']) {
-    h.states['sensor.humidity'].state = state; const m = buildModel(h, c, identity); assert.equal(m.humidity.band, 'unknown'); assert.equal(m.headerTelemetry[0].colour, '#8795a8'); assert.equal(m.canSet, true);
+    h.states['sensor.humidity'].state = state; const m = buildModel(h, c, identity); assert.equal(m.humidity.band, 'unknown'); assert.equal(m.headerTelemetry.find(row=>row.group==='primary').colour, '#8795a8'); assert.equal(m.canSet, true);
   }
   h.states['sensor.humidity'].state = '50'; h.states['sensor.humidity'].last_updated = '2026-10-25T10:00:00Z';
   const stale = buildModel(h, { ...c, telemetry: [{ kind: 'humidity', entity: 'sensor.humidity', max_age_seconds: 1 }] }, identity, { now: Date.parse('2026-10-25T11:00:00Z') });
-  assert.equal(stale.humidity.band, 'unknown'); assert.equal(stale.headerTelemetry[0].activityLabel, 'Stale');
+  assert.equal(stale.humidity.band, 'unknown'); assert.equal(stale.headerTelemetry.find(row=>row.group==='primary').activityLabel, 'Stale');
   const legacy = buildModel(h, { ...c, humidity_bands: { low: 35, high: 65 } }, identity); assert.equal(legacy.humidity.guideMode, 'legacy'); assert.equal(legacy.humidity.band, 'within');
 });
 

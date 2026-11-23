@@ -9,6 +9,14 @@ Installation images use assisted image editing for anonymisation and were visual
 
 The header is generated presentation artwork, not a screenshot. Documentation and artwork are subject to the separate [reuse terms](licensing-options.md).
 
+## Version 1.0.0 release images
+
+The [release header](../assets/presentation/thermal-intelligence-v1-release-header.png) uses the TI house logo, five top-row icons and artwork made with ImageGen from supplied thermostat captures. The [Plum thermostat](../assets/presentation/thermal-intelligence-v1-plum.png) is a supplied screen capture with its display name edited to read “Thermal Intelligence Thermostat”. Its room reading, target, trend and Idle status are shown as captured. Its originating build was not independently verified.
+
+## Version 1.0.0 settings
+
+[Top row icon settings](../assets/presentation/v1-top-row-settings.png) shows the control source first, then humidity and valve position in the draft preview, selectable readings, reorder handles and copy action. [Temperature response](../assets/presentation/v1-temperature-response.png) shows the native thermostat route in the dashboard editor. Both are captures of the 1.0.0 module in the standalone browser fixture, using synthetic room data and example entity IDs.
+
 ## Project artwork
 
 [The canonical TI logo](../assets/logo.png) is a standalone transparent PNG at `assets/logo.png`. Use this asset for the project mark; page banners and other presentation artwork live in `assets/presentation/`.

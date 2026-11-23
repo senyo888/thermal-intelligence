@@ -5,3 +5,6 @@ These unmodified historical fixtures are copied from release source
 snapshot and its licence notices. Current foundation pin checks use the RC.3
 manifest; branch-policy tests use independent synthetic payloads. This directory
 is test data, not an installation or current candidate package.
+
+The module is stored as `thermostat-rc1.fixture.js` so Marketplace can identify
+the installable module by filename. Its contents match the original RC.1 file.

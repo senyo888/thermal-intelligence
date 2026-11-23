@@ -1,6 +1,6 @@
 # Provider and observation contracts
 
-The [published RC.3](rc-3.md) preserves RC.2 configuration and control boundaries while correcting request ordering, configuration editing and presentation. RC.2 acceptance remains dated evidence for RC.2; see the [RC.3 validation limits](rc-3.md#validation-limits) for the current release.
+This reference includes the prepared [1.0.0 configuration](card-configuration.md), including the optional VT response and control-source mappings. The [published RC.3](rc-3.md) preserves RC.2 configuration and control boundaries while correcting request ordering, configuration editing and presentation. RC.2 acceptance remains dated evidence for RC.2; see the [RC.3 validation limits](rc-3.md#validation-limits) for the current release.
 
 The RC.3 adapters retain the Home Assistant 2026.10 climate contract and Versatile Thermostat (VT) 10.5.1 attributes. See [Compatibility](compatibility.md) for tested scenarios and limits. Unit tests use synthetic entities.
 
@@ -30,7 +30,9 @@ VT 10.5.1 declares `specific_states.hvac_off_reason` and `specific_states.hvac_m
 | Vertical swing | `SWING_MODE` and nonempty `swing_modes` | `climate.set_swing_mode` |
 | Horizontal swing | `SWING_HORIZONTAL_MODE` and nonempty `swing_horizontal_modes` | `climate.set_swing_horizontal_mode` |
 
-Feature values follow HA's enum: target `1`, range `2`, fan `8`, preset `16`, swing `32` and horizontal swing `512`. Unsupported surfaces remain distinguishable from supported surfaces whose service or current data is unavailable. Option values pass through unchanged. Frost is offered only when advertised; labels can change display text, never the service value. Preset `none`, current mode and coincident temperatures establish neither manual ownership nor the absence of schedules. Ownership stays **Unknown** until an authoritative contract is implemented.
+Feature values follow HA's enum: target `1`, range `2`, fan `8`, preset `16`, swing `32` and horizontal swing `512`. Unsupported surfaces remain distinguishable from supported surfaces whose service or current data is unavailable. Option values pass through unchanged. Frost is offered only when advertised; labels can change display text, never the service value. Preset `none`, current mode and coincident temperatures establish neither manual ownership nor the absence of schedules.
+
+The card reports the owner from the mapped `control_source` when the source is available, passes its configured checks and reports a recognised value such as `House`, `Schedule` or `Manual`. With no mapping, an unavailable source or an unrecognised value, the owner is **Unknown**. The source status explains stale, invalid or unavailable reports. Provider identity, presets, matching targets and schedule activation do not establish ownership.
 
 HA serializes climate temperature state values and limits in its configured display unit. The model uses `hass.config.unit_system.temperature`, accepting `°C` and `°F`; it does not apply a second conversion using a provider's native unit. Temperature editing is disabled for an unknown unit, invalid limits or invalid current targets. Valid mode or preset controls remain independently usable.
 
@@ -72,18 +74,46 @@ Regulation observations use the exact `configuration.type` published by VT 10.5.
 
 An explicitly disabled climate regulation flag yields **disabled** for its mode/target rows; missing expected values are **unavailable**, unknown values stay **unknown**, and malformed numbers are **invalid**. The internal regulated target is separate from HA's serialized climate setpoint: it retains the provider-declared unit, without substituting HA's display unit or inventing a conversion. Regulation demand includes VT's reported safety and maximum-output adjustments. It is not measured power. Requested valve opening is not independently observed position or proof of heat delivery. No regulation mode, coefficient, valve command or underlying entity is changed or discovered by these details.
 
+## Optional VT header readings
+
+The RC.4 working candidate adds an opt-in display catalogue. It does not configure VT managers or dispatch provider services. Manual and automatic window detection remain separate; false configuration flags mean **Not configured**, and absent flags remain unknown. Exact manager mappings retain the configured raw-input availability checks described above.
+
+| Reading | Provider evidence |
+| --- | --- |
+| Temperature receipt age | `specific_states.last_temperature_datetime`; valid timestamp, independent of climate `last_updated` |
+| Estimated energy | `specific_states.total_energy` with live `power_manager.energy_unit` |
+| Estimated mean power | `power_manager.mean_cycle_power` with live `power_manager.power_unit` |
+| Configured device power | `power_manager.device_power` with live `power_manager.power_unit` |
+| Manual / automatic window | `window_manager.window_state` / `window_manager.window_auto_state`, with the corresponding configuration flag |
+| Motion / Presence | `motion_manager.motion_state` / `presence_manager.presence_state`, with configured input health |
+| Power management | `power_manager.overpowering_state` with `is_power_configured` |
+| Follow | `vtherm_over_climate.follow_underlying_temp_change`; unsupported for known non-climate VT types |
+| Humidity | Explicit direct mapping (including empty disable), otherwise existing typed mapping, then a provider-declared input or `current_humidity` |
+
+Energy and power estimates do not depend on the power-limiting configuration flag. Compatible live units are required; units are neither inferred nor converted. Negative consumption/power observations are invalid. Estimated values retain their attribution in the header and details. Configured device power is not a meter observation.
+
+Receipt age rejects invalid timestamps and timestamps more than one minute in the future. It advances with a passive display timer; other HA updates do not refresh the receipt time. The one-minute allowance accommodates clock skew, not a freshness guarantee.
+
+Topic panels show reported window bypass/action/open-close delays, motion/no-motion presets and delays, Presence input, and power current/limit/limited-temperature fields when available. Their source links open HA details. These observations do not establish that a protection action ran or that heat was delivered. Native VT configuration remains provider-owned; private controller recovery, ownership, holds, timetables and cutoff settings are outside this catalogue.
+
 ## Optional telemetry
 
-Telemetry is an explicit per-card list. Its supported configuration is `{kind, entity, attribute?, label?, unit?, max_age_seconds?}`. Kinds are `humidity`, `trend`, `valve`, `energy`, `power` and `custom`. An empty entity represents a disabled row. There is no automatic entity search, private default, or inference from similarly named entities.
+Telemetry is an explicit per-card list. Its supported configuration is `{kind, entity, attribute?, label?, unit?, unit_attribute?, max_age_seconds?}`. Kinds are `temperature`, `humidity`, `trend`, `valve`, `energy`, `power`, `window`, `motion`, `presence`, `power_management`, `follow` and `custom`. An empty entity represents a disabled row. Editor search and provider-backed suggestions require explicit selection; they do not automatically bind a source or infer one from similarly named entities. The `temperature` kind and its live unit attribute were introduced in beta.8 and are not supported by RC.3 or earlier modules. The RC.4 working revision also resolves live unit attributes for humidity, trend, valve, energy and power. On categorical/custom rows, a saved `unit_attribute` remains inert unknown metadata and is preserved.
 
-`attribute` is a dot-separated own-property path. Prototype properties and the keys `__proto__`, `constructor` and `prototype` are rejected. With no attribute, the source is the entity state and its declared `unit_of_measurement`. An attribute requires its own explicit unit for typed numeric telemetry: the parent entity's unit does not necessarily describe a nested value. A configured unit conflicting with a state sensor's unit is invalid; the card does not reinterpret or convert it.
+`attribute` is a dot-separated own-property path. Prototype properties and the keys `__proto__`, `constructor` and `prototype` are rejected. With no attribute, the source is the entity state and its declared `unit_of_measurement`. An attribute requires its own explicit unit for typed numeric telemetry: the parent entity's unit does not necessarily describe a nested value. Numeric telemetry attributes may instead use `unit_attribute`, an own-property path to the live unit, such as weather's `temperature_unit`; it requires `attribute` and rejects missing or incompatible units. A configured unit conflicting with the reported state or live attribute unit is invalid; the card does not reinterpret or convert it.
 
 | Kind | Accepted units / value |
 | --- | --- |
+| Temperature | `°C`, `°F`; finite value. Sensor states require a reported unit; attributes require an explicit or live unit. |
 | Humidity or valve percentage | `%`, finite value from 0 to 100 |
 | Temperature trend | `°C/h`, `°F/h`, `°C/hour`, `°C/hr`, `degC/h`, `°F/hour`, `°F/hr`, `°C/min`, `°F/min`; finite signed value |
 | Power | `W`, `kW`, `MW`; finite value |
 | Energy | `Wh`, `kWh`, `MWh`, `J`, `kJ`, `MJ`, `GJ`; finite value |
+| Window | `on`/`off`, `open`/`closed`, or boolean; no unit |
+| Motion | `on`/`off`, `detected`/`clear`, or boolean; no unit |
+| Presence | `on`/`off`, `home`/`away`/`not_home`, or boolean; no unit |
+| Power management | `on`/`off`, `limiting`/`normal`, or boolean; no unit |
+| Follow underlying target | `on`/`off` or boolean; no unit |
 | Custom | Finite numeric value, reported text or boolean; optional declared unit |
 
 Every row carries status, source, value, unit and an explanatory detail. Missing entities or expected attributes are **unavailable**; provider `unknown` values stay **unknown**; invalid numbers and incompatible units are **invalid**. No arbitrary age threshold applies. Only an explicit `max_age_seconds` compares the entity's `last_updated` against the observation time. Old values become **stale**; missing or future timestamps leave freshness **unknown**. `last_updated` describes the HA entity update, not an independently verified physical sample time. A disconnected session makes configured telemetry unavailable for refresh.
@@ -98,7 +128,7 @@ Optional `trend_entity`, `humidity_entity` and `valve_position_entity` map expli
 
 Unknown top-level keys, feature-row keys, telemetry-row keys and humidity-band keys survive normalization. Normalization does not mutate the input. Editor patches must retain these unknown keys instead of rebuilding a minimal config. Recognized invalid values produce a useful error rather than being replaced with control defaults.
 
-`buildModel(hass, config, identity, {now})` returns provider evidence, connection/availability/readiness, temperature capabilities, independent choices, activity, unknown ownership, VT detail rows and optional telemetry. It also exposes read-only `attrs`, `state` and `action`, plus attributed `headerTelemetry`, `humidity`, `trend`, `output` and `arc` objects for the original visual surfaces. `presetReadings` is keyed by exact preset and contains `{preset, label, status, value, unit, source, selected, reason}`. Reading availability and selection remain distinct. Humidity rows expose `guides`, `guideMode` (`canonical` or `legacy`), `band`, `bandStatus: {key, label, colour}` and source colour; the header includes the matching activity label. Output distinguishes reported TRV position from thermostat demand. `arc` contains `{color, reason, label, explanation, responding, delta, expiresAt}`. It distinguishes the canonical corroborated response from the unmapped target-comparison fallback; it never claims ownership or proven physical heat delivery. `now` defaults to `Date.now()` and is injectable for deterministic freshness tests. The model has no timers, network access or service writes. `quantize(value, min, max, step)` and `targetPayload(model, key, proposedValue)` expose the same temperature rules to the command coordinator.
+`buildModel(hass, config, identity, {now})` returns provider evidence, connection/availability/readiness, temperature capabilities, independent choices, activity, the ownership label and status from `control_source`, VT detail rows and optional telemetry. It also exposes read-only `attrs`, `state` and `action`, plus attributed `headerOptions` (before display filtering), `headerTelemetry`, `vtReadings`, `humidity`, `trend`, `output` and `arc` objects for the original visual surfaces. `presetReadings` is keyed by exact preset and contains `{preset, label, status, value, unit, source, selected, reason}`. Reading availability and selection remain distinct. Humidity rows expose `guides`, `guideMode` (`canonical` or `legacy`), `band`, `bandStatus: {key, label, colour}` and source colour; the header includes the matching activity label. Output distinguishes reported TRV position from thermostat demand. `arc` contains `{color, reason, label, explanation, responding, delta, expiresAt}`. It distinguishes the canonical corroborated response from the unmapped target-comparison fallback; it never claims ownership or proven physical heat delivery. `now` defaults to `Date.now()` and is injectable for deterministic freshness tests. The model has no timers, network access or service writes. `quantize(value, min, max, step)` and `targetPayload(model, key, proposedValue)` expose the same temperature rules to the command coordinator.
 
 ### Temperature-response evidence
 
@@ -141,3 +171,15 @@ Only literal `is_lock_configured: false` retires a retained locked flag from the
 ## Optional switch eligibility (introduced in beta.6)
 
 The optional row requires an enrolled schema-2 mapping, an available/ready registered standard climate anchor and an exact registered switch. Current-session registry lookup plus subscription is required for this new path; remembered VT identity never falls back to standard. Known group/template platforms are excluded. Missing proof or switch state disables only this row. Climate Off and temperature-specific `canSet` do not prohibit an otherwise eligible switch. Provider-reported On/Off may be optimistic and does not prove physical association, heat, or authorization. See [Optional switch control](optional-switch-control.md) for Honeywell mode effects and the narrower compatibility boundary.
+
+## Additional VT observations and native controls
+
+The outside-temperature option reads `specific_states.ext_current_temperature` in `configuration.temperature_unit`, with reception time from `specific_states.last_ext_temperature_datetime`. It accepts negative temperatures. Other thermostat updates do not renew that reception time. This is VT's accepted reading, not a newly measured sample; TI does not guess the external sensor entity ID or alter VT input configuration. Independent outdoor/weather mappings remain available.
+
+Auto start/stop reads `is_auto_start_stop_configured`, `auto_start_stop_manager.auto_start_stop_enable` and `is_auto_stop_detected`. Configuration, enabled state and detected stop are separate. The supported VT 10.6.5 shape is `configuration.type: over_climate` with `configuration.have_valve_regulation: false`; other types are unsupported, and missing/invalid capability evidence remains unknown. Stop details may report Off, Fan only or Dry, so detection does not establish heating-off or physical response.
+
+**Open VT auto start/stop controls** performs a fresh entity-registry lookup after an explicit click. It requires one enabled, visible VT switch with the provider-defined `_enable_auto_start_stop` unique-ID suffix and the same nonempty config-entry and device identities as the selected VT climate. Entity names are not used to guess a target. Ambiguous, unavailable, mismatched or late replies open nothing. Configuration/session changes or dismissal retire the lookup; an unresolved old lookup does not prevent a new explicit attempt.
+
+The link opens Home Assistant's native switch dialog. TI sends no switch service, and it does not govern later actions in that native dialog. Changing the switch can stop or resume provider behavior. The ordinary optional-switch enrollment remains separate and still excludes VT.
+
+VT's [10.6.5 auto start/stop documentation](https://github.com/jmcollin78/versatile_thermostat/blob/10.6.5/documentation/en/feature-auto-start-stop.md) describes its configuration and enable switch.

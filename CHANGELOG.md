@@ -1,5 +1,48 @@
 # Changelog
 
+## 1.0.0 — Unreleased
+
+- Selecting a different thermostat clears the previous room’s request warning. An outstanding call still has to finish before the controls become available.
+
+- Choose a thermostat, add independent room sensors or expose VT readings, and arrange the top row separately on each card.
+- Read the confirmed control source and applicable preset together. Open the indicator for ownership, House policy and Schedule details.
+- Configure the optional VT temperature response arc using measured room trend and accepted output.
+- Select **Thermal Intelligence Thermostat** in Add Card. New YAML uses `custom:thermal-intelligence-thermostat`. Saved beta and RC cards keep working.
+- See presets and control source first, with preset labels centred over their temperatures. Adjust humidity colours with four markers on a single bar or enter exact percentages.
+- The dashboard editor shows a validation message for malformed icon or VT reading lists. Correcting the YAML restores the preview.
+- Adding an outside reading now preserves malformed telemetry or feature mappings and shows the validation error so you can correct the YAML and retry.
+
+[Senyo’s introduction](docs/v1.0.0.md) · [Package details](docs/v1.0.0-package.md) · [First-room walkthrough](docs/wiki/Configuration.md) · [Tested coverage](docs/compatibility.md#unreleased-100-package). RC.3 is the published prerelease.
+
+## 0.1.0-rc.4 — Unreleased
+
+- Carry beta.8’s clearer button feedback, Home Assistant editor guidance, humidity controls, source previews/suggestions and typed temperature observations into an RC candidate.
+- Preserve advanced draft/export and its clipboard fallback, optional-switch search/recovery, unknown configuration fields and existing control guards.
+- Reveal the selected manual-copy configuration after the icon dialog updates its layout.
+- Keep uncertain request tooltips consistent while a transport is still settling and after a late acknowledgement.
+- Retain develop’s reviewed Pages tooling and align telemetry and migration guidance with current behavior.
+- Combine reported control source and preset in one icon, with Unknown standing alone and confirmed local adjustments marked as the last action. Keep categorical states icon-only, with full details on hover or press.
+- Add VT outside-temperature and native auto start/stop observations, and arrange expanded mode, preset settings and compact utility controls consistently across providers.
+- Keep expanded reading values upright and show manual-action history only while the current targets match the acknowledged request.
+- Pair Schedule ownership with an explicitly mapped last-confirmed Frost, Eco, Comfort or Boost mode, including when the thermostat preset is `none`. Preserve unavailable, pending and storage-error evidence without borrowing another preset.
+- Keep invalid source-guard values editable without accepting them, and refresh expiring combined control icons during a dial draft without interrupting the gesture.
+
+Prepared on `senyo888-patch-1` for reconciliation into `develop`; RC.3 remains the published prerelease. [RC.4 package checks and limits](docs/rc-4.md) distinguish each Lab-tested module from the later immutable-commit Marketplace installation and bounded Stable Schedule/Boost checks. Temperature and guarded control-source mappings require compatible module/configuration rollback together.
+
+## 0.1.0-beta.8 — Unreleased
+
+- Make button activation, provider-selected presets and pending or uncertain requests easier to distinguish.
+- Expose one accessible request-status message, including when a temperature draft is cancelled.
+- Lead display setup through Home Assistant’s card editor, preserving advanced draft/export in the runtime dialogs.
+- Open and select the advanced configuration text when clipboard access is unavailable.
+- Add humidity sliders, exact fields and a live display preview to the editor; keep the saved guide distinct from runtime drafts.
+- Search optional switches by name or entity ID without changing selection or enrollment.
+- Update an invalid switch confirmation's explanation when the switch recovers, while still requiring a fresh confirmation.
+- Preview reading icons, values and source status; offer explicitly adopted VT source suggestions with identity revalidation.
+- Add typed temperature observations and a guided outdoor sensor/weather mapping with live unit validation.
+
+Existing schemas, control guards, per-card settings and unknown configuration fields remain supported. Older modules cannot read the new `temperature` kind: retain compatible configuration and its module together for rollback. Synthetic checks and bounded Lab display and control checks passed; see [coverage and limits](docs/compatibility.md#unreleased-beta8-usability-candidate). This is an unreleased beta, not an installation recommendation.
+
 ## 0.1.0-rc.3 — 14 November 2026
 
 - Preserve submillisecond ordering when climate or VT lock reports contradict an earlier match before acknowledgement.

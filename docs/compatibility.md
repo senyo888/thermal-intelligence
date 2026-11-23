@@ -1,10 +1,91 @@
 # Compatibility
 
+## Unreleased 1.0.0 package
+
+The [rebuilt module](v1.0.0-package.md#package-identity-and-upgrade) has unit, synthetic browser and package coverage. Its live installation and soak are unverified.
+
+The table records the previous 265,844-byte candidate, verified at SHA-256 `2f838e7ed3d59d4dc87f7e156872b2b820ca8cc19fa24410d66b6759190cdeba`. Use the [1.0.0 package and upgrade notes](v1.0.0-package.md) for the matching picker and resource.
+
+| Check | Coverage for the earlier candidate |
+| --- | --- |
+| Home Assistant and VT | A manual test installation on HA 2026.11.2 with VT 10.6.5 exercised eight control actions on inert fixtures. A second installation used Marketplace with the exact source commit. |
+| Editor and room controls | Save and reload, invalid humidity draft, room target adjustment, VT Boost and clearing the preset were checked. A five-minute scheduled Boost started and returned to Comfort automatically. |
+| Whole-house policy supplied by a separate controller | Comfort confirmed across eight rooms. Boost confirmed in seven. A thermostat with its user lock enabled kept its target. After the house timer expired all eight confirmed Comfort, then their original settings were restored. Physical heat delivery was outside these checks. |
+| Marketplace rollback and reinstall | On HA 2026.11.2, an in-place rollback to RC.4 and reinstall of 1.0.0 preserved the resource ID and loaded the expected card and editor. Removal preserved the dashboard and unrelated resource. Home Assistant served the exact installed card and full licence. A local named-release rehearsal also delivered both files. See the [installer results and package checks](v1.0.0-package.md#validation-boundaries). |
+| Devices and observation | Phone, tablet and desktop layout fixtures passed. The 48-hour Lab soak finished on 22 November 2026. All nine checkpoints reported healthy for Home Assistant Core, the exact 1.0.0 module, VT and the expected HA/VT versions. Verification of the public tagged download follows release. A minimum supported HA version has not been established. |
+
+## Published RC.3
+
 Current published prerelease: **0.1.0-rc.3**. [RC.3](rc-3.md) corrects request ordering, configuration editing and presentation while preserving schema-1/schema-2 configurations and existing control restrictions.
 
 On 13 November 2026, the exact released module passed passive manual Lab checks on HA 2026.11.0: six inert fixture renders, humidity editing/manual export, clearing a visual valve mapping and browser reconnect, with no observed thermostat commands or observation gaps. The independent observation exceeded its planned five-minute limit, lasting about 10 minutes 43 seconds. This is a pass for the completed checks, not full timing-plan compliance or a soak. See the [exact package and validation limits](rc-3.md#validation-limits).
 
 The Lab used a manual overlay while Marketplace retained RC.2. RC.3 named-release Marketplace acceptance, physical clients, wider providers, installer update/removal/recovery and backup restore rehearsal remain incomplete. Explicitly empty YAML valve sources, range controls and delayed clipboard/stale-registry cases retain synthetic or historical coverage. A minimum supported HA version has not been established.
+
+## Unreleased RC.4 candidate
+
+The RC.4 packaging-preparation module is `2c7dc3e7eb63715de0e1a14004db0798b4f41e944406d76d97448ebde3d814c6` (265865 bytes). Its stable-version packaging and picker support preserve the RC.4 runtime version and existing card/editor types. These bytes have not been installed on Lab or Stable. It retains the explicit last-confirmed Schedule mode mapping from source `61c299a`, separate from the thermostat preset and House policy. A calendar can show Frost/Eco/Comfort/Boost even when the thermostat preset is `none`; the details retain the confirmed-intent boundary. Optional null-valued source guards suppress pending or storage-error evidence. Modules predating `61c299a` do not enforce these guards; retain a compatible module and saved configuration together for rollback. This revision also corrects malformed-guard editing and combined-icon expiry during a dial draft. The preceding reconciliation module `c7deef911f85cdbd7deb3d8017635f19cf81eeea45207e3d0ee14ade4fd99229` (265805 bytes) passed bounded manual Lab controls and malformed-guard editing checks on 20 November. Its held-pointer Schedule-expiry gesture retains synthetic coverage. The same reconciliation module passed bounded Stable Marketplace installation, rollback/restoration, rendering and configuration-preview checks without thermostat commands. See [exact Lab coverage](rc-4.md#final-reconciliation-lab-checks--20-november-2026) and [Stable coverage and limits](rc-4.md#final-reconciliation-stable-checks--20-november-2026).
+
+The preceding `61c299a` module (`25e47e4bdca8328469a1aecf488dd84344ca31854ba921fdc83dafc0e896b9a5`, 265389 bytes) passed immutable-commit Marketplace installation and bounded Stable checks on HA 2026.11.2 with VT 10.6.5: sixteen inert icon combinations, real Schedule/Comfort, Eco and Frost, natural five-minute Schedule/Boost and confirmed Comfort handback, with original settings restored. A separately corrected installation-specific ownership error and an automatically recovered startup output fault precede the successful trial. See [exact coverage and limits](rc-4.md#stable-marketplace-and-schedule-checks--1819-november-2026). This is not physical-heating, uninterrupted restart-health, named-release installer or formal-soak acceptance.
+
+The earlier 17 November revision combines source and preset into one icon, adds VT outside temperature and auto start/stop observations, and refines the expanded controls. Its dedicated icon page supports preview and export; Home Assistant’s selected-card editor owns saving. No runtime dashboard writes are made. Module `d7701409…` passed bounded Lab checks on 17 November, including 27 card requests, two native VT switch actions, intentional rejection/recovery and a fresh load with no replay. Fixture controls and saved configuration were restored. Exact identities, earlier native-editor evidence and the unverified loaded VT version are recorded in [RC.4](rc-4.md#lab-tested-revision--17-november-2026). Stable was not changed by this trial.
+
+The preceding 16 November revision uses quiet button feedback: routine actions leave no banner, issue notices expire after ten seconds, and unresolved issues remain on the LED and in the overview. Module SHA256 `718e6f5f076c9471bbc6a634fa3dd515255a02c1db7365d3d982d65a6cdc3cff` passed 178 unit and 171 synthetic browser tests. These bytes have not been loaded on HA Lab or Stable; the live results below remain tied to the earlier module.
+
+The earlier [RC.4](rc-4.md) module consolidates beta.8 usability improvements and the request-tooltip correction. Its SHA256 is `c5c88f6f662095f1bd0a11254bea1401c2ff8b15a13da500d894fdbb664130ae`. It passed 178 unit, 164 synthetic browser, 14 foundation, 13 package and eight Marketplace distribution tests, including phone/tablet/desktop layouts and preserved advanced export. It remains on the beta branch for future develop reconciliation, without a named release.
+
+On 15 November 2026, those exact bytes passed manual Lab checks on HA 2026.11.0 with VT 10.6.4: editor Save/Cancel and export, Generic/VT controls, an eligible inert optional switch, range/fan/swing controls and deliberate error paths. All 35 card requests and eight fixture setup/restoration requests had acknowledgements and independent server events, including two intended rejections. Original fixture settings and saved configurations were restored; no card-runtime defect was found. At that trial, RC.4 used a manual resource overlay while Marketplace retained RC.2. See [coverage and limits](rc-4.md#validation-limits); physical-device, installer and formal-soak acceptance remain separate.
+
+## Unreleased beta.8 usability candidate
+
+The candidate adds visible press feedback, a clearer HA editor route, humidity editor controls, searchable switch selection, verified source suggestions and typed temperature observations. Synthetic fixtures cover phone, tablet and desktop widths, reduced motion and command recording.
+
+On 15 November 2026, module SHA256 `84e380283e159a93ca98ce51d53867d9ba34ef901cb50313bc7dca883e7fc936` passed bounded passive checks on HA 2026.11.0: six inert cards, visible button activation, manual export, humidity preview/reset, switch search, weather temperature preview, explicit VT source adoption into a draft, and Home Assistant Save/Cancel. A temporary card-name change persisted across a fresh frontend connection and was restored exactly. Independent observation recorded no service calls, frontend errors or observation gaps. An earlier build exposed a collapsed clipboard fallback; it was rolled back, corrected and retested.
+
+The manual overlay remains separate from the installed Marketplace package. Physical phone/tablet and Companion acceptance, wider providers, installer lifecycle, physical heating, backup restore rehearsal and formal soak remain unverified for beta.8. Published RC.3 evidence above does not apply to these bytes.
+
+Switch search uses a labelled search input and native select. No undocumented HA picker API or new minimum HA version is assumed. Source suggestions require registry access; failure leaves manual mapping available. Slope suggestions use the VT registry role, config entry and device association and require a compatible live numeric observation. Temperature telemetry requires the new module; restore compatible configuration and module together on rollback.
+
+### Inert control checks — 15 November 2026
+
+The same beta.8 module also passed control checks on a Generic Thermostat and a switch-based VT, whose outputs were verified to lead only to software helpers. The corrected observation recorded 22 deliberate requests, each with a positive service acknowledgement, an independent service event and a matching reported setting.
+
+| Control | Observed result |
+| --- | --- |
+| Temperature buttons | Increment and decrement reached the requested target on both providers. |
+| Generic dial | Keyboard and pointer adjustments committed correctly and were restored. |
+| Presets and HVAC mode | Both providers accepted preset changes and Heat/Off; original modes, presets and targets were restored. |
+| VT locking | Dialog cancellation sent nothing. Explicit unlock/lock succeeded; automatic relocking invalidated an old action without sending a redundant request. Locked controls stayed disabled. |
+| Reconnect and preservation | A fresh document loaded six cards without replaying commands. Saved dashboards, resources, protected configuration and output-helper states were preserved or restored. |
+
+An initial test recorder missed acknowledgements delivered in batched WebSocket frames. Its decoder was corrected and the affected control paths were repeated; no card-runtime defect was found. At that stage, the available Lab switches were template or VT entities, which are ineligible for optional switch enrollment. The subsequent optional-switch checks are recorded below. Range, fan/swing, interrupted-draft and forced transport-failure cases were not exercised in this live test. These are bounded fixture results, not physical heating, installer or soak acceptance.
+
+### Optional switch checks — 15 November 2026
+
+A registered Command Line switch with local file readback and no physical output was enrolled through the visual editor beside an inert Generic Thermostat on HA 2026.11.0. Initial checks found that an invalid confirmation retained an unavailable-state explanation after the switch recovered. The correction updates that explanation while keeping the confirmation disabled.
+
+Corrected module SHA256 `66b247fe500a959c79dcb2c288174c4250ca27b15ac64e2dec49fbc0702f4235`, built from [source `5278a26`](https://github.com/senyo888/thermal-intelligence/commit/5278a26e4e04085fe171a71b21a620d732b4cd07), passed the repeated recovery check, fresh confirmed On/Off, cancellation and a fresh frontend connection. The observed sequence was Pending → Accepted → Observed. Two deliberate requests each had a positive acknowledgement, an independent service event and matching software readback. Recovery and reconnect sent no commands; the fixture finished Off. Existing dashboard content, unrelated resources and thermostat settings were preserved.
+
+The corrected observation lasted about 4 minutes 26 seconds with no recorded frontend errors or observation gaps. This manual overlay trial establishes the inert switch's frontend and service path. It does not establish physical response, real Honeywell behavior, provider-wide health, installer lifecycle or formal soak acceptance. The broader beta.8 display and thermostat checks above retain their original module identity.
+
+### Range and error-path checks — 15 November 2026
+
+Module SHA256 `66b247fe500a959c79dcb2c288174c4250ca27b15ac64e2dec49fbc0702f4235` was tested on a dedicated Template climate with local helper readback and no physical outputs, on HA 2026.11.0.
+
+| Path | Observed result |
+| --- | --- |
+| Range controls | Buttons sent both endpoints; keyboard Home/End respected limits and the other endpoint. Unchanged boundary presses sent nothing. |
+| Fan and swing | Advertised fan modes and both swing directions reached the selected settings and returned to their starting values. |
+| Service rejection | Negative acknowledgement produced failure, including when matching state arrived before the rejection. |
+| Missing or delayed readback | Acknowledgement without a state change became uncertain. A delayed response kept controls busy until transport settled and did not upgrade the timed-out request to success. |
+| Invalid or unavailable state | Crossed ranges and unavailable entities disabled affected controls; recovery sent no commands. |
+| Interrupted input and connection | A concurrent target change cancelled a held-key draft without dispatch. Closing the frontend connection during an in-flight request caused no replay; HA reconstructed the card and resynchronised current state. The new instance does not retain the old request's history. |
+
+The first pass recorded 23 deliberate climate requests: 20 positive acknowledgements, two intentional rejections and one acknowledgement lost during the deliberate frontend disconnect. Independent server observation recorded all 23 service events and the delayed state change after disconnect. Fixture setup calls were counted separately.
+
+The held-key test exposed duplicate accessible status text. [Source `5851fcf`](https://github.com/senyo888/thermal-intelligence/commit/5851fcf71bc2f0f3ccba1e112644bf6847c83a05) corrects only that rendering. The corrected module, SHA256 `b6d1a2a9c6c0639a255e14ac7a25b56bb3cf55de6a7a5a22339a3eb8bcb145bd`, passed a focused Lab retest of cancellation, pending/uncertain feedback and a fresh Off action. Each captured status had one accessible status region; the cancelled draft sent nothing. All three deliberate retest requests had positive acknowledgements and independent service events. Actual screen-reader speech was not tested.
+
+The inert fixture finished Off with its original range, fan and swing settings. Existing thermostat settings, provider configuration and dashboard content were preserved. These are bounded manual overlay checks, not provider-wide permissions, physical-device response, installer lifecycle, backup restore or formal soak acceptance. Earlier checks retain their original module identities.
 
 ## Historical RC.2 validation
 
@@ -76,3 +157,9 @@ The test establishes the real-HA registry, frontend and service path for this in
 ## RC.2 acceptance boundary
 
 Named-release Marketplace selection, passive installation checks, bounded controls and maintainer-observed heating now have [dated RC.2 evidence](rc2-validation.md). Earlier beta.7 inert-switch tests remain specific to beta.7. Default catalogue admission, wider physical-device support, a formal RC.2 soak and complete update/removal/recovery acceptance are not established.
+
+## Unreleased RC.4 control-icon refinement
+
+The current patch adds exact advertised preset indicators, read-only ownership/House/schedule mappings, a combined source/preset icon with VT and circled-P marks, VT outside temperature and auto start/stop observations. The latter uses the inspected VT 10.6.5 attribute shape and opens only a uniquely verified same-device/config-entry native switch. It does not broaden ordinary optional-switch eligibility.
+
+Synthetic browser coverage includes state separation, acknowledgement without observation, contrary-preset retirement, wrong/missing registry targets, delayed replies after context loss, native-editor mapping round trips, and phone/tablet/desktop plus a 250px card layout. The 17 November Lab trial also verified the native auto start/stop dialog and its explicit Off/On actions on an inert fixture. This result applies to the exact `d7701409…` module and recorded paths; Stable installation, physical response and formal soak remain separate.

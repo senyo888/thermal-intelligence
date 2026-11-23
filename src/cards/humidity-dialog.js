@@ -26,7 +26,7 @@ const inputValue = value => typeof value === 'number' && Number.isFinite(value) 
 const entityId = value => typeof value === 'string' && /^[a-z0-9_]+\.[a-z0-9_]+$/.test(value) ? value : '';
 
 /** Pure source-shaped humidity dialog. Values are a local draft, never a dashboard save. */
-export function renderHumidity({ model = {}, config = {}, row, statusMessage = '' } = {}) {
+export function renderHumidity({ model = {}, config = {}, row, savedConfig = config, statusMessage = '' } = {}) {
   const current = row ?? model.humidity ?? model.headerTelemetry?.find(item => item.kind === 'humidity' || item.topic === 'humidity');
   const source = current?.source ?? {};
   const rawValue = current?.rawValue ?? current?.value;
@@ -56,7 +56,7 @@ export function renderHumidity({ model = {}, config = {}, row, statusMessage = '
   const fields = keys.map(key => `<label>${LABELS[key]}<span><input type="number" min="0" max="100" step="${legacy ? 'any' : '1'}" inputmode="numeric" data-humidity-boundary="${key}" data-number="${key}" value="${esc(inputValue(draft[key]))}" aria-label="${LABELS[key]} exact percentage" aria-invalid="${!valid}"> %</span></label>`).join('');
   const legend = !valid ? '' : legacy
     ? `<div class="legend"><span style="color:#79b8ed">Below ${esc(fmt(draft.low))}%</span><span style="color:#7dc39c">Within ${esc(fmt(draft.low))}–${esc(fmt(draft.high))}%</span><span style="color:#eb7777">Above ${esc(fmt(draft.high))}%</span></div>`
-    : `<div class="legend"><span style="color:#79b8ed">Dry &lt;${draft.dry_below}%</span><span style="color:#7dc39c">Good ${draft.good_min}–${draft.good_max}%</span><span style="color:#eb7777">Wet &gt;${draft.wet_above}%</span></div>`;
+    : `<div class="legend"><span style="color:#79b8ed">Dry &lt;${esc(draft.dry_below)}%</span><span style="color:#7dc39c">Good ${esc(draft.good_min)}–${esc(draft.good_max)}%</span><span style="color:#eb7777">Wet &gt;${esc(draft.wet_above)}%</span></div>`;
   const preview = `<strong style="color:${band.colour}">${esc(selected)} · ${esc(band.label)}</strong>${legend}`;
   const explanation = legacy
     ? 'This card has a legacy two-boundary colour preference. Its original lower and upper values are retained; they have not been converted into four boundaries.'
@@ -64,6 +64,11 @@ export function renderHumidity({ model = {}, config = {}, row, statusMessage = '
   const validation = valid ? 'Draft only — nothing has been saved.' : legacy
     ? 'Keep two increasing percentages between 0 and 100.' : 'Keep four increasing whole percentages between 0 and 100.';
   const footerStyle = valid ? 'background:#24483f;border-color:#79bfa15e;color:#e1fff2' : 'background:#274b44';
-  const html = `<dialog data-view="humidity" data-reading-status="${esc(value===null&&current?.status==='available'?'unavailable':current?.status||'disabled')}" aria-labelledby="humidity-title"><header><div><small>${esc(config.name || model.name || 'Room')} · display</small><h2 id="humidity-title">Humidity</h2></div><button data-close data-dialog-close aria-label="Close humidity" autofocus>×</button></header><div class="body"><div class="reading">${reading}</div><h3>${legacy ? 'Legacy colour preference' : 'Colour boundaries'}</h3><p>${explanation}</p><div class="bar"><div class="track" style="background:${gradient}"></div>${ranges}</div><div class="scale"><span>0%</span><span>100%</span></div><div class="fields">${fields}</div><div class="preview" role="status">${preview}</div><p class="scope">These colours are visual guides only. They do not control heating, humidifiers or dehumidifiers. Draft only; copy into this card’s Home Assistant editor to save.</p><p class="message" data-dialog-status role="status">${esc(statusMessage || validation)}</p></div><footer><button data-cancel data-dialog-close>Close</button><button data-copy-humidity style="${footerStyle}" ${valid ? '' : 'disabled'}>Copy configuration</button></footer></dialog>`;
+  const savedBands = humidityBands(savedConfig), savedBand = humidityBand(value,savedBands);
+  const savedLegend = !savedBands ? 'Display guide unavailable' : legacyHumidityBands(savedBands)
+    ? `Below ${fmt(savedBands.low)}% · Within ${fmt(savedBands.low)}–${fmt(savedBands.high)}% · Above ${fmt(savedBands.high)}%`
+    : `Dry <${savedBands.dry_below}% · Good ${savedBands.good_min}–${savedBands.good_max}% · Wet >${savedBands.wet_above}%`;
+  const savedPreview = `<div class="saved-guide"><h3>Saved display guide</h3><div style="height:14px;border-radius:7px;background:${esc(humidityGradient(savedBands))}" aria-hidden="true"></div><p>${esc(selected)} · ${esc(savedBand.label)}</p><p class="legend">${esc(savedLegend)}</p><p>To change these guides, use Dashboard → Edit → Edit card → Humidity display, then Save.</p></div>`;
+  const html = `<dialog data-view="humidity" data-reading-status="${esc(value===null&&current?.status==='available'?'unavailable':current?.status||'disabled')}" aria-labelledby="humidity-title"><header><div><small>${esc(config.name || model.name || 'Room')} · display</small><h2 id="humidity-title">Humidity</h2></div><button data-close data-dialog-close aria-label="Close humidity" autofocus>×</button></header><div class="body"><div class="reading">${reading}</div>${savedPreview}<details id="humidity-advanced"><summary>Advanced draft and export</summary><h3>${legacy ? 'Legacy colour preference' : 'Colour boundaries'}</h3><p>${explanation}</p><div class="bar"><div class="track" style="background:${esc(gradient)}"></div>${ranges}</div><div class="scale"><span>0%</span><span>100%</span></div><div class="fields">${fields}</div><div class="preview" role="status">${preview}</div><p class="scope">These colours are visual guides only. They do not control heating, humidifiers or dehumidifiers. Draft only; copy into this card’s Home Assistant editor to save.</p><p class="message" data-dialog-status role="status">${esc(statusMessage || validation)}</p><button data-copy-humidity style="${footerStyle}" ${valid ? '' : 'disabled'}>Copy configuration</button></details></div><footer><button data-cancel data-dialog-close>Close</button></footer></dialog>`;
   return { title: 'Humidity', html };
 }
