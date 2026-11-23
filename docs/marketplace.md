@@ -1,6 +1,6 @@
 # Install with Home Assistant Marketplace
 
-The named download in this guide is **RC.3**. The [1.0.0 package](v1.0.0-package.md) is awaiting release. Its verification notes identify the rebuilt module and the earlier module used for installation checks.
+The named download in this guide is **RC.3**. The [1.0.0 package](v1.0.0-package.md) is awaiting release. The verification notes cover the final Marketplace upgrade and identify the earlier build used for rollback testing.
 
 Thermal Intelligence is a standalone **Dashboard** card. It uses your existing climate entities; no TI controller or backend integration is required. On Home Assistant 2026.11 and later, Marketplace is the installation route. For earlier Home Assistant versions, use the [HACS guide](hacs.md).
 

@@ -1,6 +1,6 @@
 # HACS on Home Assistant before 2026.11
 
-The named download in this guide is **RC.3**. The [1.0.0 package](v1.0.0-package.md) is awaiting release. Its verification notes identify the rebuilt module and the earlier module used for installation checks.
+The named download in this guide is **RC.3**. The [1.0.0 package](v1.0.0-package.md) is awaiting release. The verification notes cover the final Marketplace upgrade and identify the earlier build used for rollback testing.
 
 For Home Assistant 2026.11 and later, use [Marketplace](marketplace.md). Do not install HACS alongside Marketplace. The older HACS route below is for systems that still use that integration.
 
