@@ -4,13 +4,7 @@
 
 **Temperature, control and context in one Home Assistant card.**
 
-[![Introducing Thermal Intelligence 1.0.0](https://img.shields.io/badge/1.0.0-Introduction-725691)](docs/v1.0.0.md)
-[![Marketplace installation guide](https://img.shields.io/badge/Marketplace-Installation%20guide-41BDF5?logo=home-assistant&logoColor=white)](docs/marketplace.md)
-[![Project site](https://img.shields.io/badge/Project%20site-Thermal%20Intelligence-377980)](https://senyo888.github.io/thermal-intelligence/)
-[![Thermal Intelligence Wiki guides](https://img.shields.io/badge/Wiki-Guides-536b87)](docs/wiki/Home.md)
-[![Configuration and YAML reference](https://img.shields.io/badge/Configuration-YAML-52677a)](docs/card-configuration.md)
-[![Compatibility and tested versions](https://img.shields.io/badge/Compatibility-Tested%20versions-537458)](docs/compatibility.md)
-[![Software licence GPL-3.0-only](https://img.shields.io/badge/Software-GPL--3.0--only-415a79)](LICENSE)
+[![Introducing Thermal Intelligence 1.0.0](https://img.shields.io/badge/1.0.0-Introduction-725691)](docs/v1.0.0.md) [![Marketplace installation guide](https://img.shields.io/badge/Marketplace-216488?logo=home-assistant&logoColor=white)](docs/marketplace.md) [![Project site](https://img.shields.io/badge/Project%20site-377980)](https://senyo888.github.io/thermal-intelligence/) [![Thermal Intelligence Wiki guides](https://img.shields.io/badge/Wiki-Guides-536b87)](docs/wiki/Home.md) [![Configuration and YAML reference](https://img.shields.io/badge/Configuration-YAML-52677a)](docs/card-configuration.md) [![Compatibility and tested versions](https://img.shields.io/badge/Compatibility-Tested%20versions-537458)](docs/compatibility.md) [![Software licence GPL-3.0-only](https://img.shields.io/badge/Software-GPL--3.0--only-415a79)](LICENSE)
 
 Thermal Intelligence puts your thermostat’s current temperature, target and reported activity on one Home Assistant card. Add the readings that help you understand a room. A closed radiator valve and a rising room temperature, for example, can both be true. Tap the status chip for the reported activity, or open a top-row icon to inspect its source.
 
@@ -117,9 +111,7 @@ Report vulnerabilities through [private vulnerability reporting](https://github.
 
 If TI has earned a spot on your dashboard, give it a star. A screenshot or a note about what worked in your room helps me make the next version better. You can also sponsor development.
 
-[![Star Thermal Intelligence on GitHub](https://img.shields.io/badge/Star-Thermal%20Intelligence-2e724e?logo=github&logoColor=white)](https://github.com/senyo888/thermal-intelligence)
-[![Share feedback on GitHub](https://img.shields.io/badge/Feedback-Issues-396b92)](https://github.com/senyo888/thermal-intelligence/issues/new/choose)
-[![Sponsor Senyo on GitHub](https://img.shields.io/badge/Sponsor-Senyo-934e78?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/senyo888)
+[![Star Thermal Intelligence on GitHub](https://img.shields.io/badge/Star-2e724e?logo=github&logoColor=white)](https://github.com/senyo888/thermal-intelligence) [![Share feedback on GitHub](https://img.shields.io/badge/Feedback-396b92)](https://github.com/senyo888/thermal-intelligence/issues/new/choose) [![Sponsor Senyo on GitHub](https://img.shields.io/badge/Sponsor-934e78?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/senyo888)
 
 Software is licensed under [GPL-3.0-only](LICENSE). Documentation and artwork have separate [reuse terms](docs/licensing-options.md).
 
