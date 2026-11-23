@@ -8,12 +8,6 @@ Add this repository as **Dashboard**, choose **v1.0.0** when the tag is availabl
 
 In Home Assistant 2026.11.1, TI uses the Marketplace [Dashboard category icon](https://github.com/home-assistant/frontend/blob/e32bc0696ebefde323f5b791269ad0c57f3f99d9/src/panels/marketplace/tools/repository-icon.ts); custom listing images are supported for integrations. TI's repository description uses its README artwork. [Relative image links](https://github.com/home-assistant/frontend/blob/e32bc0696ebefde323f5b791269ad0c57f3f99d9/src/panels/marketplace/tools/markdown.ts) resolve against the installed version, available version or default branch, in that order. An installed version retains its versioned README and images after later documentation changes on `main`. The RC.3 tag preserves its pre-publication README; use the [current installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md) and [RC.3 release notes](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.3) for the intended version and final validation record.
 
-## Download counts
-
-Marketplace reads the download count of the matching release asset for its selected version. For TI, that asset is `thermal-intelligence.js`; no extra badge or repository setting enables the native count. This is an asset-download count, not a count of unique users or installations, and verification downloads also contribute.
-
-The reviewed frontend shows a dash in the wide list view, omits the count in narrow layouts, and omits the detail count when its stored value is zero. **Refresh information** can update repository metadata without installing a release; a missing count after refresh does not prove that nobody has downloaded TI. See the [Marketplace count lookup](https://github.com/home-assistant/core/blob/74cf5a49c63ed8d4d87717844bf14f79c28c9cea/homeassistant/components/marketplace/repositories/base.py#L1617) and [display rule](https://github.com/home-assistant/frontend/blob/e32bc0696ebefde323f5b791269ad0c57f3f99d9/src/panels/marketplace/dashboards/ha-marketplace-dashboard.ts#L624).
-
 ## Before installation
 
 Save a fresh backup, export it and verify the downloaded archive. Retain your trial card configuration, resource URL and previous module. Archive integrity is not a restore rehearsal; confirm your recovery method before a trial.
