@@ -55,7 +55,7 @@ export class IconOptions {
     if(next===this.config)return;
     const active=this.host.getRootNode().activeElement;
     const action=active?.dataset.iconMove??'grip';
-    this.onChange(next);
+    if (this.onChange(next) === false) return;
     const row=[...this.host.querySelectorAll('[data-icon-row]')].find(node=>node.dataset.iconRow===key);
     const target=row?.querySelector(action==='grip'?'[data-icon-grip]':`[data-icon-move="${action}"]`);
     (target?.disabled?row?.querySelector('[data-icon-grip]'):target)?.focus({preventScroll:true});

@@ -639,20 +639,31 @@ test('preset header suppression follows ready Heat and exact selection, never te
 
 test('preset readings reject unsupported, duplicate, unavailable, nonfinite and incompatible evidence', () => {
   const { h, c } = presetFixture(); const id = c.features[1].entity;
-  const read = (overrides = c) => buildModel(h, overrides, identity);
+  function expectRejected(status, config = c) {
+    const model = buildModel(h, config, identity);
+    assert.equal(model.presetReadings.comfort.status, status);
+    assert.equal(model.headerTelemetry.some(row => row.group === 'primary'), false);
+    assert.equal(model.headerTelemetry.some(row => row.source.entity === id), false);
+  }
   for (const value of [NaN, Infinity, 'Infinity', 'not numeric', true, {}, []]) {
-    h.states[id].state = value; assert.equal(read().presetReadings.comfort.status, 'invalid'); assert.equal(read().headerTelemetry.filter(row=>row.group==='primary').length, 0);
+    h.states[id].state = value;
+    expectRejected('invalid');
   }
   h.states[id].state = '21';
-  for (const unit of ['°F', '%', undefined]) { h.states[id].attributes.unit_of_measurement = unit; assert.equal(read().presetReadings.comfort.status, 'invalid'); }
+  for (const unit of ['°F', '%', undefined]) {
+    h.states[id].attributes.unit_of_measurement = unit;
+    expectRejected('invalid');
+  }
   h.states[id].attributes.unit_of_measurement = '°C';
-  const duplicate = { ...c, features: [...c.features, { entity: id, preset: 'comfort' }] };
-  assert.equal(read(duplicate).presetReadings.comfort.status, 'invalid'); assert.equal(read(duplicate).headerTelemetry.filter(row=>row.group==='primary').length, 0);
-  h.states[id].state = 'unavailable'; assert.equal(read().presetReadings.comfort.status, 'unavailable');
-  h.states[id].state = '21'; h.states[entity].attributes.preset_modes = ['none', 'eco'];
-  assert.equal(read().presetReadings.comfort.status, 'unsupported'); assert.equal(read().headerTelemetry.filter(row=>row.group==='primary').length, 0);
-  h.states[entity].attributes.preset_modes.push('comfort'); h.config.unit_system.temperature = undefined;
-  assert.equal(read().presetReadings.comfort.status, 'unknown');
+  expectRejected('invalid', { ...c, features: [...c.features, { entity: id, preset: 'comfort' }] });
+  h.states[id].state = 'unavailable';
+  expectRejected('unavailable');
+  h.states[id].state = '21';
+  h.states[entity].attributes.preset_modes = ['none', 'eco'];
+  expectRejected('unsupported');
+  h.states[entity].attributes.preset_modes.push('comfort');
+  h.config.unit_system.temperature = undefined;
+  expectRejected('unknown');
 });
 
 test('preset attribute observations use only own fields and explicit units', () => {

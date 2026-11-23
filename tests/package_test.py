@@ -136,10 +136,10 @@ class PackageTests(unittest.TestCase):
         Path("dist/LICENSE").unlink(); self.commit()
         with self.assertRaises(ValueError): module.package_marketplace("HEAD", "a")
 
-    def stable_source(self):
+    def stable_source(self, canonical_tags="thermal-intelligence-thermostat thermal-intelligence-thermostat-editor"):
         Path("package.json").write_text(json.dumps({"version": "1.0.0"}))
         bundle = Path("dist/thermal-intelligence.js")
-        bundle.write_text(bundle.read_text().replace("0.1.0-beta.1", "1.0.0").replace("prerelease frontend", "frontend"))
+        bundle.write_text(bundle.read_text().replace("0.1.0-beta.1", "1.0.0").replace("prerelease frontend", "frontend") + " " + canonical_tags)
         self.marketplace_files()
 
     def test_stable_routes_are_immutable_and_reproducible(self):
@@ -153,26 +153,27 @@ class PackageTests(unittest.TestCase):
                 b = package_candidate.package("HEAD", "ci-" + str(marketplace), marketplace=marketplace)
                 self.assertEqual(a, b)
                 self.assertEqual((a['version'], a['channel'], a['delivery_branch']), ('1.0.0', 'stable', 'main'))
-                self.assertEqual(a['card_type'], 'custom:thermal-intelligence-beta-card')
+                self.assertEqual(a['card_type'], 'custom:thermal-intelligence-thermostat')
+                self.assertEqual(a['editor_tag'], 'thermal-intelligence-thermostat-editor')
                 for p in Path("stable-" + str(marketplace)).iterdir():
                     self.assertEqual(p.read_bytes(), (Path("ci-" + str(marketplace)) / p.name).read_bytes())
                 self.assertEqual(Path("stable-" + str(marketplace), "thermal-intelligence.js").read_bytes(), original)
         with self.assertRaises(ValueError): module.package_marketplace("HEAD", "wrong-route")
 
-    def test_stable_package_records_canonical_registration_and_requires_its_editor(self):
-        self.stable_source()
+    def test_stable_routes_reject_missing_canonical_registrations(self):
+        self.stable_source(canonical_tags="")
         bundle = Path("dist/thermal-intelligence.js")
-        with bundle.open("a") as out:
-            out.write(" thermal-intelligence-thermostat")
-        self.commit()
-        with self.assertRaises(ValueError):
-            package_release.package("HEAD", "incomplete")
-        with bundle.open("a") as out:
-            out.write(" thermal-intelligence-thermostat-editor")
-        self.commit()
-        manifest = package_release.package("HEAD", "canonical")
-        self.assertEqual(manifest["card_type"], "custom:thermal-intelligence-thermostat")
-        self.assertEqual(manifest["editor_tag"], "thermal-intelligence-thermostat-editor")
+        legacy_only = bundle.read_text()
+        for tags in ("", "thermal-intelligence-thermostat", "thermal-intelligence-thermostat-editor"):
+            if tags:
+                bundle.write_text(legacy_only + tags)
+                self.commit()
+            for builder in (package_release.package, package_release.package_marketplace):
+                with self.subTest(tags=tags, route=builder.__name__):
+                    output = Path(f"incomplete-{tags}-{builder.__name__}")
+                    with self.assertRaises(ValueError):
+                        builder("HEAD", output)
+                    self.assertFalse(output.exists())
 
     def test_release_route_rejects_prereleases(self):
         self.marketplace_files()

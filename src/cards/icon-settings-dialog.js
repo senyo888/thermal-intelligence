@@ -12,7 +12,16 @@ export class IconSettingsDialog {
     this.owner=owner;this.root=root;this.draft=owner._displayDraft;this.message='';this.copying=false;
     root.innerHTML=`<style>${settingsDialogStyles}${iconOptionsStyles}${feedbackStyles}footer{flex-wrap:wrap}</style><dialog data-view="icons" aria-labelledby="ti-icons-title"><header><div><small>${esc(owner.config.name||owner.model().name||'Thermostat')} · this card</small><h2 id="ti-icons-title">Top row icon settings</h2></div><button data-icon-close aria-label="Close icon settings">×</button></header><div class="body"><p>Changes here are a draft; save them in Home Assistant. Choose the readings beside the card name. Drag the handles, use the arrows, or focus a handle and press Up or Down. Presets and control source appear first, followed by primary icons and VT readings.</p><div data-icon-options></div><details class="add"><summary>Add reading</summary><p>Add a reported entity value. For typed sources, freshness limits and other display settings, use advanced configuration.</p>${[['entity','Entity'],['label','Label (optional)'],['attribute','Attribute (optional)'],['unit','Unit (optional)'],['icon','Icon (optional)']].map(([key,label])=>`<label>${label}<input data-icon-add="${key}" ${key==='entity'?'list="ti-icon-entities"':''} ${key==='icon'?'placeholder="mdi:thermometer"':''}></label>`).join('')}<datalist id="ti-icon-entities"></datalist><button data-icon-add-reading>Add to draft</button><p data-icon-add-error role="alert"></p></details><p class="scope">To save, open Edit dashboard → Edit this card → Readings and icons → Top row icon settings. Or copy this draft into that card’s configuration editor. Changes here remain a preview until saved in Home Assistant.</p><button data-icon-advanced>Advanced configuration and export</button> ${owner.model().provider.kind==='vtherm'?'<button data-vt-settings>Open VT device settings</button>':''}</div><footer><p data-icon-status class="status" role="status" style="flex-basis:100%;margin:0"></p><button data-icon-cancel>Cancel</button><button data-copy-icons>Copy configuration</button></footer></dialog>`;
     this.dialog=root.querySelector('dialog');
-    this.options=new IconOptions(root.querySelector('[data-icon-options]'),next=>{this.draft=normalizeConfig(next);this.message='';this.update();});
+    this.options = new IconOptions(root.querySelector('[data-icon-options]'), next => {
+      try {
+        this.draft = normalizeConfig(next);
+        this.message = '';
+      } catch (error) {
+        this.message = error.message;
+      }
+      this.update();
+      return !this.message;
+    });
     this.dialog.addEventListener('cancel',event=>{event.preventDefault();owner._closeDialog();});
     for(const button of root.querySelectorAll('[data-icon-close],[data-icon-cancel]'))button.onclick=()=>{owner._closeDialog();};
     root.querySelector('[data-copy-icons]').onclick=()=>this.copy();
