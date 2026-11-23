@@ -1,6 +1,6 @@
 # Install with Marketplace
 
-The named download in this guide is **RC.3**. The [1.0.0 package](https://github.com/senyo888/thermal-intelligence/blob/5fc9977cf6923ed5f03471405649501c88fed43f/docs/v1.0.0-package.md) is awaiting release. Its verification notes identify the rebuilt module and the earlier module used for installation checks.
+The named download in this guide is **RC.3**. The [1.0.0 package](https://github.com/senyo888/thermal-intelligence/blob/b10f7136adebe85bf4bef7f0e2f4d41d744fd123/docs/v1.0.0-package.md) is awaiting release. Its verification notes identify the rebuilt module and the earlier module used for installation checks.
 
 For Home Assistant 2026.11 and later, follow the [Marketplace installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md). It covers adding the TI repository, prerelease selection, resources, verification and recovery. After a fresh install, open a new browser session and check the version the card shows. For a published TI release, Marketplace downloads the card and licence attached to that release. TI is a Dashboard card; it needs no TI controller or backend integration.
 
