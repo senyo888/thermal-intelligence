@@ -10,7 +10,7 @@ Open **Optional switch control** in the visual editor. Select the exact switch, 
 
 Enabling deliberately opts this card into schema 2. Other cards and ordinary edits retain schema 1. A saved schema-1 `controls` or `mapped_controls` section remains inert. If a saved section conflicts, the editor requires **Replace saved optional-control section** before enrollment. Unknown fields elsewhere, including unknown nested fields on an already supported mapping, survive ordinary edits.
 
-The equivalent explicit YAML configuration uses synthetic entities:
+Use the example below for **1.0.0**. For **RC.3**, or a beta build that supports optional switches, use `type: custom:thermal-intelligence-beta-card` on the first line. Replace the example entity IDs with your thermostat and switch.
 
 ```yaml
 type: custom:thermal-intelligence-thermostat

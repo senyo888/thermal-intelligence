@@ -38,6 +38,39 @@ test('confirmed schedule mode wins conflicting VT and House presets and retires 
   await page.evaluate(()=>{fixture.hass.states['sensor.owner'].attributes.mode='Comfort';fixture.hass.states['sensor.owner'].state='House';fixture.refresh();});
   await badge(page).click();await expect(card(page).getByRole('dialog')).toContainText('Not controlling');await page.keyboard.press('Escape');
 });
+test('a mapped schedule outside ownership reads Not controlling in the list and details', async ({page}) => {
+  await setup(page);
+  await page.evaluate(() => { fixture.hass.states['sensor.owner'].state = 'Manual'; fixture.refresh(); });
+  await expect(badge(page)).toHaveAccessibleName('Control source: Manual');
+  await card(page).locator('[data-expand]').click();
+  await card(page).getByRole('button', {name:'Readings', exact:true}).click();
+  const dialog = card(page).getByRole('dialog');
+  const summary = dialog.locator('summary').filter({hasText:'Last confirmed schedule mode'});
+  await expect(summary).toContainText('Not controlling');
+  await summary.click();
+  await dialog.locator('details[open]').getByRole('button', {name:'Open details'}).click();
+  await expect(dialog.getByText('Not controlling', {exact:true})).toBeVisible();
+  await expect(dialog.getByText('available', {exact:true})).toBeVisible();
+});
+
+test('idle card expires schedule mode and ownership at their separate deadlines', async ({page}) => {
+  await page.clock.install({time:new Date('2026-11-20T12:00:00Z')});
+  await page.clock.pauseAt(new Date('2026-11-20T12:00:01Z'));
+  await setup(page);
+  await page.evaluate(() => {
+    fixture.configure({...fixture.config,
+      schedule_preset:{...fixture.config.schedule_preset, max_age_seconds:1},
+      control_source:{...fixture.config.control_source, max_age_seconds:2},
+    });
+    fixture.refresh();
+  });
+  await expect(badge(page)).toHaveAccessibleName('Control source: Schedule; Last confirmed schedule mode: Eco');
+  await page.clock.runFor(1100);
+  await expect(badge(page)).toHaveAccessibleName('Control source: Schedule');
+  await page.clock.runFor(1000);
+  await expect(badge(page)).toHaveAccessibleName('Control source: Stale');
+});
+
 test('schedule mode can be hidden without borrowing the thermostat preset and stays in export',async({page})=>{
   await setup(page);await page.evaluate(()=>{fixture.hass.states[fixture.config.entity].attributes.preset_mode='comfort';fixture.refresh();});
   await card(page).locator('[data-expand]').click();await card(page).getByRole('button',{name:'Top row icon settings',exact:true}).click();

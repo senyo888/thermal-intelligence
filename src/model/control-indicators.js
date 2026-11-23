@@ -51,7 +51,8 @@ export function buildControlIndicators(hass,config,climate,now,connected) {
     const known=scheduled.status==='available'&&Object.hasOwn(PRESETS,preset);
     const confirmed=ownership.status==='available'&&owner==='Schedule';
     rows.push({...base,...scheduled,key:'control:schedule_preset',label:'Last confirmed schedule mode',icon:known&&confirmed?PRESETS[preset]:'mdi:calendar-clock',schedulePreset:known&&confirmed?preset:null,
-      value:known?confirmed?label(preset):'Not controlling':scheduled.status==='available'?'Unknown':label(scheduled.status),status:known?confirmed?scheduled.status:'disabled':scheduled.status==='available'?'unknown':scheduled.status,
+      value:known?confirmed?label(preset):'Not controlling':scheduled.status==='available'?'Unknown':label(scheduled.status),
+      status:!known && scheduled.status === 'available' ? 'unknown' : scheduled.status,
       headerEligible:known&&confirmed&&connected&&climate.available&&climate.ready&&climate.state==='heat',
       activity:known?confirmed?'active':'neutral':'unknown',detail:'Last accepted mode reported by the mapped schedule controller while Schedule owns this thermostat. This is confirmed intent, not proof that a schedule period or Boost timer is still running. It does not establish physical heating.'});
   }
