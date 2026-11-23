@@ -1,6 +1,8 @@
 # Compatibility
 
-## Unreleased 1.0.0 package
+<a name="unreleased-100-package"></a>
+
+## 1.0.0 package
 
 Home Assistant 2026.11.2 upgraded to the rebuilt 1.0.0 card through Marketplace. Three existing thermostats displayed the temperatures Home Assistant reported, including after a fresh browser reload. The top-row draft and humidity editor checks also passed. [Final installation and display checks](v1.0.0-package.md#validation-boundaries).
 
