@@ -112,6 +112,31 @@ for (const [field, value, message] of [
   });
 }
 
+for (const id of ['sensor.outside', 'weather.outside']) {
+  test(`outside reading rechecks the selected ${id} when inventory refresh is deferred`, async ({page}) => {
+    await page.evaluate(id => {
+      fixture.hass.states[id] = {state:'12', attributes:{unit_of_measurement:'°C'}};
+      fixture.refresh();
+    }, id);
+    await section(page, 'sources');
+    const source = editor(page).getByLabel('Outside temperature source', {exact:true});
+    const add = editor(page).getByRole('button', {name:'Add outside reading'});
+    await source.selectOption(id);
+    await add.focus();
+    await page.evaluate(id => {
+      if (id.startsWith('weather.')) delete fixture.hass.states[id];
+      else fixture.hass.states[id].attributes.unit_of_measurement = '%';
+      fixture.refresh();
+    }, id);
+    await expect(source).toHaveValue(id);
+    await add.press('Enter');
+    await expect(editor(page).getByRole('alert')).toContainText('Choose an outside temperature source again');
+    await expect(source).toHaveValue('');
+    await expect(add).toBeDisabled();
+    expect(await page.evaluate(() => [fixture.events, fixture.calls])).toEqual([[], []]);
+  });
+}
+
 test('outside weather reading follows actual units and degrades without changing the indoor dial',async({page})=>{
   await page.evaluate(()=>{fixture.hass.states['weather.example']={entity_id:'weather.example',state:'sunny',attributes:{friendly_name:'Example weather',temperature:8,temperature_unit:'°C'},last_updated:new Date().toISOString()};fixture.refresh();});
   await section(page,'sources');

@@ -16,7 +16,7 @@ const own = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
 const record = (value) => value && typeof value === 'object' && !Array.isArray(value);
 
 function outsideCandidate(id, state) {
-  return id.startsWith('weather.') || (id.startsWith('sensor.') && ['°C', '°F'].includes(state?.attributes?.unit_of_measurement));
+  return !!state && (id.startsWith('weather.') || (id.startsWith('sensor.') && ['°C', '°F'].includes(state.attributes?.unit_of_measurement)));
 }
 
 function clone(value) {
@@ -585,6 +585,11 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     section.append(this._button('Add outside reading','add-outside',()=>{
       const id=this._outsideSource, weather=id?.startsWith('weather.');
       if (!id) return;
+      if (!outsideCandidate(id, this._hass?.states?.[id])) {
+        this._error = 'Choose an outside temperature source again. The selected entity is missing or its unit has changed.';
+        this._render({open:'sources', focus:'outside.entity'});
+        return;
+      }
       const row={kind:'temperature',entity:id,label:'Outside',...(weather?{attribute:'temperature',unit_attribute:'temperature_unit'}:{})};
       let config;
       try {
