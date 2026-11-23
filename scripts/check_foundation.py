@@ -23,10 +23,10 @@ PRIVATE_DOCUMENTS = {
 }
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".svg", ".webp", ".gif"}
 
-# Frozen 1.0.0 distribution from 8abf1ce52233861f0a7d1d5b1585480d5fdcc07d.
+# Frozen 1.0.0 distribution from e96009dfde982af4e9b51a2c093dcd376dc08e63.
 # Update only alongside an explicitly reviewed candidate promotion.
 DISTRIBUTION_HASHES = {
-    "dist/thermal-intelligence.js": "5e3c5bc4f33ab29d45df2855a23065607439a8d8c930eb13bb241a62978f8d44",
+    "dist/thermal-intelligence.js": "60f77851cea6f37d92cce2777252c2dfbec3a0a9ac1ff1228a90d99b8fb92019",
     "dist/LICENSE": "fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0",
 }
 HACS_METADATA = {
