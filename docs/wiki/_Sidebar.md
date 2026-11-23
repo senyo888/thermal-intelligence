@@ -1,7 +1,7 @@
 **Thermal Intelligence Thermostat**
 
 - [Home](https://github.com/senyo888/thermal-intelligence/blob/main/docs/wiki/Home.md)
-- [1.0.0 introduction](https://github.com/senyo888/thermal-intelligence/blob/bace04277e5c0ae8b7eae33e09ae762405eaae18/docs/v1.0.0.md)
+- [1.0.0 introduction](https://github.com/senyo888/thermal-intelligence/blob/a09ae680967339dd7d48ceb8d6ee5e1b20ed5fcd/docs/v1.0.0.md)
 - [Published RC.3](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md)
 - [Marketplace installation](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md)
 - [Published RC.1 record](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-1.md)
