@@ -1,6 +1,6 @@
 # Compatibility
 
-**1.0.0 is prepared and unreleased.** Home Assistant 2026.11.2 upgraded to the final card through Marketplace. Three existing thermostats displayed the current and target temperatures reported by Home Assistant, including after a fresh browser reload. [Final package and dashboard checks](https://github.com/senyo888/thermal-intelligence/blob/1240526208b0fb0b914f57e29c539931768e031b/docs/v1.0.0-package.md#validation-boundaries).
+**Thermal Intelligence 1.0.0.** Home Assistant 2026.11.2 upgraded to the final card through Marketplace. Three existing thermostats displayed the current and target temperatures reported by Home Assistant, including after a fresh browser reload. [Final package and dashboard checks](https://github.com/senyo888/thermal-intelligence/blob/1240526208b0fb0b914f57e29c539931768e031b/docs/v1.0.0-package.md#validation-boundaries).
 
 The earlier candidate passed editor save and reload, room control and a five-minute scheduled Boost with automatic return. Whole-house Boost confirmed seven of eight rooms. The Marketplace rollback and reinstall trial and all nine checkpoints of the 48-hour Lab soak used that earlier build. Verification of the public tagged download follows release. [Version-specific results](https://github.com/senyo888/thermal-intelligence/blob/1240526208b0fb0b914f57e29c539931768e031b/docs/compatibility.md#unreleased-100-package).
 

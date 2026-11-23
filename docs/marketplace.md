@@ -1,10 +1,10 @@
 # Install with Home Assistant Marketplace
 
-The named download in this guide is **RC.3**. The [1.0.0 package](v1.0.0-package.md) is awaiting release. The verification notes cover the final Marketplace upgrade and identify the earlier build used for rollback testing.
+Thermal Intelligence is a **Dashboard** card for the thermostat you already use. On Home Assistant 2026.11 or later, install it through Marketplace. If your older installation uses HACS, follow the [HACS guide](hacs.md).
 
-Thermal Intelligence is a standalone **Dashboard** card. It uses your existing climate entities; no TI controller or backend integration is required. On Home Assistant 2026.11 and later, Marketplace is the installation route. For earlier Home Assistant versions, use the [HACS guide](hacs.md).
+## Install 1.0.0
 
-[RC.3 is published](rc-3.md). Its exact module passed passive manual Lab checks; named-release Marketplace acceptance is still incomplete. The earlier [RC.2 installation](rc2-validation.md) passed on 9 November 2026 and does not validate an RC.3 update. Update, removal and recovery coverage remain incomplete. TI is not claimed to be in the default catalogue; add its repository link.
+Add this repository as **Dashboard**, choose **v1.0.0** when the tag is available and open a fresh dashboard tab after installation. The picker for that version is **Thermal Intelligence Thermostat**. The [releases page](https://github.com/senyo888/thermal-intelligence/releases) lists the published versions. If you’re using **v0.1.0-rc.3**, its picker is **Thermal Intelligence Thermostat · RC**. Use the [RC.3 guide](rc-3.md) for that version.
 
 In Home Assistant 2026.11.1, TI uses the Marketplace [Dashboard category icon](https://github.com/home-assistant/frontend/blob/e32bc0696ebefde323f5b791269ad0c57f3f99d9/src/panels/marketplace/tools/repository-icon.ts); custom listing images are supported for integrations. TI's repository description uses its README artwork. [Relative image links](https://github.com/home-assistant/frontend/blob/e32bc0696ebefde323f5b791269ad0c57f3f99d9/src/panels/marketplace/tools/markdown.ts) resolve against the installed version, available version or default branch, in that order. An installed version retains its versioned README and images after later documentation changes on `main`. The RC.3 tag preserves its pre-publication README; use the [current installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md) and [RC.3 release notes](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.3) for the intended version and final validation record.
 
@@ -20,21 +20,21 @@ Save a fresh backup, export it and verify the downloaded archive. Retain your tr
 
 Check ownership of `www/community/thermal-intelligence/`, all resources using that folder prefix, and any existing manual trial resource. Stop if another TI installation or unrelated content uses the same namespace. The [Marketplace resource manager](https://github.com/home-assistant/core/blob/74cf5a49c63ed8d4d87717844bf14f79c28c9cea/homeassistant/components/marketplace/repositories/plugin.py) matches resource prefixes when updating or removing entries. A differently named dashboard does not isolate its files or resources.
 
-Keep legacy TI modules and cards separate. Beta and RC trial modules share `custom:thermal-intelligence-beta-card`; only one of those modules may load in a browser document.
+Keep the original TI dashboard resource separate. The 1.0.0 standalone card also registers the beta and RC names so saved cards continue to load. Use one standalone module in each browser session.
 
 For a manual-to-Marketplace transition, retain the old module and its saved resource details. Before confirming installation, keep affected dashboard clients closed or prevent them from loading or reloading dashboards until the resource transition is complete. After installation, check the generated registration, remove only the old manual trial registration and verify exactly one trial module remains. Preserve every legacy resource and unrelated entry. Only then open a fresh document on each affected client and verify the intended version before using controls. Refresh any client that opened during the overlap after reconciliation as well.
 
 ## Add the repository and select a version
 
 1. Open **Settings → Marketplace → Add from link**. Connect GitHub through Home Assistant if requested, then add `https://github.com/senyo888/thermal-intelligence`. If a type is requested, select **Dashboard**.
-2. Open Thermal Intelligence, then its three-dot menu → **Install another version**. For a first prerelease installation, choose the exact published tag here; there is no installed-repository Pre-release switch yet.
-3. Explicitly select **v0.1.0-rc.3**. Verify that tag in the confirmation dialog and stop if it is absent. Do not substitute another release, a branch or “latest”. [RC.1](rc-1.md) remains a separate older prerelease with its original assets.
+2. Open Thermal Intelligence and check the version offered. To pick a different published tag, open the three-dot menu and choose **Install another version**.
+3. For the first stable version, select **v1.0.0**. If it is missing, check the releases page and refresh Marketplace information. For the RC.3 prerelease, explicitly select **v0.1.0-rc.3**. Confirm the exact tag before continuing.
 4. Review the installation dialog and confirm. Storage-mode resources are registered automatically. For YAML-managed resources, use the installer URL; do not add a duplicate.
 5. Finish the resource transition above, then open a fresh browser document. If Home Assistant says that `www` did not exist at startup and needs a restart, stop and plan that separately.
 
 These steps follow the [official Marketplace instructions](https://www.home-assistant.io/integrations/marketplace/). The [version selector](https://github.com/home-assistant/frontend/blob/a67b691a451e0b3fc469679b07158f963a61842c/src/panels/marketplace/dialogs/dialog-marketplace-install.ts#L618) supports explicit prerelease selection before installation; update preferences are separate. UI labels can vary with translation.
 
-## Verify the trial
+## Verify the installation
 
 Reload the dashboard in a new browser session and check the card version. For a published TI release, Marketplace downloads the attached card and licence. TI prepares stable releases from `main`. A release tag identifies the exact download even as that branch moves on. [How Marketplace selects versions](https://contributors.home-assistant.io/marketplace/how-it-works/) · [1.0.0 package verification](v1.0.0-package.md#validation-boundaries)
 
@@ -42,7 +42,7 @@ Record the selected version, installer result, installed file list and generated
 
 Retain the installer-generated resource URL. Do not replace it with the previous manual URL or register a second trial module.
 
-Choose **Add Card → Thermal Intelligence Thermostat · RC**. Confirm the reported version, selected climate entity, readings, editor open/cancel and passive reconnect. These operations must send no thermostat or switch commands. Existing cards keep their saved trial type; the word “beta” in its internal type is not the installed version.
+For 1.0.0 choose **Add card → Thermal Intelligence Thermostat**. RC.3 adds **· RC** to the name. Confirm the reported version, selected climate entity, readings, editor open/cancel and passive reconnect. These operations must send no thermostat or switch commands. Existing cards keep their saved trial type; the word “beta” in its internal type is not the installed version.
 
 Optional switch enrollment is deliberate and uses schema 2. Read its [eligibility, confirmation and provider side effects](optional-switch-control.md) before enabling it. A reported setting or valve position does not establish physical heating.
 
