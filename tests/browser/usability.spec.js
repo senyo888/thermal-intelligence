@@ -76,6 +76,42 @@ test('search query and focus survive inventory updates, missing saved targets st
   expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
 });
 
+for (const [field, value, message] of [
+  ['telemetry', {}, 'telemetry must be an array.'],
+  ['features', {}, 'features must be an array.'],
+  ['telemetry', [null], 'Unsupported telemetry kind.'],
+  ['features', [null], 'A feature requires an entity ID or an empty setup source.'],
+]) {
+  const invalidPart = Array.isArray(value) ? 'row' : 'collection';
+  test(`outside reading preserves an invalid ${field} ${invalidPart} and recovers after correction`, async ({page}) => {
+    const original = await page.evaluate(({field, value}) => {
+      fixture.hass.states['weather.example'] = {state:'sunny', attributes:{temperature:8, temperature_unit:'°C'}};
+      fixture.editor.setConfig({...fixture.config, [field]:value});
+      fixture.refresh();
+      return {draft:fixture.editor._draft, saved:fixture.config};
+    }, {field, value});
+    await section(page, 'sources');
+    const source = editor(page).getByLabel('Outside temperature source', {exact:true});
+    const add = editor(page).getByRole('button', {name:'Add outside reading'});
+    await source.selectOption('weather.example');
+    await add.click();
+    await expect(editor(page).getByRole('alert')).toContainText(message);
+    expect(await page.evaluate(() => ({draft:fixture.editor._draft, saved:fixture.config}))).toEqual(original);
+    expect(await page.evaluate(() => fixture.events)).toEqual([]);
+
+    await page.evaluate(() => fixture.editor.setConfig(fixture.config));
+    await add.click();
+    await expect(editor(page).getByRole('alert')).toHaveCount(0);
+    expect(await page.evaluate(() => fixture.config.telemetry.filter(row => row.entity === 'weather.example'))).toEqual([
+      {kind:'temperature', entity:'weather.example', label:'Outside', attribute:'temperature', unit_attribute:'temperature_unit'},
+    ]);
+    await add.click();
+    await expect(editor(page).getByRole('alert')).toContainText('already mapped');
+    expect(await page.evaluate(() => fixture.events.length)).toBe(1);
+    expect(await page.evaluate(() => fixture.calls)).toEqual([]);
+  });
+}
+
 test('outside weather reading follows actual units and degrades without changing the indoor dial',async({page})=>{
   await page.evaluate(()=>{fixture.hass.states['weather.example']={entity_id:'weather.example',state:'sunny',attributes:{friendly_name:'Example weather',temperature:8,temperature_unit:'°C'},last_updated:new Date().toISOString()};fixture.refresh();});
   await section(page,'sources');

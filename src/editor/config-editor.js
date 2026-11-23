@@ -586,9 +586,21 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
       const id=this._outsideSource, weather=id?.startsWith('weather.');
       if (!id) return;
       const row={kind:'temperature',entity:id,label:'Outside',...(weather?{attribute:'temperature',unit_attribute:'temperature_unit'}:{})};
-      const duplicates=[...(this._draft.telemetry??[]),...(this._draft.features??[])].some(item=>item.entity===id&&(item.attribute||'')===(row.attribute||''));
-      if (duplicates) {this._error='This source is already mapped. Edit its existing row below instead of adding it twice.';this._refreshFieldState();return;}
-      this._commit({...clone(this._draft),telemetry:[...(this._draft.telemetry??[]),row]},{open:'sources'});
+      let config;
+      try {
+        config = normalizeConfig(this._draft);
+      } catch (error) {
+        this._error = error.message;
+        this._refreshFieldState();
+        return;
+      }
+      const sameSource = item => item.entity === id && (item.attribute || '') === (row.attribute || '');
+      if (config.telemetry.some(sameSource) || config.features.some(sameSource)) {
+        this._error = 'This source is already mapped. Edit its existing row below instead of adding it twice.';
+        this._refreshFieldState();
+        return;
+      }
+      this._commit({...this._draft, telemetry:config.telemetry.concat(row)}, {open:'sources', keepInvalidDraft:false});
     },{disabled:!this._outsideSource,className:'add'}));
     section.append(element('p','hint','Temperature readings require this newer card module. Keep the previous configuration with its module for rollback.'));
     return section;

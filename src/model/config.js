@@ -163,7 +163,7 @@ export function normalizeConfig(raw) {
     const copy = { ...entry };
     if (['temperature','humidity','trend','valve','energy','power'].includes(entry.kind) && entry.unit_attribute !== undefined) {
       safeText(entry.unit_attribute, 'Measurement unit attribute');
-      if (!['temperature','humidity','trend','valve','energy','power'].includes(entry.kind) || !entry.attribute || entry.unit_attribute.split('.').some(part => !/^\w+$/.test(part) || FORBIDDEN_KEYS.has(part))) {
+      if (!entry.attribute || entry.unit_attribute.split('.').some(part => !/^\w+$/.test(part) || FORBIDDEN_KEYS.has(part))) {
         throw new Error('A measurement unit attribute requires a numeric reading, a value attribute and a safe own-property path.');
       }
     }

@@ -30,7 +30,7 @@ Open the dashboard menu, choose **Edit dashboard**, then **Edit** on this card. 
 
 1. In **Thermostat**, select a climate entity and provider mode. Set the name, background and activity/detail visibility.
 2. In **Readings and icons**, use **Top row icon settings** to select and order visible readings, and map trend, humidity and valve sensors. Preview each header icon, value, status and source. **Custom telemetry & features** and **Optional telemetry** retain their full fields, ordering and preset associations.
-3. **Outside temperature** adds an explicitly selected temperature sensor or weather entity. It leaves the indoor dial unchanged. **Find VT sources** lists verified suggestions; each needs a deliberate **Use this source** action.
+3. **Outside temperature** adds an explicitly selected temperature sensor or weather entity. It leaves the indoor dial unchanged. If **Add outside reading** shows a validation error, correct the indicated field in the card’s YAML, then add the source again. Your existing mappings stay in place. **Find VT sources** lists verified suggestions; each needs a deliberate **Use this source** action.
 4. In **Humidity display**, drag the four markers on one colour bar or enter exact percentages below it, inspect the gradient and current reading, or reset the guides. Legacy low/high guides remain two labelled fields; reset preserves unknown nested preferences.
 5. In **Optional switch control**, search by friendly name or entity ID, select the exact switch, and enroll it separately. Searching alone changes no configuration.
 6. **Preset display labels**, **Temperature response** and **Advanced display settings** retain preset labels, response mappings and the fallback temperature step.
