@@ -18,10 +18,12 @@ def validate_bundle(version, text):
     legacy = "thermal-intelligence-beta-card"
     current = "thermal-intelligence-thermostat"
     tags = set(re.findall(r"thermal-intelligence-[a-z0-9-]+", text))
-    canonical = {current, current + "-editor"} & tags
+    canonical = {current, current + "-editor"}
     if (not match or match.group(1) != version or
             bool(match.group(2)) != (channel != "stable") or
-            not {legacy, legacy + "-editor"} <= tags or
-            (canonical and canonical != {current, current + "-editor"})):
+            not {legacy, legacy + "-editor"} <= tags):
         raise ValueError("Module identity does not exactly match the package version and channel")
-    return current if channel == "stable" and canonical else legacy
+    if channel == "stable" or canonical.intersection(tags):
+        if not canonical.issubset(tags):
+            raise ValueError("Module must include both the thermostat card and its editor")
+    return current if channel == "stable" else legacy

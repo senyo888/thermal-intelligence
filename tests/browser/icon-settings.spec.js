@@ -60,6 +60,65 @@ test('runtime copy retains display-only draft and unknown fields without changin
   expect(await page.evaluate(()=>savedDashboard)).toEqual(before);expect(await page.evaluate(()=>dashboardCalls)).toEqual([]);expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
   await expect(card(page).locator('[data-header-telemetry]')).not.toContainText('2.5 kWh');
 });
+for (const width of [390, 768, 1440]) test(`hiding a 257th icon keeps the checkbox and exported draft in sync at ${width}px`, async ({page}) => {
+  await page.setViewportSize({width, height:900});
+  await setup(page);
+  await page.evaluate(() => {
+    const hidden = Array.from({length:255}, (_, i) => `absent:${i}`);
+    fixture.configure({...fixture.config, header_icons:{...fixture.config.header_icons, hidden}});
+    Object.defineProperty(navigator, 'clipboard', {configurable:true, value:{
+      writeText: async text => { window.copiedIcons = JSON.parse(text); },
+    }});
+  });
+  await open(page);
+  const primary = dialog(page).getByRole('group', {name:'Primary icons'});
+  const humidity = primary.getByRole('checkbox', {name:'Show Humidity', exact:true});
+  const valve = primary.getByRole('checkbox', {name:'Show Valve', exact:true});
+  const valveKey = await valve.getAttribute('data-icon-visible');
+  const humidityKey = await humidity.getAttribute('data-icon-visible');
+  const status = dialog(page).locator('[data-icon-status]');
+  const copy = dialog(page).getByRole('button', {name:'Copy configuration'});
+  await humidity.uncheck();
+  await valve.click();
+  await expect(valve).toBeChecked();
+  await expect(humidity).not.toBeChecked();
+  await expect(status).toContainText('256');
+  await copy.click();
+  const accepted = await page.evaluate(() => window.copiedIcons.header_icons.hidden);
+  expect(accepted).toHaveLength(256);
+  expect(accepted).toContain(humidityKey);
+  expect(accepted).not.toContain(valveKey);
+
+  await humidity.check();
+  await valve.uncheck();
+  await expect(status).toBeHidden();
+  await copy.click();
+  const recovered = await page.evaluate(() => window.copiedIcons.header_icons.hidden);
+  expect(recovered).toHaveLength(256);
+  expect(recovered).toContain(valveKey);
+  expect(recovered).not.toContain(humidityKey);
+  expect(await page.evaluate(() => fixture.calls)).toEqual([]);
+  expect(await page.evaluate(() => dashboardCalls)).toEqual([]);
+});
+
+test('rejected reorder preserves the saved order and announces how to clear obsolete keys', async ({page}) => {
+  await setup(page);
+  await page.evaluate(() => {
+    const order = Array.from({length:256}, (_, i) => `obsolete:${i}`);
+    fixture.configure({...fixture.config, header_icons:{order}});
+  });
+  await open(page);
+  const primary = dialog(page).getByRole('group', {name:'Primary icons'});
+  const rows = primary.locator('[data-icon-row]');
+  const keys = () => rows.evaluateAll(nodes => nodes.map(node => node.dataset.iconRow));
+  const before = await keys();
+  await primary.getByRole('button', {name:'Move Valve up', exact:true}).click();
+  await expect(dialog(page).locator('[data-icon-status]')).toContainText('header_icons.order');
+  await expect(dialog(page).locator('[data-icon-announcement]')).toBeEmpty();
+  expect(await keys()).toEqual(before);
+  expect(await page.evaluate(() => fixture.calls)).toEqual([]);
+});
+
 test('boundary arrow moves retain focus in the popup and HA editor; hidden readings keep expanded details',async({page})=>{
   await setup(page);await open(page);
   await expect(dialog(page).getByRole('button',{name:'Close icon settings',exact:true})).toBeFocused();

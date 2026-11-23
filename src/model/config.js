@@ -200,7 +200,12 @@ export function normalizeConfig(raw) {
     result.header_icons = {...raw.header_icons};
     for (const key of ['hidden','order']) if (raw.header_icons[key] !== undefined) {
       const values=raw.header_icons[key];
-      if (!Array.isArray(values)||values.length>256||new Set(values).size!==values.length||values.some(value=>typeof value!=='string'||!value.length||value.length>2048||/[\u0000-\u001f\u007f]/u.test(value))) throw new Error(`header_icons.${key} must contain unique reading keys.`);
+      if (Array.isArray(values) && values.length > 256) {
+        throw new Error(key === 'hidden'
+          ? 'You can hide up to 256 top-row icons. Show a hidden icon or remove an unused key from header_icons.hidden in the card’s YAML.'
+          : 'You can order up to 256 top-row icons. Remove unused keys from header_icons.order in the card’s YAML.');
+      }
+      if (!Array.isArray(values)||new Set(values).size!==values.length||values.some(value=>typeof value!=='string'||!value.length||value.length>2048||/[\u0000-\u001f\u007f]/u.test(value))) throw new Error(`header_icons.${key} must contain unique reading keys.`);
       result.header_icons[key]=[...values];
     }
   }
