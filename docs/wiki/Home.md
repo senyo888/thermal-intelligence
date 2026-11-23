@@ -13,7 +13,7 @@ The prepared 1.0.0 card appears as **Thermal Intelligence Thermostat** in the pi
 1. **Set up your room.** Select a climate entity and save. Expose [VT readings or your own sensors](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#choose-your-sources), then [arrange the header](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#arrange-the-top-row).
 2. **Read the result.** Learn what the [arc, slope ring, status chip and LED](https://github.com/senyo888/thermal-intelligence/wiki/Reading-the-card) tell you. To enable the optional warming response, follow the [temperature response walkthrough](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#set-up-temperature-response).
 
-[See the Plum card, top-row layout and VT response setup in Senyo’s introduction to 1.0.0](https://github.com/senyo888/thermal-intelligence/blob/fe8414957fd490fa412eaa80920ecfe84f5e9561/docs/v1.0.0.md) · [Complete settings and YAML](https://github.com/senyo888/thermal-intelligence/blob/3d4404c9e01291494aa4d8c271021cc214a63d7f/docs/card-configuration.md)
+[See the Plum card, top-row layout and VT response setup in Senyo’s introduction to 1.0.0](https://github.com/senyo888/thermal-intelligence/blob/fe8414957fd490fa412eaa80920ecfe84f5e9561/docs/v1.0.0.md) · [Complete settings and YAML](https://github.com/senyo888/thermal-intelligence/blob/e6da5b4989140f58072b2f2e6059eea445b49b44/docs/card-configuration.md)
 
 ## Find your way
 
