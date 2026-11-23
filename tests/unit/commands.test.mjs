@@ -487,6 +487,25 @@ test('presentation changes cannot clear an unresolved transport or revive its la
   assert.equal(f.calls.length, 1);
 });
 
+test('switching thermostats retires the displayed warning without releasing the original flight', async () => {
+  const f = setup();
+  const pending = f.request();
+  f.coordinator.updateContext({hass:f.hass, entity:'climate.other', preview:false});
+  const outcome = await pending;
+  assert.equal(outcome.phase, 'uncertain');
+  assert.equal(outcome.target, ENTITY);
+  assert.equal(f.coordinator.status, outcome);
+  assert.equal(f.coordinator.presentationStatus.phase, 'idle');
+  assert.equal(f.coordinator.busy, true);
+  assert.equal((await f.request()).phase, 'failed');
+  f.transport.reject(new Error('Late rejection'));
+  await tick();
+  assert.equal(f.coordinator.busy, false);
+  assert.equal(f.coordinator.status, outcome);
+  assert.equal(f.notifications.at(-1).phase, 'idle');
+  assert.deepEqual(f.calls.map(call => call.payload.entity_id), [ENTITY]);
+});
+
 test('unavailable observation, detachment and disposal dismiss success but preserve its result', async () => {
   for (const invalidate of [f => f.coordinator.observe(state(21, 2, { state: 'unavailable' })), f => f.coordinator.cancel(), f => f.coordinator.dispose()]) {
     const f = setup(), pending = f.request();

@@ -110,6 +110,8 @@ function makeStatus(phase, message, job) {
   });
 }
 
+const IDLE_STATUS = makeStatus('idle', '');
+
 /** Explicit climate, VT lock and mapped switch requests; observation never dispatches. */
 export class CommandCoordinator {
   constructor({
@@ -127,38 +129,42 @@ export class CommandCoordinator {
     this._job = null;
     this._flight = null;
     this._disposed = false;
-    this._status = makeStatus("idle", "");
+    this._status = IDLE_STATUS;
+    this._presentationStatus = IDLE_STATUS;
     this._observedPresentation = null;
   }
 
   get status() { return this._status; }
 
   // The immutable result is evidence about one request, not the current setting.
-  get presentationStatus() {
-    return this._status.phase === 'observed' && !this._observedPresentation
-      ? makeStatus('idle', '') : this._status;
-  }
+  get presentationStatus() { return this._presentationStatus; }
 
-  /** Retire only visible success; notify once while retaining the request result. */
+  /** Clear the display while retaining the request result and any outstanding transport. */
   _retirePresentation() {
-    if (!this._observedPresentation) return;
+    if (this._presentationStatus === IDLE_STATUS) return;
     this._observedPresentation = null;
-    this._notify(this.presentationStatus);
+    this._presentationStatus = IDLE_STATUS;
+    this._notify();
   }
 
   // An uncertain transport can still be in flight. Do not overlap another call.
   get busy() { return !this._disposed && (this._job !== null || this._flight !== null); }
 
-  _notify(status = this._status) {
+  _notify() {
     if (this._disposed) return;
-    try { this._onChange(status); } catch { /* Presentation failures cannot replay or corrupt a request. */ }
+    try { this._onChange(this._presentationStatus); } catch { /* Presentation failures cannot replay or corrupt a request. */ }
   }
 
   _publish(phase, message, job) {
     const status = makeStatus(phase, message, job);
-    this._status = status;
     this._observedPresentation = null;
-    this._notify(status);
+    return this._recordStatus(status, job);
+  }
+
+  _recordStatus(status, job) {
+    this._status = status;
+    this._presentationStatus = job && job.context.entity !== this._context?.entity ? IDLE_STATUS : status;
+    this._notify();
     return status;
   }
 
@@ -174,14 +180,13 @@ export class CommandCoordinator {
     this._clearJobTimer(job);
     this._job = null;
     const status = makeStatus(phase, message, job);
-    this._status = status;
     this._observedPresentation = phase === 'observed' ? {
       context: { ...job.context, hass: undefined }, kind: job.kind,
       target: job.target, service: job.service, values: job.values,
       timestamp: job.lastTimestamp,
     } : null;
     job.resolve(status);
-    this._notify(status);
+    this._recordStatus(status, job);
   }
 
   _retire(job, reason) {
@@ -243,12 +248,12 @@ export class CommandCoordinator {
 
   updateContext({ hass, entity, preview, contextKey, model } = {}) {
     if (this._disposed) return this.status;
+    const previousEntity = this._context?.entity;
     this._context = context({ hass, entity, preview, contextKey, model });
-    if (this._observedPresentation && !sameContext(this._observedPresentation.context, this._context, this._observedPresentation.kind)) {
-      this._retirePresentation();
-    }
     if (this._job && !this._contextStillMatches(this._job)) {
       this._retire(this._job, "Control context changed; the outcome is uncertain.");
+    } else if (previousEntity !== entity || (this._observedPresentation && !sameContext(this._observedPresentation.context, this._context, this._observedPresentation.kind))) {
+      this._retirePresentation();
     }
     return this.status;
   }
@@ -501,7 +506,7 @@ export class CommandCoordinator {
   }
 
   cancel(reason = "Tracking stopped; the request outcome is uncertain.") {
-    this._retirePresentation();
+    if (this._observedPresentation) this._retirePresentation();
     if (this._job) this._retire(this._job, reason);
     return this.status;
   }
@@ -511,6 +516,7 @@ export class CommandCoordinator {
     this._disposed = true;
     this._observedPresentation = null;
     if (this._job) this._retire(this._job, "The card was detached; the request outcome is uncertain.");
+    this._presentationStatus = IDLE_STATUS;
     this._onChange = () => {};
     this._context = null;
   }

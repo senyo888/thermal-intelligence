@@ -2,6 +2,8 @@
 
 ## 1.0.0 — Unreleased
 
+- Selecting a different thermostat clears the previous room’s request warning. An outstanding call still has to finish before the controls become available.
+
 - Choose a thermostat, add independent room sensors or expose VT readings, and arrange the top row separately on each card.
 - Read the confirmed control source and applicable preset together. Open the indicator for ownership, House policy and Schedule details.
 - Configure the optional VT temperature response arc using measured room trend and accepted output.
