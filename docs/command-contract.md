@@ -85,7 +85,7 @@ Failed or uncertain requests, cancelled drafts and current availability problems
 
 Failed and uncertain request outcomes retain an amber LED and an explanation in the overview after the notice disappears. Disconnection or an unavailable thermostat retains red precedence. A later successful request can replace the earlier request outcome; dismissing a notice cannot claim recovery.
 
-Selecting another thermostat clears the previous thermostat’s request warning from the card. If a service call is still pending, controls stay disabled until it settles. The overview explains which request the card is waiting for. Switching thermostats sends no request.
+Selecting another thermostat clears the previous thermostat’s request warning from the card. If a service call is still pending, controls stay disabled until it settles. The overview explains that the card is waiting for an earlier request. Switching thermostats sends no request.
 
 Successful detail presentation is removed after a selected-entity, configuration, session, readiness or preview change, detachment, or a contrary provider report. Returning to the previous context does not revive it. Current degradation takes precedence on the card and general dialogs.
 

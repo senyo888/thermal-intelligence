@@ -517,8 +517,13 @@ test('pending target change and reconnect never retarget or replay',async({page}
   await expect(card(page).getByRole('status')).toHaveText('Requesting the selected setting…');
   await page.evaluate(()=>{fixture.configure({...fixture.config,entity:'climate.fixture_secondary'});fixture.hass.connected=false;fixture.refresh();fixture.hass.connected=true;fixture.refresh();});
   await expect(increase(page)).toBeDisabled();
-  await expect(card(page).locator('[data-device]')).toHaveAttribute('title', /previous thermostat/);
+  const health = card(page).locator('[data-device]');
+  await expect(health).toHaveAttribute('title', 'Waiting for an earlier request from this card to finish.');
   await expect(card(page).locator('[data-request-status]')).toBeHidden();
+  await page.evaluate(()=>fixture.configure({...fixture.config,entity:'climate.fixture_thermostat'}));
+  await expect(increase(page)).toBeDisabled();
+  await expect(health).toHaveAttribute('title', 'Waiting for an earlier request from this card to finish.');
+  await page.evaluate(()=>fixture.configure({...fixture.config,entity:'climate.fixture_secondary'}));
   await page.evaluate(()=>fixture.pending[0].resolve());
   await expect(increase(page)).toBeEnabled();
   await expect(card(page).locator('[data-device]')).toHaveAttribute('data-health','green');

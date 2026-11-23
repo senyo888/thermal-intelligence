@@ -701,7 +701,7 @@ export class ThermalIntelligenceCard extends HTMLElement {
     if (!model.ready && current) {
       return status.phase !== 'idle' && status.phase !== 'observed' ? `${current} ${status.message}` : current;
     }
-    if (status.phase === 'idle' && this._coordinator.busy) return 'Waiting for a request to the previous thermostat to finish.';
+    if (status.phase === 'idle' && this._coordinator.busy) return 'Waiting for an earlier request from this card to finish.';
     return this._draftMessage || (status.phase !== 'idle' ? status.message : current);
   }
   _expireNotice() {
