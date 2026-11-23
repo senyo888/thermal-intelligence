@@ -49,9 +49,15 @@ export function buildControlIndicators(hass,config,climate,now,connected) {
   if(scheduled) {
     const preset=typeof scheduled.value==='string'?scheduled.value.toLowerCase():'';
     const known=scheduled.status==='available'&&Object.hasOwn(PRESETS,preset);
-    const confirmed=ownership.status==='available'&&owner==='Schedule';
+    const ownerKnown = ownership.status === 'available' && !['Pending', 'Unknown'].includes(owner);
+    const confirmed = ownerKnown && owner === 'Schedule';
+    let value = scheduled.status === 'available' ? 'Unknown' : label(scheduled.status);
+    if (known) {
+      const ownerState = ownership.status === 'available' ? owner.toLowerCase() : ownership.status;
+      value = ownerKnown ? (confirmed ? label(preset) : 'Not controlling') : `Control source ${ownerState}`;
+    }
     rows.push({...base,...scheduled,key:'control:schedule_preset',label:'Last confirmed schedule mode',icon:known&&confirmed?PRESETS[preset]:'mdi:calendar-clock',schedulePreset:known&&confirmed?preset:null,
-      value:known?confirmed?label(preset):'Not controlling':scheduled.status==='available'?'Unknown':label(scheduled.status),
+      value,
       status:!known && scheduled.status === 'available' ? 'unknown' : scheduled.status,
       headerEligible:known&&confirmed&&connected&&climate.available&&climate.ready&&climate.state==='heat',
       activity:known?confirmed?'active':'neutral':'unknown',detail:'Last accepted mode reported by the mapped schedule controller while Schedule owns this thermostat. This is confirmed intent, not proof that a schedule period or Boost timer is still running. It does not establish physical heating.'});

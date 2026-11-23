@@ -71,6 +71,31 @@ test('idle card expires schedule mode and ownership at their separate deadlines'
   await expect(badge(page)).toHaveAccessibleName('Control source: Stale');
 });
 
+test('a fresh mode with expired ownership shows the stale control source in details', async ({page}) => {
+  await page.clock.install({time:new Date('2026-11-20T12:00:00Z')});
+  await page.clock.pauseAt(new Date('2026-11-20T12:00:01Z'));
+  await setup(page);
+  await page.evaluate(() => {
+    fixture.configure({...fixture.config,
+      control_source:{...fixture.config.control_source, max_age_seconds:1},
+      schedule_preset:{...fixture.config.schedule_preset, max_age_seconds:10},
+    });
+    fixture.refresh();
+  });
+  await expect(badge(page)).toHaveAccessibleName('Control source: Schedule; Last confirmed schedule mode: Eco');
+  await page.clock.runFor(1100);
+  await expect(badge(page)).toHaveAccessibleName('Control source: Stale');
+  await card(page).locator('[data-expand]').click();
+  await card(page).getByRole('button', {name:'Readings', exact:true}).click();
+  const dialog = card(page).getByRole('dialog');
+  const summary = dialog.locator('summary').filter({hasText:'Last confirmed schedule mode'});
+  await expect(summary).toContainText('Control source stale');
+  await summary.click();
+  await dialog.locator('details[open]').getByRole('button', {name:'Open details'}).click();
+  await expect(dialog.getByText('Control source stale', {exact:true})).toBeVisible();
+  await expect(dialog.getByText('available', {exact:true})).toBeVisible();
+});
+
 test('schedule mode can be hidden without borrowing the thermostat preset and stays in export',async({page})=>{
   await setup(page);await page.evaluate(()=>{fixture.hass.states[fixture.config.entity].attributes.preset_mode='comfort';fixture.refresh();});
   await card(page).locator('[data-expand]').click();await card(page).getByRole('button',{name:'Top row icon settings',exact:true}).click();
