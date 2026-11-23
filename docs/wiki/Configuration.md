@@ -32,7 +32,7 @@ An outdoor sensor or weather entity keeps the unit it reports, so an 8°C outdoo
 
 | Reading or icon | What to select and what you’ll see |
 | --- | --- |
-| Humidity | Choose the room’s relative humidity sensor. Tap the reading for its current band and available history. In **Humidity display**, drag four markers on one colour bar or enter exact percentages below it. Defaults are 30, 40, 60 and 70%. These boundaries colour this card. |
+| Humidity | Choose the room’s relative humidity sensor. Tap the reading for its current band and available history. Edit the colours for this card under **Humidity display**. |
 | Temperature and trend | The dial uses the climate entity’s current temperature. Add another temperature as typed telemetry for comparison. A signed rate sensor drives the fine ring and Rising, Stable or Falling text. |
 | Outside | In **Outside temperature**, choose a temperature sensor or a weather entity and select **Add outside reading**. With weather, TI reads its temperature and unit attributes. The optional VT outside reading shows the value VT last received. |
 | Valve and activity | Map a valve opening from 0–100% to see **TRV Open/Closed** and its position. Without a valve mapping the card uses reported thermostat activity. **Heat requested** describes a VT request. |
@@ -40,7 +40,13 @@ An outdoor sensor or weather entity keeps the unit it reports, so an 8°C outdoo
 | Power, energy and other VT readings | Use explicit telemetry for a meter. VT also offers estimated energy, estimated mean power, configured device power, power limiting, Follow, automatic window detection and auto start/stop when reported. Tap the icon to inspect its source. |
 | Control source and preset | The combined indicator can show House, Schedule, Manual or another reported source with its applicable preset or mode. Tap it for the separate reports. An unmapped owner can be Unknown. A hand with a history marker identifies the last confirmed adjustment made on this card. |
 
-The in-card humidity panel also has a shared colour track under **Advanced draft and export**. To save thresholds directly, use the same colour bar or the percentage fields in the dashboard editor.
+### Set humidity colours
+
+In the dashboard card editor, open **Humidity display**. On a new card, drag the four markers on the colour bar or enter exact percentages below it. The defaults are 30%, 40%, 60% and 70%.
+
+If your saved YAML uses `humidity_bands.low` or `humidity_bands.high`, the editor shows **Humidity legacy low (%)** and **Humidity legacy high (%)**. You can keep using those two fields, including decimal percentages. To switch to four markers, select **Reset humidity guides to source defaults**. This replaces the two legacy values with the four defaults. Adjust them if you like, then choose **Save** in the dashboard editor.
+
+On the card itself, **Advanced draft and export** lets you preview and copy changes. Use the dashboard editor to save them.
 
 ## Arrange the top row
 
