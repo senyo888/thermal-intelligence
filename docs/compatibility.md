@@ -2,7 +2,7 @@
 
 ## Unreleased 1.0.0 package
 
-The [rebuilt module](v1.0.0-package.md#package-identity-and-upgrade) has unit, synthetic browser and package coverage. Its live installation and soak are unverified.
+Home Assistant 2026.11.2 upgraded to the rebuilt 1.0.0 card through Marketplace. Three existing thermostats displayed the temperatures Home Assistant reported, including after a fresh browser reload. The top-row draft and humidity editor checks also passed. [Final installation and display checks](v1.0.0-package.md#validation-boundaries).
 
 The table records the previous 265,844-byte candidate, verified at SHA-256 `2f838e7ed3d59d4dc87f7e156872b2b820ca8cc19fa24410d66b6759190cdeba`. Use the [1.0.0 package and upgrade notes](v1.0.0-package.md) for the matching picker and resource.
 
