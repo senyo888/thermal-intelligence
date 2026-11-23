@@ -2,15 +2,15 @@
 
 ## The card is missing from Add Card
 
-Check the module you loaded. Version 1.0.0 appears as **Thermal Intelligence Thermostat**, RC.3 as **Thermal Intelligence Thermostat · RC**, and beta builds add **· Beta**. New 1.0.0 cards use `custom:thermal-intelligence-thermostat`. Existing cards using `custom:thermal-intelligence-beta-card` still work. Keep one registration for the standalone module, then open a fresh browser document. The older dashboard card uses a separate registration. [Upgrade and rollback](https://github.com/senyo888/thermal-intelligence/blob/fe8414957fd490fa412eaa80920ecfe84f5e9561/docs/migration.md).
+Check the module you loaded. Version 1.0.0 appears as **Thermal Intelligence Thermostat**, RC.3 as **Thermal Intelligence Thermostat · RC**, and beta builds add **· Beta**. New 1.0.0 cards use `custom:thermal-intelligence-thermostat`. Existing cards using `custom:thermal-intelligence-beta-card` still work. Keep one registration for the standalone module, then open a fresh browser document. The older dashboard card uses a separate registration. [Upgrade and rollback](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md).
 
 ## My icon layout disappeared
 
-The settings opened from the card are a draft. Copy the complete configuration into that card’s dashboard code editor and choose **Save**, or make the change in **Edit dashboard → Edit → Readings and icons → Top row icon settings**. Reopen the card to verify it. [Step-by-step guide](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#arrange-the-top-row).
+The settings opened from the card are a draft. Copy the complete configuration into that card’s dashboard code editor and choose **Save**, or make the change in **Edit dashboard → Edit → Readings and icons → Top row icon settings**. Reopen the card to verify it. [Step-by-step guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/wiki/Configuration.md#arrange-the-top-row).
 
 ## My reading is missing
 
-Check the entity’s current value and unit in Home Assistant. A humidity reading needs a number in percent. A trend needs degrees per unit of time. For a VT suggestion, check that the feature is configured and its entity enabled. Open the reading preview for its source and status. [Source setup](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#choose-your-sources).
+Check the entity’s current value and unit in Home Assistant. A humidity reading needs a number in percent. A trend needs degrees per unit of time. For a VT suggestion, check that the feature is configured and its entity enabled. Open the reading preview for its source and status. [Source setup](https://github.com/senyo888/thermal-intelligence/blob/main/docs/wiki/Configuration.md#choose-your-sources).
 
 ## The LED is amber
 
@@ -18,11 +18,11 @@ Tap the LED to see which observation or restriction needs attention. The card di
 
 ## Controls are unavailable
 
-Check the selected entity, connection, provider readiness, advertised capabilities and VT lock scope. Missing readiness cannot enable fallback controls. Lock actions also require a verified administrator and complete provider capabilities; see [VT lock control](https://github.com/senyo888/thermal-intelligence/wiki/VT-lock-control).
+Check the selected entity, connection, provider readiness, advertised capabilities and VT lock scope. Missing readiness cannot enable fallback controls. Lock actions also require a verified administrator and complete provider capabilities; see [VT lock control](https://github.com/senyo888/thermal-intelligence/blob/main/docs/wiki/VT-lock-control.md).
 
 ## The arc, ring and status differ
 
-They describe different observations: temperature response, temperature slope and thermostat/valve activity. A room can keep warming after its valve closes. A falling room temperature does not establish active HVAC cooling. See [Reading the card](https://github.com/senyo888/thermal-intelligence/wiki/Reading-the-card).
+They describe different observations: temperature response, temperature slope and thermostat/valve activity. A room can keep warming after its valve closes. A falling room temperature does not establish active HVAC cooling. See [Reading the card](https://github.com/senyo888/thermal-intelligence/blob/main/docs/wiki/Reading-the-card.md).
 
 ## Update or rollback
 
