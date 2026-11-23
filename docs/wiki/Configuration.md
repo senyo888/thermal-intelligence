@@ -18,6 +18,12 @@ type: custom:thermal-intelligence-thermostat
 entity: climate.example_room
 ```
 
+## Fahrenheit or Celsius
+
+The dial and target controls follow Home Assistant’s temperature unit. For example, if your thermostat reports a 70°F target with a 1°F step, one tap on **+** requests 71°F. To use Fahrenheit, choose **US customary** in Home Assistant’s regional settings. You can also keep metric units elsewhere and set Home Assistant’s temperature unit to Fahrenheit. [Home Assistant regional settings](https://www.home-assistant.io/docs/configuration/basic/) · [Temperature unit override](https://www.home-assistant.io/integrations/homeassistant/)
+
+An outdoor sensor or weather entity keeps the unit it reports, so an 8°C outdoor reading can sit beside a 70°F target. For the optional VT temperature response arc in a Fahrenheit home, use a room reading in °F and a matching slope in °F per hour or minute. VT must also report its internal temperature unit as °F.
+
 ## Choose your sources
 
 **With VT**, expand **Readings and icons → Top row icon settings → VT readings** and tick an observation such as room-temperature receipt age or outside temperature. TI reads the selected VT’s report directly. For reusable sensor mappings, open **Readings and icons**, choose **Find VT sources**, inspect the suggested value and select **Use this source**. For example, a matching VT slope sensor can supply the trend ring. If that sensor is disabled, enable it in Home Assistant or pick a suitable existing rate sensor. TI leaves features and existing mappings as you configured them.
