@@ -239,9 +239,8 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
     }
   }
 
-  _commit(next, { field, focus, open, rerender = true } = {}) {
+  _commit(next, { field, focus, open, rerender = true, keepInvalidDraft = true } = {}) {
     if (field) this._buffers.delete(field);
-    this._draft = next;
     this._suggestionGeneration++;
     let accepted;
     try {
@@ -252,18 +251,20 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
       this._error = '';
       this._invalidField = '';
     } catch (error) {
+      if (keepInvalidDraft) this._draft = next;
       this._error = `${error.message} This draft has not been applied.`;
       this._invalidField = field ?? '';
     }
     if (rerender) this._render({ focus, open });
     else this._refreshFieldState();
-    if (!accepted) return;
+    if (!accepted) return false;
     this._lastEmittedSignature = JSON.stringify(accepted);
     this.dispatchEvent(new CustomEvent('config-changed', {
       detail: { config: clone(accepted) },
       bubbles: true,
       composed: true,
     }));
+    return true;
   }
 
   _change(path, value, options = {}) {
@@ -442,7 +443,7 @@ export class ThermalIntelligenceCardEditor extends HTMLElement {
   _iconDisplay() {
     const section=this._details('header-icons','Top row icon settings');
     const host=element('div');section.append(host);
-    this._iconOptions=new IconOptions(host,next=>this._commit(next,{rerender:false}));
+    this._iconOptions = new IconOptions(host, next => this._commit(next, {rerender:false, keepInvalidDraft:false}));
     return section;
   }
 

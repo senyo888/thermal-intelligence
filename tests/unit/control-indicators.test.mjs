@@ -112,7 +112,14 @@ test('explicit schedule mode never falls back on unknown, unready, mismatched, h
   f.config.header_icons={hidden:['control:schedule_preset']};assert.equal(badge(),null);delete f.config.header_icons;
   f.config.schedule_preset.max_age_seconds=30;good.last_updated='2020-01-01T00:00:00Z';assert.equal(f.row('control:schedule_preset').status,'stale');assert.equal(badge(),null);
   good.last_updated='2099-01-01T00:00:00Z';assert.equal(badge(),null);delete f.config.schedule_preset.max_age_seconds;
-  for(const owner of ['Unknown','Pending']){f.hass.states['sensor.owner'].state=owner;assert.equal(badge(),null);}
+  for (const owner of ['Unknown','Pending']) {
+    f.hass.states['sensor.owner'].state = owner;
+    const row = f.row('control:schedule_preset');
+    assert.equal(row.status, 'available');
+    assert.equal(row.value, `Control source ${owner.toLowerCase()}`);
+    assert.equal(row.schedulePreset, null);
+    assert.equal(badge(), null);
+  }
   f.hass.states['sensor.owner'].state='House';assert.equal(f.row('control:schedule_preset').value,'Not controlling');
   f.hass.states['sensor.owner'].state='Schedule';f.attrs.is_ready=false;assert.equal(badge(),null);f.attrs.is_ready=true;
   f.hass.states[entity].state='off';assert.equal(badge(),null);f.hass.states[entity].state='heat';

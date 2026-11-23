@@ -101,6 +101,46 @@ for (const width of [390, 768, 1440]) test(`hiding a 257th icon keeps the checkb
   expect(await page.evaluate(() => dashboardCalls)).toEqual([]);
 });
 
+for (const width of [390, 768, 1440]) test(`dashboard editor keeps accepted icon settings after a rejected change at ${width}px`, async ({page}) => {
+  await page.setViewportSize({width, height:900});
+  await page.goto('/');
+  await page.evaluate(() => {
+    const keys = Array.from({length:256}, (_, i) => `retired:${i}`);
+    fixture.reset('standard', {header_icons:{hidden:keys.slice(1), order:keys, future:'keep'}});
+  });
+  const editor = page.locator('#editor thermal-intelligence-beta-card-editor');
+  await editor.locator('[data-section="sources"] > summary').click();
+  await editor.locator('[data-section="header-icons"] > summary').click();
+  const primary = editor.getByRole('group', {name:'Primary icons'});
+  const humidity = primary.getByRole('checkbox', {name:'Show Humidity', exact:true});
+  const valve = primary.getByRole('checkbox', {name:'Show Valve', exact:true});
+  const error = editor.getByRole('alert');
+  await humidity.uncheck();
+  const accepted = await page.evaluate(() => fixture.config);
+  expect(accepted.header_icons.hidden).toHaveLength(256);
+  await valve.click();
+  await expect(error).toContainText('256');
+  await page.evaluate(() => fixture.refresh());
+  await expect(valve).toBeChecked();
+  await expect(humidity).not.toBeChecked();
+  await primary.getByRole('button', {name:'Move Valve up', exact:true}).click();
+  await expect(error).toContainText('header_icons.order');
+  await expect(editor.locator('[data-icon-announcement]')).toBeEmpty();
+  expect(await page.evaluate(() => fixture.events)).toEqual([accepted]);
+  expect(await page.evaluate(() => fixture.editor._draft)).toEqual(accepted);
+
+  await humidity.check();
+  await valve.uncheck();
+  await expect(error).toBeHidden();
+  const saved = await page.evaluate(() => fixture.config.header_icons);
+  expect(saved.future).toBe('keep');
+  expect(saved.order).toEqual(accepted.header_icons.order);
+  expect(saved.hidden).toHaveLength(256);
+  expect(saved.hidden).toContain(await valve.getAttribute('data-icon-visible'));
+  expect(saved.hidden).not.toContain(await humidity.getAttribute('data-icon-visible'));
+  expect(await page.evaluate(() => fixture.calls)).toEqual([]);
+});
+
 test('rejected reorder preserves the saved order and announces how to clear obsolete keys', async ({page}) => {
   await setup(page);
   await page.evaluate(() => {
