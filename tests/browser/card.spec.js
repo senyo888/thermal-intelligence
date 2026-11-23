@@ -255,6 +255,34 @@ test('Fahrenheit and dual range preserve units and the other endpoint',async({pa
   expect((await calls(page))[1].service).toBe('set_swing_horizontal_mode');
 });
 
+test('Fahrenheit home keeps VT presets, trend, and a Celsius outdoor reading in their reported units', async ({page}) => {
+  await page.evaluate(() => {
+    fixture.reset('vt', {
+      trend_entity:'sensor.room_slope',
+      telemetry:[{kind:'temperature', entity:'sensor.outdoors', label:'Outside'}],
+    });
+    fixture.hass.config.unit_system.temperature = '°F';
+    Object.assign(fixture.hass.states[fixture.config.entity].attributes, {
+      current_temperature:68.5, temperature:70, min_temp:45, max_temp:90, target_temp_step:1,
+      configuration:{type:'over_climate', temperature_unit:'°F'}, preset_temperatures:{frost_temp:45},
+    });
+    fixture.hass.states['sensor.room_slope'] = {state:'1.8', attributes:{unit_of_measurement:'°F/h'}};
+    fixture.hass.states['sensor.outdoors'] = {state:'8', attributes:{unit_of_measurement:'°C'}};
+    fixture.refresh();
+  });
+  await expect(card(page).locator('[data-current-value]')).toHaveText('68.5');
+  await expect(card(page).locator('.dial .unit')).toHaveText('°F');
+  await expect(marker(page)).toHaveAttribute('aria-valuetext', '70°F');
+  await expect(card(page).locator('.trend')).toContainText('Rising');
+  await expect(card(page).locator('.trend')).toContainText('°F/h');
+  await expect(card(page).locator('[data-header-telemetry]')).toContainText('8 °C');
+  await expand(page);
+  await expect(card(page).locator('[data-preset="frost"] .preset-temperature')).toHaveText('45°F');
+  expect(await calls(page)).toEqual([]);
+  await increase(page).click();
+  expect((await calls(page)).map(call => call.payload)).toEqual([{entity_id:'climate.fixture_thermostat', temperature:71}]);
+});
+
 test('invalid numeric data disables temperature independently of supported mode',async({page})=>{
   await page.evaluate(()=>{fixture.hass.states['climate.fixture_thermostat'].attributes.target_temp_step=0;fixture.refresh();});
   await expect(increase(page)).toBeDisabled();await expand(page);

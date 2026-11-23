@@ -30,7 +30,7 @@ Open the dashboard menu, choose **Edit dashboard**, then **Edit** on this card. 
 
 1. In **Thermostat**, select a climate entity and provider mode. Set the name, background and activity/detail visibility.
 2. In **Readings and icons**, use **Top row icon settings** to select and order visible readings, and map trend, humidity and valve sensors. Preview each header icon, value, status and source. **Custom telemetry & features** and **Optional telemetry** retain their full fields, ordering and preset associations.
-3. **Outside temperature** adds an explicitly selected temperature sensor or weather entity. It leaves the indoor dial unchanged. **Find VT sources** lists verified suggestions; each needs a deliberate **Use this source** action.
+3. **Outside temperature** adds an explicitly selected temperature sensor or weather entity. It leaves the indoor dial unchanged. If **Add outside reading** shows a validation error, correct the indicated field in the card’s YAML, then add the source again. Your existing mappings stay in place. If the selected source disappears or a sensor stops reporting a temperature unit, choose a source again. **Find VT sources** lists verified suggestions; each needs a deliberate **Use this source** action.
 4. In **Humidity display**, drag the four markers on one colour bar or enter exact percentages below it, inspect the gradient and current reading, or reset the guides. Legacy low/high guides remain two labelled fields; reset preserves unknown nested preferences.
 5. In **Optional switch control**, search by friendly name or entity ID, select the exact switch, and enroll it separately. Searching alone changes no configuration.
 6. **Preset display labels**, **Temperature response** and **Advanced display settings** retain preset labels, response mappings and the fallback temperature step.
@@ -176,7 +176,9 @@ In RC.3, a failed lookup can recover from matching frontend registry metadata. O
 
 VT requires literal boolean `is_ready: true`. Unknown readiness, initialization in progress, applicable user locking, an unavailable climate entity or a disconnected session disables dependent controls. The model does not relax these restrictions to make a control appear usable.
 
-Temperature units come from HA's configured display unit (`°C` or `°F`). Limits, targets and advertised step come from the climate entity. If no step is advertised, `step` supplies a fallback; if neither exists, the display increment is `0.5°C` or `1°F`. A malformed advertised step does not silently fall back. The details view identifies the step's source.
+The dial and target controls follow Home Assistant’s configured temperature unit (`°F` or `°C`). To use Fahrenheit, choose US customary in Home Assistant’s regional settings or set its temperature unit to Fahrenheit while keeping metric units elsewhere. An independent outside reading keeps its reported unit. [Home Assistant units and overrides](https://www.home-assistant.io/integrations/homeassistant/)
+
+Limits, targets and advertised step come from the climate entity. If no step is advertised, `step` supplies a fallback; if neither exists, the display increment is `0.5°C` or `1°F`. A malformed advertised step does not silently fall back. The details view identifies the step's source.
 
 The card quantizes target edits to the valid step grid within the provider limits. A range edit preserves the other endpoint and cannot cross it. In RC.3, Home and End choose the first and last feasible step for the selected endpoint. If a provider reports an off-grid sibling, the draft still respects it, but the final request remains blocked unless the complete payload satisfies the existing step validation. Unknown units or invalid temperature data disable temperature editing; independently valid mode or preset controls can remain available. No configuration option invents a temperature range, preset, fan mode or swing capability.
 

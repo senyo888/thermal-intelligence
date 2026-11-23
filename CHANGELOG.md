@@ -8,6 +8,7 @@
 - Select **Thermal Intelligence Thermostat** in Add Card. New YAML uses `custom:thermal-intelligence-thermostat`. Saved beta and RC cards keep working.
 - See presets and control source first, with preset labels centred over their temperatures. Adjust humidity colours with four markers on a single bar or enter exact percentages.
 - The dashboard editor shows a validation message for malformed icon or VT reading lists. Correcting the YAML restores the preview.
+- Adding an outside reading now preserves malformed telemetry or feature mappings and shows the validation error so you can correct the YAML and retry.
 
 [Senyo’s introduction](docs/v1.0.0.md) · [Package details](docs/v1.0.0-package.md) · [First-room walkthrough](docs/wiki/Configuration.md) · [Tested coverage](docs/compatibility.md#unreleased-100-package). RC.3 is the published prerelease.
 
