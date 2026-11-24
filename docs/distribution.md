@@ -1,10 +1,10 @@
 # Distribution
 
-The [1.0.0 release preparation](v1.0.0-package.md) identifies the tested module and its upgrade path. Marketplace upgraded an existing installation to the reviewed 1.0.0 card on Home Assistant 2026.11.2. The rollback trial used the earlier build listed in the package notes. Check the [releases page](https://github.com/senyo888/thermal-intelligence/releases) for available tags. Stable releases follow two pull requests in order, `senyo888-patch-1` into `develop`, then `develop` into `main`. The stable tag and its release assets come from the approved commit on `main` after the second merge.
+[Thermal Intelligence 1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) was published on 24 November 2026 from `main` at `4e6b941`. A clean Marketplace installation on Home Assistant 2026.11.2 selected the public tag and served the card, GPL licence and manifest with matching SHA-256 hashes. [Package identity and verification](v1.0.0-package.md)
 
-[RC.3](rc-3.md) is the current published prerelease, from source `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`. Its exact package is preserved by the `v0.1.0-rc.3` tag; `main` carries the promoted snapshot and current documentation. Verify a branch revision before use rather than assuming it matches the released tag. [RC.2](rc.md), [RC.1](rc-1.md) and [beta.7](beta-7.md) retain their dated historical records. Use [Marketplace](marketplace.md) for Home Assistant 2026.11 and later, or [HACS](hacs.md) on older installations.
+Use [Marketplace](marketplace.md) on Home Assistant 2026.11 and later, or [HACS](hacs.md) on older installations. Users maintaining a prerelease can find its original files and rollback guidance in the [RC.3](rc-3.md), [RC.2](rc.md), [RC.1](rc-1.md) and [beta.7](beta-7.md) records.
 
-[RC.4](rc-4.md) is an unreleased candidate prepared on `senyo888-patch-1` for later reconciliation into `develop`. Its local package manifest names `develop` as the intended delivery branch; that field does not prove branch promotion, publication or installation. The tagged RC.3 files remain available at their original revision.
+[RC.4](rc-4.md) was tested by commit during development of 1.0.0. It had no named release.
 
 | Branch | Contents |
 | --- | --- |
@@ -16,9 +16,9 @@ The package contains the JavaScript module, software licence and a manifest iden
 
 ## Marketplace and older HACS installations
 
-RC.2 passed a bounded manual-to-Marketplace custom-repository installation and passive Lab checks on 9 November. The [validation record](rc2-validation.md) distinguishes that result from incomplete two-version update, removal, recovery and catalogue acceptance. Historical beta.7 manual-installation evidence remains scoped to beta.7.
+For 1.0.0, use the custom **Dashboard** repository route. The [default catalogue submission](https://github.com/hacs/default/pull/14872) passed its automated checks and is awaiting maintainer review. The older [RC.2 installation record](rc2-validation.md) applies only to that prerelease.
 
-The root [`hacs.json`](../hacs.json) names `thermal-intelligence.js`, uses the `dist/` layout and hides the default branch as a download choice. The [published RC.3](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.3) has its own versioned tag, Dashboard metadata and three release assets. Beta.7 is an untagged branch candidate; its metadata does not make it a named GitHub release or establish installer acceptance.
+The root [`hacs.json`](../hacs.json) names `thermal-intelligence.js`, uses the `dist/` layout and hides the default branch as a download choice. Stable releases follow the patch → develop → main pull request sequence. Package the tagged commit to reproduce its published manifest.
 
 The build writes `thermal-intelligence.js` and a copy of the software `LICENSE` to `dist/`. The distribution check rejects any extra files, including leftovers from earlier builds. There are no runtime dependencies to fetch. No minimum Home Assistant or HACS version is declared until the supported range is established. The manifest does not use integration-only ZIP or persistent-directory options. See the official [Dashboard requirements](https://www.hacs.xyz/docs/publish/plugin/) and [manifest guidance](https://www.hacs.xyz/docs/publish/start/).
 
@@ -57,18 +57,18 @@ Omit `--marketplace` for the manual package. Both routes produce the same three 
 
 `package_beta.py` continues to accept only beta and RC versions; `package_release.py` accepts only stable versions. CI uses `package_candidate.py` for all three validated channels. Every route reads committed files, checks the exact generated version and channel, and rejects an existing output directory. A stable manifest's `delivery_branch: main` records its intended destination only. These commands do not promote a branch, create a tag, publish a release or install the module.
 
-Changing the version or picker changes the module bytes. Validate that resulting package and its upgrade and rollback paths separately; acceptance of an RC does not establish acceptance of a different stable module. Release preparation does not change the current published version or waive the remaining checks below.
+Changing the version or picker changes the module bytes. Validate that resulting package and its upgrade and rollback paths separately; acceptance of an RC does not establish acceptance of a different stable module.
 
-### Remaining installation and release checks
+### Installation and release checks
 
 | Check | Status |
 | --- | --- |
 | Repository description, topics, README images and software licence | Present |
 | Dashboard metadata, bounded install directory and repeatable candidate assets | Reproducible 1.0.0 packages contain the reviewed card, GPL licence and manifest. See the [package record](v1.0.0-package.md). |
-| Published release containing the metadata and module | The [release list](https://github.com/senyo888/thermal-intelligence/releases) identifies public packages. Public download verification for v1.0.0 follows publication. |
-| Upstream HACS validation with no ignored checks | RC.1 passed all 8 applicable checks on 3 November 2026; no beta.7 installer acceptance implied |
-| HACS and Marketplace install, update, removal, migration and recovery | The final 1.0.0 card passed an existing Marketplace upgrade on HA 2026.11.2. The earlier 1.0.0 build covered Marketplace rollback and reinstall. HACS lifecycle and public v1.0.0 download checks are separate. [Coverage by version](compatibility.md). |
-| Default catalogue inclusion | Not submitted or claimed |
+| Published files | [v1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) includes the card, licence and [manifest](https://github.com/senyo888/thermal-intelligence/releases/download/v1.0.0/manifest.json). All three public downloads matched the release checksums. |
+| HACS plugin validation | All eight applicable [checks on v1.0.0](https://github.com/senyo888/thermal-intelligence/actions/runs/45459007561) passed with none disabled. |
+| Installer coverage | Marketplace clean install from the public tag and upgrade to the matching card verified on HA 2026.11.2. The earlier candidate covered rollback, reinstall and removal. Older HACS installation and full backup restoration remain unverified. [Coverage by version](compatibility.md). |
+| Default catalogue | [Submission #14872](https://github.com/hacs/default/pull/14872) is awaiting upstream review. Use the custom Dashboard repository to install today. |
 
 The intended versioned route uses a reviewed GitHub release with the standalone JS asset, software licence and package manifest. A manual ZIP or a bare tag is not that route. Keep internal reports, prompts and raw evidence out of release assets. Catalogue submission has [additional requirements](https://www.hacs.xyz/docs/publish/include/), including upstream validation and a published release; preparing the files does not complete those steps.
 
@@ -78,7 +78,7 @@ The RC.1 validation used the unmodified upstream action entry point at [`0704ffc
 
 Check file and resource ownership before an installer manages `www/community/thermal-intelligence/`. Stop if that directory or its resource prefix contains existing TI or unrelated files. The [reviewed Marketplace resource manager](https://github.com/home-assistant/core/blob/74cf5a49c63ed8d4d87717844bf14f79c28c9cea/homeassistant/components/marketplace/repositories/plugin.py) updates resources by repository-folder prefix and removes entries in that prefix on uninstall. Renaming a card does not isolate those resources.
 
-The resource-manager source above is from HA 2026.11.0; source review alone does not establish installer acceptance; the separate RC.2 Lab result covers only the recorded route. Test storage-mode resources, YAML resources, `frontend.extra_module_url`, legacy `/hacsfiles/` paths, `/local/community/` paths, duplicate loading and fresh-document caching separately. Preserve genuine unknown and unavailable provider states. An HA/HACS migration may require a full backup restore; reverting a JS resource only rolls back the frontend. Keep these checks separate from the recorded RC.1 observation and from physical heating claims.
+The resource-manager source above is from HA 2026.11.0; source review alone does not establish installer acceptance; the version-specific results above identify the routes exercised in Home Assistant. Test storage-mode resources, YAML resources, `frontend.extra_module_url`, legacy `/hacsfiles/` paths, `/local/community/` paths, duplicate loading and fresh-document caching separately. Preserve genuine unknown and unavailable provider states. An HA/HACS migration may require a full backup restore; reverting a JS resource only rolls back the frontend. Keep these checks separate from the recorded RC.1 observation and from physical heating claims.
 
 ## Resource loading
 
@@ -90,4 +90,4 @@ RC.3 retains `custom:thermal-intelligence-beta-card`, with the picker name **The
 
 ## Default-branch discovery and release selection
 
-The default branch carries its separately reviewed module and licence for repository discovery, with a strict hash check. Select the named RC.3 release for RC.3 installation; the branch discovery payload is not its installed version. Both Marketplace and HACS read `hacs.json`; branch inspection or matching bytes alone do not prove named-release selection. Capture the selected version and installer origin as well as the served bytes. Reproduce published assets from their original release commit; a later promotion commit would change manifest provenance and is not a replacement release.
+The default branch carries its separately reviewed module and licence for repository discovery, with a strict hash check. For the stable card, select the named v1.0.0 release. The installation record identifies the version Marketplace actually selected. Both Marketplace and HACS read `hacs.json`; branch inspection or matching bytes alone do not prove named-release selection. Capture the selected version and installer origin as well as the served bytes. Reproduce published assets from their original release commit; a later promotion commit would change manifest provenance and is not a replacement release.

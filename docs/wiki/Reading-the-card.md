@@ -1,6 +1,6 @@
 # Reading the card
 
-This guide covers the 1.0.0 card. For example, a room can be below target, its valve can be closed, and the temperature can still be rising. Read the arc, chip and fine ring together. [Choose the sources for your room](https://github.com/senyo888/thermal-intelligence/blob/main/docs/wiki/Configuration.md).
+This guide covers the 1.0.0 card. For example, a room can be below target, its valve can be closed, and the temperature can still be rising. Read the arc, chip and fine ring together. [Choose the sources for your room](https://github.com/senyo888/thermal-intelligence/wiki/Configuration).
 
 ## Every detail has a purpose
 
@@ -37,7 +37,7 @@ The staggered glint of the small lights around the dial and the slope ring's gen
 
 Each configured icon combines a compact reading with colour that follows its meaning. Humidity follows your display bands; window, presence and motion distinguish **Open/Closed**, **Home/Away** and **Detected/Clear**; supported presets retain their own Frost, Eco, Comfort and Boost colours. Active, inactive and unknown observations receive distinct treatments, with missing information muted.
 
-The combined control indicator puts a reported owner and its applicable preset or last confirmed Schedule mode in one place. Open it to inspect the evidence. The history-marked hand records a confirmed action from this card. An ordinary hand can identify a controller reporting Manual. [Choose the icon and map its source](https://github.com/senyo888/thermal-intelligence/blob/main/docs/wiki/Configuration.md#arrange-the-top-row).
+The combined control indicator puts a reported owner and its applicable preset or last confirmed Schedule mode in one place. Open it to inspect the evidence. The history-marked hand records a confirmed action from this card. An ordinary hand can identify a controller reporting Manual. [Choose the icon and map its source](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#arrange-the-top-row).
 
 Choose which readings appear, their order, labels and icons for each card. Humidity, temperature, valve position and provider features can sit beside the room name without filling the main dial with detail. Tap a reading for its focused panel or Home Assistant source details. The compact VT lock indicates its reported state and opens [Lock/Unlock controls](https://github.com/senyo888/thermal-intelligence/blob/main/docs/lock-control.md) for verified administrators when supported.
 
@@ -77,6 +77,6 @@ This keeps occasional settings close without putting every control on the everyd
   </tr>
 </table>
 
-*These beta.2 captures use synthetic data and illustrate controls retained in RC.3; the current response-arc behaviour is described above.*
+*These beta.2 captures use synthetic data and illustrate controls also present in 1.0.0. See the response-arc guide above for the stable card’s behaviour.*
 
 </details>

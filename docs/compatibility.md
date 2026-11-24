@@ -4,7 +4,7 @@
 
 ## 1.0.0 package
 
-Home Assistant 2026.11.2 upgraded to the rebuilt 1.0.0 card through Marketplace. Three existing thermostats displayed the temperatures Home Assistant reported, including after a fresh browser reload. The top-row draft and humidity editor checks also passed. [Final installation and display checks](v1.0.0-package.md#validation-boundaries).
+A clean Home Assistant 2026.11.2 Marketplace install selected the public v1.0.0 tag and served the card, GPL licence and manifest byte for byte. Separately, an existing installation upgraded to the rebuilt 1.0.0 card through Marketplace. Three existing thermostats displayed the temperatures Home Assistant reported, including after a fresh browser reload. The top-row draft and humidity editor checks also passed. [Final installation and display checks](v1.0.0-package.md#validation-boundaries).
 
 The table records the previous 265,844-byte candidate, verified at SHA-256 `2f838e7ed3d59d4dc87f7e156872b2b820ca8cc19fa24410d66b6759190cdeba`. Use the [1.0.0 package and upgrade notes](v1.0.0-package.md) for the matching picker and resource.
 
@@ -14,11 +14,11 @@ The table records the previous 265,844-byte candidate, verified at SHA-256 `2f83
 | Editor and room controls | Save and reload, invalid humidity draft, room target adjustment, VT Boost and clearing the preset were checked. A five-minute scheduled Boost started and returned to Comfort automatically. |
 | Whole-house policy supplied by a separate controller | Comfort confirmed across eight rooms. Boost confirmed in seven. A thermostat with its user lock enabled kept its target. After the house timer expired all eight confirmed Comfort, then their original settings were restored. Physical heat delivery was outside these checks. |
 | Marketplace rollback and reinstall | On HA 2026.11.2, an in-place rollback to RC.4 and reinstall of 1.0.0 preserved the resource ID and loaded the expected card and editor. Removal preserved the dashboard and unrelated resource. Home Assistant served the exact installed card and full licence. A local named-release rehearsal also delivered both files. See the [installer results and package checks](v1.0.0-package.md#validation-boundaries). |
-| Devices and observation | Phone, tablet and desktop layout fixtures passed. The 48-hour Lab soak finished on 22 November 2026. All nine checkpoints reported healthy for Home Assistant Core, the exact 1.0.0 module, VT and the expected HA/VT versions. Verification of the public tagged download follows release. A minimum supported HA version has not been established. |
+| Devices and observation | Phone, tablet and desktop layout fixtures passed. The 48-hour Lab soak finished on 22 November 2026. All nine checkpoints reported healthy for Home Assistant Core, the exact 1.0.0 module, VT and the expected HA/VT versions. A minimum supported HA version has not been established. |
 
 ## Published RC.3
 
-Current published prerelease: **0.1.0-rc.3**. [RC.3](rc-3.md) corrects request ordering, configuration editing and presentation while preserving schema-1/schema-2 configurations and existing control restrictions.
+[RC.3](rc-3.md) corrects request ordering, configuration editing and presentation while preserving schema-1/schema-2 configurations and existing control restrictions.
 
 On 13 November 2026, the exact released module passed passive manual Lab checks on HA 2026.11.0: six inert fixture renders, humidity editing/manual export, clearing a visual valve mapping and browser reconnect, with no observed thermostat commands or observation gaps. The independent observation exceeded its planned five-minute limit, lasting about 10 minutes 43 seconds. This is a pass for the completed checks, not full timing-plan compliance or a soak. See the [exact package and validation limits](rc-3.md#validation-limits).
 
@@ -34,7 +34,7 @@ The earlier 17 November revision combines source and preset into one icon, adds 
 
 The preceding 16 November revision uses quiet button feedback: routine actions leave no banner, issue notices expire after ten seconds, and unresolved issues remain on the LED and in the overview. Module SHA256 `718e6f5f076c9471bbc6a634fa3dd515255a02c1db7365d3d982d65a6cdc3cff` passed 178 unit and 171 synthetic browser tests. These bytes have not been loaded on HA Lab or Stable; the live results below remain tied to the earlier module.
 
-The earlier [RC.4](rc-4.md) module consolidates beta.8 usability improvements and the request-tooltip correction. Its SHA256 is `c5c88f6f662095f1bd0a11254bea1401c2ff8b15a13da500d894fdbb664130ae`. It passed 178 unit, 164 synthetic browser, 14 foundation, 13 package and eight Marketplace distribution tests, including phone/tablet/desktop layouts and preserved advanced export. It remains on the beta branch for future develop reconciliation, without a named release.
+The earlier [RC.4](rc-4.md) module consolidates beta.8 usability improvements and the request-tooltip correction. Its SHA256 is `c5c88f6f662095f1bd0a11254bea1401c2ff8b15a13da500d894fdbb664130ae`. It passed 178 unit, 164 synthetic browser, 14 foundation, 13 package and eight Marketplace distribution tests, including phone/tablet/desktop layouts and preserved advanced export. This revision was tested by commit and was never tagged.
 
 On 15 November 2026, those exact bytes passed manual Lab checks on HA 2026.11.0 with VT 10.6.4: editor Save/Cancel and export, Generic/VT controls, an eligible inert optional switch, range/fan/swing controls and deliberate error paths. All 35 card requests and eight fixture setup/restoration requests had acknowledgements and independent server events, including two intended rejections. Original fixture settings and saved configurations were restored; no card-runtime defect was found. At that trial, RC.4 used a manual resource overlay while Marketplace retained RC.2. See [coverage and limits](rc-4.md#validation-limits); physical-device, installer and formal-soak acceptance remain separate.
 
@@ -162,6 +162,6 @@ Named-release Marketplace selection, passive installation checks, bounded contro
 
 ## Unreleased RC.4 control-icon refinement
 
-The current patch adds exact advertised preset indicators, read-only ownership/House/schedule mappings, a combined source/preset icon with VT and circled-P marks, VT outside temperature and auto start/stop observations. The latter uses the inspected VT 10.6.5 attribute shape and opens only a uniquely verified same-device/config-entry native switch. It does not broaden ordinary optional-switch eligibility.
+The unreleased RC.4 build added exact advertised preset indicators, read-only ownership/House/schedule mappings, a combined source/preset icon with VT and circled-P marks, VT outside temperature and auto start/stop observations. The latter uses the inspected VT 10.6.5 attribute shape and opens only a uniquely verified same-device/config-entry native switch. It does not broaden ordinary optional-switch eligibility.
 
 Synthetic browser coverage includes state separation, acknowledgement without observation, contrary-preset retirement, wrong/missing registry targets, delayed replies after context loss, native-editor mapping round trips, and phone/tablet/desktop plus a 250px card layout. The 17 November Lab trial also verified the native auto start/stop dialog and its explicit Off/On actions on an inert fixture. This result applies to the exact `d7701409…` module and recorded paths; Stable installation, physical response and formal soak remain separate.

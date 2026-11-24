@@ -1,6 +1,6 @@
 # Thermal Intelligence architecture contract
 
-This checkout contains the [1.0.0 frontend](docs/v1.0.0.md). The latest published prerelease is [RC.3](docs/rc-3.md) from [source `f93fb64`](https://github.com/senyo888/thermal-intelligence/tree/f93fb6489f87fbf9c393dd8cd03e85e5718277ef). `main` carries documentation and a separately promoted frozen snapshot. Candidates are prepared through `develop`, with beta work on `senyo888-patch-1`. The card presents Home Assistant/provider state and sends commands only after explicit user interaction. A future TI backend is a separate component and is not required by this card.
+The [1.0.0 frontend](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) is a standalone Home Assistant dashboard card. It presents Home Assistant and provider state and sends commands only after explicit user interaction. A future TI backend is a separate component. [Distribution](docs/distribution.md) describes branch roles and versioned packages.
 
 ## Ownership and layers
 

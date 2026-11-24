@@ -37,7 +37,7 @@ Subsequent synthetic regressions confirmed three defects in the published RC.2 r
 - An explicitly empty valve mapping can display **TRV unavailable** instead of the selected thermostat's reported activity. An empty mapping disables that source; it does not establish a failed TRV.
 - With no header telemetry, a long title can overflow beside a read-only lock indicator.
 
-These findings do not replace the dated installation and trial results above. They remain defects in the released RC.2 assets. Runtime corrections are prepared in the separately reviewed [RC.3 candidate](rc-3.md); none changes the released RC.2 snapshot. The promotion's test fixture now discards delayed observations after a scenario reset, and its registry test completes both pending reads before checking stale-session rejection. Those test corrections do not change installed behavior.
+These findings do not replace the dated installation and trial results above. They remain defects in the released RC.2 assets. Runtime corrections shipped in the [RC.3 prerelease](rc-3.md); none changes the released RC.2 snapshot. The promotion's test fixture now discards delayed observations after a scenario reset, and its registry test completes both pending reads before checking stale-session rejection. Those test corrections do not change installed behavior.
 
 ## Remaining acceptance
 

@@ -31,7 +31,7 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: HA, provider/version, Marketplace (formerly HACS) or manual installation, browser/OS or Companion version. Use not applicable for documentation-only reports.
+      description: HA, provider/version, Marketplace, older HACS or manual installation, browser/OS or Companion version. Use not applicable for documentation-only reports.
     validations:
       required: true
   - type: textarea

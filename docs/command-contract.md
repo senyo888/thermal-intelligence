@@ -1,6 +1,6 @@
 # Standalone climate command lifecycle
 
-The [published RC.3](rc-3.md) preserves RC.2 configuration and control boundaries while correcting request ordering, configuration editing and presentation. RC.2 acceptance remains dated evidence for RC.2; see the [RC.3 validation limits](rc-3.md#validation-limits) for the current release.
+The 1.0.0 card sends a request only after an explicit action. It keeps acknowledgement separate from fresh provider or device observations. [Tested scenarios by version](compatibility.md#100-package).
 
 Implemented in `src/commands/coordinator.js`; unit fixtures establish the cases below. This is a frontend request contract, not live Home Assistant/provider compatibility or physical-device validation.
 

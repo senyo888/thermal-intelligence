@@ -14,7 +14,7 @@ The preceding Stable-tested module is **265389 bytes**, SHA-256 `25e47e4bdca8328
 
 An earlier Lab-tested module is 262418 bytes, SHA-256 `d7701409f421da0127a4b5a4fde887aecc86245a860230fc6d39b993e8ef13e9`, built from [source `65d40ef`](https://github.com/senyo888/thermal-intelligence/commit/65d40efc83d0aba14bc1a4fce3625ca36384208c). Its bounded results below remain specific to those bytes. The intermediate 262718-byte module `f1a730956bd471373d9389f0d55a9e9a7267898c7c2056ed1ed75a7d53de71a2` had synthetic coverage and was superseded. See [configuration](card-configuration.md#presets-provider-and-policy-icons) and the [VT navigation boundary](provider-contracts.md#additional-vt-observations-and-native-controls).
 
-RC.4 is prepared on `senyo888-patch-1` for reconciliation into `develop`. The immutable-commit trial is separate from a named release or automatic installer update. [RC.3](rc-3.md) remains the published prerelease; its assets and the main discovery snapshot are unchanged.
+RC.4 was tested by commit while 1.0.0 was in development. It had no named release. The [RC.3 tag](rc-3.md) preserves the preceding prerelease, and the [1.0.0 package record](v1.0.0-package.md) identifies the published stable files.
 
 ## Changes from RC.3
 

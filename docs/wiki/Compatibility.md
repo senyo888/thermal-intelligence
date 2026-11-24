@@ -1,12 +1,12 @@
 # Compatibility
 
-**Thermal Intelligence 1.0.0.** Home Assistant 2026.11.2 upgraded to the final card through Marketplace. Three existing thermostats displayed the current and target temperatures reported by Home Assistant, including after a fresh browser reload. [Final package and dashboard checks](https://github.com/senyo888/thermal-intelligence/blob/1240526208b0fb0b914f57e29c539931768e031b/docs/v1.0.0-package.md#validation-boundaries).
+**Thermal Intelligence 1.0.0.** A fresh Marketplace install on Home Assistant 2026.11.2 served the card, GPL licence and manifest from the public v1.0.0 release with matching checksums. An existing installation also upgraded to the final card through Marketplace. Three existing thermostats displayed the current and target temperatures reported by Home Assistant, including after a fresh browser reload. [Final package and dashboard checks](https://github.com/senyo888/thermal-intelligence/blob/main/docs/v1.0.0-package.md#validation-boundaries).
 
-The earlier candidate passed editor save and reload, room control and a five-minute scheduled Boost with automatic return. Whole-house Boost confirmed seven of eight rooms. The Marketplace rollback and reinstall trial and all nine checkpoints of the 48-hour Lab soak used that earlier build. Verification of the public tagged download follows release. [Version-specific results](https://github.com/senyo888/thermal-intelligence/blob/1240526208b0fb0b914f57e29c539931768e031b/docs/compatibility.md#unreleased-100-package).
+The earlier candidate passed editor save and reload, room control and a five-minute scheduled Boost with automatic return. Whole-house Boost confirmed seven of eight rooms. The Marketplace rollback and reinstall trial and all nine checkpoints of the 48-hour Lab soak used that earlier build. [Version-specific results](https://github.com/senyo888/thermal-intelligence/blob/main/docs/compatibility.md#100-package).
 
 ## Published RC.3
 
-Current published prerelease: **0.1.0-rc.3**. [RC.3](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md) corrects request ordering, configuration editing and presentation while preserving schema-1/schema-2 configurations and existing control restrictions.
+[RC.3](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md) corrects request ordering, configuration editing and presentation while preserving schema-1/schema-2 configurations and existing control restrictions.
 
 On 13 November 2026, the exact released module passed passive manual Lab checks on HA 2026.11.0: six inert fixture renders, humidity editing/manual export, clearing a visual valve mapping and browser reconnect, with no observed thermostat commands or observation gaps. The independent observation exceeded its planned five-minute limit, lasting about 10 minutes 43 seconds. This is a pass for the completed checks, not full timing-plan compliance or a soak. See the [exact package and validation limits](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md#validation-limits).
 

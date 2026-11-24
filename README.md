@@ -4,15 +4,15 @@
 
 **Temperature, control and context in one Home Assistant card.**
 
-[![Introducing Thermal Intelligence 1.0.0](https://img.shields.io/badge/1.0.0-Introduction-725691)](docs/v1.0.0.md) [![Marketplace installation guide](https://img.shields.io/badge/Marketplace-216488?logo=home-assistant&logoColor=white)](docs/marketplace.md) [![Project site](https://img.shields.io/badge/Project%20site-377980)](https://senyo888.github.io/thermal-intelligence/) [![Thermal Intelligence Wiki guides](https://img.shields.io/badge/Wiki-Guides-536b87)](docs/wiki/Home.md) [![Configuration and YAML reference](https://img.shields.io/badge/Configuration-YAML-52677a)](docs/card-configuration.md) [![Compatibility and tested versions](https://img.shields.io/badge/Compatibility-Tested%20versions-537458)](docs/compatibility.md) [![Software licence GPL-3.0-only](https://img.shields.io/badge/Software-GPL--3.0--only-415a79)](LICENSE)
+[![Introducing Thermal Intelligence 1.0.0](https://img.shields.io/badge/1.0.0-Introduction-725691)](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) [![Marketplace installation guide](https://img.shields.io/badge/Marketplace-216488?logo=home-assistant&logoColor=white)](docs/marketplace.md) [![Project site](https://img.shields.io/badge/Project%20site-377980)](https://senyo888.github.io/thermal-intelligence/) [![Thermal Intelligence Wiki guides](https://img.shields.io/badge/Wiki-Guides-536b87)](https://github.com/senyo888/thermal-intelligence/wiki) [![Configuration and YAML reference](https://img.shields.io/badge/Configuration-YAML-52677a)](docs/card-configuration.md) [![Compatibility and tested versions](https://img.shields.io/badge/Compatibility-Tested%20versions-537458)](docs/compatibility.md) [![Software licence GPL-3.0-only](https://img.shields.io/badge/Software-GPL--3.0--only-415a79)](LICENSE)
 
 Thermal Intelligence puts your thermostat’s current temperature, target and reported activity on one Home Assistant card. Add the readings that help you understand a room. A closed radiator valve and a rising room temperature, for example, can both be true. Tap the status chip for the reported activity, or open a top-row icon to inspect its source.
 
-**Start with your version.** This guide covers **Thermal Intelligence Thermostat** in 1.0.0. The RC.3 prerelease has **· RC** in the picker and its own [setup guide](https://github.com/senyo888/thermal-intelligence/blob/4caf6f84868079a4d8f25c5d5731654f015bc260/docs/card-configuration.md#visual-configuration). The [1.0.0 package notes](docs/v1.0.0-package.md#validation-boundaries) record the Marketplace upgrade and dashboard checks on Home Assistant 2026.11.2.
+**Start with 1.0.0.** Install the [stable release](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) as a Dashboard card, then choose **Thermal Intelligence Thermostat** in Home Assistant. You can start with just your room’s thermostat.
 
 ## Set up your first room
 
-1. With the 1.0.0 module loaded, open **Edit dashboard → Add card → Thermal Intelligence Thermostat**. The published RC.3 picker adds **· RC**.
+1. With the 1.0.0 module loaded, open **Edit dashboard → Add card → Thermal Intelligence Thermostat**.
 2. Choose your room’s **Thermostat entity** (`climate.*`) and leave **Provider** on **Automatic**. The dial gets the room temperature, target and supported controls from that entity and follows your Home Assistant temperature unit (°F or °C). Choose **Save**.
 3. Edit the card again to add one useful reading. **With VT**, open **Readings and icons**, choose **Find VT sources** and inspect a suggestion before selecting **Use this source**. **With a standard thermostat**, choose a sensor yourself, such as a room humidity sensor reporting `%`. Both paths support independent sensors.
 4. In **Readings and icons → Top row icon settings**, tick the reading, move it within its group, check the preview and **Save**. From the live card, **Controls & features → Top row icon settings** lets you try a layout. To keep that draft, copy its configuration into the same card’s code editor and save it there.
@@ -82,7 +82,7 @@ TI sends the actions you choose through Home Assistant’s services. Your thermo
 
 ## Installation
 
-On Home Assistant 2026.11 or later, add Thermal Intelligence as a **Dashboard** repository in Marketplace. On an older installation that uses HACS, add it there. Choose the version you want by its tag. For this guide, look for **v1.0.0** and the picker **Thermal Intelligence Thermostat**. [Marketplace steps](docs/marketplace.md) · [HACS steps](docs/hacs.md) · [Available releases](https://github.com/senyo888/thermal-intelligence/releases)
+On Home Assistant 2026.11 or later, use **Settings → Marketplace → Add from link**. On older systems with HACS, add TI as a custom **Dashboard** repository. Select **v1.0.0**. The default catalogue listing is [under review](https://github.com/hacs/default/pull/14872). [Marketplace steps](docs/marketplace.md) · [HACS steps](docs/hacs.md)
 
 If you’re using **v0.1.0-rc.3**, keep the [RC.3 installation and rollback instructions](docs/rc-3.md) with your saved configuration.
 
