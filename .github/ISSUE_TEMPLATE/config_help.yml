@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        TI is prerelease software available through Marketplace or manual installation. Describe the guide and exact version you are using.
+        Tell us which TI version you installed, which installation method you used and which guide you followed.
         Share only a minimal redacted configuration, never tokens, private URLs or a full HA backup.
   - type: textarea
     id: goal

@@ -4,18 +4,11 @@
 
 **Temperature, control and context in one Home Assistant card.**
 
-[![Release candidate 0.1.0-rc.3](https://img.shields.io/badge/Release%20candidate-0.1.0--rc.3-d9a36c)](docs/rc-3.md)
-[![Project Site](https://img.shields.io/badge/Project%20Site-GitHub%20Pages-5aa8d6)](https://senyo888.github.io/thermal-intelligence/)
-[![Marketplace installation guide](https://img.shields.io/badge/Marketplace-Installation%20guide-41BDF5?logo=home-assistant&logoColor=white)](docs/marketplace.md)
-[![1.0.0 setup guide](https://img.shields.io/badge/1.0.0-Setup%20guide-377980)](docs/wiki/Configuration.md)
-[![Licence GPL-3.0-only](https://img.shields.io/badge/License-GPL--3.0--only-blue)](LICENSE)
-[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/senyo888)
-
-[Website](https://senyo888.github.io/thermal-intelligence/) · [Wiki](https://github.com/senyo888/thermal-intelligence/wiki) · [Marketplace installation](docs/marketplace.md) · [Configuration](docs/card-configuration.md) · [Compatibility](docs/compatibility.md)
+[![Introducing Thermal Intelligence 1.0.0](https://img.shields.io/badge/1.0.0-Introduction-725691)](docs/v1.0.0.md) [![Marketplace installation guide](https://img.shields.io/badge/Marketplace-216488?logo=home-assistant&logoColor=white)](docs/marketplace.md) [![Project site](https://img.shields.io/badge/Project%20site-377980)](https://senyo888.github.io/thermal-intelligence/) [![Thermal Intelligence Wiki guides](https://img.shields.io/badge/Wiki-Guides-536b87)](docs/wiki/Home.md) [![Configuration and YAML reference](https://img.shields.io/badge/Configuration-YAML-52677a)](docs/card-configuration.md) [![Compatibility and tested versions](https://img.shields.io/badge/Compatibility-Tested%20versions-537458)](docs/compatibility.md) [![Software licence GPL-3.0-only](https://img.shields.io/badge/Software-GPL--3.0--only-415a79)](LICENSE)
 
 Thermal Intelligence puts your thermostat’s current temperature, target and reported activity on one Home Assistant card. Add the readings that help you understand a room. A closed radiator valve and a rising room temperature, for example, can both be true. Tap the status chip for the reported activity, or open a top-row icon to inspect its source.
 
-**Which version are you using?** This branch documents **1.0.0**, prepared for release. **RC.3** is the published prerelease and has its own [installation guide](docs/rc-3.md). The final card passed a [Marketplace upgrade and dashboard check](docs/v1.0.0-package.md#validation-boundaries) on Home Assistant 2026.11.2. [Read Senyo’s introduction](docs/v1.0.0.md) to see the Plum card, arrange the top row and explore the optional VT temperature response.
+**Start with your version.** This guide covers **Thermal Intelligence Thermostat** in 1.0.0. The RC.3 prerelease has **· RC** in the picker and its own [setup guide](https://github.com/senyo888/thermal-intelligence/blob/4caf6f84868079a4d8f25c5d5731654f015bc260/docs/card-configuration.md#visual-configuration). The [1.0.0 package notes](docs/v1.0.0-package.md#validation-boundaries) record the Marketplace upgrade and dashboard checks on Home Assistant 2026.11.2.
 
 ## Set up your first room
 
@@ -89,11 +82,9 @@ TI sends the actions you choose through Home Assistant’s services. Your thermo
 
 ## Installation
 
-For Home Assistant 2026.11 and later, use the [Marketplace installation guide](docs/marketplace.md) and select **v0.1.0-rc.3** explicitly. The [RC.3 guide](docs/rc-3.md) records the exact release and rollback requirements. Keep existing TI resources separate and load one trial module at a time.
+On Home Assistant 2026.11 or later, add Thermal Intelligence as a **Dashboard** repository in Marketplace. On an older installation that uses HACS, add it there. Choose the version you want by its tag. For this guide, look for **v1.0.0** and the picker **Thermal Intelligence Thermostat**. [Marketplace steps](docs/marketplace.md) · [HACS steps](docs/hacs.md) · [Available releases](https://github.com/senyo888/thermal-intelligence/releases)
 
-On older Home Assistant installations, see the [HACS guide](docs/hacs.md). TI is a custom Dashboard repository, not a backend integration. Installer acceptance and catalogue inclusion remain separate from package validation.
-
-[RC.3 validation](docs/rc-3.md#validation-limits) covers synthetic tests and passive Lab checks of the released module. Named-release Marketplace acceptance, physical-client testing and a formal soak remain incomplete. [Earlier RC.2 results](docs/rc2-validation.md), including its heating trial and recovered external controller incident, remain specific to RC.2. RC.3 is not a stable release.
+If you’re using **v0.1.0-rc.3**, keep the [RC.3 installation and rollback instructions](docs/rc-3.md) with your saved configuration.
 
 ## Acknowledgements
 
@@ -118,9 +109,9 @@ Report vulnerabilities through [private vulnerability reporting](https://github.
 
 ## Support the project
 
-Star the repository, share useful feedback, or [sponsor development](https://github.com/sponsors/senyo888).
+If TI has earned a spot on your dashboard, give it a star. A screenshot or a note about what worked in your room helps me make the next version better. You can also sponsor development.
 
-[![Star Thermal Intelligence](https://img.shields.io/badge/Star%20%2F%20Support-Thermal%20Intelligence-2ea44f?logo=github&logoColor=white)](https://github.com/senyo888/thermal-intelligence)
+[![Star Thermal Intelligence on GitHub](https://img.shields.io/badge/Star-2e724e?logo=github&logoColor=white)](https://github.com/senyo888/thermal-intelligence) [![Share feedback on GitHub](https://img.shields.io/badge/Feedback-396b92)](https://github.com/senyo888/thermal-intelligence/issues/new/choose) [![Sponsor Senyo on GitHub](https://img.shields.io/badge/Sponsor-934e78?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/senyo888)
 
 Software is licensed under [GPL-3.0-only](LICENSE). Documentation and artwork have separate [reuse terms](docs/licensing-options.md).
 
