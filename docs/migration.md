@@ -6,7 +6,7 @@ RC.3 retains existing **schema-1** and **schema-2** configurations. Explicit enr
 
 ## Unreleased RC.4 candidate
 
-[RC.4](rc-4.md) carries the beta.8 usability changes and the reviewed request-tooltip correction. It retains the trial card/editor names and schema-1/schema-2 support. It is prepared on the beta branch for develop reconciliation. An immutable-commit Marketplace trial has passed; no named RC.4 release or automatic installer update is available.
+[RC.4](rc-4.md) carries the beta.8 usability changes and the reviewed request-tooltip correction. It retains the trial card/editor names and schema-1/schema-2 support. RC.4 was tested by commit during development of 1.0.0. An immutable-commit Marketplace trial has passed; no named RC.4 release or automatic installer update is available.
 
 The `temperature` kind and optional `unit_attribute` are supported by beta.8 and RC.4, but rejected by RC.3 and earlier. Before adopting them, retain the older module and compatible saved configuration together. A return to the older module requires restoring that configuration without discarding unrelated dashboard edits. Advanced export remains available and does not save the dashboard.
 
@@ -18,13 +18,13 @@ RC.4 has its own synthetic, package, bounded manual Lab and [immutable-commit St
 
 ## Unreleased beta.8 candidate
 
-Existing schema-1 and schema-2 configurations remain supported. The new `temperature` telemetry kind and its optional `unit_attribute` require the beta.8 candidate module; RC.3 and earlier reject that kind. Retain the earlier configuration and module together before adding temperature rows. Returning to the older module requires restoring compatible configuration too; preserve unrelated newer dashboard edits deliberately.
+Existing schema-1 and schema-2 configurations remain supported. The new `temperature` telemetry kind and its optional `unit_attribute` first appeared in beta.8 and are included in 1.0.0. RC.3 and earlier reject that kind. Retain the earlier configuration and module together before adding temperature rows. Returning to the older module requires restoring compatible configuration too; preserve unrelated newer dashboard edits deliberately.
 
 Humidity editor sliders, search and source suggestions do not change schema or enroll controls. Runtime advanced export remains available and does not save the dashboard. Synthetic checks and bounded manual Lab checks cover the identified beta.8 modules; see [coverage and exact module limits](compatibility.md#unreleased-beta8-usability-candidate). Those results do not establish acceptance of different bytes, installer lifecycle, physical response or a formal soak. Beta.8 is a development-channel identity, not a higher semantic version than RC.3 and not an automatic installer update from it.
 
 ## Keep existing TI alongside the trial card
 
-The prepared stable module supports the earlier registrations `custom:thermal-intelligence-beta-card` and `thermal-intelligence-beta-card-editor`. Existing schema-1 and schema-2 card configurations therefore keep their type; no rename to the legacy `custom:thermal-intelligence-card` is required. A stable build uses **Thermal Intelligence Thermostat** in the picker, while beta and RC builds retain their channel suffix. The [1.0.0 package notes](v1.0.0-package.md#validation-boundaries) record the verified Marketplace upgrade and the earlier rollback trial.
+The 1.0.0 module supports the earlier registrations `custom:thermal-intelligence-beta-card` and `thermal-intelligence-beta-card-editor`. Existing schema-1 and schema-2 card configurations therefore keep their type; no rename to the legacy `custom:thermal-intelligence-card` is required. A stable build uses **Thermal Intelligence Thermostat** in the picker, while beta and RC builds retain their channel suffix. The [1.0.0 package notes](v1.0.0-package.md#validation-boundaries) record the verified Marketplace upgrade and the earlier rollback trial.
 
 Keep existing `custom:thermal-intelligence-card` instances and their resources in place. For a new 1.0.0 card choose **Thermal Intelligence Thermostat**. Use **Thermal Intelligence Thermostat · RC** with RC.3. The wider system keeps responsibility for schedules, holds, ownership, cutoff and recovery controls. Preserve its backend-dependent cards and their types.
 

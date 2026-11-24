@@ -19,13 +19,13 @@
 <a class="skip" href="#main">Skip to content</a>
 <header class="navigation">
   <a class="wordmark" href="#">Thermal Intelligence<span>Thermostat for Home Assistant</span></a>
-  <nav aria-label="Main"><a href="#interface">The interface</a><a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/wiki/Home.md">Wiki</a><a href="https://github.com/senyo888/thermal-intelligence">GitHub</a><a class="nav-action" href="#install">Install <span aria-hidden="true">↗</span></a></nav>
+  <nav aria-label="Main"><a href="#interface">The interface</a><a href="https://github.com/senyo888/thermal-intelligence/wiki/Home">Wiki</a><a href="https://github.com/senyo888/thermal-intelligence">GitHub</a><a class="nav-action" href="#install">Install <span aria-hidden="true">↗</span></a></nav>
 </header>
 <main id="main">
 <section class="hero" aria-labelledby="intro">
   <img class="banner" src="assets/presentation/thermal-intelligence-v1-release-header.png" alt="Thermal Intelligence 1.0.0 with the TI house logo and Plum dial" fetchpriority="high">
   <div class="hero-copy">
-    <div class="badges" aria-label="Project status"><a href="https://github.com/senyo888/thermal-intelligence/releases"><img src="https://img.shields.io/badge/GitHub-Releases-725691" alt="Available GitHub releases" height="20"></a>
+    <div class="badges" aria-label="Project status"><a href="https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/Release-v1.0.0-725691" alt="Thermal Intelligence v1.0.0 release" height="20"></a>
 <a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md"><img src="https://img.shields.io/badge/Marketplace-Custom%20repository-41BDF5?logo=home-assistant&amp;logoColor=white" alt="Marketplace custom repository" height="20"></a>
 <a href="https://github.com/senyo888/thermal-intelligence/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-GPL--3.0--only-blue" alt="Licence GPL-3.0-only" height="20"></a>
 <a href="https://github.com/sponsors/senyo888"><img src="https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors&amp;logoColor=white" alt="Sponsor" height="20"></a></div>
@@ -43,7 +43,7 @@
 <figure><a href="assets/presentation/trv-closed-falling-example.png"><img src="assets/presentation/trv-closed-falling-example.png" alt="TI installation example with a closed valve and falling temperature" loading="lazy" decoding="async"></a><figcaption><strong>TRV closed · falling</strong></figcaption></figure>
 <figure><a href="assets/presentation/trv-above-target-rising-example.png"><img src="assets/presentation/trv-above-target-rising-example.png" alt="TI installation example above its target, with a rising slope ring" loading="lazy" decoding="async"></a><figcaption><strong>Above target · rising</strong></figcaption></figure>
 </div>
-  <p class="image-note">Selected installation examples. Explore the <a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/wiki/State-gallery.md">state gallery</a> and <a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/image-notes.md">image context</a>.</p>
+  <p class="image-note">Selected installation examples. Explore the <a href="https://github.com/senyo888/thermal-intelligence/wiki/State-gallery">state gallery</a> and <a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/image-notes.md">image context</a>.</p>
 </section>
 <section class="reading" aria-labelledby="meaning">
   <div class="section-heading"><p class="eyebrow">Understand the response</p><h2 id="meaning">A clearer picture of your room.</h2></div>
@@ -58,7 +58,7 @@
 <figure><a href="assets/presentation/trv-closed-rising-example.png"><img src="assets/presentation/trv-closed-rising-example.png" alt="Installation example with a closed valve and rising temperature" loading="lazy" decoding="async"></a><figcaption><strong>TRV closed · still rising</strong></figcaption></figure>
 </div>
   <p class="image-note">TRV means thermostatic radiator valve. These installation examples show how valve position and temperature trend can vary independently.</p>
-  <p class="guide-link"><a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/wiki/Reading-the-card.md">Explore the colours and observations →</a></p>
+  <p class="guide-link"><a href="https://github.com/senyo888/thermal-intelligence/wiki/Reading-the-card">Explore the colours and observations →</a></p>
 </section>
 <section aria-labelledby="personal">
   <div class="section-heading"><h2 id="personal">Set up your first room in 1.0.0</h2><p>In the 1.0.0 module, choose <strong>Edit dashboard → Add card → Thermal Intelligence Thermostat</strong>. Select the room’s climate entity, leave Provider on Automatic and save. The dial shows that thermostat’s current temperature and target in your Home Assistant unit, °F or °C.</p></div>
@@ -69,7 +69,7 @@
   <details><summary>Read the Plum card</summary><div class="detail-body"><p>The room is at 19.1°C with a 10°C target. The thermostat reports Idle, and the trend shows the room is still warming at 0.06°C per hour.</p><a href="assets/presentation/thermal-intelligence-v1-plum.png"><img src="assets/presentation/thermal-intelligence-v1-plum.png" width="320" alt="Plum thermostat with a 19.1°C reading, 10°C target, Idle status and rising trend" loading="lazy"></a></div></details>
   <details><summary>Arrange the top row and save it</summary><div class="detail-body"><p>In the dashboard editor, open <strong>Readings and icons → Top row icon settings</strong>. Tick a reading and drag its handle or use the arrows within its group. Version 1.0.0 shows Presets and control source first, followed by Primary icons and then VT readings. Choose <strong>Save</strong> to keep the layout for this room.</p><p>From the live card, <strong>Controls &amp; features → Top row icon settings</strong> opens a draft. Use <strong>Copy configuration</strong>, paste it into the same card’s dashboard code editor and save.</p><p><a href="assets/presentation/v1-top-row-settings.png"><img src="assets/presentation/v1-top-row-settings.png" width="360" loading="lazy" alt="Top row icon settings showing Humidity, Valve and Copy configuration"></a></p></div></details>
   <details><summary>Set up the temperature response arc</summary><div class="detail-body"><p>A signed temperature rate drives the fine ring. For the optional orange VT arc, open <strong>Temperature response</strong>, select the room sensor VT uses and map a matching trend. Add either the underlying thermostat for target confirmation or a supported TRV output controller and valve-position sensor. Tap the status chip to see which observations are present.</p><p><a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/card-configuration.md#temperature-response-arc">Response sources, units and colours →</a></p><p><a href="assets/presentation/v1-temperature-response.png"><img src="assets/presentation/v1-temperature-response.png" width="460" loading="lazy" alt="Temperature response example pairing the room sensor with its underlying thermostat"></a></p></div></details>
-  <p class="guide-link"><a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/wiki/Configuration.md">Walk through each setting →</a> · <a href="https://github.com/senyo888/thermal-intelligence/blob/346b11d5ec37af584571eaa482178d67cd6bc41a/docs/v1.0.0.md">Read Senyo’s introduction to 1.0.0</a> · <a href="https://github.com/senyo888/thermal-intelligence/blob/1240526208b0fb0b914f57e29c539931768e031b/docs/v1.0.0-package.md#validation-boundaries">1.0.0 installation and dashboard checks</a></p>
+  <p class="guide-link"><a href="https://github.com/senyo888/thermal-intelligence/wiki/Configuration">Walk through each setting →</a> · <a href="https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0">Read Senyo’s introduction to 1.0.0</a> · <a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/v1.0.0-package.md#validation-boundaries">1.0.0 installation and dashboard checks</a></p>
   <details><summary>Explore the detail panels</summary><div class="detail-body">
     <div class="gallery four details-gallery">
 <figure><a href="assets/presentation/window-detection-example.png"><img src="assets/presentation/window-detection-example.png" alt="Installation example showing window observations" loading="lazy" decoding="async"></a><figcaption><strong>Window details</strong></figcaption></figure>
@@ -117,17 +117,17 @@
 </section>
 <section id="install" class="candidate" aria-labelledby="candidate-title">
   <h2 id="candidate-title">Install Thermal Intelligence</h2>
-  <p class="lead">Choose the Dashboard card for your Home Assistant version. For the first stable release, look for <strong>v1.0.0</strong> in the version list. Its picker reads <strong>Thermal Intelligence Thermostat</strong>.</p>
+  <p class="lead">Install <strong>v1.0.0</strong> as a custom Dashboard repository. After installation, open a fresh dashboard tab and choose <strong>Thermal Intelligence Thermostat</strong>.</p>
   <div class="split-copy">
-    <div><h3>Home Assistant 2026.11 and later</h3><p>In Marketplace, choose <strong>Add from link</strong> and add the TI repository. Select your version, finish the installation and open a fresh dashboard tab.</p><a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md">Marketplace installation guide →</a></div>
-    <div><h3>Earlier Home Assistant versions</h3><p>If your system uses HACS, add TI as a custom Dashboard repository and choose the matching release.</p><a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/hacs.md">HACS installation guide →</a></div>
+    <div><h3>Home Assistant 2026.11 and later</h3><p>In Marketplace, choose <strong>Add from link</strong> and add the TI repository. Select <strong>v1.0.0</strong>, finish the installation and open a fresh dashboard tab.</p><a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md">Marketplace installation guide →</a></div>
+    <div><h3>Earlier Home Assistant versions</h3><p>If your system uses HACS, add TI as a custom Dashboard repository and select <strong>v1.0.0</strong>.</p><a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/hacs.md">HACS installation guide →</a></div>
   </div>
-  <p class="guide-link"><a href="https://github.com/senyo888/thermal-intelligence/releases">Available releases</a> · <a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md">Using RC.3?</a> · <a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/compatibility.md">Tested versions and coverage</a></p>
+  <p class="guide-link"><a href="https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0">Download v1.0.0</a> · <a href="https://github.com/hacs/default/pull/14872">Default catalogue listing under review</a> · <a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md">Using RC.3?</a> · <a href="https://github.com/senyo888/thermal-intelligence/blob/main/docs/compatibility.md">Tested versions and coverage</a></p>
 </section>
 <section class="project" aria-labelledby="project-title">
   <div class="section-heading"><p class="eyebrow">Building together</p><h2 id="project-title">Shape what comes next.</h2><p>The standalone thermostat is the first component. House Climate, Effective Mode, Climate Control Centre and a portable backend are planned as separate steps.</p></div>
   <div class="split-copy">
-    <div><h3>Contributions</h3><p>Share reproducible feedback, improve a guide or help with development. Include version details and a redacted configuration when reporting an issue.</p><a href="https://github.com/senyo888/thermal-intelligence/blob/develop/CONTRIBUTING.md">Contributing guide →</a></div>
+    <div><h3>Contributions</h3><p>Share reproducible feedback, improve a guide or help with development. Include version details and a redacted configuration when reporting an issue.</p><a href="https://github.com/senyo888/thermal-intelligence/blob/main/CONTRIBUTING.md">Contributing guide →</a></div>
     <div><h3>Security</h3><p>Use private vulnerability reporting for security concerns. The security guide explains the useful details to include and how to protect sensitive information.</p><a href="https://github.com/senyo888/thermal-intelligence/blob/develop/SECURITY.md">Security guide →</a></div>
   </div>
 </section>

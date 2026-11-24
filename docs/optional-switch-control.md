@@ -1,6 +1,6 @@
 # Optional switch control
 
-From beta.6, the card offers one optional switch beside the thermostat's Mode and Fan choices. It uses an existing Home Assistant switch and needs no TI controller, integration or add-on. It is not included in released RC.1 or beta.5. Beta.7 corrected a false registry mismatch for device-less entities. RC.3 retains this feature and its eligibility rules.
+In 1.0.0, a standard thermostat can show one enrolled Home Assistant switch beside Mode and Fan. The card asks for confirmation before sending On or Off. The [migration guide](migration.md) records which earlier versions support this setting.
 
 In the 1.0.0 editor, **Search switches** filters friendly names and exact entity IDs. The selected target stays visible even when it does not match the query or is currently missing. Up to 100 matching options are shown; refine the query for larger inventories. Arrow Down moves from search to the selector. Searching does not select, enroll or send a command.
 

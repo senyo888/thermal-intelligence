@@ -1,6 +1,6 @@
 # Release candidate 0.1.0-rc.2
 
-This is the historical RC.2 release record. For the current prerelease and installation instructions, use [RC.3](rc-3.md).
+This is the historical RC.2 release record. For the stable card, use the [1.0.0 installation guide](marketplace.md#install-100).
 
 RC.2 is a published prerelease of the standalone thermostat card. It brings the beta.5–beta.7 changes: explicitly disabled VT locking no longer blocks ordinary controls, and eligible standard thermostats can expose one deliberately enrolled switch with confirmation before On or Off. It also retires completed request notices after context loss or a contrary provider report. No TI controller is required.
 
