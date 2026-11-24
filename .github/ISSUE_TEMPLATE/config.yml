@@ -5,4 +5,4 @@ contact_links:
     about: Report vulnerabilities privately. Do not include secrets in public issues.
   - name: Project status and documentation
     url: https://github.com/senyo888/thermal-intelligence#readme
-    about: Foundation stage; no installable card or supported release yet.
+    about: Install the thermostat card, set up a room and find the guide for your version.

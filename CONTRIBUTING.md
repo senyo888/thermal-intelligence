@@ -1,6 +1,6 @@
 # Contributing to Thermal Intelligence
 
-Changes start on `senyo888-patch-1`, then enter `develop` by pull request for release-candidate preparation. A second pull request promotes the validated candidate from `develop` to `main`. Once it merges, tag the approved commit on `main` and publish the stable release from that commit. `main` carries public documentation, the website and the separately promoted frozen distribution snapshot. RC.3 is published from `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`; the [RC.4 candidate](docs/rc-4.md) consolidates beta.8 usability work on `senyo888-patch-1` pending future develop reconciliation. There is no stable release yet. Senyo retains merges; local preparation does not authorize publication or installation.
+Start changes on `senyo888-patch-1` and open a pull request to `develop`. After validation, promote `develop` to `main` by pull request. Senyo approves merges, release tags and publication. The [first stable release](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) was tagged on `main`. Current documentation and the website can move forward independently of those release assets.
 
 Read [Architecture](ARCHITECTURE.md) and [AGENTS.md](AGENTS.md). Keep changes focused and describe the problem, resulting behaviour and checks actually run. Update configuration, compatibility, migration and release notes when affected.
 

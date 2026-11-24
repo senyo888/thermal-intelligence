@@ -2,7 +2,9 @@
 
 <a name="100--unreleased"></a>
 
-## 1.0.0
+<a name="100"></a>
+
+## 1.0.0 — 24 November 2026
 
 - Selecting a different thermostat clears the previous room’s request warning. An outstanding call still has to finish before the controls become available.
 - Choose a thermostat, add independent room sensors or expose VT readings, and arrange the top row separately on each card.
@@ -13,7 +15,7 @@
 - The dashboard editor shows a validation message for malformed icon or VT reading lists. Correcting the YAML restores the preview.
 - Adding an outside reading now preserves malformed telemetry or feature mappings and shows the validation error so you can correct the YAML and retry.
 
-[Senyo’s introduction](docs/v1.0.0.md) · [Package details](docs/v1.0.0-package.md) · [First-room walkthrough](docs/wiki/Configuration.md) · [Tested coverage](docs/compatibility.md#100-package). [Available releases](https://github.com/senyo888/thermal-intelligence/releases).
+[Senyo’s introduction](docs/v1.0.0.md) · [Package details](docs/v1.0.0-package.md) · [First-room walkthrough](docs/wiki/Configuration.md) · [Tested coverage](docs/compatibility.md#100-package). [Download v1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0).
 
 ## 0.1.0-rc.4 — Unreleased
 
@@ -28,7 +30,7 @@
 - Pair Schedule ownership with an explicitly mapped last-confirmed Frost, Eco, Comfort or Boost mode, including when the thermostat preset is `none`. Preserve unavailable, pending and storage-error evidence without borrowing another preset.
 - Keep invalid source-guard values editable without accepting them, and refresh expiring combined control icons during a dial draft without interrupting the gesture.
 
-Prepared on `senyo888-patch-1` for reconciliation into `develop`; RC.3 remains the published prerelease. [RC.4 package checks and limits](docs/rc-4.md) distinguish each Lab-tested module from the later immutable-commit Marketplace installation and bounded Stable Schedule/Boost checks. Temperature and guarded control-source mappings require compatible module/configuration rollback together.
+RC.4 was tested by commit and never tagged. RC.3 remained the published prerelease during these trials. [RC.4 package checks and limits](docs/rc-4.md) distinguish each Lab-tested module from the later immutable-commit Marketplace installation and bounded Stable Schedule/Boost checks. Temperature and guarded control-source mappings require compatible module/configuration rollback together.
 
 ## 0.1.0-beta.8 — Unreleased
 
@@ -57,7 +59,7 @@ Existing schemas, control guards, per-card settings and unknown configuration fi
 
 Configuration schemas and trial registrations are unchanged. See the [release record](docs/rc-3.md); the corrected module passed bounded passive manual Lab acceptance on 13 November. Named-release Marketplace acceptance remains separate; an earlier build was rolled back after observation lost freshness.
 
-There is no stable release yet. Future release candidates are prepared through `develop`; beta work uses `senyo888-patch-1`.
+RC.3 was the published prerelease at the time. Its tag preserves the original assets.
 
 ## 0.1.0-rc.2 — 9 November 2026
 
@@ -77,7 +79,7 @@ Published prerelease; [subsequent validation through 12 November](docs/rc2-valid
 - Show **Thermal Intelligence Thermostat · RC** in the card picker. Keep the existing prerelease element names so saved trial cards continue working alongside legacy TI.
 - Add explicit beta/RC package channels and reproducibility checks for branch and pull-request builds.
 - Configure weekly dependency updates for npm tooling and GitHub Actions, with provider compatibility reviewed separately.
-- HACS installation and a stable release remain unavailable. See the [RC.1 record](docs/rc-1.md) for validation limits.
+- At the time of RC.1, HACS installation had not been verified and no stable release was available. See the [RC.1 record](docs/rc-1.md) for validation limits.
 
 ## 0.1.0-beta.7 — 6 November 2026 (untagged beta)
 

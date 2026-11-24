@@ -4,7 +4,7 @@ Thermal Intelligence is a **Dashboard** card for the thermostat you already use.
 
 ## Install 1.0.0
 
-Add this repository as **Dashboard**, choose **v1.0.0** when the tag is available and open a fresh dashboard tab after installation. The picker for that version is **Thermal Intelligence Thermostat**. The [releases page](https://github.com/senyo888/thermal-intelligence/releases) lists the published versions. If you’re using **v0.1.0-rc.3**, its picker is **Thermal Intelligence Thermostat · RC**. Use the [RC.3 guide](rc-3.md) for that version.
+Choose **Settings → Marketplace → Add from link**, enter `https://github.com/senyo888/thermal-intelligence` and select **Dashboard** if prompted. Install [v1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0), open a fresh dashboard tab and select **Thermal Intelligence Thermostat** in the card picker. Use this direct route while the [default catalogue listing](https://github.com/hacs/default/pull/14872) is under review.
 
 In Home Assistant 2026.11.1, TI uses the Marketplace [Dashboard category icon](https://github.com/home-assistant/frontend/blob/e32bc0696ebefde323f5b791269ad0c57f3f99d9/src/panels/marketplace/tools/repository-icon.ts); custom listing images are supported for integrations. TI's repository description uses its README artwork. [Relative image links](https://github.com/home-assistant/frontend/blob/e32bc0696ebefde323f5b791269ad0c57f3f99d9/src/panels/marketplace/tools/markdown.ts) resolve against the installed version, available version or default branch, in that order. An installed version retains its versioned README and images after later documentation changes on `main`. The RC.3 tag preserves its pre-publication README; use the [current installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md) and [RC.3 release notes](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.3) for the intended version and final validation record.
 
@@ -30,7 +30,7 @@ These steps follow the [official Marketplace instructions](https://www.home-assi
 
 ## Verify the installation
 
-Reload the dashboard in a new browser session and check the card version. For a published TI release, Marketplace downloads the attached card and licence. TI prepares stable releases from `main`. A release tag identifies the exact download even as that branch moves on. [How Marketplace selects versions](https://contributors.home-assistant.io/marketplace/how-it-works/) · [1.0.0 package verification](v1.0.0-package.md#validation-boundaries)
+Reload the dashboard in a new browser session and check the card version. For v1.0.0, Marketplace downloads the attached card, GPL licence and release manifest. TI prepares stable releases from `main`. A release tag identifies the exact download even as that branch moves on. [How Marketplace selects versions](https://contributors.home-assistant.io/marketplace/how-it-works/) · [1.0.0 package verification](v1.0.0-package.md#validation-boundaries)
 
 Record the selected version, installer result, installed file list and generated resource URL. Verify the served `thermal-intelligence.js` against the exact release manifest’s size and SHA-256. Identical bytes on another branch do not prove that the intended named version was selected.
 
@@ -52,4 +52,4 @@ Home Assistant recommends restoring a backup after a failed update instead of us
 
 Home Assistant 2026.11 takes over HACS repositories and update entities through Marketplace. Old `/hacsfiles/` resource paths remain supported; do not rename working URLs merely to match the new product name. Verify migration on the actual installation and do not reinstall HACS on a Marketplace system. See [how Marketplace handles HACS](https://contributors.home-assistant.io/marketplace/how-it-works/).
 
-The repository still uses `hacs.json` and the Dashboard `dist/` layout. That shared packaging contract does not establish a successful TI installation. [Distribution](distribution.md) separates package checks, the historical RC.1 validator result, installer acceptance and catalogue inclusion.
+The repository uses `hacs.json` and the Dashboard `dist/` layout. On Home Assistant 2026.11.2, a fresh Marketplace installation selected the public v1.0.0 tag and served all three files with matching checksums. [Package verification](v1.0.0-package.md#validation-boundaries) · [Distribution and catalogue status](distribution.md)

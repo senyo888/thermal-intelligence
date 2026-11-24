@@ -17,7 +17,7 @@ body:
     id: setup
     attributes:
       label: Versions and setup
-      description: TI version or commit, HA/provider versions, Marketplace (formerly HACS) or manual installation, resource loading and browser/Companion. Mark anything not applicable.
+      description: TI version or commit, HA/provider versions, Marketplace, older HACS or manual installation, resource loading and browser/Companion. Mark anything not applicable.
     validations:
       required: true
   - type: textarea
