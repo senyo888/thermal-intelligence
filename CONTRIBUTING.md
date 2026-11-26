@@ -29,7 +29,9 @@ Senyo reviews project scope and merges. Code contributions must be compatible wi
 
 ## Website and Wiki
 
-The static website lives in `site/`; build it with `python3 scripts/build_site.py` from a checkout without an existing `_site/` directory. GitHub Pages publishes only that selected output on `main`. Wiki page sources live in `docs/wiki/` and are published to the separate GitHub Wiki repository. Keep their version, installation, compatibility and image notes aligned with the repository guides.
+The static website lives in `site/`. Use Python 3.11 or newer in a virtual environment. Install the website dependency with `python -m pip install --require-hashes -r site/requirements.txt`, then run `python scripts/build_site.py` from a checkout without an existing `_site/` directory. GitHub Pages publishes the selected output on `main`.
+
+Edit the [Marketplace installation guide](docs/wiki/Installing-with-Marketplace.md) or the [first-room setup guide](docs/wiki/Configuration.md) in `docs/wiki/`. The website builds both guides from those files. The hosted GitHub Wiki has its own publication step.
 
 ## Dependency updates
 
