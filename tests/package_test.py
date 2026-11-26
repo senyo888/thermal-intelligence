@@ -175,6 +175,22 @@ class PackageTests(unittest.TestCase):
                         builder("HEAD", output)
                     self.assertFalse(output.exists())
 
+    def test_patch_beta_keeps_stable_card_and_editor_on_beta_branch(self):
+        version = "1.0.1-beta.1"
+        Path("package.json").write_text(json.dumps({"version": version}))
+        bundle = Path("dist/thermal-intelligence.js")
+        legacy_only = bundle.read_text().replace("0.1.0-beta.1", version)
+        bundle.write_text(legacy_only)
+        self.commit()
+        with self.assertRaises(ValueError):
+            module.package("HEAD", "legacy-only")
+        bundle.write_text(legacy_only + " thermal-intelligence-thermostat thermal-intelligence-thermostat-editor")
+        self.commit()
+        manifest = module.package("HEAD", "patch-beta")
+        self.assertEqual((manifest["channel"], manifest["delivery_branch"]), ("beta", "senyo888-patch-1"))
+        self.assertEqual(manifest["card_type"], "custom:thermal-intelligence-thermostat")
+        self.assertEqual(manifest["editor_tag"], "thermal-intelligence-thermostat-editor")
+
     def test_release_route_rejects_prereleases(self):
         self.marketplace_files()
         for builder in [package_release.package, package_release.package_marketplace]:

@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.1 — Unreleased
+## 1.0.1-beta.1
 
 - A soft, steady glow highlights the confirmed control source in the top row. The smaller preset badge keeps its own colour and shape.
 - The installation guides now start with a catalogue search for **Thermal Intelligence** in Marketplace or HACS.
