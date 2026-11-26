@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1-rc.1
+
+The first release candidate includes the changes tested in Beta 1. The card picker displays **Thermal Intelligence Thermostat · RC**.
+
 ## 1.0.1-beta.1
 
 - A soft, steady glow highlights the confirmed control source in the top row. The smaller preset badge keeps its own colour and shape.
