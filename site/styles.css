@@ -503,3 +503,21 @@ footer p {
   .source-grid, .platform-grid, .mapping-grid { grid-template-columns: 1fr; }
   .stage-link { padding: 0 12px; }
 }
+
+.guide {
+  max-width: 54rem;
+  padding-top: clamp(2rem, 5vw, 4rem);
+  padding-bottom: 4rem;
+  overflow-wrap: anywhere;
+}
+.guide h1 { font-size: clamp(2.4rem, 6vw, 4rem); }
+.guide h2 { margin-top: 2.5rem; font-size: clamp(1.55rem, 4vw, 2.2rem); }
+.guide li { margin-bottom: .65rem; }
+.guide ol, .guide ul { padding-left: 1.6rem; }
+.guide pre { padding: 1rem; overflow-x: auto; border-radius: 8px; background: #142338; }
+.guide table { width: 100%; margin: 1.5rem 0; border-collapse: collapse; }
+.guide th, .guide td { padding: .65rem; text-align: left; vertical-align: top; border-bottom: 1px solid #344252; }
+.guide th { background: #142338; }
+.guide details { margin-bottom: 1.5rem; padding: 0 1rem; }
+.guide summary { padding-left: 0; padding-right: 0; }
+.navigation nav a[aria-current="page"] { color: #fff; text-decoration: underline; }
