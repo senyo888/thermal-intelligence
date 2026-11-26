@@ -4,7 +4,7 @@
 
 ## 1.0.0 package
 
-A clean Home Assistant 2026.11.2 Marketplace install selected the public v1.0.0 tag and served the card, GPL licence and manifest byte for byte. Separately, an existing installation upgraded to the rebuilt 1.0.0 card through Marketplace. Three existing thermostats displayed the temperatures Home Assistant reported, including after a fresh browser reload. The top-row draft and humidity editor checks also passed. [Final installation and display checks](v1.0.0-package.md#validation-boundaries).
+The [Dashboard catalogue entry](https://github.com/hacs/default/pull/14872) was accepted on 26 November 2026. A clean installation through **Marketplace → Add from link** on Home Assistant 2026.11.2 selected the public v1.0.0 tag and served the card, GPL licence and manifest byte for byte. Separately, an existing installation upgraded to the rebuilt 1.0.0 card through Marketplace. Three existing thermostats displayed the temperatures Home Assistant reported, including after a fresh browser reload. The top-row draft and humidity editor checks also passed. [Final installation and display checks](v1.0.0-package.md#validation-boundaries).
 
 The table records the previous 265,844-byte candidate, verified at SHA-256 `2f838e7ed3d59d4dc87f7e156872b2b820ca8cc19fa24410d66b6759190cdeba`. Use the [1.0.0 package and upgrade notes](v1.0.0-package.md) for the matching picker and resource.
 
@@ -108,7 +108,7 @@ The following table and results describe their original builds and observation p
 | VT lock code/error paths | Synthetic tests only; see [provider logging limitation](lock-control.md#code-handling-and-provider-limits) |
 | VT response arc | Synthetic positive, restricted, mismatching, stale and expired evidence; real HA checks cover unmapped configurations |
 | Phone, tablet and desktop widths | Responsive Chromium fixtures, keyboard and reduced-motion checks; physical devices and Companion apps remain unverified |
-| HACS | Installation, updates and catalogue inclusion are unverified |
+| HACS | Installation, updates and catalogue inclusion were unverified for this historical baseline |
 | Home Assistant Marketplace | HA 2026.11.0b1 source reviewed; metadata and offline package checks prepared. Installation, migration, update and recovery remain unverified; see [Distribution](distribution.md) |
 | Other climate integrations | Provisional; require integration-specific checks |
 | Physical heating response | Unverified; activity and valve readings do not prove heat delivery |
@@ -158,7 +158,7 @@ The test establishes the real-HA registry, frontend and service path for this in
 
 ## RC.2 acceptance boundary
 
-Named-release Marketplace selection, passive installation checks, bounded controls and maintainer-observed heating now have [dated RC.2 evidence](rc2-validation.md). Earlier beta.7 inert-switch tests remain specific to beta.7. Default catalogue admission, wider physical-device support, a formal RC.2 soak and complete update/removal/recovery acceptance are not established.
+Named-release Marketplace selection, passive installation checks, bounded controls and maintainer-observed heating now have [dated RC.2 evidence](rc2-validation.md). Earlier beta.7 inert-switch tests remain specific to beta.7. At the time of RC.2, default catalogue admission, wider physical-device support, a formal RC.2 soak and complete update/removal/recovery acceptance were unverified.
 
 ## Unreleased RC.4 control-icon refinement
 

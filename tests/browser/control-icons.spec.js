@@ -78,6 +78,7 @@ test('provider preset indicator changes only with provider state and keeps House
   await combined.click();await expect(dialog(page)).toContainText('House preset');await expect(dialog(page)).toContainText('Eco');await expect(dialog(page)).toContainText('Schedule');await page.keyboard.press('Escape');
   await page.evaluate(()=>{fixture.hass.states['sensor.example_owner'].attributes.intent_ready=false;fixture.hass.states[fixture.config.entity].attributes.preset_mode='none';fixture.refresh();});
   await expect(combined).toHaveAccessibleName('Control source: Unknown');await expect(combined.locator('.preset-mark')).toHaveCount(0);
+  await expect(combined.locator('.header-glyph > ha-icon')).toHaveCSS('filter','none');
   expect(await page.evaluate(()=>fixture.calls)).toEqual([]);
 });
 test('manual hand requires observation and retires on contrary preset without revival',async({page},info)=>{
@@ -86,6 +87,7 @@ test('manual hand requires observation and retires on contrary preset without re
   await expect(hand).toHaveCount(0);await card(page).getByRole('button',{name:'Increase temperature',exact:true}).click();await expect(hand).toHaveCount(0);
   await page.evaluate(()=>fixture.pending[0].resolve());await expect(hand).toHaveCount(0);
   await page.evaluate(()=>fixture.apply(fixture.calls[0]));await expect(hand).toBeVisible();await expect(hand).toHaveAccessibleName(/^Last confirmed card action: Manual adjustment; Control source: Unknown/);
+  await expect(hand.locator('.header-glyph > ha-icon').first()).toHaveCSS('filter','none');
   await expect(hand.locator('.action-mark')).toHaveAttribute('data-fixture-icon-known','true');await hand.screenshot({path:info.outputPath('manual-last-action.png')});
   await page.evaluate(()=>{fixture.hass.states[fixture.config.entity].attributes.preset_mode='eco';fixture.refresh();});await expect(hand).toHaveCount(0);
   await page.evaluate(()=>{fixture.hass.states[fixture.config.entity].attributes.preset_mode='comfort';fixture.refresh();});await expect(hand).toHaveCount(0);
@@ -123,10 +125,16 @@ test('hybrid control slot follows explicit sources and its shared visibility set
   });
   const summary=card(page).locator('[data-telemetry-key="control:summary"]');
   await expect(summary).toHaveAccessibleName('Control source: House; House policy: Boost');await expect(summary.locator('.preset-mark')).toHaveAttribute('icon','mdi:fire');await expect(summary).toHaveText('');
+  const rear = summary.locator('.header-glyph > :first-child');
+  const preset = summary.locator('.preset-mark');
+  await expect(rear).toHaveCSS('filter', /drop-shadow/);
+  await expect(preset).toHaveCSS('filter', 'none');
   await summary.click();await dialog(page).getByRole('button',{name:'Preset temperatures',exact:true}).click();await expect(dialog(page)).toHaveAttribute('data-view','presets');await page.keyboard.press('Escape');
   for(const source of ['VT','Manual','Policy','Schedule']){
     await page.evaluate(source=>{fixture.hass.states['sensor.owner'].state=source;fixture.refresh();},source);
     await expect(summary).toHaveAccessibleName(`Control source: ${source}; Thermostat preset: Comfort`);await expect(summary.locator('.preset-mark')).toHaveAttribute('icon','mdi:sofa');
+    await expect(rear).toHaveCSS('filter', /drop-shadow/);
+    await expect(preset).toHaveCSS('filter', 'none');
     await summary.screenshot({path:info.outputPath(`hybrid-${source}.png`)});
   }
   await card(page).locator('[data-expand]').click();await card(page).getByRole('button',{name:'Top row icon settings',exact:true}).click();

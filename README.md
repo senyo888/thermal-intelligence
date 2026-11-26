@@ -82,7 +82,7 @@ TI sends the actions you choose through Home Assistant’s services. Your thermo
 
 ## Installation
 
-On Home Assistant 2026.11 or later, use **Settings → Marketplace → Add from link**. On older systems with HACS, add TI as a custom **Dashboard** repository. Select **v1.0.0**. The default catalogue listing is [under review](https://github.com/hacs/default/pull/14872). [Marketplace steps](docs/marketplace.md) · [HACS steps](docs/hacs.md)
+On Home Assistant 2026.11 or later, open **Settings → Marketplace** and search for **Thermal Intelligence**. On older systems, search for the same name in **HACS**. Open the Dashboard card by **senyo888** and install **v1.0.0**. [Marketplace steps](docs/marketplace.md) · [HACS steps](docs/hacs.md)
 
 If you’re using **v0.1.0-rc.3**, keep the [RC.3 installation and rollback instructions](docs/rc-3.md) with your saved configuration.
 

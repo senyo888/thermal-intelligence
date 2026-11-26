@@ -29,6 +29,7 @@ export function compactHeader(model) {
     ||row.preset&&row.headerEligible!==false
     ||row.key==='control:manual_adjustment'&&row.headerEligible);
   const summary={...primary,key:'control:summary',label:'Control source and preset',title,value:manual?'Manual adjustment (last action)':owner.value,topic:'entity',group:'control',activity:known||manual?'active':'unknown',lastAction:!!manual,
+    confirmedOwner:known && !manual,
     source:manual?manual.source:model.ownership?.source,
     secondary:preset?{icon:preset.icon,preset:owner.value==='House'?String(preset.value).toLowerCase():preset.schedulePreset||preset.preset}:null,
     detail:'The source, thermostat preset, House policy, last confirmed schedule mode and schedule activity are independent reported facts. A confirmed schedule mode records accepted intent, not a running period or Boost timer. Provider identity and matching temperatures do not establish ownership. Unknown means no confirmed control source is available.',
@@ -48,7 +49,9 @@ export function headerPresentation(item) {
   const tint=uncertain?'#8795a8':item.key==='control:provider'?'#8abfda':iconOnly
     ?item.activity==='active'?colour(item.colour,presetColour(preset)||presetColour(item.kind)||'#8abfda'):'#a9b8cb'
     :colour(item.colour,item.activity==='active'?'#8abfda':'#a9b8cb');
-  const glyph=item.monogram?`<b class="provider-monogram ${item.monogram==='P'?'policy-monogram':''}">${esc(item.monogram)}</b>`:`<ha-icon icon="${esc(item.icon||'mdi:information-outline')}"></ha-icon>`;
+  // Mark the rear symbol itself so the foreground preset keeps its own edge and colour.
+  const ownerMark = item.confirmedOwner ? ' data-confirmed-owner' : '';
+  const glyph=item.monogram?`<b class="provider-monogram ${item.monogram==='P'?'policy-monogram':''}"${ownerMark}>${esc(item.monogram)}</b>`:`<ha-icon${ownerMark} icon="${esc(item.icon||'mdi:information-outline')}"></ha-icon>`;
   const source=item.secondary?`<ha-icon class="preset-mark" style="color:${presetColour(item.secondary.preset)||'#8abfda'}" icon="${esc(item.secondary.icon)}"></ha-icon>`:item.badge==='House'?'<ha-icon class="source-mark" icon="mdi:home"></ha-icon>':'';
   const action=item.lastAction?'<ha-icon class="action-mark" icon="mdi:history"></ha-icon>':'';
   const issue=uncertain&&!['control:ownership','control:summary'].includes(item.key)?`<ha-icon class="state-mark" icon="${item.status==='unknown'?'mdi:help-circle-outline':'mdi:alert-circle-outline'}"></ha-icon>`:'';
@@ -59,6 +62,8 @@ export function headerPresentation(item) {
 export const headerGlyphStyles=`
 .header-glyph{position:relative;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex:none;color:var(--telemetry-colour,#a9b8cb)}
 .header-glyph>ha-icon{width:16px;height:16px;--mdc-icon-size:16px;color:inherit}
+.header-glyph>[data-confirmed-owner]{filter:drop-shadow(0 0 3px color-mix(in srgb,currentColor 65%,transparent))}
+@media(forced-colors:active){.header-glyph>[data-confirmed-owner]{filter:none}}
 .header-glyph>ha-icon.source-mark,.header-glyph>ha-icon.state-mark{position:absolute;right:-2px;width:10px;height:10px;--mdc-icon-size:10px;background:#0b111b;border-radius:50%}
 .header-glyph>.source-mark{bottom:-1px}.header-glyph>.state-mark{top:-2px}
 .header-glyph>ha-icon.preset-mark{position:absolute;right:-5px;bottom:-3px;width:13px;height:13px;--mdc-icon-size:13px;background:#0b111b;border-radius:50%;box-shadow:0 0 0 2px #0b111b}
