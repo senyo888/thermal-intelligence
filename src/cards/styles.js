@@ -18,8 +18,6 @@ ha-card{border-color:#607b9b42;box-shadow:inset 0 1px 0 #d5e7ff09,0 8px 24px #00
 .header-telemetry .telemetry-item:focus-visible{outline-offset:-3px;box-shadow:none}
 .header-telemetry .ownership-indicator{width:44px;flex:0 0 44px;padding:0}
 .ownership-indicator ha-icon{width:14px;height:14px;--mdc-icon-size:14px}
-.ownership-indicator[data-source=Schedule],.ownership-indicator[data-source=Manual]{background:radial-gradient(circle at center,color-mix(in srgb,var(--telemetry-colour) 13%,transparent),transparent 72%)}
-.ownership-indicator[data-source=Schedule] ha-icon,.ownership-indicator[data-source=Manual] ha-icon{filter:drop-shadow(0 0 4px color-mix(in srgb,var(--telemetry-colour) 45%,transparent))}
 .source-summary{margin:12px 8px 0;font-size:11px;line-height:1.5;color:#a9b8cb}
 .source-summary strong{color:#dcebf7;font-weight:600}
 .source-summary:focus-visible{outline:2px solid #a3d7f5;outline-offset:3px;border-radius:4px}

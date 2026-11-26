@@ -1,8 +1,10 @@
 # Install with Marketplace
 
-On Home Assistant 2026.11 or later, open **Settings → Marketplace → Add from link** and enter `https://github.com/senyo888/thermal-intelligence`. Choose **Dashboard** if prompted, then install [v1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0). This direct route works while the [default catalogue submission](https://github.com/hacs/default/pull/14872) is under review.
+On Home Assistant 2026.11 or later, open **Settings → Marketplace** and search for **Thermal Intelligence**. Open the **Dashboard** card by **senyo888**, choose **Install** and confirm [v1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0).
 
 Open a fresh dashboard tab and choose **Edit dashboard → Add card → Thermal Intelligence Thermostat**. Select your room’s thermostat and save. [Set up your first room](https://github.com/senyo888/thermal-intelligence/wiki/Configuration).
+
+If your catalogue does not show the card yet, choose **Add from link** and enter `https://github.com/senyo888/thermal-intelligence`. Choose **Dashboard** if prompted.
 
 Already using a manual, beta or RC card? Keep its configuration and resource URL before switching. Load a single standalone module and preserve any separate legacy dashboard resource. [Installation and resource checks](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md#before-installation) · [Upgrade and rollback](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md).
 

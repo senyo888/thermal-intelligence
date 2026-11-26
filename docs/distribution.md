@@ -16,7 +16,7 @@ The package contains the JavaScript module, software licence and a manifest iden
 
 ## Marketplace and older HACS installations
 
-For 1.0.0, use the custom **Dashboard** repository route. The [default catalogue submission](https://github.com/hacs/default/pull/14872) passed its automated checks and is awaiting maintainer review. The older [RC.2 installation record](rc2-validation.md) applies only to that prerelease.
+Search for **Thermal Intelligence** in Marketplace or HACS and open the **Dashboard** card by **senyo888**. The [default catalogue entry](https://github.com/hacs/default/pull/14872) was accepted on 26 November 2026. The older [RC.2 installation record](rc2-validation.md) applies only to that prerelease.
 
 The root [`hacs.json`](../hacs.json) names `thermal-intelligence.js`, uses the `dist/` layout and hides the default branch as a download choice. Stable releases follow the patch → develop → main pull request sequence. Package the tagged commit to reproduce its published manifest.
 
@@ -68,7 +68,7 @@ Changing the version or picker changes the module bytes. Validate that resulting
 | Published files | [v1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) includes the card, licence and [manifest](https://github.com/senyo888/thermal-intelligence/releases/download/v1.0.0/manifest.json). All three public downloads matched the release checksums. |
 | HACS plugin validation | All eight applicable [checks on v1.0.0](https://github.com/senyo888/thermal-intelligence/actions/runs/45459007561) passed with none disabled. |
 | Installer coverage | Marketplace clean install from the public tag and upgrade to the matching card verified on HA 2026.11.2. The earlier candidate covered rollback, reinstall and removal. Older HACS installation and full backup restoration remain unverified. [Coverage by version](compatibility.md). |
-| Default catalogue | [Submission #14872](https://github.com/hacs/default/pull/14872) is awaiting upstream review. Use the custom Dashboard repository to install today. |
+| Default catalogue | [Accepted on 26 November 2026](https://github.com/hacs/default/pull/14872). The Dashboard catalogue lists `senyo888/thermal-intelligence` at `v1.0.0`. |
 
 The intended versioned route uses a reviewed GitHub release with the standalone JS asset, software licence and package manifest. A manual ZIP or a bare tag is not that route. Keep internal reports, prompts and raw evidence out of release assets. Catalogue submission has [additional requirements](https://www.hacs.xyz/docs/publish/include/), including upstream validation and a published release; preparing the files does not complete those steps.
 
