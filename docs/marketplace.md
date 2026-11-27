@@ -2,6 +2,8 @@
 
 Thermal Intelligence is a **Dashboard** card for the thermostat you already use. On Home Assistant 2026.11 or later, install it through Marketplace. If your older installation uses HACS, follow the [HACS guide](hacs.md).
 
+If you added the standalone TI dashboard resource manually, follow the [resource transition steps](#before-installation) before choosing **Install**. Reopen your dashboards once you have verified that only one standalone TI resource is registered.
+
 ## Install 1.0.0
 
 Open **Settings → Marketplace**, search for **Thermal Intelligence** and select the **Dashboard** card by **senyo888**. Choose **Install** and confirm the version. For [v1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0), open a fresh dashboard tab and choose **Edit dashboard → Add card → Thermal Intelligence Thermostat**.
