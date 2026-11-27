@@ -95,6 +95,21 @@ def render_guides():
     return pages
 
 
+def validate_links(pages, files):
+    page_targets = pages.copy()
+    for origin, page in pages.items():
+        page_targets[origin + "index.html"] = page
+    destinations = set(page_targets) | {SITE + name for name in files}
+    for origin, page in pages.items():
+        for url in page.urls:
+            parts = urlsplit(urljoin(origin, url))
+            target = parts._replace(query="", fragment="").geturl()
+            if target.startswith(SITE) and target not in destinations:
+                raise SystemExit(f"{origin}: missing site destination {url}")
+            if parts.fragment and target in page_targets and unquote(parts.fragment) not in page_targets[target].ids:
+                raise SystemExit(f"{origin}: missing site anchor {url}")
+
+
 def main():
     parser = Links()
     parser.feed(public_file("site/index.html").read_text())
@@ -106,8 +121,9 @@ def main():
     if locations != {SITE, *(SITE + route for route in guides)}:
         raise SystemExit("Sitemap URLs must match the published pages.")
     files = {f"site/{name}": name for name in ("index.html", "styles.css", "robots.txt", "sitemap.xml")}
+    known_paths = set(files.values()) | set(guides) | {route + "index.html" for route in guides}
     for name in parser.paths:
-        if name == "styles.css" or name in guides:
+        if name in known_paths:
             continue
         path = Path(name)
         if path.parent != Path("assets/presentation") or path.suffix != ".png":
@@ -118,14 +134,7 @@ def main():
         guide = Links()
         guide.feed(html)
         pages[SITE + route] = guide
-    destinations = {SITE + target for target in files.values()} | set(pages)
-    for origin, page in pages.items():
-        for url in page.urls:
-            target, _, fragment = urljoin(origin, url).partition("#")
-            if target.startswith(SITE) and target not in destinations:
-                raise SystemExit(f"{origin}: missing site destination {url}")
-            if fragment and target in pages and unquote(fragment) not in pages[target].ids:
-                raise SystemExit(f"{origin}: missing site anchor {url}")
+    validate_links(pages, files.values())
     for name in files:
         public_file(name)
     if OUTPUT.is_symlink() or OUTPUT.exists():

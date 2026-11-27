@@ -9,6 +9,7 @@ on:
       - 'docs/wiki/Installing-with-Marketplace.md'
       - 'docs/wiki/Configuration.md'
       - 'scripts/build_site.py'
+      - 'tests/site_test.py'
       - '.github/workflows/pages.yml'
   pull_request:
     branches: [develop, main]
@@ -40,6 +41,7 @@ jobs:
         run: |
           python3 -m venv "$RUNNER_TEMP/ti-pages"
           "$RUNNER_TEMP/ti-pages/bin/pip" install --require-hashes -r site/requirements.txt
+          "$RUNNER_TEMP/ti-pages/bin/python" -B tests/site_test.py
           "$RUNNER_TEMP/ti-pages/bin/python" scripts/build_site.py
       - name: Upload website
         if: github.ref == 'refs/heads/main'

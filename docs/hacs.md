@@ -5,9 +5,10 @@ On older Home Assistant systems that already use HACS, install Thermal Intellige
 ## Install the dashboard card
 
 1. Create a fresh backup, export it and verify the downloaded archive. Retain the existing module, card configuration and resource URL. If moving from a manual installation, check ownership of `www/community/thermal-intelligence/` and complete the [resource transition](marketplace.md#before-installation).
-2. Search HACS for **Thermal Intelligence**, open the **Dashboard** card by **senyo888** and select **v1.0.1**. If search returns no match, add `https://github.com/senyo888/thermal-intelligence` under **Custom repositories** as **Dashboard**.
-3. Confirm a single standalone resource uses the generated URL. Open a fresh dashboard tab and choose **Edit dashboard → Add card → Thermal Intelligence Thermostat**.
-4. Select the room’s thermostat, check its current and target temperatures, and save the card. [First-room guide](wiki/Configuration.md)
+2. Search HACS for **Thermal Intelligence** by **senyo888**. If it does not appear, add `https://github.com/senyo888/thermal-intelligence` under **Custom repositories** as **Dashboard**.
+3. Open the **Thermal Intelligence** Dashboard entry, select **v1.0.1** and choose **Download**.
+4. Confirm a single standalone resource uses the generated URL. Open a fresh dashboard tab and choose **Edit dashboard → Add card → Thermal Intelligence Thermostat**.
+5. Select the room’s thermostat, check its current and target temperatures, and save the card. [First-room guide](wiki/Configuration.md)
 
 For an existing HACS-managed installation, update the existing entry. Keep its generated resource and reopen your saved card. If you need to recover, use the previous module and matching configuration for a manual resource, or the backup for installer state. [Update and rollback](migration.md)
 
