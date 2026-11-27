@@ -2,6 +2,8 @@
 
 <img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/0d2075b490a1487f79797105645fd8df08649c59/assets/presentation/thermal-intelligence-v1.0.1-release-header.png" alt="Thermal Intelligence v1.0.1. A thermostat dashboard card+. Now in the Home Assistant Marketplace." width="100%">
 
+[![Latest published release](https://img.shields.io/github/v/release/senyo888/thermal-intelligence?label=Release&color=725691)](https://github.com/senyo888/thermal-intelligence/releases/latest) [![Latest published package manifest version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fsenyo888%2Fthermal-intelligence%2Freleases%2Flatest%2Fdownload%2Fmanifest.json&query=%24.version&label=Manifest&color=536b87)](https://github.com/senyo888/thermal-intelligence/releases/latest/download/manifest.json)
+
 ## Start here
 
 Search for **Thermal Intelligence** by **senyo888** in the Dashboard catalogue. Install the [latest stable version](https://github.com/senyo888/thermal-intelligence/releases/latest), then choose **Thermal Intelligence Thermostat** in the card picker. Start with the [Marketplace installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md) or, on older Home Assistant systems, the [HACS guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/hacs.md).
