@@ -1,6 +1,6 @@
 # Standalone climate command lifecycle
 
-The 1.0.0 card sends a request only after an explicit action. It keeps acknowledgement separate from fresh provider or device observations. [Tested scenarios by version](compatibility.md#100-package).
+The v1.0.1 card sends a request only after an explicit action. It keeps acknowledgement separate from fresh provider or device observations. [Tested scenarios by version](compatibility.md#101-package).
 
 Implemented in `src/commands/coordinator.js`; unit fixtures establish the cases below. This is a frontend request contract, not live Home Assistant/provider compatibility or physical-device validation.
 
@@ -25,13 +25,13 @@ Only one request may be in flight per card. Rapid subsequent attempts are refuse
 | Phase | Meaning |
 | --- | --- |
 | `idle` | No tracked request. |
-| `pending` | The explicit request was sent and its service outcome is not yet known. A matching state alone does not end this phase. |
+| `pending` | The coordinator is processing the explicit request and awaits its service outcome. A matching state alone does not end this phase. |
 | `accepted` | The service promise resolved, but a fresh matching setting has not been observed. |
-| `observed` | The service promise resolved and a fresh matching setting was observed for the captured entity. This does not prove causation or physical heating. |
+| `observed` | For a dispatched request, the service promise resolved and TI observed a matching setting for the captured entity. An already-satisfied lock or switch request can also finish here with an explicit message that no command was sent. |
 | `uncertain` | Tracking ended because of timeout, changed context, cancellation or detachment; the request is not replayed. |
 | `failed` | Validation prevented dispatch or the service call failed. A transport error does not establish whether the remote setting changed; check current state. |
 
-Observations require the captured entity ID and a different state snapshot. When the baseline has a valid `last_updated`/`last_changed`, only a later valid timestamp is admitted; older or duplicate states cannot complete a request. Without provider timestamps, a new snapshot can establish observed setting equality, without claiming freshness by elapsed time. Unknown/unavailable states cannot match. A later external change replaces an earlier match while awaiting acknowledgement. Late rejection after a matching observation still yields failure.
+For a dispatched climate or VT lock request, TI checks that the observation belongs to the captured entity and differs from the previous state snapshot. A matching setting cannot establish causation or physical heating. When the baseline has a valid `last_updated`/`last_changed`, only a later valid timestamp is admitted; older or duplicate states cannot complete a request. Without provider timestamps, a new snapshot can establish observed setting equality, without claiming freshness by elapsed time. Unknown/unavailable states cannot match. A later external change replaces an earlier match while awaiting acknowledgement. Late rejection after a matching observation still yields failure.
 
 The default timeout is ten seconds, bounded to at most sixty seconds by constructor validation. Timeout is uncertainty, not permission to retry. If the original service promise is still unsettled, `busy` remains true even after the status becomes uncertain, preventing overlapping requests. A late service settlement releases that local gate only; it cannot turn a retired outcome into success. Once the gate clears, a new deliberate, freshly validated action may be sent.
 
@@ -57,25 +57,27 @@ const result = await commands.request({
 
 `status` is an immutable snapshot containing phase/message and, for tracked requests, target/service/values. `busy` is separate because a timed-out transport may remain unsettled. Context updates and observations are synchronous and perform no I/O. The request promise resolves with its terminal tracked outcome; it does not reject merely because a command fails. A busy attempt returns a failed result without replacing the existing request's status.
 
-From a clean checkout of released RC.3 commit `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`, run `node --test tests/unit/commands.test.mjs`. Fixtures cover both acknowledgement/observation orders, late rejection, external changes, stale state, preview, context replacement, disconnected/authentication/service gaps, payload mutation, unsupported writes, rapid attempts, timeout, cancellation, disposal and rendering exceptions. Live Generic Thermostat/VT evidence remains a separate gate.
+From a checkout of [v1.0.1](https://github.com/senyo888/thermal-intelligence/tree/b9150b79bbc378af5542e39b6ee42de730d6dcfd) with Node.js 22 or newer, run `node --test tests/unit/commands.test.mjs`. Fixtures cover both acknowledgement/observation orders, late rejection, external changes, stale state, preview, context replacement, disconnected/authentication/service gaps, payload mutation, unsupported writes, rapid attempts, timeout, cancellation, disposal and rendering exceptions. See [compatibility](compatibility.md) for the versions exercised on Home Assistant.
 
 ## Administrator VT lock requests
 
-Beta.2 adds a closed lock-request entry to the existing command coordinator. It permits only native `versatile_thermostat.lock` or `versatile_thermostat.unlock` for one captured climate entity and shares the same busy gate as climate commands. Ordinary climate readiness remains unchanged; lock eligibility is checked separately so an authorised unlock can be requested while user climate controls remain locked.
+The coordinator’s `requestLock()` method permits only native `versatile_thermostat.lock` or `versatile_thermostat.unlock` for one captured climate entity and shares the same busy gate as climate commands. Ordinary climate readiness remains unchanged; lock eligibility is checked separately so an authorised unlock can be requested while user climate controls remain locked.
 
 A lock request requires a confirmed administrator, a live authenticated session, an attached non-preview card, verified VT registry identity, provider availability and literal readiness, a configured lock, boolean lock/code and user/automation scope capabilities, a known nonnegative relock delay, at least one enabled scope, and both native lock/unlock services. This conservative lock gate keeps capabilities well-defined across the requested transition; it still sends only the single intended service. The dialog captures its entity, session, relevant capabilities and desired state. Changes before dispatch invalidate that intention rather than reversing it or retargeting it. A request for an already-observed desired state sends nothing.
 
 Public request status contains the desired boolean lock state, never the entered code. Code text is transient input for the dispatch only; validation/status messages and rejected-service handling do not retain or display raw exceptions. UI restrictions do not create backend authorization or fix upstream logging. [Code-handling limits](lock-control.md#code-handling-and-provider-limits) remain explicit.
 
-Service acknowledgement and a fresh matching provider observation are both required to report an observed result. Stale observations, reconnect, context changes, timeout and later automatic relocking must not manufacture success or retry. The latest provider state remains authoritative. Rendering, opening/dismissing a dialog, setup, preview, editor saves and reconnect never dispatch commands.
+For a dispatched lock request, TI requires service acknowledgement and a fresh matching provider observation before reporting an observed result. Stale observations, reconnect, context changes, timeout and later automatic relocking must not manufacture success or retry. The latest provider state remains authoritative. Rendering, opening/dismissing a dialog, setup, preview, editor saves and reconnect never dispatch commands.
 
-## Optional mapped-switch requests (beta.6)
+<a id="optional-mapped-switch-requests-beta6"></a>
+
+## Optional mapped-switch requests
 
 `requestMapped()` is a closed third entry point in the same coordinator, with `entity` for the climate anchor, `target` for the registered switch, and boolean `on`. It never widens `request()` or `requestLock()`. Only `switch.turn_on`/`switch.turn_off` and a scalar `entity_id` payload are constructed. All three request kinds share the unresolved-transport gate. Current-session proof and explicit schema-2 enrollment are required by the card. No administrator-only rule is added; HA enforces backend permissions.
 
 Confirmation captures both identities, direction, meaningful switch state, session, configuration revision and eligibility. Known identity/registry/configuration changes invalidate it. Harmless telemetry refreshes do not. Expected switch and integration-induced climate transitions after dispatch do not invalidate themselves; identity/eligibility loss retires tracking as uncertain. Labels and backend rejection objects cannot create payloads or raw error messages.
 
-This path requires acknowledgement plus a valid mapped `last_updated` baseline immediately before dispatch and a strictly later matching mapped update. It never substitutes `last_changed`, a climate timestamp or zero for a missing baseline. Newer contrary states replace a match while awaiting acknowledgement. A valid same-state request is an explicit no-op. Missing evidence, timeout and disconnect remain unconfirmed/uncertain; no retry, compensation or mode restoration occurs. Existing climate and lock observation semantics are unchanged. See [configuration, integration effects and rollback](optional-switch-control.md).
+To report an observed switch change, TI requires a service acknowledgement, a valid switch `last_updated` captured just before dispatch and a strictly later matching switch update. It never substitutes `last_changed`, a climate timestamp or zero for a missing baseline. Newer contrary states replace a match while awaiting acknowledgement. A valid same-state request is an explicit no-op. Missing evidence, timeout and disconnect remain unconfirmed/uncertain; no retry, compensation or mode restoration occurs. Existing climate and lock observation semantics are unchanged. See [configuration, integration effects and rollback](optional-switch-control.md).
 
 ## Completed-result presentation
 
@@ -93,7 +95,7 @@ Retiring successful presentation notifies consumers with the current presentatio
 
 ## Display-only icon configuration
 
-The RC.4 top-row chooser changes a local display draft. Runtime selection, ordering, Add reading and Copy configuration do not read or write Lovelace storage or dispatch thermostat services. Copying exports the complete draft, including preserved unknown fields; it does not claim a save. Clipboard failure exposes selected text for manual copying, and late callbacks cannot affect another dialog or reselected card.
+The top-row chooser changes a local display draft. Runtime selection, ordering, Add reading and Copy configuration do not read or write Lovelace storage or dispatch thermostat services. Copying exports the complete draft, including preserved unknown fields; it does not claim a save. Clipboard failure exposes selected text for manual copying, and late callbacks cannot affect another dialog or reselected card.
 
 The same chooser in Home Assistant’s card editor emits the ordinary `config-changed` event. Home Assistant owns that editor’s selected card and Save/Cancel operation. Runtime configuration equality is not treated as proof of a saved card’s identity: stale or generated copies can match unrelated saved cards. No runtime dashboard writer is shipped.
 

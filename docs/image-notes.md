@@ -2,12 +2,16 @@
 
 The gallery contains two kinds of images:
 
-- **Beta component captures:** `thermostat.png`, `thermostat-expanded.png`, `preset-details.png` and `lock-controls.png` show the actual beta.2 component with synthetic data. The lock example has no configured code. They illustrate controls retained in RC.3; the captures retain their original beta.2 identity.
+- **Beta component captures:** `thermostat.png`, `thermostat-expanded.png`, `preset-details.png` and `lock-controls.png` show the actual beta.2 component with synthetic data. The lock example has no configured code. They illustrate the earlier layout of controls also available in v1.0.1.
 - **Anonymised installation examples:** the other thermostat, window and dashboard examples preserve the supplied readings and states while replacing identifying labels. Their exact source builds were not recorded. Some schedule, ownership and cutoff indicators belong to the wider TI system and are outside the standalone thermostat card.
 
 Installation images use assisted image editing for anonymisation and were visually compared with the originals. They are illustrative, not pixel-comparison or physical-heating evidence. Original cropping and partially visible rows remain. Personal photo metadata was removed; content credentials are retained where present.
 
 The header is generated presentation artwork, not a screenshot. Documentation and artwork are subject to the separate [reuse terms](licensing-options.md).
+
+## Version 1.0.1 release header
+
+The [Marketplace release header](../assets/presentation/thermal-intelligence-v1.0.1-release-header.png) pairs the TI logo with an illustrated Schedule calendar and Eco leaf. The dimensional icons and thermal contours are release artwork. The card itself applies a soft glow to the confirmed control source.
 
 ## Version 1.0.0 release images
 

@@ -1,8 +1,10 @@
 # Beta.7 registry compatibility correction
 
-Version **0.1.0-beta.7** fixes a false unavailable status in the optional switch control. Home Assistant can represent an absent device ID as `undefined` in frontend metadata and `null` in its registry response. TI now treats those two absent values as equivalent for `device_id` only. Real identity differences still block the control.
+This archive covers **0.1.0-beta.7**, the untagged build that corrected a false unavailable status in the optional switch control. For a new installation, follow the [stable installation guide](marketplace.md).
 
-No new settings, controller or backend are required. Existing schema-1 and schema-2 configurations are retained. VT, helpers, group/template switches and multiple mappings remain unsupported for the optional row. Each eligible On or Off action still requires confirmation; setup, rendering and reconnect do not send commands. See [optional switch setup and limits](optional-switch-control.md).
+Home Assistant can represent an absent device ID as `undefined` in frontend metadata and `null` in its registry response. TI now treats those two absent values as equivalent for `device_id` only. Real identity differences still block the control.
+
+No new settings, controller or backend are required. Existing schema-1 and schema-2 configurations are retained. VT, helpers, group/template switches and multiple mappings remain unsupported for the optional row. Each eligible On or Off action still requires confirmation; setup, rendering and reconnect do not send commands. See [optional switch setup and limits](https://github.com/senyo888/thermal-intelligence/blob/9196b9e77b9403b4dde953f136fc84aca9a6331a/docs/optional-switch-control.md).
 
 ## Exact package
 

@@ -1,6 +1,8 @@
 # Release candidate 0.1.0-rc.3
 
-[RC.3 is published](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.3) as a prerelease of the standalone thermostat card, dated 14 November 2026. It corrects request tracking, configuration editing and presentation defects found after RC.2. No TI backend or controller is required. The [RC.2 record](rc.md), released assets and dated heating evidence remain separate.
+This archive covers [0.1.0-rc.3](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.3), published on 14 November 2026. For a new installation, follow the [stable installation guide](marketplace.md).
+
+RC.3 corrected request tracking, configuration editing and presentation defects found after RC.2. No TI backend or controller is required. The [RC.2 record](rc.md), released assets and dated heating evidence remain separate.
 
 ## Changes from RC.2
 
@@ -19,7 +21,7 @@ The synthetic fixture also discards observations from a scenario replaced by res
 
 The card type remains `custom:thermal-intelligence-beta-card`; the editor and supported schema-1/schema-2 configurations are unchanged. Commands still require explicit intent, a captured target and current provider permission/readiness. Rendering, editor cancellation and reconnect do not dispatch or replay commands. No TI backend/controller is required.
 
-For Home Assistant 2026.11 and later, use the [Marketplace route](marketplace.md); earlier installations use [HACS](hacs.md). Select `v0.1.0-rc.3` explicitly and verify the served module against the release manifest. Keep one trial resource, retain the previous module/configuration, and preserve legacy TI separately. Before a manual-to-installer transition, check ownership of `www/community/thermal-intelligence/` and every resource using that prefix. Keep affected dashboard clients closed until the transition is complete. See [migration and recovery](migration.md).
+The RC.3 instructions used the Marketplace three-dot menu → **Install another version**, or prerelease visibility on older HACS, to select **v0.1.0-rc.3** explicitly. Marketplace’s optional **Pre-release** switch controlled future updates after installation. The trial required checking the served module against that release’s manifest. [Archived Marketplace steps](https://github.com/senyo888/thermal-intelligence/blob/62f4891e96999ae40b13a4c93cd11d7b8e65d23e/docs/marketplace.md#find-the-card-and-select-a-version) · [Archived HACS steps](https://github.com/senyo888/thermal-intelligence/blob/62f4891e96999ae40b13a4c93cd11d7b8e65d23e/docs/hacs.md#install-the-dashboard-card). Keep one trial resource, retain the previous module/configuration, and preserve legacy TI separately. Before a manual-to-installer transition, check ownership of `www/community/thermal-intelligence/` and every resource using that prefix. Keep affected dashboard clients closed until the transition is complete. See [migration and recovery](migration.md).
 
 ## Exact release
 
@@ -73,4 +75,4 @@ On 13 November, the exact released module above passed fresh passive manual Lab 
 
 The Lab used a manual candidate overlay while Marketplace retained RC.2. Named-release RC.3 Marketplace installation and wider installer lifecycle testing remain incomplete. Explicitly empty YAML valve sources, range controls, delayed clipboard failures and stale-registry cases retain synthetic or historical coverage. Physical clients, wider providers, backup restore rehearsal and a formal soak remain separate checks. RC.2's heating trial does not establish RC.3 physical acceptance.
 
-Service acknowledgement, provider observation, valve position and physical heating remain distinct evidence. The [release notes](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.3) preserve the publication-time scope. Documentation inside the immutable tag predates the final Lab result; this current guide records the later evidence without rewriting that history.
+Service acknowledgement, provider observation, valve position and physical heating remain distinct evidence. The [release notes](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.3) preserve the publication-time scope. Documentation inside the immutable tag predates the final Lab result. This archive includes that later evidence.

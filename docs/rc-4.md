@@ -1,5 +1,7 @@
 # Release candidate 0.1.0-rc.4 — unreleased
 
+This archive covers RC.4, tested by commit during development of 1.0.0. It had no named release. See the [RC.3 tag](rc-3.md) for the preceding prerelease and the [1.0.0 package record](v1.0.0-package.md) for the first stable files. For a new installation, follow the [stable installation guide](marketplace.md).
+
 ## Combined control icons and expanded layout
 
 RC.4 combines the reported control source and selected preset in one top-row slot, such as VT Eco or House Boost. Unknown or degraded source evidence replaces the other control symbols. A confirmed card temperature adjustment can show a hand with a history mark when no ownership source is mapped; its details identify the last action without claiming current ownership. Reported policies use a circled P, and VT uses a text badge. Optional House and schedule mappings remain read-only.
@@ -12,9 +14,7 @@ The preceding reconciliation module, **265805 bytes**, SHA-256 `c7deef911f85cdbd
 
 The preceding Stable-tested module is **265389 bytes**, SHA-256 `25e47e4bdca8328469a1aecf488dd84344ca31854ba921fdc83dafc0e896b9a5`, from `61c299a`. It was installed through Marketplace by immutable commit and passed the bounded Stable checks below. These revisions retain the earlier upright expanded values and current-target checks for confirmed manual-action history. The version remains `0.1.0-rc.4`; the hash distinguishes revisions with that same candidate label.
 
-An earlier Lab-tested module is 262418 bytes, SHA-256 `d7701409f421da0127a4b5a4fde887aecc86245a860230fc6d39b993e8ef13e9`, built from [source `65d40ef`](https://github.com/senyo888/thermal-intelligence/commit/65d40efc83d0aba14bc1a4fce3625ca36384208c). Its bounded results below remain specific to those bytes. The intermediate 262718-byte module `f1a730956bd471373d9389f0d55a9e9a7267898c7c2056ed1ed75a7d53de71a2` had synthetic coverage and was superseded. See [configuration](card-configuration.md#presets-provider-and-policy-icons) and the [VT navigation boundary](provider-contracts.md#additional-vt-observations-and-native-controls).
-
-RC.4 was tested by commit while 1.0.0 was in development. It had no named release. The [RC.3 tag](rc-3.md) preserves the preceding prerelease, and the [1.0.0 package record](v1.0.0-package.md) identifies the published stable files.
+An earlier Lab-tested module is 262418 bytes, SHA-256 `d7701409f421da0127a4b5a4fde887aecc86245a860230fc6d39b993e8ef13e9`, built from [source `65d40ef`](https://github.com/senyo888/thermal-intelligence/commit/65d40efc83d0aba14bc1a4fce3625ca36384208c). Its bounded results below remain specific to those bytes. The intermediate 262718-byte module `f1a730956bd471373d9389f0d55a9e9a7267898c7c2056ed1ed75a7d53de71a2` had synthetic coverage and was superseded. See [configuration](https://github.com/senyo888/thermal-intelligence/blob/61c299a9f0acf4a1ced4698fa3e0b0e531e18489/docs/card-configuration.md#presets-provider-and-policy-icons) and the [VT navigation boundary](https://github.com/senyo888/thermal-intelligence/blob/61c299a9f0acf4a1ced4698fa3e0b0e531e18489/docs/provider-contracts.md#additional-vt-observations-and-native-controls).
 
 ## Changes from RC.3
 
@@ -34,7 +34,7 @@ RC.4 carries the reviewed beta.8 behavior and subsequent icon refinements. Exist
 
 The card type remains `custom:thermal-intelligence-beta-card`, with editor `thermal-intelligence-beta-card-editor` and picker label **Thermal Intelligence Thermostat · RC**. Existing schema-1 and schema-2 configurations, per-card settings and unknown configuration fields remain supported. Advanced export does not save a dashboard.
 
-The `temperature` telemetry kind and `unit_attribute` require beta.8 or RC.4. RC.3 and earlier reject this kind. Keep a compatible saved configuration with its original module before adding temperature rows; rollback must restore both while preserving unrelated dashboard edits. See [configuration](card-configuration.md) and [update and rollback](migration.md).
+The `temperature` telemetry kind and `unit_attribute` require beta.8 or RC.4. RC.3 and earlier reject this kind. Keep a compatible saved configuration with its original module before adding temperature rows; rollback must restore both while preserving unrelated dashboard edits. See [configuration](https://github.com/senyo888/thermal-intelligence/blob/61c299a9f0acf4a1ced4698fa3e0b0e531e18489/docs/card-configuration.md) and [update and rollback](migration.md).
 
 The `schedule_preset` mapping and `clear_attributes` guards require `61c299a` or a later build containing that change. Earlier RC.4 modules preserve these fields as unknown data without implementing their behavior. Restore a compatible saved configuration with its matching module; do not assume an earlier build enforces the new guards.
 
@@ -46,7 +46,7 @@ Real Schedule ownership and confirmed Comfort, Eco and Frost modes passed, follo
 
 An installation-specific ownership error initially prevented these handoffs. The configured controller was corrected and independently tested before the successful run; that backend correction is outside this card and is not a TI dependency. A separate startup output fault recovered automatically before testing. The subsequent fifteen-minute witness recorded no native/adapter incidents or observation gaps. Brief transitional Unknown/Pending reports were retained; no settled checkpoint remained Unknown.
 
-These results establish the observed ownership, accepted-intent and display paths for that installation. They do not establish physical heating, uninterrupted restart health, a formal soak, wider-provider support, named-release installation or complete installer recovery. The latest Lab control checks below remain tied to their earlier module.
+These results establish the observed ownership, accepted-intent and display paths for that installation. They do not establish physical heating, uninterrupted restart health, a formal soak, wider-provider support, named-release installation or complete installer recovery. The Lab control checks below apply to the earlier module identified in each dated entry.
 
 The Stable-tested runtime source passed 203 unit, 220 synthetic browser, 14 foundation, 13 package and eight Marketplace checks. Its ten-path change from the preceding reviewed source had a completed scoped security scan with no findings. That scan does not cover later runtime revisions. These are bounded checks, not proof of the absence of all vulnerabilities.
 

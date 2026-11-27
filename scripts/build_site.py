@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-only
 """Build the static website from an explicit list of public files."""
-from html import escape
+from html import escape, unescape
 from html.parser import HTMLParser
 from pathlib import Path
 from string import Template
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urljoin, urlsplit
 from xml.etree import ElementTree
+import re
 import shutil
 
 import mistune
@@ -24,10 +25,26 @@ GUIDES = {
 
 
 class GuideRenderer(mistune.HTMLRenderer):
+    def __init__(self):
+        super().__init__(escape=False)
+        self.heading_ids = set()
+
+    def heading(self, text, level, **attrs):
+        plain = unescape(re.sub(r"<[^>]+>", "", text)).lower()
+        base = re.sub(r"[^\w -]", "", plain).replace(" ", "-")
+        identifier = base
+        suffix = 0
+        while identifier in self.heading_ids:
+            suffix += 1
+            identifier = f"{base}-{suffix}"
+        self.heading_ids.add(identifier)
+        return super().heading(text, level, id=identifier)
+
     def link(self, text, url, title=None):
+        page, marker, fragment = url.partition("#")
         for route, (slug, _) in GUIDES.items():
-            if url == WIKI + slug:
-                url = "../" + route
+            if page == WIKI + slug:
+                url = "../" + route + marker + fragment
                 break
         return super().link(text, url, title)
 
@@ -36,11 +53,18 @@ class Links(HTMLParser):
     def __init__(self):
         super().__init__()
         self.paths = set()
+        self.urls = set()
+        self.ids = set()
 
     def handle_starttag(self, tag, attrs):
         for key, value in attrs:
+            if key == "id" and value:
+                if value in self.ids:
+                    raise SystemExit(f"Duplicate HTML id: {value}")
+                self.ids.add(value)
             if key not in {"src", "href"} or not value:
                 continue
+            self.urls.add(value)
             target = urlsplit(value)
             if not target.scheme and not target.netloc and target.path:
                 self.paths.add(target.path)
@@ -55,9 +79,9 @@ def public_file(name):
 
 def render_guides():
     template = Template(public_file("site/guide.html").read_text())
-    markdown = mistune.create_markdown(renderer=GuideRenderer(escape=False), plugins=["table"])
     pages = {}
     for route, (slug, description) in GUIDES.items():
+        markdown = mistune.create_markdown(renderer=GuideRenderer(), plugins=["table"])
         source = public_file(f"docs/wiki/{slug}.md").read_text()
         heading = source.splitlines()[0]
         if not heading.startswith("# "):
@@ -89,6 +113,19 @@ def main():
         if path.parent != Path("assets/presentation") or path.suffix != ".png":
             raise SystemExit(f"Unexpected website path: {name}")
         files[name] = name
+    pages = {SITE: parser}
+    for route, html in guides.items():
+        guide = Links()
+        guide.feed(html)
+        pages[SITE + route] = guide
+    destinations = {SITE + target for target in files.values()} | set(pages)
+    for origin, page in pages.items():
+        for url in page.urls:
+            target, _, fragment = urljoin(origin, url).partition("#")
+            if target.startswith(SITE) and target not in destinations:
+                raise SystemExit(f"{origin}: missing site destination {url}")
+            if fragment and target in pages and unquote(fragment) not in pages[target].ids:
+                raise SystemExit(f"{origin}: missing site anchor {url}")
     for name in files:
         public_file(name)
     if OUTPUT.is_symlink() or OUTPUT.exists():

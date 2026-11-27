@@ -1,6 +1,6 @@
 # RC.2 validation — 12 November 2026
 
-These dated results apply to the published [v0.1.0-rc.2](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.2), source commit `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`. They support a controlled prerelease trial, not a stable support guarantee. TI remains a standalone Dashboard card.
+These dated results apply to the published [v0.1.0-rc.2](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.2), source commit `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`. The checks covered this specific prerelease of the standalone Dashboard card. See [compatibility by version](compatibility.md) for later releases.
 
 The installed module was 199,166 bytes, SHA-256 `626f426b213d58cf142201fb3f97e5e5887e0f795d2b55c02229d663c5c13624`. The released tag, manifest and assets are unchanged. Repository promotion does not upgrade an installation.
 
@@ -43,4 +43,4 @@ These findings do not replace the dated installation and trial results above. Th
 
 Physical phone/tablet and Companion coverage, broader thermostat integrations, an RC.2 physical optional-switch test, installer two-version update/removal/recovery, backup restore rehearsal and a formal RC.2 soak remain incomplete. Verified backup exports, archive integrity and database checks provide recovery evidence; they are not a rehearsed restore.
 
-Keep request acknowledgement, provider state, native-device reports, room trends and human-observed heating distinct. The [compatibility record](compatibility.md) preserves earlier results by version, and the [installation guide](marketplace.md) describes the controlled Marketplace route.
+Keep request acknowledgement, provider state, native-device reports, room trends and human-observed heating distinct. The [compatibility record](compatibility.md) preserves earlier results by version, and the [installation guide](https://github.com/senyo888/thermal-intelligence/blob/6d0833f20e9e071d94d2f09f00c1a4d4a34f1805/docs/marketplace.md) describes the controlled Marketplace route.
