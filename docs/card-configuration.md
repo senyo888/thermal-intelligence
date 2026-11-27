@@ -1,6 +1,6 @@
 # Card configuration
 
-Use this guide for the [stable Thermostat card](v1.0.1.md). For a guided first room, follow the [settings walkthrough](wiki/Configuration.md). If your card picker shows **· RC**, use the [RC.3 guide](rc-3.md) for that version.
+This reference covers the [v1.0.1 Thermostat card](v1.0.1.md). For a guided first room, follow the [settings walkthrough](wiki/Configuration.md). If your picker shows **· RC** or **· Beta**, check the installed version before choosing an [earlier version’s guide](migration.md).
 
 ## What you need
 
@@ -91,7 +91,7 @@ The top row uses icons for categorical states, with colour for active states and
 
 Provider, source and preset observations share **one combined control indicator**. A reported VT source can pair the VT mark with the selected Comfort icon; Manual can pair the hand with Eco; House can pair the house with its reported Boost policy. A circled **P** represents another reported Provider, Policy or Other source. These are TI marks, not upstream logos. The combined indicator's details retain provider identity, room preset, House policy and schedule activity as separate facts.
 
-Starting with 1.0.1-beta.1, a steady glow around the larger symbol identifies a confirmed control source, even when there is no preset to display. A hand with a history marker records a past adjustment and stays unlit, as do pending and unknown sources.
+A steady glow around the larger symbol identifies a confirmed control source, even when there is no preset to display. A hand with a history marker records a past adjustment and stays unlit, as do pending and unknown sources. In forced-colours mode, the icon identifies the source without a glow.
 
 Schedule can pair its calendar with an explicitly mapped **last confirmed schedule mode**: Frost, Eco, Comfort or Boost. This supports controllers that apply a numeric target while the thermostat reports preset `none`. The mapping must report accepted intent, not a requested selector or raw timetable metadata. It joins the icon only with confirmed Schedule ownership and a connected, available, ready thermostat in Heat. Its details identify it as the last confirmed mode, not proof that a period or Boost timer is still running. No target-temperature matching or timer inference is used.
 
@@ -174,7 +174,7 @@ The earlier local preview's `theme` option is no longer the appearance control. 
 
 Identity lookup is tied to the active connection, socket and user session. A session change invalidates the previous lookup; reconnecting retries identity checks without replaying commands. Remembered VT restrictions stay scoped to their connection, preventing an unavailable lookup from silently relaxing a known provider's readiness requirements.
 
-In RC.3, a failed lookup can recover from matching frontend registry metadata. Otherwise, later HA updates allow at most two additional reads after one-second and two-second cooldowns within the same entity/configuration/session. There is no background retry loop. Exhausted or malformed evidence remains unavailable until valid metadata or a new context arrives; recovery never sends a thermostat command.
+A failed lookup can recover from matching frontend registry metadata. Otherwise, later HA updates allow at most two additional reads after one-second and two-second cooldowns within the same entity/configuration/session. There is no background retry loop. Exhausted or malformed evidence remains unavailable until valid metadata or a new context arrives; recovery never sends a thermostat command.
 
 VT requires literal boolean `is_ready: true`. Unknown readiness, initialization in progress, applicable user locking, an unavailable climate entity or a disconnected session disables dependent controls. The model does not relax these restrictions to make a control appear usable.
 
@@ -182,7 +182,7 @@ The dial and target controls follow Home Assistant’s configured temperature un
 
 Limits, targets and advertised step come from the climate entity. If no step is advertised, `step` supplies a fallback; if neither exists, the display increment is `0.5°C` or `1°F`. A malformed advertised step does not silently fall back. The details view identifies the step's source.
 
-The card quantizes target edits to the valid step grid within the provider limits. A range edit preserves the other endpoint and cannot cross it. In RC.3, Home and End choose the first and last feasible step for the selected endpoint. If a provider reports an off-grid sibling, the draft still respects it, but the final request remains blocked unless the complete payload satisfies the existing step validation. Unknown units or invalid temperature data disable temperature editing; independently valid mode or preset controls can remain available. No configuration option invents a temperature range, preset, fan mode or swing capability.
+The card quantizes target edits to the valid step grid within the provider limits. A range edit preserves the other endpoint and cannot cross it. Home and End choose the first and last feasible step for the selected endpoint. If a provider reports an off-grid sibling, the draft still respects it, but the final request remains blocked unless the complete payload satisfies the existing step validation. Unknown units or invalid temperature data disable temperature editing; independently valid mode or preset controls can remain available. No configuration option invents a temperature range, preset, fan mode or swing capability.
 
 Frost is selectable only if the provider advertises its exact preset value. For example, `preset_labels: {frost: Frost}` changes that value's display label; it neither creates Frost support nor maps an unrelated preset to a different service value. Preset `none` and a coincident target temperature do not establish manual ownership or the absence of a schedule.
 
@@ -219,11 +219,11 @@ features:
     icon: mdi:sofa
 ```
 
-Measured temperature trend retains the existing TI labels and colours. Values within `±0.05°C/hour` or `±0.09°F/hour` display **Stable**; positive values display **Rising**, negative values **Falling**. The original stronger trend colours apply beyond `±2.5°C/hour` or `±4.5°F/hour`. Per-minute readings use the equivalent hourly rate for this display classification and retain their reported unit. This describes measured temperature change only; it is not HI Stability or proof of heating response. In RC.3, the trend surface requires a connected session, an available climate entity, finite current temperature and a valid available trend source. User locks and unknown control readiness do not hide valid observations and still block dependent commands. Published RC.2 also requires thermostat readiness for this trend surface.
+Measured temperature trend retains the existing TI labels and colours. Values within `±0.05°C/hour` or `±0.09°F/hour` display **Stable**; positive values display **Rising**, negative values **Falling**. The original stronger trend colours apply beyond `±2.5°C/hour` or `±4.5°F/hour`. Per-minute readings use the equivalent hourly rate for this display classification and retain their reported unit. This describes measured temperature change only; it is not HI Stability or proof of heating response. The trend surface requires a connected session, an available climate entity, finite current temperature and a valid available trend source. User locks and unknown control readiness do not hide valid observations and still block dependent commands. The historical RC.2 build also required thermostat readiness to display the trend.
 
 **TRV** stands for **thermostatic radiator valve**. An explicitly mapped valve source retains **TRV Open/Closed** and its reported percentage. An open valve does not establish boiler firing or heat delivery. Without a valve mapping, the output summary uses the selected climate entity's reported activity; known VT heating remains **Heat requested**.
 
-When VT explicitly reports a configured lock, its state appears as a small lock/unlock icon beside the card name. Explicitly disabled locking hides the icon and retires a residual locked flag; unknown configuration never clears a reported user lock. Hover text and an accessible label identify the state; a question-mark lock means the state is unknown or unavailable. From beta.2, verified administrators can tap the icon for the [lock control dialog](lock-control.md); other accounts retain a read-only indicator. No per-card option is needed. User controls follow VT's reported lock scope, and missing state for a configured lock keeps them disabled.
+When VT explicitly reports a configured lock, its state appears as a small lock/unlock icon beside the card name. Explicitly disabled locking hides the icon and retires a residual locked flag; unknown configuration never clears a reported user lock. Hover text and an accessible label identify the state; a question-mark lock means the state is unknown or unavailable. Verified administrators can tap the icon for the [lock control dialog](lock-control.md); other accounts retain a read-only indicator. No per-card option is needed. User controls follow VT's reported lock scope, and missing state for a configured lock keeps them disabled.
 
 ### Temperature response arc
 
@@ -325,7 +325,7 @@ telemetry:
     label: Outside
 ```
 
-Only finite numeric values and `°C`/`°F` units are accepted. Unit changes are followed without conversion; a conflicting explicit unit, lost metadata, boolean or nonnumeric value is invalid. This observation never supplies a target, control permission or indoor dial reading. Rollback to RC.3 or earlier requires the previous compatible configuration as well as its module.
+Only finite numeric values and `°C`/`°F` units are accepted. Unit changes are followed without conversion; a conflicting explicit unit, lost metadata, boolean or nonnumeric value is invalid. This observation never supplies a target, control permission or indoor dial reading. Rollback to v0.1.0-rc.3 or earlier requires the previous compatible configuration as well as its module.
 
 **Find VT sources** reads the entity registry when selected. A slope suggestion requires one enabled VT temperature-slope sensor associated with the selected thermostat’s config entry and device; names alone are not evidence. Humidity and accepted feature states need explicit provider declarations. Existing mappings, including explicitly disabled direct sources, stay unchanged. Each adoption rereads the registry and rejects changed identity, session, configuration or unavailable data. Disabled sensors stay disabled; configure them in Home Assistant if desired. No suggestion is selected automatically.
 
@@ -409,7 +409,7 @@ See [Compatibility](compatibility.md) for authenticated Home Assistant checks an
 
 ## Run the synthetic preview
 
-Use Node.js 22 or newer. From the root of a clean checkout of released RC.3 commit `f93fb6489f87fbf9c393dd8cd03e85e5718277ef`:
+Use Node.js 22 or newer. Run the following commands from a clean checkout of [v1.0.1](https://github.com/senyo888/thermal-intelligence/tree/b9150b79bbc378af5542e39b6ee42de730d6dcfd).
 
 ```sh
 npm ci

@@ -9,9 +9,11 @@
 
 ## 1.0.1-rc.1
 
-The first release candidate includes the changes tested in Beta 1. The card picker displays **Thermal Intelligence Thermostat · RC**.
+This development candidate carried the changes tested in Beta 1 into `develop`. Its picker displayed **Thermal Intelligence Thermostat · RC**. The project published the changes in stable v1.0.1 without a separate named RC.1 release for this version.
 
 ## 1.0.1-beta.1
+
+This untagged beta was prepared on `senyo888-patch-1` during development of v1.0.1.
 
 - A soft, steady glow highlights the confirmed control source in the top row. The smaller preset badge keeps its own colour and shape.
 - The installation guides now start with a catalogue search for **Thermal Intelligence** in Marketplace or HACS.
@@ -60,7 +62,7 @@ RC.4 was tested by commit and never tagged. RC.3 remained the published prerelea
 - Preview reading icons, values and source status; offer explicitly adopted VT source suggestions with identity revalidation.
 - Add typed temperature observations and a guided outdoor sensor/weather mapping with live unit validation.
 
-Existing schemas, control guards, per-card settings and unknown configuration fields remain supported. Older modules cannot read the new `temperature` kind: retain compatible configuration and its module together for rollback. Synthetic checks and bounded Lab display and control checks passed; see [coverage and limits](docs/compatibility.md#unreleased-beta8-usability-candidate). This is an unreleased beta, not an installation recommendation.
+Existing schemas, control guards, per-card settings and unknown configuration fields remain supported. Older modules cannot read the new `temperature` kind: retain compatible configuration and its module together for rollback. Synthetic checks and bounded Lab display and control checks passed; see [coverage and limits](docs/compatibility.md#unreleased-beta8-usability-candidate). Beta.8 was tested by commit during development and had no named release.
 
 ## 0.1.0-rc.3 — 14 November 2026
 
@@ -75,7 +77,7 @@ Existing schemas, control guards, per-card settings and unknown configuration fi
 
 Configuration schemas and trial registrations are unchanged. See the [release record](docs/rc-3.md); the corrected module passed bounded passive manual Lab acceptance on 13 November. Named-release Marketplace acceptance remains separate; an earlier build was rolled back after observation lost freshness.
 
-RC.3 was the published prerelease at the time. Its tag preserves the original assets.
+The RC.3 tag preserves the original prerelease assets.
 
 ## 0.1.0-rc.2 — 9 November 2026
 
@@ -120,7 +122,7 @@ Published prerelease; [subsequent validation through 12 November](docs/rc2-valid
 
 - Add Dashboard package metadata for HACS and Home Assistant Marketplace, with the default branch hidden from download choices and its reviewed RC.1 snapshot retained for discovery.
 - Include the software licence in `dist/` and validate installation files and reproducible candidate assets in CI.
-- Preserve the existing frontend and saved configurations. RC.1 is published with its three immutable assets. Installer lifecycle, migration and catalogue checks remain separate; see [distribution status](docs/distribution.md).
+- Preserve the existing frontend and saved configurations. The 3 November RC.1 prerelease included three immutable assets. Its HACS validation covered packaging. See [distribution status](docs/distribution.md) for later installer and catalogue results.
 
 ## Documentation — 27 October 2026
 

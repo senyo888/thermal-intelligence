@@ -10,7 +10,7 @@
 
 Thermal Intelligence puts your thermostat’s current temperature, target and reported activity on one Home Assistant card. Add the readings that help you understand a room. A closed radiator valve and a rising room temperature, for example, can both be true. Tap the status chip for the reported activity, or open a top-row icon to inspect its source.
 
-**Start with your room’s thermostat.** Install the [stable release](https://github.com/senyo888/thermal-intelligence/releases/latest) as a Dashboard card, then choose **Thermal Intelligence Thermostat** in Home Assistant. You can start with just your room’s thermostat.
+**Start with your room’s thermostat.** Install [v1.0.1](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.1) as a Dashboard card, then choose **Thermal Intelligence Thermostat** in Home Assistant. You can start with just your room’s thermostat.
 
 ## Set up your first room
 
@@ -49,7 +49,7 @@ The arc, slope ring and status chip describe different parts of the room’s sto
 
 ## Your readings, arranged your way
 
-Set up each room independently. Show humidity in one room and valve position in another. Tap a reading for its value, source and status. Presets and control source come first, followed by primary icons and then VT readings. In **Humidity display**, drag the four markers along the colour bar or enter exact percentages. The combined control indicator can pair a confirmed owner with its applicable preset or schedule mode. Unknown ownership stays visible.
+Set up each room independently. Show humidity in one room and valve position in another. Tap a reading for its value, source and status. Presets and control source come first, followed by primary icons and then VT readings. In **Humidity display**, drag the four markers along the colour bar or enter exact percentages. When Schedule has confirmed control and its last confirmed mode is Eco, the calendar glows behind the green leaf. Tap the indicator to see each report. An unknown source and the hand marking a previous adjustment stay unlit.
 
 **Controls & features** opens the thermostat’s advertised modes and presets, preset temperatures and card settings. VT can also expose accepted window, presence and motion states, estimated energy and provider settings. A compatible standard thermostat can use an explicitly enrolled [optional switch](docs/optional-switch-control.md). The card asks for confirmation before operating it.
 
@@ -84,11 +84,9 @@ TI sends the actions you choose through Home Assistant’s services. Your thermo
 
 ## Installation
 
-On Home Assistant 2026.11 or later, open **Settings → Marketplace** and search for **Thermal Intelligence**. On older systems, search for the same name in **HACS**. Open the Dashboard card by **senyo888** and select the latest stable version. [Marketplace steps](docs/marketplace.md) · [HACS steps](docs/hacs.md)
+On Home Assistant 2026.11 or later, open **Settings → Marketplace** and search for **Thermal Intelligence**. On older systems, search for the same name in **HACS**. Open the Dashboard card by **senyo888** and select **v1.0.1**. [Marketplace steps](docs/marketplace.md) · [HACS steps](docs/hacs.md)
 
 **Updating from v1.0.0?** Update the existing Marketplace or HACS entry to **v1.0.1**, then open a fresh dashboard tab. Your saved card carries over. For a manual installation, follow the [resource transition steps](docs/marketplace.md#before-installation) before choosing **Install**. [Update and rollback](docs/migration.md)
-
-If you’re using **v0.1.0-rc.3**, keep the [RC.3 installation and rollback instructions](docs/rc-3.md) with your saved configuration.
 
 ## Acknowledgements
 

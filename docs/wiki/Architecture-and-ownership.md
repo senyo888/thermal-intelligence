@@ -12,7 +12,7 @@ Thermal Intelligence brings together a selected thermostat and the additional ob
 | --- | --- | --- |
 | Thermostats, TRVs and heating hardware | Climate state, target, activity and provider attributes | Selected thermostat view, supported controls and provider details |
 | Independent room and TRV sensors | Temperature, humidity and reported valve position | Explicit named readings, humidity/valve mappings and optional response evidence |
-| Outdoor probes and weather services | Outdoor temperature, other readings and reported conditions | Explicit feature/custom-telemetry readings from an entity or scalar attribute |
+| Outdoor probes and weather services | Outdoor temperature, other readings and reported conditions | Typed temperature from a selected sensor or weather entity, plus explicit mappings for other reported conditions |
 | Window, presence and motion sensors | Raw contact or occupancy observations | Configured context indicators, kept distinct from VT’s accepted feature states |
 | Power and energy sources | Reported power and accumulated energy | Typed optional observations with their units and availability |
 | Existing HA helpers and derived sensors | Temperature slope and other configured derived values | Explicit trend or named source mappings |
@@ -29,7 +29,7 @@ Two paths then enter TI: the **selected climate entity**, and **independently co
 
 The main dial uses the selected climate entity’s current temperature and target. A separately mapped room/TRV temperature supplies an additional reading or response evidence; it does not automatically replace the dial’s temperature source.
 
-Outdoor/weather mappings present scalar readings or reported conditions. Forecast processing and weather-driven control belong to separate provider/backend contracts. TI reads an existing configured trend source rather than calculating a trend from room-temperature history.
+For outside temperature, select a sensor reporting a temperature unit or a weather entity exposing both the temperature and its unit. Other weather conditions can be mapped individually. Forecast processing and weather-driven control belong to separate provider/backend contracts. TI reads an existing configured trend source rather than calculating a trend from room-temperature history.
 
 Raw window, presence and motion inputs stay distinct from the states VT accepts after its configured rules and delays. Each mapped reading keeps its source, units, availability and applicable freshness information. [Configure the sources](https://github.com/senyo888/thermal-intelligence/wiki/Configuration).
 

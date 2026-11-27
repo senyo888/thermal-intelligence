@@ -18,6 +18,7 @@ body:
     attributes:
       label: Evidence type
       options:
+        - Published release running in Home Assistant
         - Design mockup
         - Synthetic fixture capture
         - Tested development build

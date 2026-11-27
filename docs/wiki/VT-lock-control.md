@@ -4,9 +4,9 @@ The compact icon beside the thermostat name shows the lock state reported by **V
 
 ## Configured and disabled locks
 
-From beta.5, the header icon appears only when VT explicitly reports `is_lock_configured: true`. A configured lock can be locked, unlocked, unknown or unavailable; the icon follows that evidence.
+The header icon appears only when VT explicitly reports `is_lock_configured: true`. A configured lock can be locked, unlocked, unknown or unavailable; the icon follows that evidence.
 
-If VT explicitly reports `is_lock_configured: false`, a retained `specific_states.is_locked: true` no longer blocks ordinary controls. TI does not send Unlock or change VT configuration. Connection, availability, readiness and the other command checks still apply. Missing or malformed configuration is not treated as disabled and cannot clear a reported user lock.
+If VT explicitly reports `is_lock_configured: false`, a retained `specific_states.is_locked: true` does not block ordinary controls. TI does not send Unlock or change VT configuration. Connection, availability, readiness and the other command checks still apply. Missing or malformed configuration is not treated as disabled and cannot clear a reported user lock.
 
 If VT explicitly reports `is_lock_configured: false` while the lock dialog is open, the dialog shows **Lock not configured**. If the flag is missing or malformed, it shows **Unknown** while the thermostat remains observable; lost connection or observation shows **Unavailable**. In these cases the action is invalidated and any entered code is cleared. The dialog stays open until dismissed, and restoring configuration does not revive the old action.
 
