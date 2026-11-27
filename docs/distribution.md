@@ -1,6 +1,6 @@
 # Distribution
 
-Version [1.0.1](v1.0.1.md) adds the confirmed control-source glow. The [releases page](https://github.com/senyo888/thermal-intelligence/releases/latest) lists the latest downloadable stable package.
+[Thermal Intelligence v1.0.1](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.1) was published on 27 November 2026. The [release manifest](https://github.com/senyo888/thermal-intelligence/releases/download/v1.0.1/manifest.json) identifies commit `b9150b7`. All three downloads matched the package built from that commit. [Checksums and Marketplace upgrade](compatibility.md#101-package).
 
 [Thermal Intelligence 1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) was published on 24 November 2026 from `main` at `4e6b941`. A clean Marketplace installation on Home Assistant 2026.11.2 selected the public tag and served the card, GPL licence and manifest with matching SHA-256 hashes. [Package identity and verification](v1.0.0-package.md)
 
@@ -63,15 +63,15 @@ Changing the version or picker changes the module bytes. Validate that resulting
 
 ### Installation and release checks
 
-[1.0.1 dashboard and package checks](compatibility.md#101-package) cover the final card module. The published installation results below were recorded for 1.0.0.
+The [1.0.1 package record](compatibility.md#101-package) covers both delivery and the saved-card upgrade. The [1.0.0 record](v1.0.0-package.md) preserves the earlier installation and rollback results.
 
 | Check | Status |
 | --- | --- |
 | Repository description, topics, README images and software licence | Present |
-| Dashboard metadata, bounded install directory and repeatable candidate assets | Reproducible 1.0.0 packages contain the reviewed card, GPL licence and manifest. See the [package record](v1.0.0-package.md). |
-| Published files | [v1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) includes the card, licence and [manifest](https://github.com/senyo888/thermal-intelligence/releases/download/v1.0.0/manifest.json). All three public downloads matched the release checksums. |
-| HACS plugin validation | All eight applicable [checks on v1.0.0](https://github.com/senyo888/thermal-intelligence/actions/runs/45459007561) passed with none disabled. |
-| Installer coverage | The v1.0.0 Marketplace clean install and upgrade were verified on HA 2026.11.2. The earlier candidate covered rollback, reinstall and removal. Older HACS installation and full backup restoration remain unverified. [Coverage by version](compatibility.md). |
+| Dashboard metadata, bounded install directory and repeatable candidate assets | The v1.0.1 package reproduces from the tagged commit and contains the card, GPL licence and manifest. |
+| Published files | All three [v1.0.1 downloads](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.1) matched their [recorded checksums](compatibility.md#101-package). |
+| HACS plugin validation | The official [Dashboard plugin validation](https://github.com/senyo888/thermal-intelligence/actions/runs/46037190950) passed for the v1.0.1 tag. |
+| Installer coverage | Marketplace installed v1.0.0 from the default catalogue and upgraded the saved dashboard to v1.0.1 on HA 2026.11.2. The earlier candidate covered rollback, reinstall and removal. Older HACS installation and full backup restoration remain unverified. [Coverage by version](compatibility.md). |
 | Default catalogue | [Accepted on 26 November 2026](https://github.com/hacs/default/pull/14872). Search for **Thermal Intelligence** by **senyo888** in the Dashboard catalogue. |
 
 The intended versioned route uses a reviewed GitHub release with the standalone JS asset, software licence and package manifest. A manual ZIP or a bare tag is not that route. Keep internal reports, prompts and raw evidence out of release assets. Catalogue submission has [additional requirements](https://www.hacs.xyz/docs/publish/include/), including upstream validation and a published release; preparing the files does not complete those steps.
