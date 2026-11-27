@@ -1,6 +1,8 @@
 # Compatibility
 
-**Thermal Intelligence 1.0.0.** A fresh Marketplace install on Home Assistant 2026.11.2 served the card, GPL licence and manifest from the public v1.0.0 release with matching checksums. An existing installation also upgraded to the final card through Marketplace. Three existing thermostats displayed the current and target temperatures reported by Home Assistant, including after a fresh browser reload. [Final package and dashboard checks](https://github.com/senyo888/thermal-intelligence/blob/main/docs/v1.0.0-package.md#validation-boundaries).
+**Thermal Intelligence 1.0.1.** Phone and iPad WebKit checks covered the control-source glow and saved cards. [1.0.1 package and dashboard checks](https://github.com/senyo888/thermal-intelligence/blob/main/docs/compatibility.md#101-package).
+
+**Thermal Intelligence 1.0.0.** The [Dashboard catalogue entry](https://github.com/hacs/default/pull/14872) was accepted on 26 November 2026. A fresh installation through **Marketplace → Add from link** on Home Assistant 2026.11.2 served the card, GPL licence and manifest from the public v1.0.0 release with matching checksums. An existing installation also upgraded to the final card through Marketplace. Three existing thermostats displayed the current and target temperatures reported by Home Assistant, including after a fresh browser reload. [Final package and dashboard checks](https://github.com/senyo888/thermal-intelligence/blob/main/docs/v1.0.0-package.md#validation-boundaries).
 
 The earlier candidate passed editor save and reload, room control and a five-minute scheduled Boost with automatic return. Whole-house Boost confirmed seven of eight rooms. The Marketplace rollback and reinstall trial and all nine checkpoints of the 48-hour Lab soak used that earlier build. [Version-specific results](https://github.com/senyo888/thermal-intelligence/blob/main/docs/compatibility.md#100-package).
 
@@ -31,7 +33,7 @@ The following table and results describe their original builds and observation p
 | VT lock code/error paths | Synthetic tests only; see [provider logging limitation](https://github.com/senyo888/thermal-intelligence/blob/main/docs/lock-control.md#code-handling-and-provider-limits) |
 | VT response arc | Synthetic positive, restricted, mismatching, stale and expired evidence; real HA checks cover unmapped configurations |
 | Phone, tablet and desktop widths | Responsive Chromium fixtures, keyboard and reduced-motion checks; physical devices and Companion apps remain unverified |
-| HACS | Installation, updates and catalogue inclusion are unverified |
+| HACS | Installation, updates and catalogue inclusion were unverified for this historical baseline |
 | Home Assistant Marketplace | HA 2026.11.0b1 source reviewed; metadata and offline package checks prepared. Installation, migration, update and recovery remain unverified; see [Distribution](https://github.com/senyo888/thermal-intelligence/blob/main/docs/distribution.md) |
 | Other climate integrations | Provisional; require integration-specific checks |
 | Physical heating response | Unverified; activity and valve readings do not prove heat delivery |
@@ -81,4 +83,4 @@ The test establishes the real-HA registry, frontend and service path for this in
 
 ## RC.2 acceptance boundary
 
-Named-release Marketplace selection, passive installation checks, bounded controls and maintainer-observed heating now have [dated RC.2 evidence](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc2-validation.md). Earlier beta.7 inert-switch tests remain specific to beta.7. Default catalogue admission, wider physical-device support, a formal RC.2 soak and complete update/removal/recovery acceptance are not established.
+Named-release Marketplace selection, passive installation checks, bounded controls and maintainer-observed heating now have [dated RC.2 evidence](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc2-validation.md). Earlier beta.7 inert-switch tests remain specific to beta.7. At the time of RC.2, default catalogue admission, wider physical-device support, a formal RC.2 soak and complete update/removal/recovery acceptance were unverified.

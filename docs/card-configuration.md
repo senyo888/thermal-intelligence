@@ -1,6 +1,6 @@
 # Card configuration
 
-Use this guide for the [1.0.0 Thermostat](v1.0.0.md). For a guided first room, follow the [settings walkthrough](wiki/Configuration.md). If your card picker shows **· RC**, use the [RC.3 guide](rc-3.md) for that version.
+Use this guide for the [stable Thermostat card](v1.0.1.md). For a guided first room, follow the [settings walkthrough](wiki/Configuration.md). If your card picker shows **· RC**, use the [RC.3 guide](rc-3.md) for that version.
 
 ## What you need
 
@@ -90,6 +90,8 @@ Tapping a displayed VT icon opens its current observation and available provider
 The top row uses icons for categorical states, with colour for active states and grey for inactive states. Window Open/Closed uses the corresponding window shape. Hover or press an icon for its name, state, source and available actions. Numerical readings such as outside temperature and humidity retain their values. Missing or invalid observations keep their own status in the details and a small status marker where needed.
 
 Provider, source and preset observations share **one combined control indicator**. A reported VT source can pair the VT mark with the selected Comfort icon; Manual can pair the hand with Eco; House can pair the house with its reported Boost policy. A circled **P** represents another reported Provider, Policy or Other source. These are TI marks, not upstream logos. The combined indicator's details retain provider identity, room preset, House policy and schedule activity as separate facts.
+
+Starting with 1.0.1-beta.1, a steady glow around the larger symbol identifies a confirmed control source, even when there is no preset to display. A hand with a history marker records a past adjustment and stays unlit, as do pending and unknown sources.
 
 Schedule can pair its calendar with an explicitly mapped **last confirmed schedule mode**: Frost, Eco, Comfort or Boost. This supports controllers that apply a numeric target while the thermostat reports preset `none`. The mapping must report accepted intent, not a requested selector or raw timetable metadata. It joins the icon only with confirmed Schedule ownership and a connected, available, ready thermostat in Heat. Its details identify it as the last confirmed mode, not proof that a period or Boost timer is still running. No target-temperature matching or timer inference is used.
 

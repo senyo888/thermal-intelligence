@@ -4,7 +4,11 @@ import { readFileSync } from 'node:fs';
 import { build } from 'esbuild';
 const version = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version;
 
-for (const identity of [...new Set([version, '0.1.0-rc.4', '1.0.0', '1.0.0-beta.1'])]) {
+const current = 'thermal-intelligence-thermostat';
+const legacy = 'thermal-intelligence-beta-card';
+const identities = new Map([[version, current], ['1.0.1-beta.1', current], ['1.0.1-rc.1', current],
+  ['1.0.0', current], ['0.1.0-rc.4', legacy], ['1.0.0-beta.1', legacy]]);
+for (const [identity, tag] of identities) {
 for (const order of ['legacy-first', 'beta-first']) {
   test(`${identity} card and editor coexist with legacy registrations: ${order}`, async ({ page }) => {
     if (identity !== version) {
@@ -12,7 +16,6 @@ for (const order of ['legacy-first', 'beta-first']) {
         define: { __TI_VERSION__: JSON.stringify(identity) } });
       await page.route('**/dist/thermal-intelligence.js*', route => route.fulfill({ contentType: 'text/javascript', body: result.outputFiles[0].text }));
     }
-    const tag = identity.includes('-') ? 'thermal-intelligence-beta-card' : 'thermal-intelligence-thermostat';
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.goto('/tests/fixtures/index.html');

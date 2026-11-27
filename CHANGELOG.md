@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.1
+
+- A soft glow identifies the confirmed control source behind the preset badge.
+- Find the Dashboard card by searching for **Thermal Intelligence** in Marketplace or HACS. [Release notes](docs/v1.0.1.md).
+
+## 1.0.1-rc.1
+
+The first release candidate includes the changes tested in Beta 1. The card picker displays **Thermal Intelligence Thermostat · RC**.
+
+## 1.0.1-beta.1
+
+- A soft, steady glow highlights the confirmed control source in the top row. The smaller preset badge keeps its own colour and shape.
+- The installation guides now start with a catalogue search for **Thermal Intelligence** in Marketplace or HACS.
+
 <a name="100--unreleased"></a>
 
 <a name="100"></a>

@@ -23,7 +23,8 @@ def validate_bundle(version, text):
             bool(match.group(2)) != (channel != "stable") or
             not {legacy, legacy + "-editor"} <= tags):
         raise ValueError("Module identity does not exactly match the package version and channel")
-    if channel == "stable" or canonical.intersection(tags):
+    legacy_prerelease = channel != "stable" and version.startswith(("0.", "1.0.0-"))
+    if not legacy_prerelease or canonical.intersection(tags):
         if not canonical.issubset(tags):
             raise ValueError("Module must include both the thermostat card and its editor")
-    return current if channel == "stable" else legacy
+    return legacy if legacy_prerelease else current

@@ -22,17 +22,21 @@ test('a single House composite uses House policy without borrowing the different
   model.headerTelemetry[4].status='stale';assert.equal(compactHeader(model)[1].secondary,null);
 });
 test('unknown, pending and invalid ownership suppress every other control glyph and preset',()=>{
-  for(const [owner,status]of [['Unknown','unknown'],['Unknown','available'],['Pending','available'],['Unavailable','unavailable'],['Invalid','invalid']]){
+  for(const [owner,status]of [['Unknown','unknown'],['Unknown','available'],['Pending','available'],['Unavailable','unavailable'],['Invalid','invalid'],['Stale','stale']]){
     const summary=compactHeader(fixture(owner,status))[1];
     assert.equal(summary.secondary,null);assert.equal(summary.monogram,undefined);
+    assert.equal(summary.confirmedOwner,false);
     assert.equal(headerPresentation(summary).iconOnly,true);assert(!headerPresentation(summary).content.includes('Provider'));
   }
 });
 test('known room ownership combines only with an available selected preset',()=>{
-  for(const owner of ['Manual','VT','Policy','Schedule']){
+  for(const owner of ['Manual','VT','Policy','Schedule','Provider','Other']){
     const model=fixture(owner),summary=compactHeader(model)[1];assert.equal(summary.secondary.preset,'eco');
     assert.equal(summary.title,`Control source: ${owner}; Thermostat preset: Eco`);
-    model.headerTelemetry=model.headerTelemetry.filter(row=>!row.preset);assert.equal(compactHeader(model)[1].secondary,null);
+    model.headerTelemetry=model.headerTelemetry.filter(row=>!row.preset);
+    const sourceAlone=compactHeader(model)[1];
+    assert.equal(sourceAlone.secondary,null);
+    assert.equal(sourceAlone.confirmedOwner,true);
   }
 });
 test('hiding the combined control indicator suppresses the slot without losing its observations',()=>{
@@ -43,7 +47,7 @@ test('confirmed local adjustment has a history marker, never overrides a mapped 
   const model=fixture('Unknown','unknown');model.ownership={label:'Unknown'};
   const manual={key:'control:manual_adjustment',group:'control',status:'available',headerEligible:true,icon:'mdi:hand-back-right',value:'Manual input'};
   model.headerTelemetry.push(manual);model.headerOptions.push(manual);
-  let summary=compactHeader(model)[1];assert.equal(summary.lastAction,true);assert.match(summary.title,/Last confirmed card action.*Control source: Unknown/);assert.match(headerPresentation(summary).content,/mdi:history/);
+  let summary=compactHeader(model)[1];assert.equal(summary.lastAction,true);assert.equal(summary.confirmedOwner,false);assert.match(summary.title,/Last confirmed card action.*Control source: Unknown/);assert.match(headerPresentation(summary).content,/mdi:history/);
   model.ownership.source={entity:'sensor.owner'};summary=compactHeader(model)[1];assert.equal(summary.lastAction,false);assert.equal(summary.secondary,null);
 });
 test('binary custom mappings omit words while numbers and arbitrary custom text survive',()=>{

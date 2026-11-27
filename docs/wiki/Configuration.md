@@ -2,7 +2,7 @@
 
 Start with one room. Once its dial shows the temperature and target you recognise, add the readings you actually use. Each card has its own sources and layout.
 
-This walkthrough covers **Thermal Intelligence Thermostat** in the **1.0.0** package. The published RC.3 picker adds **· RC** and has an earlier editor. [Published RC.3 installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md)
+This walkthrough covers **Thermal Intelligence Thermostat** in stable versions **1.0.0** and **1.0.1**. The published RC.3 picker adds **· RC** and has an earlier editor. [Published RC.3 installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md)
 
 ## Get a working dial
 
@@ -62,7 +62,7 @@ Synthetic room in the 1.0.0 card. The footer stays visible as you scroll through
 
 </details>
 
-In 1.0.0 the settings groups run **Presets and control source → Primary icons → VT readings**. Hiding a primary icon keeps its source available in expanded readings. VT checkboxes opt into provider observations. The combined indicator has its own visibility setting, and individual preset choices determine which badge can join it. The lock and status LED keep their own positions.
+The settings groups run **Presets and control source → Primary icons → VT readings**. Hiding a primary icon keeps its source available in expanded readings. VT checkboxes opt into provider observations. The combined indicator has its own visibility setting, and individual preset choices determine which badge can join it. The lock and status LED keep their own positions.
 
 ## Set up temperature response
 

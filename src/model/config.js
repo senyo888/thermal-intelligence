@@ -4,9 +4,10 @@ import { VT_READINGS } from './vt-catalog.js';
 
 export const LEGACY_CARD_TAG = 'thermal-intelligence-beta-card';
 export const LEGACY_EDITOR_TAG = 'thermal-intelligence-beta-card-editor';
-const prerelease = typeof __TI_VERSION__ !== 'undefined' && __TI_VERSION__.includes('-');
-export const CARD_TAG = prerelease ? LEGACY_CARD_TAG : 'thermal-intelligence-thermostat';
-export const EDITOR_TAG = prerelease ? LEGACY_EDITOR_TAG : 'thermal-intelligence-thermostat-editor';
+// Only prereleases from before the first stable card used the beta tag as their primary type.
+const legacyPrerelease = typeof __TI_VERSION__ !== 'undefined' && /^(?:0\.\d+\.\d+|1\.0\.0)-/.test(__TI_VERSION__);
+export const CARD_TAG = legacyPrerelease ? LEGACY_CARD_TAG : 'thermal-intelligence-thermostat';
+export const EDITOR_TAG = legacyPrerelease ? LEGACY_EDITOR_TAG : 'thermal-intelligence-thermostat-editor';
 export const CARD_TYPE = `custom:${CARD_TAG}`;
 export const SCHEMA_VERSION = 1;
 export const TELEMETRY_KINDS = ['temperature', 'humidity', 'trend', 'valve', 'energy', 'power', 'window', 'motion', 'presence', 'power_management', 'follow', 'custom'];

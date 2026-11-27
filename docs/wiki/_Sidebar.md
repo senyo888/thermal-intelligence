@@ -1,6 +1,7 @@
 **Thermal Intelligence Thermostat**
 
 - [Home](https://github.com/senyo888/thermal-intelligence/wiki/Home)
+- [1.0.1 release notes](https://github.com/senyo888/thermal-intelligence/blob/1dad849ef14fc98953c844d4e06d70d5656fa9fe/docs/v1.0.1.md)
 - [1.0.0 release and introduction](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0)
 - [Install with Marketplace](https://github.com/senyo888/thermal-intelligence/wiki/Installing-with-Marketplace)
 - [Install with older HACS](https://github.com/senyo888/thermal-intelligence/wiki/HACS-custom-repository)

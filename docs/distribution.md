@@ -1,5 +1,7 @@
 # Distribution
 
+Version [1.0.1](v1.0.1.md) adds the confirmed control-source glow. The [releases page](https://github.com/senyo888/thermal-intelligence/releases/latest) lists the latest downloadable stable package.
+
 [Thermal Intelligence 1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) was published on 24 November 2026 from `main` at `4e6b941`. A clean Marketplace installation on Home Assistant 2026.11.2 selected the public tag and served the card, GPL licence and manifest with matching SHA-256 hashes. [Package identity and verification](v1.0.0-package.md)
 
 Use [Marketplace](marketplace.md) on Home Assistant 2026.11 and later, or [HACS](hacs.md) on older installations. Users maintaining a prerelease can find its original files and rollback guidance in the [RC.3](rc-3.md), [RC.2](rc.md), [RC.1](rc-1.md) and [beta.7](beta-7.md) records.
@@ -8,7 +10,7 @@ Use [Marketplace](marketplace.md) on Home Assistant 2026.11 and later, or [HACS]
 
 | Branch | Contents |
 | --- | --- |
-| `main` | Public documentation, website and the promoted 1.0.0 card and licence |
+| `main` | Public documentation, website and the promoted stable card and licence |
 | `develop` | Release-candidate source, tests and reproducible candidate package |
 | `senyo888-patch-1` | Branch for beta development and packages; verify its current commit before use |
 
@@ -16,7 +18,7 @@ The package contains the JavaScript module, software licence and a manifest iden
 
 ## Marketplace and older HACS installations
 
-For 1.0.0, use the custom **Dashboard** repository route. The [default catalogue submission](https://github.com/hacs/default/pull/14872) passed its automated checks and is awaiting maintainer review. The older [RC.2 installation record](rc2-validation.md) applies only to that prerelease.
+Search for **Thermal Intelligence** in Marketplace or HACS and open the **Dashboard** card by **senyo888**. The [default catalogue entry](https://github.com/hacs/default/pull/14872) was accepted on 26 November 2026. The older [RC.2 installation record](rc2-validation.md) applies only to that prerelease.
 
 The root [`hacs.json`](../hacs.json) names `thermal-intelligence.js`, uses the `dist/` layout and hides the default branch as a download choice. Stable releases follow the patch → develop → main pull request sequence. Package the tagged commit to reproduce its published manifest.
 
@@ -61,14 +63,16 @@ Changing the version or picker changes the module bytes. Validate that resulting
 
 ### Installation and release checks
 
+[1.0.1 dashboard and package checks](compatibility.md#101-package) cover the final card module. The published installation results below were recorded for 1.0.0.
+
 | Check | Status |
 | --- | --- |
 | Repository description, topics, README images and software licence | Present |
 | Dashboard metadata, bounded install directory and repeatable candidate assets | Reproducible 1.0.0 packages contain the reviewed card, GPL licence and manifest. See the [package record](v1.0.0-package.md). |
 | Published files | [v1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) includes the card, licence and [manifest](https://github.com/senyo888/thermal-intelligence/releases/download/v1.0.0/manifest.json). All three public downloads matched the release checksums. |
 | HACS plugin validation | All eight applicable [checks on v1.0.0](https://github.com/senyo888/thermal-intelligence/actions/runs/45459007561) passed with none disabled. |
-| Installer coverage | Marketplace clean install from the public tag and upgrade to the matching card verified on HA 2026.11.2. The earlier candidate covered rollback, reinstall and removal. Older HACS installation and full backup restoration remain unverified. [Coverage by version](compatibility.md). |
-| Default catalogue | [Submission #14872](https://github.com/hacs/default/pull/14872) is awaiting upstream review. Use the custom Dashboard repository to install today. |
+| Installer coverage | The v1.0.0 Marketplace clean install and upgrade were verified on HA 2026.11.2. The earlier candidate covered rollback, reinstall and removal. Older HACS installation and full backup restoration remain unverified. [Coverage by version](compatibility.md). |
+| Default catalogue | [Accepted on 26 November 2026](https://github.com/hacs/default/pull/14872). Search for **Thermal Intelligence** by **senyo888** in the Dashboard catalogue. |
 
 The intended versioned route uses a reviewed GitHub release with the standalone JS asset, software licence and package manifest. A manual ZIP or a bare tag is not that route. Keep internal reports, prompts and raw evidence out of release assets. Catalogue submission has [additional requirements](https://www.hacs.xyz/docs/publish/include/), including upstream validation and a published release; preparing the files does not complete those steps.
 
@@ -90,4 +94,4 @@ RC.3 retains `custom:thermal-intelligence-beta-card`, with the picker name **The
 
 ## Default-branch discovery and release selection
 
-The default branch carries its separately reviewed module and licence for repository discovery, with a strict hash check. For the stable card, select the named v1.0.0 release. The installation record identifies the version Marketplace actually selected. Both Marketplace and HACS read `hacs.json`; branch inspection or matching bytes alone do not prove named-release selection. Capture the selected version and installer origin as well as the served bytes. Reproduce published assets from their original release commit; a later promotion commit would change manifest provenance and is not a replacement release.
+The default branch carries its separately reviewed module and licence for repository discovery, with a strict hash check. For the stable card, select the version listed on the [latest release](https://github.com/senyo888/thermal-intelligence/releases/latest). The installation record identifies the version Marketplace actually selected. Both Marketplace and HACS read `hacs.json`; branch inspection or matching bytes alone do not prove named-release selection. Capture the selected version and installer origin as well as the served bytes. Reproduce published assets from their original release commit; a later promotion commit would change manifest provenance and is not a replacement release.
