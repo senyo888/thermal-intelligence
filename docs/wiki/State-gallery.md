@@ -14,7 +14,7 @@ These images come from earlier installations. Some ownership and cutoff indicato
   </tr>
 </table>
 
-Both captures show an orange arc and a rising trend. The chips report different facts: a thermostat heat request on the left, and a reported thermostatic radiator valve (TRV) opening on the right. Neither screenshot alone proves accepted output or physical heat transfer. In v1.0.1, orange requires the configured [response evidence](https://github.com/senyo888/thermal-intelligence/blob/main/docs/provider-contracts.md#temperature-response-evidence).
+Both captures show an orange arc and a rising trend. The chips report different facts: a thermostat heat request on the left, and a reported thermostatic radiator valve (TRV) opening on the right. Neither screenshot alone proves accepted output or physical heat transfer. In v1.0.1, the outer arc turns orange only when the card has the configured [response evidence](https://github.com/senyo888/thermal-intelligence/blob/main/docs/provider-contracts.md#temperature-response-evidence). The fine slope ring follows the measured temperature trend independently.
 
 ## A closed valve with different temperature trends
 
