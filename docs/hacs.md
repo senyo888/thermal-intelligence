@@ -16,4 +16,4 @@ For the first prerelease, HACS 2.0.5 can inspect the default branch during repos
 
 Install, update, removal, manual-to-installer migration and recovery still require their own acceptance. A module/resource rollback does not restore installer state or the whole environment. Schema-2 rollback to RC.1 also requires the original schema-1 configuration. See [migration](migration.md).
 
-All eight [HACS plugin checks](https://github.com/senyo888/thermal-intelligence/actions/runs/45459007561) passed for v1.0.0. HACS accepted the [catalogue entry](https://github.com/hacs/default/pull/14872) on 26 November 2026. [Dashboard requirements](https://www.hacs.xyz/docs/publish/plugin/)
+The official [HACS Dashboard plugin check](https://github.com/senyo888/thermal-intelligence/actions/runs/46037190950) passed for v1.0.1. Installation and upgrade on older HACS systems remain unverified. HACS accepted the [catalogue entry](https://github.com/hacs/default/pull/14872) on 26 November 2026. [Dashboard requirements](https://www.hacs.xyz/docs/publish/plugin/)

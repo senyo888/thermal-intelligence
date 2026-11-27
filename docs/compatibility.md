@@ -2,9 +2,17 @@
 
 ## 1.0.1 package
 
-The [1.0.1 card](v1.0.1.md) is 269,376 bytes, with SHA-256 `7d5b40c49bc5ee922661296f4f35433bb3bdd0f11b11e5b71cace1366de774c2`. The [build manifest](../tests/fixtures/v1.0.1/manifest.json) identifies the reviewed source and licence.
+[Thermal Intelligence v1.0.1](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.1) was published on 27 November 2026 from [`b9150b7`](https://github.com/senyo888/thermal-intelligence/commit/b9150b79bbc378af5542e39b6ee42de730d6dcfd). All three public downloads matched the package built from that commit.
 
-On Home Assistant 2026.11.3, isolated WebKit sessions loaded these bytes at phone, iPad portrait and iPad landscape sizes. All 21 display cases passed, including unknown and stale sources. On 2026.11.2, three saved cards showed the reported temperatures, targets and control sources through a fresh phone reload and both iPad orientations. Both checks used the package in the browser. The versioned Marketplace upgrade requires a separate check after publication.
+| Public download | Bytes | SHA-256 |
+| --- | ---: | --- |
+| [thermal-intelligence.js](https://github.com/senyo888/thermal-intelligence/releases/download/v1.0.1/thermal-intelligence.js) | 269,376 | `7d5b40c49bc5ee922661296f4f35433bb3bdd0f11b11e5b71cace1366de774c2` |
+| [LICENSE](https://github.com/senyo888/thermal-intelligence/releases/download/v1.0.1/LICENSE) | 34,674 | `fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0` |
+| [manifest.json](https://github.com/senyo888/thermal-intelligence/releases/download/v1.0.1/manifest.json) | 1,436 | `9d60f93f33ed69a998b5c4d83b977bcf6dab742656b345231b7904f6e6a8e7a8` |
+
+On Home Assistant 2026.11.3, isolated WebKit sessions loaded these bytes at phone, iPad portrait and iPad landscape sizes. All 21 display cases passed, including unknown and stale sources. On 2026.11.2, three saved cards showed the reported temperatures, targets and control sources through a fresh phone reload and both iPad orientations. Both checks used the package in the browser.
+
+On a disposable Home Assistant 2026.11.2 installation, the default Marketplace Dashboard catalogue offered v1.0.1 to an installed v1.0.0 card. Updating through the existing Marketplace entry preserved the saved dashboard configuration and the single resource ID. In fresh Chromium sessions before and after the upgrade, the card and editor reported the selected version and the card showed the same current and target temperatures. All three installed files matched their public downloads on disk and over HTTP for both versions.
 
 <a name="unreleased-100-package"></a>
 

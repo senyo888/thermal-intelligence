@@ -36,7 +36,7 @@ These steps follow the [official Marketplace instructions](https://www.home-assi
 
 ## Verify the installation
 
-Reload the dashboard in a new browser session and check the card version. For v1.0.0, Marketplace downloads the attached card, GPL licence and release manifest. TI prepares stable releases from `main`. A release tag identifies the exact download even as that branch moves on. [How Marketplace selects versions](https://contributors.home-assistant.io/marketplace/how-it-works/) · [1.0.0 package verification](v1.0.0-package.md#validation-boundaries)
+Open a fresh dashboard tab and check the card version. For v1.0.1, Marketplace downloads the card, GPL licence and [release manifest](https://github.com/senyo888/thermal-intelligence/releases/download/v1.0.1/manifest.json). [Published checksums](compatibility.md#101-package) · [How Marketplace selects versions](https://contributors.home-assistant.io/marketplace/how-it-works/)
 
 Record the selected version, installer result, installed file list and generated resource URL. Verify the served `thermal-intelligence.js` against the exact release manifest’s size and SHA-256. Identical bytes on another branch do not prove that the intended named version was selected.
 
@@ -48,6 +48,8 @@ Optional switch enrollment is deliberate and uses schema 2. Read its [eligibilit
 
 ## Update and recovery
 
+If you already use v1.0.0, open its existing Marketplace update, confirm **v1.0.1**, then reopen your saved dashboard in a fresh tab. You can keep the same card and resource. [Update and rollback](migration.md)
+
 After installation, enable the repository’s disabled **Pre-release** entity under **Settings → Devices & services → Marketplace**, then turn on that switch if you want future prerelease updates. This is separate from first-install version selection.
 
 Read the release notes and take a fresh backup before an update. Verify the exact new version and served hash again. Test update, removal and recovery separately; installing the same version twice does not prove update behavior.
@@ -58,4 +60,4 @@ Home Assistant recommends restoring a backup after a failed update instead of us
 
 Home Assistant 2026.11 takes over HACS repositories and update entities through Marketplace. Old `/hacsfiles/` resource paths remain supported; do not rename working URLs merely to match the new product name. Verify migration on the actual installation and do not reinstall HACS on a Marketplace system. See [how Marketplace handles HACS](https://contributors.home-assistant.io/marketplace/how-it-works/).
 
-The repository uses `hacs.json` and the Dashboard `dist/` layout. On Home Assistant 2026.11.2, a fresh Marketplace installation selected the public v1.0.0 tag and served all three files with matching checksums. [Package verification](v1.0.0-package.md#validation-boundaries) · [Distribution and catalogue status](distribution.md)
+On Home Assistant 2026.11.2, the default Dashboard catalogue delivered v1.0.0 and offered v1.0.1 as an update. The saved dashboard and its single resource ID survived the upgrade. [Package verification](compatibility.md#101-package) · [Distribution and catalogue status](distribution.md)
