@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/presentation/thermal-intelligence-v1.0.1-release-header.png" alt="Thermal Intelligence v1.0.1. A thermostat dashboard card+. Now in the Home Assistant Marketplace." width="100%"></p>
+<p align="center"><img src="assets/presentation/thermal-intelligence-header.png" alt="Thermal Intelligence — thermostat control for Home Assistant" width="100%"></p>
 
 # Thermal Intelligence
 
