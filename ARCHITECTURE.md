@@ -1,6 +1,6 @@
 # Thermal Intelligence architecture contract
 
-The [1.0.0 frontend](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) is a standalone Home Assistant dashboard card. It presents Home Assistant and provider state and sends commands only after explicit user interaction. A future TI backend is a separate component. [Distribution](docs/distribution.md) describes branch roles and versioned packages.
+The [Thermal Intelligence frontend](https://github.com/senyo888/thermal-intelligence/releases/latest) is a standalone Home Assistant dashboard card. It presents Home Assistant and provider state and sends commands only after explicit user interaction. A future TI backend is a separate component. [Distribution](docs/distribution.md) describes branch roles and versioned packages.
 
 ## Ownership and layers
 

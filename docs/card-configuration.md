@@ -1,6 +1,6 @@
 # Card configuration
 
-Use this guide for the [1.0.0 Thermostat](v1.0.0.md). For a guided first room, follow the [settings walkthrough](wiki/Configuration.md). If your card picker shows **· RC**, use the [RC.3 guide](rc-3.md) for that version.
+Use this guide for the [stable Thermostat card](v1.0.1.md). For a guided first room, follow the [settings walkthrough](wiki/Configuration.md). If your card picker shows **· RC**, use the [RC.3 guide](rc-3.md) for that version.
 
 ## What you need
 

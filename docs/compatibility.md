@@ -1,5 +1,11 @@
 # Compatibility
 
+## 1.0.1 package
+
+The [1.0.1 card](v1.0.1.md) is 269,376 bytes, with SHA-256 `7d5b40c49bc5ee922661296f4f35433bb3bdd0f11b11e5b71cace1366de774c2`. The [build manifest](../tests/fixtures/v1.0.1/manifest.json) identifies the reviewed source and licence.
+
+On Home Assistant 2026.11.3, isolated WebKit sessions loaded these bytes at phone, iPad portrait and iPad landscape sizes. All 21 display cases passed, including unknown and stale sources. On 2026.11.2, three saved cards showed the reported temperatures, targets and control sources through a fresh phone reload and both iPad orientations. Both checks used the package in the browser. The versioned Marketplace upgrade requires a separate check after publication.
+
 <a name="unreleased-100-package"></a>
 
 ## 1.0.0 package

@@ -9,6 +9,10 @@ Installation images use assisted image editing for anonymisation and were visual
 
 The header is generated presentation artwork, not a screenshot. Documentation and artwork are subject to the separate [reuse terms](licensing-options.md).
 
+## Version 1.0.1 release header
+
+The [Marketplace release header](../assets/presentation/thermal-intelligence-v1.0.1-release-header.png) pairs the TI logo with an illustrated Schedule calendar and Eco leaf. The dimensional icons and thermal contours are release artwork. The card itself applies a soft glow to the confirmed control source.
+
 ## Version 1.0.0 release images
 
 The [release header](../assets/presentation/thermal-intelligence-v1-release-header.png) uses the TI house logo, five top-row icons and artwork made with ImageGen from supplied thermostat captures. The [Plum thermostat](../assets/presentation/thermal-intelligence-v1-plum.png) is a supplied screen capture with its display name edited to read “Thermal Intelligence Thermostat”. Its room reading, target, trend and Idle status are shown as captured. Its originating build was not independently verified.

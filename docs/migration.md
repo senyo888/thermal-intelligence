@@ -1,5 +1,7 @@
 # Update and rollback
 
+Updating from 1.0.0 to 1.0.1 keeps your saved dashboard card type and configuration. If Marketplace or HACS manages the card, update the existing entry and open a fresh dashboard tab. The stable picker reads **Thermal Intelligence Thermostat**.
+
 The 1.0.1-rc.1 picker reads **Thermal Intelligence Thermostat · RC**. Beta 1 uses the **· Beta** suffix. Dashboards saved with the 1.0.0 thermostat type or the earlier beta-card type open with this build. Keep a single standalone TI module registered.
 
 The 1.0.0 picker reads **Thermal Intelligence Thermostat**. Beta builds add **· Beta** and RC builds add **· RC**. New 1.0.0 cards and exports use `custom:thermal-intelligence-thermostat`. Saved beta and RC cards continue to load using `custom:thermal-intelligence-beta-card`. Loading two standalone builds, even two marked 1.0.0, can leave an old picker or duplicate entries. Keep one standalone resource and reload the dashboard in a fresh browser tab. If you return to an older module, use the previous YAML type and the configuration saved with that module. Replace the existing standalone resource when moving between them. Keep the previous module, resource URL and matching card configuration for rollback. [1.0.0 package](v1.0.0-package.md).

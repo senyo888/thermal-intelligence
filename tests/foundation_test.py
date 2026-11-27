@@ -23,15 +23,15 @@ class FoundationTargetTests(unittest.TestCase):
 
     def test_distribution_pins_match_frozen_v1_manifest(self):
         """Bind main pins to the separately reviewed immutable candidate record."""
-        data = (ROOT / "tests/fixtures/v1.0.0/manifest.json").read_bytes()
+        data = (ROOT / "tests/fixtures/v1.0.1/manifest.json").read_bytes()
         self.assertEqual(hashlib.sha256(data).hexdigest(),
-            "2373e41c518c1fb36fce882ed8c973d77a3170e2dd3f42340809b007c3b465b1")
+            "5ebf0c7a66673e88da164806d5375e707d661357a98ea01d47038ac73bcfe038")
         manifest = json.loads(data)
-        self.assertEqual(manifest["version"], "1.0.0")
+        self.assertEqual(manifest["version"], "1.0.1")
         self.assertEqual(manifest["card_type"], "custom:thermal-intelligence-thermostat")
         self.assertEqual(manifest["editor_tag"], "thermal-intelligence-thermostat-editor")
-        self.assertEqual(manifest["source_commit"], "e96009dfde982af4e9b51a2c093dcd376dc08e63")
-        self.assertEqual(manifest["source_tree"], "10681d89ccc8231a11cde68cca38d92c1ddb598f")
+        self.assertEqual(manifest["source_commit"], "0d2075b490a1487f79797105645fd8df08649c59")
+        self.assertEqual(manifest["source_tree"], "12e76f264457a14fb152278b43239bfbce9df266")
         self.assertEqual(foundation.DISTRIBUTION_HASHES,
             {f'dist/{item["path"]}': item["sha256"] for item in manifest["files"]})
 
