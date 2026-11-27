@@ -8,6 +8,8 @@
 
 Search for **Thermal Intelligence** by **senyo888** in the Dashboard catalogue. Install the [latest stable version](https://github.com/senyo888/thermal-intelligence/releases/latest), then choose **Thermal Intelligence Thermostat** in the card picker. Start with the [Marketplace installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md) or, on older Home Assistant systems, the [HACS guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/hacs.md).
 
+**Updating from v1.0.0?** Update the existing entry to **v1.0.1**, then reopen your saved dashboard in a fresh tab. [Release notes](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.1) · [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md)
+
 **Already running RC.3?** Its picker reads **Thermal Intelligence Thermostat · RC**. The [RC.3 setup guide](https://github.com/senyo888/thermal-intelligence/blob/4caf6f84868079a4d8f25c5d5731654f015bc260/docs/card-configuration.md#visual-configuration) matches that editor.
 
 ## Set up your first room

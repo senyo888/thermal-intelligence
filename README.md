@@ -6,7 +6,7 @@
 
 [![Latest published release](https://img.shields.io/github/v/release/senyo888/thermal-intelligence?label=Release&color=725691)](https://github.com/senyo888/thermal-intelligence/releases/latest) [![Latest published package manifest version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fsenyo888%2Fthermal-intelligence%2Freleases%2Flatest%2Fdownload%2Fmanifest.json&query=%24.version&label=Manifest&color=536b87)](https://github.com/senyo888/thermal-intelligence/releases/latest/download/manifest.json) [![Marketplace Dashboard card](https://img.shields.io/badge/Marketplace-Dashboard-41BDF5?logo=homeassistant&logoColor=white)](docs/marketplace.md) [![Software licence GPL-3.0-only](https://img.shields.io/badge/License-GPL--3.0--only-blue)](LICENSE)
 
-[Release notes](docs/v1.0.1.md) · [Project site](https://senyo888.github.io/thermal-intelligence/) · [Wiki guides](https://github.com/senyo888/thermal-intelligence/wiki) · [Configuration and YAML](docs/card-configuration.md) · [Compatibility](docs/compatibility.md)
+[v1.0.1 release notes](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.1) · [Project site](https://senyo888.github.io/thermal-intelligence/) · [Wiki guides](https://github.com/senyo888/thermal-intelligence/wiki) · [Configuration and YAML](docs/card-configuration.md) · [Compatibility](docs/compatibility.md)
 
 Thermal Intelligence puts your thermostat’s current temperature, target and reported activity on one Home Assistant card. Add the readings that help you understand a room. A closed radiator valve and a rising room temperature, for example, can both be true. Tap the status chip for the reported activity, or open a top-row icon to inspect its source.
 
@@ -85,6 +85,8 @@ TI sends the actions you choose through Home Assistant’s services. Your thermo
 ## Installation
 
 On Home Assistant 2026.11 or later, open **Settings → Marketplace** and search for **Thermal Intelligence**. On older systems, search for the same name in **HACS**. Open the Dashboard card by **senyo888** and select the latest stable version. [Marketplace steps](docs/marketplace.md) · [HACS steps](docs/hacs.md)
+
+**Updating from v1.0.0?** Update the existing Marketplace or HACS entry to **v1.0.1**, then open a fresh dashboard tab. Your saved card carries over. For a manual installation, follow the [resource transition steps](docs/marketplace.md#before-installation) before choosing **Install**. [Update and rollback](docs/migration.md)
 
 If you’re using **v0.1.0-rc.3**, keep the [RC.3 installation and rollback instructions](docs/rc-3.md) with your saved configuration.
 
