@@ -18,6 +18,7 @@ Commit and push changes to `senyo888-patch-1` first, then open a pull request in
 
 ## Public and private material
 
+- Keep the unversioned TI brand header on the README and website, including the website link preview. Replacing it on either surface requires explicit instructions from Senyo. Use version-specific release headers in their release notes.
 - Publish product guidance, useful contributor contracts and concise release notes. Keep conversations, requests, design briefs, prompts, decision journals, internal reviews and raw operational evidence in ignored `.private/` or `AGENTS.local.md`.
 - Use synthetic public examples and privacy-reviewed images. Keep `assets/` for selected images; public image context belongs in [Image notes](docs/image-notes.md). Preserve required licence notices.
 - Before publication, check links, rendered presentation, private-data boundaries, tracked files and Git history with redacted secret scans. A clean secret scan does not establish that correspondence is suitable for publication.
