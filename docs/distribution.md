@@ -1,5 +1,7 @@
 # Distribution
 
+[Thermal Intelligence v1.0.1](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.1) was published on 27 November 2026. The [release manifest](https://github.com/senyo888/thermal-intelligence/releases/download/v1.0.1/manifest.json) identifies commit `b9150b7`. All three downloads matched the package built from that commit. [Checksums and Marketplace upgrade](compatibility.md#101-package).
+
 [Thermal Intelligence 1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) was published on 24 November 2026 from `main` at `4e6b941`. A clean Marketplace installation on Home Assistant 2026.11.2 selected the public tag and served the card, GPL licence and manifest with matching SHA-256 hashes. [Package identity and verification](v1.0.0-package.md)
 
 Use [Marketplace](marketplace.md) on Home Assistant 2026.11 and later, or [HACS](hacs.md) on older installations. Users maintaining a prerelease can find its original files and rollback guidance in the [RC.3](rc-3.md), [RC.2](rc.md), [RC.1](rc-1.md) and [beta.7](beta-7.md) records.
@@ -8,7 +10,7 @@ Use [Marketplace](marketplace.md) on Home Assistant 2026.11 and later, or [HACS]
 
 | Branch | Contents |
 | --- | --- |
-| `main` | Public documentation, website and the promoted 1.0.0 card and licence |
+| `main` | Public documentation, website and the promoted stable card and licence |
 | `develop` | Release-candidate source, tests and reproducible candidate package |
 | `senyo888-patch-1` | Branch for beta development and packages; verify its current commit before use |
 
@@ -61,14 +63,16 @@ Changing the version or picker changes the module bytes. Validate that resulting
 
 ### Installation and release checks
 
+The [1.0.1 package record](compatibility.md#101-package) covers both delivery and the saved-card upgrade. The [1.0.0 record](v1.0.0-package.md) preserves the earlier installation and rollback results.
+
 | Check | Status |
 | --- | --- |
 | Repository description, topics, README images and software licence | Present |
-| Dashboard metadata, bounded install directory and repeatable candidate assets | Reproducible 1.0.0 packages contain the reviewed card, GPL licence and manifest. See the [package record](v1.0.0-package.md). |
-| Published files | [v1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) includes the card, licence and [manifest](https://github.com/senyo888/thermal-intelligence/releases/download/v1.0.0/manifest.json). All three public downloads matched the release checksums. |
-| HACS plugin validation | All eight applicable [checks on v1.0.0](https://github.com/senyo888/thermal-intelligence/actions/runs/45459007561) passed with none disabled. |
-| Installer coverage | Marketplace clean install from the public tag and upgrade to the matching card verified on HA 2026.11.2. The earlier candidate covered rollback, reinstall and removal. Older HACS installation and full backup restoration remain unverified. [Coverage by version](compatibility.md). |
-| Default catalogue | [Accepted on 26 November 2026](https://github.com/hacs/default/pull/14872). The Dashboard catalogue lists `senyo888/thermal-intelligence` at `v1.0.0`. |
+| Dashboard metadata, bounded install directory and repeatable candidate assets | The v1.0.1 package reproduces from the tagged commit and contains the card, GPL licence and manifest. |
+| Published files | All three [v1.0.1 downloads](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.1) matched their [recorded checksums](compatibility.md#101-package). |
+| HACS plugin validation | The official [Dashboard plugin validation](https://github.com/senyo888/thermal-intelligence/actions/runs/46037190950) passed for the v1.0.1 tag. |
+| Installer coverage | Marketplace installed v1.0.0 from the default catalogue and upgraded the saved dashboard to v1.0.1 on HA 2026.11.2. The earlier candidate covered rollback, reinstall and removal. Older HACS installation and full backup restoration remain unverified. [Coverage by version](compatibility.md). |
+| Default catalogue | [Accepted on 26 November 2026](https://github.com/hacs/default/pull/14872). Search for **Thermal Intelligence** by **senyo888** in the Dashboard catalogue. |
 
 The intended versioned route uses a reviewed GitHub release with the standalone JS asset, software licence and package manifest. A manual ZIP or a bare tag is not that route. Keep internal reports, prompts and raw evidence out of release assets. Catalogue submission has [additional requirements](https://www.hacs.xyz/docs/publish/include/), including upstream validation and a published release; preparing the files does not complete those steps.
 
@@ -90,4 +94,4 @@ RC.3 retains `custom:thermal-intelligence-beta-card`, with the picker name **The
 
 ## Default-branch discovery and release selection
 
-The default branch carries its separately reviewed module and licence for repository discovery, with a strict hash check. For the stable card, select the named v1.0.0 release. The installation record identifies the version Marketplace actually selected. Both Marketplace and HACS read `hacs.json`; branch inspection or matching bytes alone do not prove named-release selection. Capture the selected version and installer origin as well as the served bytes. Reproduce published assets from their original release commit; a later promotion commit would change manifest provenance and is not a replacement release.
+The default branch carries its separately reviewed module and licence for repository discovery, with a strict hash check. For the stable card, select the version listed on the [latest release](https://github.com/senyo888/thermal-intelligence/releases/latest). The installation record identifies the version Marketplace actually selected. Both Marketplace and HACS read `hacs.json`; branch inspection or matching bytes alone do not prove named-release selection. Capture the selected version and installer origin as well as the served bytes. Reproduce published assets from their original release commit; a later promotion commit would change manifest provenance and is not a replacement release.

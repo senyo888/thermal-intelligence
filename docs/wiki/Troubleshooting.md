@@ -2,7 +2,7 @@
 
 ## The card is missing from Add Card
 
-Check the module you loaded. Version 1.0.0 appears as **Thermal Intelligence Thermostat**, RC.3 as **Thermal Intelligence Thermostat · RC**, and beta builds add **· Beta**. New 1.0.0 cards use `custom:thermal-intelligence-thermostat`. Existing cards using `custom:thermal-intelligence-beta-card` still work. Keep one registration for the standalone module, then open a fresh browser document. The older dashboard card uses a separate registration. [Upgrade and rollback](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md).
+Check the module you loaded. The stable version appears as **Thermal Intelligence Thermostat**, RC.3 as **Thermal Intelligence Thermostat · RC**, and beta builds add **· Beta**. New stable cards use `custom:thermal-intelligence-thermostat`. Existing cards using `custom:thermal-intelligence-beta-card` still work. Keep one registration for the standalone module, then open a fresh browser document. The older dashboard card uses a separate registration. [Upgrade and rollback](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md).
 
 ## My icon layout disappeared
 
@@ -26,7 +26,7 @@ They describe different observations: temperature response, temperature slope an
 
 ## Update or rollback
 
-For 1.0.0, check the module against the [published package](https://github.com/senyo888/thermal-intelligence/blob/main/docs/v1.0.0-package.md). Follow the [migration guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md) for the installer that owns your resource. Keep your previous module and its saved configuration together. A frontend rollback cannot undo a provider command. The [RC.3 package record](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md) has the files for that prerelease.
+For v1.0.1, compare the served module with the [published checksum](https://github.com/senyo888/thermal-intelligence/blob/main/docs/compatibility.md#101-package) and confirm only one standalone resource is registered. Follow the [migration guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md) for the installer that owns your resource. Keep your previous module and its saved configuration together. A frontend rollback cannot undo a provider command. The [RC.3 package record](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md) has the files for that prerelease.
 
 ## Report a problem
 

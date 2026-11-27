@@ -1,5 +1,7 @@
 # Compatibility
 
+**Thermal Intelligence 1.0.1.** The Marketplace update from v1.0.0 preserved the saved dashboard and its single resource ID on Home Assistant 2026.11.2. All three installed files matched the public downloads. Phone and iPad WebKit checks also covered the control-source glow. [1.0.1 package and dashboard checks](https://github.com/senyo888/thermal-intelligence/blob/main/docs/compatibility.md#101-package).
+
 **Thermal Intelligence 1.0.0.** The [Dashboard catalogue entry](https://github.com/hacs/default/pull/14872) was accepted on 26 November 2026. A fresh installation through **Marketplace → Add from link** on Home Assistant 2026.11.2 served the card, GPL licence and manifest from the public v1.0.0 release with matching checksums. An existing installation also upgraded to the final card through Marketplace. Three existing thermostats displayed the current and target temperatures reported by Home Assistant, including after a fresh browser reload. [Final package and dashboard checks](https://github.com/senyo888/thermal-intelligence/blob/main/docs/v1.0.0-package.md#validation-boundaries).
 
 The earlier candidate passed editor save and reload, room control and a five-minute scheduled Boost with automatic return. Whole-house Boost confirmed seven of eight rooms. The Marketplace rollback and reinstall trial and all nine checkpoints of the 48-hour Lab soak used that earlier build. [Version-specific results](https://github.com/senyo888/thermal-intelligence/blob/main/docs/compatibility.md#100-package).

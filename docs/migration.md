@@ -1,6 +1,8 @@
 # Update and rollback
 
-The 1.0.1-beta.1 picker reads **Thermal Intelligence Thermostat · Beta**. Dashboards saved with the 1.0.0 thermostat type or the earlier beta-card type open with this build. Keep a single standalone TI module registered.
+Updating from 1.0.0 to 1.0.1 keeps your saved dashboard card type and configuration. If Marketplace or HACS manages the card, update the existing entry and open a fresh dashboard tab. The stable picker reads **Thermal Intelligence Thermostat**. On Home Assistant 2026.11.2, the Marketplace update preserved the saved dashboard and its resource ID. [Verified upgrade and downloads](compatibility.md#101-package).
+
+The 1.0.1-rc.1 picker reads **Thermal Intelligence Thermostat · RC**. Beta 1 uses the **· Beta** suffix. Dashboards saved with the 1.0.0 thermostat type or the earlier beta-card type open with this build. Keep a single standalone TI module registered.
 
 The 1.0.0 picker reads **Thermal Intelligence Thermostat**. Beta builds add **· Beta** and RC builds add **· RC**. New 1.0.0 cards and exports use `custom:thermal-intelligence-thermostat`. Saved beta and RC cards continue to load using `custom:thermal-intelligence-beta-card`. Loading two standalone builds, even two marked 1.0.0, can leave an old picker or duplicate entries. Keep one standalone resource and reload the dashboard in a fresh browser tab. If you return to an older module, use the previous YAML type and the configuration saved with that module. Replace the existing standalone resource when moving between them. Keep the previous module, resource URL and matching card configuration for rollback. [1.0.0 package](v1.0.0-package.md).
 
@@ -37,7 +39,7 @@ Use the installer that owns the existing trial. On Home Assistant 2026.11 and la
 ### Update a manually installed trial card
 
 1. Retain the previous bundle, resource URL and saved card configuration.
-2. Download the module attached to the version you chose on the [releases page](https://github.com/senyo888/thermal-intelligence/releases) and verify its digest. Use the [1.0.0 package record](v1.0.0-package.md) for `v1.0.0` or the [RC.3 package record](rc-3.md) for `v0.1.0-rc.3`.
+2. Download the module attached to the version you chose on the [releases page](https://github.com/senyo888/thermal-intelligence/releases) and verify its digest. Use the checksums for your version. [v1.0.1](compatibility.md#101-package) · [v1.0.0](v1.0.0-package.md) · [RC.3](rc-3.md).
 3. Save it under a new versioned filename and update the existing standalone resource URL. Do not register a second copy.
 4. Open a fresh browser document, reopen the visual editor and check the thermostat, provider details and source mappings.
 
