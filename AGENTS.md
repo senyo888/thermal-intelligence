@@ -29,6 +29,12 @@ Commit and push changes to `senyo888-patch-1` first, then open a pull request in
 
 Bella reviews product and cross-surface coherence; Aetherwing reviews runtime, release and privacy safety; Aetherbite considers bounded alternatives. Preserve independent findings and substantive disagreement. Use proportionate review, not a mandatory ceremony for routine documentation.
 
-AetherCore remains dormant unless explicitly invoked for a bounded, read-only advisory review. It cannot implement, approve, schedule or create child reviews. Formal tags/releases require its manually requested finding, Bella/Aetherwing verification, release checks and Senyo's approval of the exact release presentation. Ordinary authorised preparation and untagged beta publication are separate activities.
+AetherCore remains dormant unless explicitly invoked for a bounded, read-only advisory review. It cannot implement, approve, schedule or create child reviews. Formal tags/releases require its manually requested finding, Bella/Aetherwing verification, release checks and Senyo's approval of the exact release presentation. Routine development and local package preparation are separate from a release decision. A beta distributed as a release follows the documentation review even when untagged.
 
 Reviews do not expand the user's authority. Deployment, restarts, external messages and changes to existing installations require their applicable scope. Keep one accountable orchestration owner and report what changed, checks actually run and remaining limits.
+
+## Compulsory release documentation review
+
+Every formal release validation, including beta, RC and stable releases, requires a complete documentation continuity and coherence review. Use the [release documentation procedure](CONTRIBUTING.md#required-release-documentation-review). Bella, Aetherwing and Aetherbite review independently. Explicitly invoke AetherCore for a bounded advisory check on the same revision. Preserve individual findings and their resolution privately. Senyo retains approval of the exact release presentation.
+
+A missing review, incomplete inventory or unresolved release-blocking finding holds the tag and publication. Reconcile the hosted README, Wiki, Pages and release assets after publication before declaring documentation closeout. Routine edits and local package builds can proceed separately.

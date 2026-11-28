@@ -1,63 +1,38 @@
 # Install with Home Assistant Marketplace
 
-Thermal Intelligence is a **Dashboard** card for the thermostat you already use. On Home Assistant 2026.11 or later, install it through Marketplace. If your older installation uses HACS, follow the [HACS guide](hacs.md).
+Thermal Intelligence v1.0.1 is a **Dashboard** card. On Home Assistant 2026.11 or later, open **Settings → Marketplace** and search for **Thermal Intelligence** by **senyo888**. On an older system with HACS, use the [HACS guide](hacs.md).
 
-If you added the standalone TI dashboard resource manually, follow the [resource transition steps](#before-installation) before choosing **Install**. Reopen your dashboards once you have verified that only one standalone TI resource is registered.
-
-<a id="install-100"></a>
-
-## Install the stable card
-
-Open **Settings → Marketplace**, search for **Thermal Intelligence** and select the **Dashboard** card by **senyo888**. Choose **Install** and confirm the [latest stable version](https://github.com/senyo888/thermal-intelligence/releases/latest). Open a fresh dashboard tab and choose **Edit dashboard → Add card → Thermal Intelligence Thermostat**.
+Already have a Marketplace-managed card? Update its existing entry, then reopen your saved dashboard in a fresh tab. If you added the standalone JavaScript module manually, complete the resource transition below before opening the dashboard. [Update and rollback](migration.md)
 
 ## Before installation
 
-Save a fresh backup, export it and verify the downloaded archive. Retain your trial card configuration, resource URL and previous module. Archive integrity is not a restore rehearsal; confirm your recovery method before a trial.
+Create a fresh backup, export it and verify the downloaded archive. Retain your card configuration, previous module and resource URL. Check which installer or manual registration owns `www/community/thermal-intelligence/` and its resource URLs. Stop if another installation or unrelated files share that directory. Marketplace updates and removes resources by repository-folder prefix. [Marketplace resource manager](https://github.com/home-assistant/core/blob/74cf5a49c63ed8d4d87717844bf14f79c28c9cea/homeassistant/components/marketplace/repositories/plugin.py)
 
-Check ownership of `www/community/thermal-intelligence/`, all resources using that folder prefix, and any existing manual trial resource. Stop if another TI installation or unrelated content uses the same namespace. The [Marketplace resource manager](https://github.com/home-assistant/core/blob/74cf5a49c63ed8d4d87717844bf14f79c28c9cea/homeassistant/components/marketplace/repositories/plugin.py) matches resource prefixes when updating or removing entries. A differently named dashboard does not isolate its files or resources.
+**Moving from a manual installation?** Keep affected dashboard tabs closed from installation until you have checked the resource URL in step 3 below.
 
-Keep the original TI dashboard resource separate. The standalone card also registers the beta and RC names so saved cards continue to load. Use one standalone module in each browser session.
-
-For a manual-to-Marketplace transition, retain the old module and its saved resource details. Before confirming installation, keep affected dashboard clients closed or prevent them from loading or reloading dashboards until the resource transition is complete. After installation, check the generated registration, remove only the old manual trial registration and verify exactly one trial module remains. Preserve every legacy resource and unrelated entry. Only then open a fresh document on each affected client and verify the intended version before using controls. Refresh any client that opened during the overlap after reconciliation as well.
-
+<a id="install-100"></a>
+<a id="install-the-stable-card"></a>
 <a id="add-the-repository-and-select-a-version"></a>
 
 ## Find the card and select a version
 
-1. Open **Settings → Marketplace** and search for **Thermal Intelligence**. Choose the Dashboard card from `senyo888/thermal-intelligence`. Connect GitHub through Home Assistant if requested.
-2. Select **Install** and check the version offered. To pick a different published tag, open the three-dot menu and choose **Install another version**.
-3. For a stable installation, select the version shown on the [latest release page](https://github.com/senyo888/thermal-intelligence/releases/latest). If it is missing, check the releases page and refresh Marketplace information. For the RC.3 prerelease, explicitly select **v0.1.0-rc.3**. Confirm the exact tag before continuing.
-4. Review the installation dialog and confirm. Storage-mode resources are registered automatically. For YAML-managed resources, use the installer URL; do not add a duplicate.
-5. Finish the resource transition above, then open a fresh browser document. If Home Assistant says that `www` did not exist at startup and needs a restart, stop and plan that separately.
+1. Open the **Dashboard** listing by **senyo888** in Marketplace. Connect GitHub through Home Assistant if prompted.
+2. Choose **Install** and confirm **v1.0.1**. If the version is missing, refresh the listing and check the [published release](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.1).
+3. Check that the standalone module uses the installer URL. For storage-managed resources, keep the registration Marketplace creates or updates in place. For YAML-managed resources, update the existing standalone entry to the installer URL or add it once as a JavaScript module. Remove an old manual registration only if it remains as a separate duplicate. Confirm the installer URL is registered once and preserve separate legacy TI and unrelated resources. If Home Assistant reports that the new `www` directory requires a restart, plan that separately.
+4. Open a fresh dashboard tab on each affected client, including any that reloaded during installation. Choose **Edit dashboard → Add card → Thermal Intelligence Thermostat**, select the room’s thermostat and save. [Set up your first room](wiki/Configuration.md)
 
-If the listing does not appear in search, use **Add from link** in Marketplace and enter `https://github.com/senyo888/thermal-intelligence`. Choose **Dashboard** if prompted, then continue with the same version and resource checks.
-
-These steps follow the [official Marketplace instructions](https://www.home-assistant.io/integrations/marketplace/). The [version selector](https://github.com/home-assistant/frontend/blob/a67b691a451e0b3fc469679b07158f963a61842c/src/panels/marketplace/dialogs/dialog-marketplace-install.ts#L618) supports explicit prerelease selection before installation; update preferences are separate. UI labels can vary with translation.
+If the catalogue search returns no match, use **Add from link** with `https://github.com/senyo888/thermal-intelligence` and choose **Dashboard** if prompted. [Official Marketplace instructions](https://www.home-assistant.io/integrations/marketplace/)
 
 ## Verify the installation
 
-Open a fresh dashboard tab and check the card version. For v1.0.1, Marketplace downloads the card, GPL licence and [release manifest](https://github.com/senyo888/thermal-intelligence/releases/download/v1.0.1/manifest.json). [Published checksums](compatibility.md#101-package) · [How Marketplace selects versions](https://contributors.home-assistant.io/marketplace/how-it-works/)
-
-Record the selected version, installer result, installed file list and generated resource URL. Verify the served `thermal-intelligence.js` against the exact release manifest’s size and SHA-256. Identical bytes on another branch do not prove that the intended named version was selected.
-
-Retain the installer-generated resource URL. Do not replace it with the previous manual URL or register a second trial module.
-
-For the stable card choose **Add card → Thermal Intelligence Thermostat**. RC.3 adds **· RC** to the name. Confirm the reported version, selected climate entity, readings, editor open/cancel and passive reconnect. These operations must send no thermostat or switch commands. Existing cards keep their saved trial type; the word “beta” in its internal type is not the installed version.
-
-Optional switch enrollment is deliberate and uses schema 2. Read its [eligibility, confirmation and provider side effects](optional-switch-control.md) before enabling it. A reported setting or valve position does not establish physical heating.
+Check the installed version, the room’s current and target temperatures, and the entity selected in the editor. The v1.0.1 package contains the card module, GPL licence and manifest. Compare the served module with the published size and SHA-256 if the picker or card looks out of date. [Downloads and checksums](compatibility.md#101-package)
 
 ## Update and recovery
 
-If you already use v1.0.0, open its existing Marketplace update, confirm **v1.0.1**, then reopen your saved dashboard in a fresh tab. You can keep the same card and resource. [Update and rollback](migration.md)
+Use the existing Marketplace entry to update. Keep its generated resource URL and open the saved dashboard in a fresh tab. The tested upgrade from v1.0.0 to v1.0.1 on Home Assistant 2026.11.2 preserved the dashboard configuration and single resource ID. [Verified upgrade](compatibility.md#101-package)
 
-After installation, enable the repository’s disabled **Pre-release** entity under **Settings → Devices & services → Marketplace**, then turn on that switch if you want future prerelease updates. This is separate from first-install version selection.
-
-Read the release notes and take a fresh backup before an update. Verify the exact new version and served hash again. Test update, removal and recovery separately; installing the same version twice does not prove update behavior.
-
-Home Assistant recommends restoring a backup after a failed update instead of using **Install another version** as a downgrade. A manually restored card module/resource only recovers that frontend surface; it does not restore Marketplace metadata or the whole environment. Use the saved recovery plan for the affected scope. Returning from schema 2 to RC.1 also requires the original schema-1 card configuration. See [migration and rollback](migration.md).
+Use a verified backup to recover installer state after a failed update. Replacing a JavaScript file recovers only the frontend. [Update and rollback](migration.md)
 
 ## Existing HACS installations
 
-Home Assistant 2026.11 takes over HACS repositories and update entities through Marketplace. Old `/hacsfiles/` resource paths remain supported; do not rename working URLs merely to match the new product name. Verify migration on the actual installation and do not reinstall HACS on a Marketplace system. See [how Marketplace handles HACS](https://contributors.home-assistant.io/marketplace/how-it-works/).
-
-On Home Assistant 2026.11.2, the default Dashboard catalogue delivered v1.0.0 and offered v1.0.1 as an update. The saved dashboard and its single resource ID survived the upgrade. [Package verification](compatibility.md#101-package) · [Distribution and catalogue status](distribution.md)
+Home Assistant 2026.11 takes over HACS repositories and update entities through Marketplace. Existing `/hacsfiles/` resource URLs are supported. Keep working URLs and verify the installed version before changing resources. [How Marketplace handles HACS](https://contributors.home-assistant.io/marketplace/how-it-works/)

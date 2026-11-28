@@ -4,7 +4,7 @@ The compact icon beside the thermostat name shows the lock state reported by **V
 
 ## Configured and disabled locks
 
-From beta.5, the header icon appears only when VT explicitly reports `is_lock_configured: true`. A configured lock can be locked, unlocked, unknown or unavailable; the icon follows that evidence.
+In v1.0.1, the header icon appears only when VT explicitly reports `is_lock_configured: true`. A configured lock can be locked, unlocked, unknown or unavailable; the icon follows that evidence.
 
 If VT explicitly reports `is_lock_configured: false`, a retained `specific_states.is_locked: true` no longer blocks ordinary controls. TI does not send Unlock or change VT configuration. Connection, availability, readiness and the other command checks still apply. Missing or malformed configuration is not treated as disabled and cannot clear a reported user lock.
 
@@ -35,4 +35,4 @@ TI keeps the entered code out of saved card configuration, copied settings, requ
 
 The inspected **VT 10.5.1** implementation includes the attempted code in an invalid-code exception. TI suppresses that error text but does not repair upstream logging behavior. [VT lock implementation](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/feature_lock_manager.py), [native service definitions](https://github.com/jmcollin78/versatile_thermostat/blob/10.5.1/custom_components/versatile_thermostat/services.yaml).
 
-Administrator-only interaction is a TI interface restriction. Home Assistant and VT remain responsible for backend permissions and code validation. See the [command contract](command-contract.md) and [historical beta evidence](beta.md) for implementation and validation boundaries.
+Administrator-only interaction is a TI interface restriction. Home Assistant and VT remain responsible for backend permissions and code validation. See the [command contract](command-contract.md) for lock requests and [compatibility](compatibility.md) for checks recorded against individual builds.

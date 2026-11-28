@@ -1,6 +1,6 @@
 # Beta.5 disabled-lock candidate
 
-Version **0.1.0-beta.5** was published as an untagged frontend candidate through `senyo888-patch-1`. It fixes VT locking reported disabled while an older locked flag remains. The published `v0.1.0-rc.1` and its assets are unchanged. No new controller or backend is required.
+This archive covers **0.1.0-beta.5**, published as an untagged frontend candidate through `senyo888-patch-1`. It corrected the lock indicator and restored ordinary thermostat controls when VT disabled locking but retained an older locked flag. For a new installation, follow the [stable installation guide](marketplace.md).
 
 ## Behavior
 
@@ -34,4 +34,4 @@ For a separately authorized trial, retain the current trial module, resource URL
 
 Rollback restores the retained trial resource URL and opens a fresh browser document. Do not overwrite a full dashboard or restore stale thermostat values. Returning to beta.4 or RC.1 can restore the disabled-lock defect. Frontend rollback does not undo a deliberate provider command. See the [migration guide](migration.md) and [historical beta.4 artifact](beta.md).
 
-HACS installation/update behavior, physical devices and real heating response for beta.5 remain unverified. This candidate has not been deployed.
+The beta.5 checks covered the source and package. Deployment, HACS installation and updates, physical devices and heating response were unverified for this candidate.

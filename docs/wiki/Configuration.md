@@ -2,7 +2,7 @@
 
 Start with one room. Once its dial shows the temperature and target you recognise, add the readings you actually use. Each card has its own sources and layout.
 
-This walkthrough covers **Thermal Intelligence Thermostat** in stable versions **1.0.0** and **1.0.1**. The published RC.3 picker adds **· RC** and has an earlier editor. [Published RC.3 installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md)
+In v1.0.1, choose **Thermal Intelligence Thermostat** in the card picker. [Installation guide](https://github.com/senyo888/thermal-intelligence/wiki/Installing-with-Marketplace)
 
 ## Get a working dial
 
@@ -38,7 +38,7 @@ An outdoor sensor or weather entity keeps the unit it reports, so an 8°C outdoo
 | Valve and activity | Map a valve opening from 0–100% to see **TRV Open/Closed** and its position. Without a valve mapping the card uses reported thermostat activity. **Heat requested** describes a VT request. |
 | Window, presence and motion | Choose a contact or occupancy source as typed telemetry, or select VT’s accepted state. Open/Closed, Home/Away and Detected/Clear answer different questions. A VT delay can leave a raw motion sensor and VT’s accepted motion state temporarily different. |
 | Power, energy and other VT readings | Use explicit telemetry for a meter. VT also offers estimated energy, estimated mean power, configured device power, power limiting, Follow, automatic window detection and auto start/stop when reported. Tap the icon to inspect its source. |
-| Control source and preset | The combined indicator can show House, Schedule, Manual or another reported source with its applicable preset or mode. Tap it for the separate reports. An unmapped owner can be Unknown. A hand with a history marker identifies the last confirmed adjustment made on this card. |
+| Control source and preset | The larger icon glows when House, Schedule, Manual or another source has confirmed control. In forced-colours mode, the icon identifies the source without a glow. Its badge shows the applicable preset or mode. Tap for the separate reports. Unknown ownership and the history-marked hand for an earlier adjustment stay unlit. |
 
 ### Set humidity colours
 
@@ -58,7 +58,7 @@ On the card itself, **Advanced draft and export** lets you preview and copy chan
 
 <img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/fe8414957fd490fa412eaa80920ecfe84f5e9561/assets/presentation/v1-top-row-settings.png" alt="Version 1.0.0 top-row draft with the control source, Humidity and Valve in the preview, preset choices and Copy configuration" width="360">
 
-Synthetic room in the 1.0.0 card. The footer stays visible as you scroll through the groups.
+This screenshot was captured with v1.0.0 using a synthetic room. The footer stays visible as you scroll through the groups.
 
 </details>
 
@@ -81,7 +81,7 @@ If your system has a separate thermostat for the heat source, **Optional heat-so
 
 <img src="https://raw.githubusercontent.com/senyo888/thermal-intelligence/f4bd1ce81e272d80823f7a1c64a0cb5ceafc345c/assets/presentation/v1-temperature-response.png" alt="Temperature response fields with a room sensor and native thermostat selected, the TRV controller empty, and default freshness of ten minutes" width="460">
 
-Example entities in the 1.0.0 editor. Use the entities that report these values in your room.
+This earlier screenshot shows example entities in the v1.0.0 editor. Use the entities that report these values in your room.
 
 </details>
 

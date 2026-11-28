@@ -1,8 +1,10 @@
 # Beta.6 optional switch candidate
 
-Version **0.1.0-beta.6** adds one optional switch control to the standalone thermostat card. For a registered standard thermostat, select a registered switch in the visual editor and explicitly enable it. Each On or Off request needs confirmation. No TI controller, integration or add-on is required.
+This archive covers **0.1.0-beta.6**, the untagged build that introduced one optional switch control for a standard thermostat. For a new installation, follow the [stable installation guide](marketplace.md).
 
-The switch may affect thermostat modes or trigger other automations. Honeywell emergency-heat On requests emergency heat; turning active emergency heat Off can turn the system Off. TI does not restore Heat, previous targets or modes. VT anchors, helpers, known group/template switches and multiple mappings are outside this version. Read [setup and provider limits](optional-switch-control.md) before enabling it.
+For a registered standard thermostat, select a registered switch in the visual editor and explicitly enable it. Each On or Off request needs confirmation. No TI controller, integration or add-on is required.
+
+The switch may affect thermostat modes or trigger other automations. Honeywell emergency-heat On requests emergency heat; turning active emergency heat Off can turn the system Off. TI does not restore Heat, previous targets or modes. VT anchors, helpers, known group/template switches and multiple mappings are outside this version. Read [setup and provider limits](https://github.com/senyo888/thermal-intelligence/blob/cb8d285aa116a52c1da5ee7669ab2874592f2363/docs/optional-switch-control.md) before enabling it.
 
 ## Exact package
 
@@ -26,7 +28,7 @@ The package contains the module, licence and a manifest binding the exact source
 
 **151 unit tests, 93 synthetic browser checks, 13 packaging tests and 8 distribution tests passed.** Coverage includes enrollment and unknown configuration preservation, both confirmation directions, captured target/session changes, registry events, timestamp ordering, unresolved requests, no automatic retries, keyboard controls and phone/tablet/desktop layouts. Existing disabled-lock behavior from beta.5 is retained. Public-file, privacy, whitespace and redacted secret checks passed.
 
-This candidate has not been installed or tested against a real Honeywell/provider device. Browser fixtures do not establish physical response, backend permission behavior, HACS/Marketplace acceptance or a minimum supported Home Assistant version. See [Compatibility](compatibility.md).
+A later [manual beta.6 trial](compatibility.md#beta6-observations-and-beta7-correction) on Home Assistant 2026.11.0 with VT 10.6.3 verified passive rendering, editor cancellation, reconnect and disabled-lock behaviour. Beta.6 blocked the optional switch when Home Assistant represented an absent device ID as `undefined` in the frontend and `null` in the registry response. [Beta.7](beta-7.md) corrected that mismatch. Real Honeywell hardware, physical response, wider backend permissions, installer acceptance and a minimum supported Home Assistant version were outside these checks.
 
 ## Install, update and rollback
 

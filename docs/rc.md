@@ -1,18 +1,18 @@
 # Release candidate 0.1.0-rc.2
 
-This is the historical RC.2 release record. For the stable card, use the [1.0.0 installation guide](marketplace.md#install-100).
+This archive covers the published **0.1.0-rc.2** prerelease. For a new installation, follow the [stable installation guide](marketplace.md).
 
-RC.2 is a published prerelease of the standalone thermostat card. It brings the beta.5–beta.7 changes: explicitly disabled VT locking no longer blocks ordinary controls, and eligible standard thermostats can expose one deliberately enrolled switch with confirmation before On or Off. It also retires completed request notices after context loss or a contrary provider report. No TI controller is required.
+RC.2 included the beta.5–beta.7 changes. It allowed ordinary controls when VT locking was explicitly disabled and added one optional switch to eligible standard thermostats, with enrollment and confirmation before On or Off. The card retired completed request notices after context loss or a contrary provider report. It worked without a TI controller.
 
 [Release v0.1.0-rc.2](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.2) was published on 9 November 2026 from `6d0833f20e9e071d94d2f09f00c1a4d4a34f1805`. [RC.3](rc-3.md) was published separately on 14 November 2026; this RC.2 package remains unchanged. Documentation updates do not change either released tag or its assets. [RC.1](rc-1.md) and the [beta.7 record](beta-7.md) retain their historical identities.
 
 ## Installation route
 
-For Home Assistant 2026.11 and later, follow [Marketplace installation](marketplace.md) and explicitly select `v0.1.0-rc.2`. Its bounded custom-repository Lab installation passed; update, removal and recovery acceptance remain incomplete. Earlier Home Assistant installations use the [HACS route](hacs.md).
+The RC.2 trial used **Install another version** in Marketplace and explicitly selected **v0.1.0-rc.2**. Older HACS installations required prerelease visibility to select that tag. On Marketplace the optional **Pre-release** update preference applied only after installation. The bounded custom-repository Lab installation passed. Update, removal and recovery were outside that trial. [Archived Marketplace instructions](https://github.com/senyo888/thermal-intelligence/blob/6d0833f20e9e071d94d2f09f00c1a4d4a34f1805/docs/marketplace.md#add-the-repository-and-select-a-version) · [Archived HACS instructions](https://github.com/senyo888/thermal-intelligence/blob/6d0833f20e9e071d94d2f09f00c1a4d4a34f1805/docs/hacs.md#controlled-installation)
 
 Retain the prior trial module and card configuration. The card type remains `custom:thermal-intelligence-beta-card`, with **Thermal Intelligence Thermostat · RC** in the picker. Beta and RC packages share trial registrations; load one trial module per document and preserve legacy TI separately.
 
-Schema-1 cards remain supported. Optional switch enrollment uses schema 2; returning to RC.1 requires both the original schema-1 configuration and its matching module. See [configuration](card-configuration.md), [optional switch behavior](optional-switch-control.md) and [migration](migration.md).
+Schema-1 cards remain supported. Optional switch enrollment uses schema 2; returning to RC.1 requires both the original schema-1 configuration and its matching module. See [RC.2 configuration](https://github.com/senyo888/thermal-intelligence/blob/6d0833f20e9e071d94d2f09f00c1a4d4a34f1805/docs/card-configuration.md), [optional switch behavior](https://github.com/senyo888/thermal-intelligence/blob/6d0833f20e9e071d94d2f09f00c1a4d4a34f1805/docs/optional-switch-control.md) and [migration](migration.md).
 
 ## Manual installation and rollback
 
