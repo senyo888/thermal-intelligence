@@ -49,7 +49,9 @@ The arc, slope ring and status chip describe different parts of the room’s sto
 
 ## Your readings, arranged your way
 
-Set up each room independently. Show humidity in one room and valve position in another. Tap a reading for its value, source and status. Presets and control source come first, followed by primary icons and then VT readings. In **Humidity display**, drag the four markers along the colour bar or enter exact percentages. When Schedule has confirmed control and its last confirmed mode is Eco, the calendar glows behind the green leaf. In forced-colours mode, the icon identifies the source without a glow. Tap the indicator to see each report. An unknown source and the hand marking a previous adjustment stay unlit.
+Set up each room independently. Show humidity in one room and valve position in another. Tap a reading for its value, source and status. Presets and control source come first, followed by primary icons and then VT readings. In **Humidity display**, drag the four markers along the colour bar or enter exact percentages.
+
+The calendar glows when Schedule has confirmed control. A green leaf appears in front of it when the thermostat is connected, available, ready and in **Heat** mode, and the displayed **Last confirmed schedule mode** is Eco. Without a schedule-mode mapping, the leaf follows the thermostat’s selected Eco preset under the same conditions. In forced-colours mode, the icon identifies the source without a glow. Tap the indicator to see each report. An unknown source and the hand marking a previous adjustment stay unlit.
 
 **Controls & features** opens the thermostat’s advertised modes and presets, preset temperatures and card settings. VT can also expose accepted window, presence and motion states, estimated energy and provider settings. A compatible standard thermostat can use an explicitly enrolled [optional switch](docs/optional-switch-control.md). The card asks for confirmation before operating it.
 
