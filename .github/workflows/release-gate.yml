@@ -1,0 +1,129 @@
+name: Release gate
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: Release operation
+        type: choice
+        options: [tag, beta-distribute, closeout, beta-closeout]
+        required: true
+      source:
+        description: Full package commit SHA
+        required: true
+      docs:
+        description: Full reviewed documentation commit SHA
+        required: true
+      note:
+        description: Reviewed release note path under docs/
+        required: true
+      delivery_run:
+        description: Original successful tag or beta delivery run ID (closeout only)
+        required: false
+
+permissions:
+  contents: read
+  actions: read
+  deployments: read
+
+concurrency:
+  group: thermal-intelligence-release
+  cancel-in-progress: false
+
+env:
+  OPERATION: ${{ inputs.operation }}
+  SOURCE: ${{ inputs.source }}
+  DOCS: ${{ inputs.docs }}
+  NOTE: ${{ inputs.note }}
+  DELIVERY_RUN: ${{ inputs.delivery_run }}
+
+jobs:
+  controller:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Require a current main dispatch by Senyo
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ORIGINAL_ACTOR: ${{ github.actor }}
+          RUN_ACTOR: ${{ github.triggering_actor }}
+        run: |
+          set -eu
+          test "$GITHUB_REPOSITORY_ID" = 1433216630
+          test "$GITHUB_REF" = refs/heads/main
+          test "$ORIGINAL_ACTOR" = senyo888
+          test "$RUN_ACTOR" = senyo888
+          test "$(gh api repos/senyo888/thermal-intelligence/branches/main --jq .commit.sha)" = "$GITHUB_SHA"
+
+  delivery:
+    needs: controller
+    if: inputs.operation == 'tag' || inputs.operation == 'beta-distribute'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: ti-release
+    steps:
+      - &checkout
+        name: Check out the trusted controller
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify the four-review attestation and source CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_ATTESTATION: ${{ secrets.TI_REVIEW_ATTESTATION }}
+          RELEASE_APP_ID: ${{ vars.TI_RELEASE_APP_ID }}
+        run: |
+          python3 -B scripts/release_gate.py authorize --operation "$OPERATION" --source "$SOURCE" \
+            --docs "$DOCS" --note "$NOTE" --out "$RUNNER_TEMP/delivery"
+      - name: Obtain the tag creator's installation token
+        if: inputs.operation == 'tag'
+        id: app
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
+        with:
+          client-id: ${{ vars.TI_RELEASE_CLIENT_ID }}
+          private-key: ${{ secrets.TI_RELEASE_PRIVATE_KEY }}
+          permission-contents: write
+      - name: Create and read back the approved tag
+        if: inputs.operation == 'tag'
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          RELEASE_ATTESTATION: ${{ secrets.TI_REVIEW_ATTESTATION }}
+          RELEASE_APP_ID: ${{ vars.TI_RELEASE_APP_ID }}
+        run: |
+          python3 -B scripts/release_gate.py create-tag --operation tag --source "$SOURCE" \
+            --docs "$DOCS" --note "$NOTE" --out "$RUNNER_TEMP/tag"
+      - name: Record delivery for closeout
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: delivery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/delivery/
+          if-no-files-found: error
+          retention-days: 90
+
+  closeout:
+    needs: controller
+    if: inputs.operation == 'closeout' || inputs.operation == 'beta-closeout'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: ti-release
+    steps:
+      - *checkout
+      - name: Install the pinned website renderer
+        run: |
+          python3 -m venv "$RUNNER_TEMP/site-python"
+          "$RUNNER_TEMP/site-python/bin/pip" install --require-hashes -r site/requirements.txt
+      - name: Verify the attestation, delivery run and live public surfaces
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_ATTESTATION: ${{ secrets.TI_REVIEW_ATTESTATION }}
+        run: |
+          "$RUNNER_TEMP/site-python/bin/python" -B scripts/release_gate.py verify \
+            --operation "$OPERATION" --source "$SOURCE" --docs "$DOCS" --note "$NOTE" \
+            --delivery-run "$DELIVERY_RUN" --out "$RUNNER_TEMP/closeout"
+      - name: Record verified release closeout
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: verified-closeout-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/closeout/
+          if-no-files-found: error
+          retention-days: 90
