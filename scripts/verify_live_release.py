@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 import time
 import unicodedata
+from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from html import unescape
@@ -55,7 +56,7 @@ class Region(HTMLParser):
         super().__init__()
         self.selector = selector
         self.stack = []
-        self.text = []
+        self.tokens = []
         self.bindings = []
         self.anchor = None
         self.images = set()
@@ -83,7 +84,7 @@ class Region(HTMLParser):
             href, text = self.anchor
             label = " ".join(" ".join(text).split())
             if label:
-                self.bindings.append((label, href))
+                self.bindings.append((len(self.tokens), label, href))
             self.anchor = None
         for i in range(len(self.stack) - 1, -1, -1):
             if self.stack[i][0] == tag:
@@ -92,26 +93,31 @@ class Region(HTMLParser):
 
     def handle_data(self, value):
         if self.stack and self.stack[-1][1]:
-            self.text.append(value)
+            value_normalized = unicodedata.normalize("NFKC", value).casefold()
+            self.tokens.extend(re.findall(r"\w+|[^\w\s]", value_normalized))
             if self.anchor:
                 self.anchor[1].append(value)
 
-    def tokens(self):
-        return re.findall(r"\w+", unicodedata.normalize("NFKC", " ".join(self.text)).casefold())
+    def destinations(self, base):
+        # GitHub adds links around some images. Check each reviewed link at its
+        # text position and retain the order of image-only links sharing a label.
+        destinations = defaultdict(list)
+        for position, label, href in self.bindings:
+            destinations[position, label].append(urljoin(base, href))
+        return destinations
 
 
 def rendered(source_html, live_html, selector, url, readme=False):
     expected, actual = Region(), Region(selector)
     expected.feed(source_html)
     actual.feed(live_html.decode())
-    words = expected.tokens()
-    require(actual.found and words and words == actual.tokens(),
+    require(actual.found and expected.tokens and expected.tokens == actual.tokens,
             "Missing reviewed text in " + url + " (" + selector + ")")
     link_base = WEB + "/blob/main/" if readme else url
     image_base = WEB + "/raw/main/" if readme else url
-    present = {(label, urljoin(url, href)) for label, href in actual.bindings}
-    for label, href in expected.bindings:
-        require((label, urljoin(link_base, href)) in present, "Wrong rendered destination for " + label + " at " + url)
+    present = actual.destinations(url)
+    for binding, destinations in expected.destinations(link_base).items():
+        require(present.get(binding) == destinations, "Wrong rendered destination for " + binding[1] + " at " + url)
     images = {urljoin(url, href) for href in actual.images if href}
     require(all(urljoin(image_base, href) in images for href in expected.images if href),
             "Missing reviewed image at " + url)
@@ -144,7 +150,7 @@ def check_presentation(release, receipt):
         revision, sep, path = image.removeprefix(RAW + "/").partition("/")
         require(sep and path.startswith("assets/presentation/"), "Unexpected release artwork location")
         compare_bytes(image, blob(checked_sha(revision), path))
-    migrations = [href for _, href in contents.bindings if urlsplit(href).path.endswith("/docs/migration.md")]
+    migrations = [href for _, _, href in contents.bindings if urlsplit(href).path.endswith("/docs/migration.md")]
     require(migrations, "Missing release migration guide")
     for guide in migrations:
         require(guide.startswith(WEB + "/blob/"), "Migration link must resolve in the TI repository")

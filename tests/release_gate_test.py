@@ -169,6 +169,22 @@ class PublicationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             live.rendered(source, ('<div id="wiki-body">' + changed + '</div>').encode(), "wiki-body", gate.WEB)
 
+    def test_reversed_temperature_comparison_fails_but_whitespace_can_change(self):
+        source = "<p>Act when temperature &lt; 20.</p>"
+        page = b'<div id="wiki-body">Act when temperature\n  &lt;   20.</div>'
+        live.rendered(source, page, "wiki-body", gate.WEB)
+        with self.assertRaisesRegex(ValueError, "reviewed text"):
+            live.rendered(source, page.replace(b"&lt;", b"&gt;"), "wiki-body", gate.WEB)
+
+    def test_each_download_link_must_stay_with_its_release_channel(self):
+        section = '<p>Stable: <a href="{}">Download</a></p><p>Beta: <a href="{}">Download</a></p>'
+        source = section.format("/stable", "/beta")
+        page = '<div id="wiki-body">{}</div>'
+        live.rendered(source, page.format(source).encode(), "wiki-body", gate.WEB)
+        swapped = section.format("/beta", "/stable")
+        with self.assertRaisesRegex(ValueError, "destination"):
+            live.rendered(source, page.format(swapped).encode(), "wiki-body", gate.WEB)
+
     @patch.object(live, "get", side_effect=lambda url: (b"right" if "?" in url else b"stale", url))
     def test_cache_busted_bytes_cannot_certify_the_canonical_url(self, _get):
         with self.assertRaises(ValueError):
