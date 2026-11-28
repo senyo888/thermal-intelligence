@@ -17,7 +17,7 @@ Save a backup, then update the existing entry in the installer that owns it. On 
 3. Save it with a versioned filename and update the existing standalone resource URL. Keep separately owned legacy and unrelated resources.
 4. Open a fresh tab, check the selected thermostat and its readings, then reopen the visual editor to check the configuration. A frontend module update alone does not require a Home Assistant Core restart.
 
-If you want Marketplace to take over a manual installation, follow the [resource transition before choosing Install](marketplace.md#before-installation).
+If you want Marketplace to take over a manual installation, complete the [backup and ownership checks](marketplace.md#before-installation) before installing, then [verify the installer URL](marketplace.md#find-the-card-and-select-a-version) before reopening your dashboard.
 
 <a id="trial-and-legacy-coexistence"></a>
 <a id="keep-existing-ti-alongside-the-trial-card"></a>

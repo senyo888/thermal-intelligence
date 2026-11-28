@@ -49,7 +49,7 @@ The arc, slope ring and status chip describe different parts of the room’s sto
 
 ## Your readings, arranged your way
 
-Set up each room independently. Show humidity in one room and valve position in another. Tap a reading for its value, source and status. Presets and control source come first, followed by primary icons and then VT readings. In **Humidity display**, drag the four markers along the colour bar or enter exact percentages. When Schedule has confirmed control and its last confirmed mode is Eco, the calendar glows behind the green leaf. Tap the indicator to see each report. An unknown source and the hand marking a previous adjustment stay unlit.
+Set up each room independently. Show humidity in one room and valve position in another. Tap a reading for its value, source and status. Presets and control source come first, followed by primary icons and then VT readings. In **Humidity display**, drag the four markers along the colour bar or enter exact percentages. When Schedule has confirmed control and its last confirmed mode is Eco, the calendar glows behind the green leaf. In forced-colours mode, the icon identifies the source without a glow. Tap the indicator to see each report. An unknown source and the hand marking a previous adjustment stay unlit.
 
 **Controls & features** opens the thermostat’s advertised modes and presets, preset temperatures and card settings. VT can also expose accepted window, presence and motion states, estimated energy and provider settings. A compatible standard thermostat can use an explicitly enrolled [optional switch](docs/optional-switch-control.md). The card asks for confirmation before operating it.
 
@@ -86,7 +86,7 @@ TI sends the actions you choose through Home Assistant’s services. Your thermo
 
 On Home Assistant 2026.11 or later, open **Settings → Marketplace** and search for **Thermal Intelligence**. On older systems, search for the same name in **HACS**. Open the Dashboard card by **senyo888** and select **v1.0.1**. [Marketplace steps](docs/marketplace.md) · [HACS steps](docs/hacs.md)
 
-**Updating from v1.0.0?** Update the existing Marketplace or HACS entry to **v1.0.1**, then open a fresh dashboard tab. Your saved card carries over. For a manual installation, follow the [resource transition steps](docs/marketplace.md#before-installation) before choosing **Install**. [Update and rollback](docs/migration.md)
+**Updating from v1.0.0?** Update the existing Marketplace or HACS entry to **v1.0.1**, then open a fresh dashboard tab. Your saved card carries over. Moving from a manual installation? Follow the [backup and ownership checks](docs/marketplace.md#before-installation) before installing, then verify the installer URL before reopening your dashboard. [Update and rollback](docs/migration.md)
 
 ## Acknowledgements
 
