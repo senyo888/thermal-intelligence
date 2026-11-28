@@ -27,6 +27,11 @@ jobs:
           python3 -B tests/foundation_test.py
           python3 -B tests/release_docs_test.py
           python3 -B scripts/check_release_docs.py inventory --source "$GITHUB_SHA" > "$RUNNER_TEMP/ti-docs-inventory.json"
+      - name: Test release controls and live verification failure cases
+        run: |
+          python3 -m venv "$RUNNER_TEMP/release-tests"
+          "$RUNNER_TEMP/release-tests/bin/pip" install --require-hashes -r site/requirements.txt
+          "$RUNNER_TEMP/release-tests/bin/python" -B tests/release_gate_test.py
       - name: Check public data boundaries
         run: python3 scripts/check_public_data.py
       - name: Install verified Gitleaks

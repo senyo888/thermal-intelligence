@@ -55,6 +55,8 @@ def inventory(source, docs):
 def template(identity):
     return {
         "inventory": identity,
+        "release_title": "",
+        "public_stable": {"tag": "", "source": ""},
         "reviews": {name: {"verdict": "pending", "finding": ""} for name in REVIEWERS},
         "preparation": {field: {"status": "pending", "evidence": ""} for field in PREPARATION},
         "publication": {field: {"status": "pending", "evidence": ""} for field in PUBLICATION},
@@ -107,7 +109,7 @@ def main():
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    print(f"Documentation {args.action} passed for {identity['release_version']} "
+    print(f"Private documentation record {args.action} passed for {identity['release_version']} "
           f"on {identity['documentation_commit']} ({len(identity['files'])} files).")
     return 0
 
