@@ -38,7 +38,7 @@ An outdoor sensor or weather entity keeps the unit it reports, so an 8°C outdoo
 | Valve and activity | Map a valve opening from 0–100% to see **TRV Open/Closed** and its position. Without a valve mapping the card uses reported thermostat activity. **Heat requested** describes a VT request. |
 | Window, presence and motion | Choose a contact or occupancy source as typed telemetry, or select VT’s accepted state. Open/Closed, Home/Away and Detected/Clear answer different questions. A VT delay can leave a raw motion sensor and VT’s accepted motion state temporarily different. |
 | Power, energy and other VT readings | Use explicit telemetry for a meter. VT also offers estimated energy, estimated mean power, configured device power, power limiting, Follow, automatic window detection and auto start/stop when reported. Tap the icon to inspect its source. |
-| Control source and preset | The larger icon glows when House, Schedule, Manual or another source has confirmed control. Its badge shows the applicable preset or mode. Tap for the separate reports. Unknown ownership and the history-marked hand for an earlier adjustment stay unlit. |
+| Control source and preset | The larger icon glows when House, Schedule, Manual or another source has confirmed control. In forced-colours mode, the icon identifies the source without a glow. Its badge shows the applicable preset or mode. Tap for the separate reports. Unknown ownership and the history-marked hand for an earlier adjustment stay unlit. |
 
 ### Set humidity colours
 
