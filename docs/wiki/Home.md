@@ -6,11 +6,9 @@
 
 ## Start here
 
-Search for **Thermal Intelligence** by **senyo888** in the Dashboard catalogue. Install the [latest stable version](https://github.com/senyo888/thermal-intelligence/releases/latest), then choose **Thermal Intelligence Thermostat** in the card picker. Start with the [Marketplace installation guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md) or, on older Home Assistant systems, the [HACS guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/hacs.md).
+Search for **Thermal Intelligence** by **senyo888** in the Dashboard catalogue. Install [v1.0.1](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.1), then choose **Thermal Intelligence Thermostat** in the card picker. [Marketplace installation](https://github.com/senyo888/thermal-intelligence/wiki/Installing-with-Marketplace) · [HACS on older Home Assistant systems](https://github.com/senyo888/thermal-intelligence/wiki/HACS-custom-repository)
 
-**Updating from v1.0.0?** Update the existing entry to **v1.0.1**, then reopen your saved dashboard in a fresh tab. [Release notes](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.1) · [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md)
-
-**Already running RC.3?** Its picker reads **Thermal Intelligence Thermostat · RC**. The [RC.3 setup guide](https://github.com/senyo888/thermal-intelligence/blob/4caf6f84868079a4d8f25c5d5731654f015bc260/docs/card-configuration.md#visual-configuration) matches that editor.
+**Updating from v1.0.0?** Update the existing Marketplace or HACS entry to **v1.0.1**, then reopen your saved dashboard in a fresh tab. [Release notes](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.1) · [Update and rollback](https://github.com/senyo888/thermal-intelligence/blob/main/docs/migration.md)
 
 ## Set up your first room
 
@@ -19,13 +17,13 @@ Start with one thermostat and follow the [first-room walkthrough](https://github
 1. **Set up your room.** Select a climate entity and save. Expose [VT readings or your own sensors](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#choose-your-sources), then [arrange the header](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#arrange-the-top-row).
 2. **Read the result.** Learn what the [arc, slope ring, status chip and LED](https://github.com/senyo888/thermal-intelligence/wiki/Reading-the-card) tell you. To enable the optional warming response, follow the [temperature response walkthrough](https://github.com/senyo888/thermal-intelligence/wiki/Configuration#set-up-temperature-response).
 
-[See the Plum card, top-row layout and VT response setup in Senyo’s introduction to 1.0.0](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0) · [Complete settings and YAML](https://github.com/senyo888/thermal-intelligence/blob/main/docs/card-configuration.md)
+[Complete settings and YAML](https://github.com/senyo888/thermal-intelligence/blob/main/docs/card-configuration.md)
 
 ## Find your way
 
 - [Thermal Intelligence in your home](https://github.com/senyo888/thermal-intelligence/wiki/Architecture-and-ownership) explains the sources, observations and control boundaries.
 - [VT lock control](https://github.com/senyo888/thermal-intelligence/wiki/VT-lock-control) covers administrator actions and provider behaviour.
-- [Marketplace](https://github.com/senyo888/thermal-intelligence/blob/main/docs/marketplace.md) covers Home Assistant 2026.11 and later; [HACS](https://github.com/senyo888/thermal-intelligence/blob/main/docs/hacs.md) covers older installations.
+- [Marketplace](https://github.com/senyo888/thermal-intelligence/wiki/Installing-with-Marketplace) covers Home Assistant 2026.11 and later; [HACS](https://github.com/senyo888/thermal-intelligence/blob/main/docs/hacs.md) covers older installations.
 - [Troubleshooting](https://github.com/senyo888/thermal-intelligence/wiki/Troubleshooting) helps with resource loading, observations and rollback.
 
 [Compatibility by version](https://github.com/senyo888/thermal-intelligence/wiki/Compatibility) covers stable releases and earlier prereleases.

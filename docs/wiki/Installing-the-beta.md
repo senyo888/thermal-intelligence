@@ -2,7 +2,7 @@
 
 # Beta.4 installation record
 
-For a new installation, use the [stable installation guide](https://github.com/senyo888/thermal-intelligence/wiki/Installing-with-Marketplace). For the later prerelease, see [RC.3 prerelease](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md). This page preserves the exact beta.4 artifact and its historical validation. The [beta.7 guide](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta-7.md) records the later untagged beta package.
+For a new card, follow the [v1.0.1 installation guide](https://github.com/senyo888/thermal-intelligence/wiki/Installing-with-Marketplace). The following instructions and test results belong to the original beta.4 trial. Later development is recorded in the [beta.7 record](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta-7.md) and [RC.3 record](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-3.md).
 
 Version **0.1.0-beta.4**, source commit `ea1268ac7a8dc5aa7f54723870808bf24a92cdc0`. This is a frontend module for controlled testing, with no TI backend required. Manual installation and rollback have been tested; see [compatibility](https://github.com/senyo888/thermal-intelligence/blob/main/docs/compatibility.md) for version coverage and remaining limits.
 
@@ -54,4 +54,4 @@ The exact bundle passed 135 unit tests, 81 browser tests and 5 packaging tests, 
 
 Physical heating, native phone/tablet use, a minimum version range and the HACS lifecycle remain unverified. Response-arc positive cases and lock-code error paths have synthetic coverage only. Read [Compatibility](https://github.com/senyo888/thermal-intelligence/blob/main/docs/compatibility.md) and [VT lock limits](https://github.com/senyo888/thermal-intelligence/blob/main/docs/lock-control.md) before testing those features.
 
-This is an untagged beta, not a stable release. The historical package remains available at the recorded commit. Installer support was outside that beta trial.
+Beta.4 remained untagged. Its package is available at the recorded commit. Installer support was outside that trial.

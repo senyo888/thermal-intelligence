@@ -1,6 +1,8 @@
 # RC.1 release record
 
-RC.1 is the standalone thermostat frontend prepared through `develop`. It retains beta.4's thermostat behaviour, response-arc rules, health LED, command guards and schema-1 configurations. Release identity, package metadata and the card-picker label are updated. This candidate provides the standalone frontend; stable release acceptance is tracked separately.
+This archive covers the published **0.1.0-rc.1** prerelease. For a new installation, follow the [stable installation guide](marketplace.md).
+
+RC.1 was prepared through `develop`. It retained beta.4's thermostat behaviour, response-arc rules, health LED, command guards and schema-1 configurations. The release identity, package metadata and card-picker label changed.
 
 Prerelease [v0.1.0-rc.1](https://github.com/senyo888/thermal-intelligence/releases/tag/v0.1.0-rc.1) is the controlled HACS trial package, targeting `9d9ed9744c29a494d45501a8bb1359edd465c5c4`. Its module matches the manual package below byte for byte; its distribution metadata and packaging checks have separate offline validation. Upstream HACS validation passed eight applicable checks on 3 November 2026. Installation lifecycle acceptance remains separate and unverified. See the release notes for the exact assets and trial gates.
 
@@ -47,4 +49,4 @@ Manual RC installation, rollback to beta.4 and RC reapplication passed on HA **2
 
 The 48-hour RC.1 controller observation completed on 2 November 2026. All nine scheduled checkpoints passed Home Assistant Core, served-module identity, VT provider and reported-version checks on Home Assistant 2026.10.0 with VT 10.5.1. UI coverage was recorded at the initial checkpoint; the eight later UI observations, including the final retained-page and fresh-render checks, were unavailable. Those gaps remain part of the result. Periodic checkpoints do not establish continuous uptime, browser execution or physical heating response. See [Compatibility](compatibility.md) for the recorded baseline and remaining coverage.
 
-The backend, schedules, holds, cutoff and recovery control remain planned work. HACS installation requires separate validation. Stable release acceptance includes package, compatibility and installation checks alongside the reviewed observation result.
+The RC.1 frontend did not provide a backend, schedules, holds, cutoff or recovery control. Its HACS installation lifecycle was unverified. See the [compatibility record](compatibility.md) for later packages and their installation checks.

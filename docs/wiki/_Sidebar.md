@@ -2,7 +2,6 @@
 
 - [Home](https://github.com/senyo888/thermal-intelligence/wiki/Home)
 - [1.0.1 release notes](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.1)
-- [1.0.0 release and introduction](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0)
 - [Install with Marketplace](https://github.com/senyo888/thermal-intelligence/wiki/Installing-with-Marketplace)
 - [Install with older HACS](https://github.com/senyo888/thermal-intelligence/wiki/HACS-custom-repository)
 - [Set up your first room](https://github.com/senyo888/thermal-intelligence/wiki/Configuration)
@@ -13,12 +12,14 @@
 - [Compatibility](https://github.com/senyo888/thermal-intelligence/wiki/Compatibility)
 - [Troubleshooting](https://github.com/senyo888/thermal-intelligence/wiki/Troubleshooting)
 
-**Earlier versions**
+**Release history**
 
-- [RC.3 installation](https://github.com/senyo888/thermal-intelligence/wiki/Installing-the-release-candidate)
+- [1.0.0 release and introduction](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.0)
+- [Changelog](https://github.com/senyo888/thermal-intelligence/blob/main/CHANGELOG.md)
+- [RC.3 installation record](https://github.com/senyo888/thermal-intelligence/wiki/Installing-the-release-candidate)
 - [RC.1 record](https://github.com/senyo888/thermal-intelligence/blob/main/docs/rc-1.md)
 - [Beta.7 package](https://github.com/senyo888/thermal-intelligence/blob/main/docs/beta-7.md)
-- [Beta.4 installation](https://github.com/senyo888/thermal-intelligence/wiki/Installing-the-beta)
+- [Beta.4 installation record](https://github.com/senyo888/thermal-intelligence/wiki/Installing-the-beta)
 
 **Project**
 

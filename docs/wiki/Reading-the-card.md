@@ -77,6 +77,6 @@ This keeps occasional settings close without putting every control on the everyd
   </tr>
 </table>
 
-*These beta.2 captures use synthetic data and illustrate controls also present in 1.0.0. See the response-arc guide above for the stable card’s behaviour.*
+*These captures show the beta.2 component with synthetic data. The response-arc guide above explains the behaviour in v1.0.1.*
 
 </details>

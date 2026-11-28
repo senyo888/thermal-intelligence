@@ -1,19 +1,15 @@
 # HACS on Home Assistant before 2026.11
 
-Use this guide on older Home Assistant installations that already use HACS. On Home Assistant 2026.11 or later, use [Marketplace](marketplace.md). Thermal Intelligence is listed in the HACS catalogue under **Dashboard**. Check the [releases page](https://github.com/senyo888/thermal-intelligence/releases) for the available tags. HACS installation and update coverage is recorded in [Distribution](distribution.md).
+On older Home Assistant systems that already use HACS, install Thermal Intelligence v1.0.1 as a **Dashboard** card. On Home Assistant 2026.11 and later, use [Marketplace](marketplace.md).
 
 ## Install the dashboard card
 
-1. Save and verify a fresh backup. Retain the current module, resource and card configuration, and establish recovery before changing an installation.
-2. Check `www/community/thermal-intelligence/` and its resource namespace for existing ownership. Preserve legacy TI and unrelated files. Follow the [resource checks](marketplace.md#before-installation) before migration.
-3. In **HACS**, search for **Thermal Intelligence** and open the **Dashboard** card from `senyo888/thermal-intelligence`.
-4. For the stable version select the version on the [latest stable release page](https://github.com/senyo888/thermal-intelligence/releases/latest). To install RC.3, enable prerelease visibility and select **v0.1.0-rc.3**. Check the named version before downloading.
-5. Verify the installer-generated resource, exact version and served hash. Use one standalone card resource and a fresh browser document. Select **Thermal Intelligence Thermostat** for the stable release or **Thermal Intelligence Thermostat · RC** for RC.3 and check passive rendering, editor cancellation and reconnect before deliberate controls.
+1. Create a fresh backup, export it and verify the downloaded archive. Retain the existing module, card configuration and resource URL. If moving from a manual installation, check ownership of `www/community/thermal-intelligence/` and complete the [resource transition](marketplace.md#before-installation).
+2. Search HACS for **Thermal Intelligence** by **senyo888**. If it does not appear, add `https://github.com/senyo888/thermal-intelligence` under **Custom repositories** as **Dashboard**.
+3. Open the **Thermal Intelligence** Dashboard entry, select **v1.0.1** and choose **Download**.
+4. Confirm a single standalone resource uses the generated URL. Open a fresh dashboard tab and choose **Edit dashboard → Add card → Thermal Intelligence Thermostat**.
+5. Select the room’s thermostat, check its current and target temperatures, and save the card. [First-room guide](wiki/Configuration.md)
 
-If search does not show TI, open **Custom repositories**, add `https://github.com/senyo888/thermal-intelligence` as **Dashboard**, then follow the same download steps.
+For an existing HACS-managed installation, update the existing entry. Keep its generated resource and reopen your saved card. If you need to recover, use the previous module and matching configuration for a manual resource, or the backup for installer state. [Update and rollback](migration.md)
 
-For the first prerelease, HACS 2.0.5 can inspect the default branch during repository discovery. The default branch’s separately reviewed snapshot supplies discovery structure; it is not proof of a named-release installation. Select the tag that matches the package you want. `hide_default_branch` hides a download choice; it does not prove which version was installed. Named-release selection and bytes must both be verified.
-
-Install, update, removal, manual-to-installer migration and recovery still require their own acceptance. A module/resource rollback does not restore installer state or the whole environment. Schema-2 rollback to RC.1 also requires the original schema-1 configuration. See [migration](migration.md).
-
-The official [HACS Dashboard plugin check](https://github.com/senyo888/thermal-intelligence/actions/runs/46037190950) passed for v1.0.1. Installation and upgrade on older HACS systems remain unverified. HACS accepted the [catalogue entry](https://github.com/hacs/default/pull/14872) on 26 November 2026. [Dashboard requirements](https://www.hacs.xyz/docs/publish/plugin/)
+The official Dashboard plugin check passed on the v1.0.1 tag. Installation, update and recovery on older HACS systems remain unverified. The observed saved-card upgrade used Home Assistant Marketplace. [HACS validation](https://github.com/senyo888/thermal-intelligence/actions/runs/46037190950) · [Verified versions and checksums](compatibility.md#101-package)

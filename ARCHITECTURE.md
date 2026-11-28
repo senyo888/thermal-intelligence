@@ -1,6 +1,6 @@
 # Thermal Intelligence architecture contract
 
-The [Thermal Intelligence frontend](https://github.com/senyo888/thermal-intelligence/releases/latest) is a standalone Home Assistant dashboard card. It presents Home Assistant and provider state and sends commands only after explicit user interaction. A future TI backend is a separate component. [Distribution](docs/distribution.md) describes branch roles and versioned packages.
+The [Thermal Intelligence v1.0.1 frontend](https://github.com/senyo888/thermal-intelligence/releases/tag/v1.0.1) is a standalone Home Assistant dashboard card. It presents Home Assistant and provider state and sends commands only after explicit user interaction. A future TI backend is a separate component. [Distribution](docs/distribution.md) describes branch roles and versioned packages.
 
 ## Ownership and layers
 
@@ -21,7 +21,7 @@ Thermostats and TRVs are one part of the input landscape. Independent indoor sen
 
 The **selected climate entity** supplies the dial’s current temperature and target, advertised controls and provider details. The **independent source mappings** supply optional humidity, temperature trend, valve position, power, energy and named readings. Those sensors do not have to pass through VT. Existing HA trend sensors/helpers supply the trend; TI reads that configured result.
 
-An independent room or TRV temperature can be a named reading or an explicitly mapped response-arc input. The dial continues to use the selected climate entity’s `current_temperature`. Version 1.0.0 includes typed temperature observations and a guided outdoor mapping with live weather-unit validation. Other weather conditions remain explicit scalar feature/custom-telemetry mappings; forecast processing and weather-driven heating policy belong to separate provider/backend contracts.
+An independent room or TRV temperature can be a named reading or an explicitly mapped response-arc input. The dial continues to use the selected climate entity’s `current_temperature`. The card supports typed temperature observations. The outdoor mapping checks the unit reported by the weather entity. Other weather conditions remain explicit scalar feature/custom-telemetry mappings; forecast processing and weather-driven heating policy belong to separate provider/backend contracts.
 
 Raw window, presence and motion inputs remain distinct from the feature states accepted by VT. TI preserves which source a reading came from, its availability, units and any configured freshness requirement. [Configuration and mapping reference](docs/card-configuration.md).
 
@@ -63,6 +63,6 @@ HI remains the authority for its seasonal humidity targets, Stability, selected 
 
 ## Code and documentation
 
-The 1.0.0 source separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. In this checkout, synthetic fixtures and unit/browser tests live under `tests/`, and the reproducible module is `dist/thermal-intelligence.js`.
+The frontend source separates `src/cards/`, `src/editor/`, `src/providers/`, `src/model/` and `src/commands/`. In this checkout, synthetic fixtures and unit/browser tests live under `tests/`, and the reproducible module is `dist/thermal-intelligence.js`.
 
 The README introduces the product; the Wiki provides practical guidance; repository documents define configuration, compatibility and technical contracts. The website presents the same supported features and version-specific coverage. See [distribution](docs/distribution.md) and [command contracts](docs/command-contract.md).
